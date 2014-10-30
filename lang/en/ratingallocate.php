@@ -27,7 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 // <editor-fold defaultstate="collapsed" desc="General Plugin Settings">
 $string['ratingallocate'] = 'ratingallocate';
-$string['ratingallocatefieldset'] = 'Settings for this plugin';
 $string['ratingallocatename'] = 'Name of this Voting';
 $string['ratingallocatename_help'] = 'This is the content of the help tooltip associated with the ratingallocatename field. Markdown syntax is supported.';
 $string['modulename'] = 'ratingallocate';
@@ -94,6 +93,8 @@ $string['choices_options_oneperline'] = 'One per line.';
 $string['choices_quickadd'] = 'Quickadd choices';
 $string['choices_quickadd_help'] = 'Add choices. One per Line. The "|" Delimiter may separate title and explanation like so "Title|Explanation"';
 $string['edit_choice'] = 'Edit Choice "{$a}"';
+$string['rating_endtime'] = 'Rating ends at';
+$string['rating_begintime'] = 'Rating begins at';
 $string['manual_allocation'] = 'Manual allocation';
 $string['manual_allocation_form'] = 'Manual Allocation Form';
 $string['newchoice'] = 'Add new Choice';
@@ -101,12 +102,12 @@ $string['no_rating_given'] = '?';
 $string['publishdate'] = 'Publishdate';
 $string['publishdate_help'] = 'With this you can display additional info to your users. This has no effect on (possibly automatic) distribution, it\'s still a manual process. Use it to communicate your intents to the users.';
 $string['publishdate_show'] = 'Show publishdate?';
-$string['select_strategy'] = 'Choose the Strategy to display to users';
+$string['select_strategy'] = 'Rating strategy';
+$string['select_strategy_help'] = 'Choose the rating strategy.';
 $string['show_rating_period'] = 'testing {$a}';
 $string['show_table'] = 'Show Table';
 $string['strategy_not_specified'] = 'You have to select a strategy';
 $string['strategyoptions_for_strategy'] = 'Options for Strategy "{$a}"';
-$string['timespan_votes'] = 'Timespan';
 $string['timespan_votes_open'] = 'Users can give ratings';
 // </editor-fold>
 

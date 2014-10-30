@@ -33,13 +33,21 @@ require_once(dirname(__FILE__) . '/locallib.php');
  * Module instance settings form
  */
 class mod_ratingallocate_mod_form extends moodleform_mod {
-    // deklariere feste Felder
-    /* public $strategy;
-      public $accesstimestart;
-      public $accesstimestop;
-      public $wahloptionen;
+    const MOD_NAME = 'ratingallocate';
+    private $choice_counter = 0;
+
+    /**
+     * constructor
+     * @see moodleform_mod::moodleform_mod
      */
-    // hier kaemen dann die strategie-optionen, aber die kenne ich ja nicht im voraus
+    function mod_ratingallocate_mod_form($current, $section, $cm, $course) {
+        // pre parse mod data if exists (in case not new)
+        if($current && property_exists($current, 'setting')) {
+            $strategyoptions = json_decode($current->setting, true);
+            $current->strategyopt = $strategyoptions;
+        }
+        parent::moodleform_mod($current, $section, $cm, $course);
+    }
 
     /**
      * Defines forms elements
@@ -83,24 +91,23 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $this->add_intro_editor();
 
         // -------------------------------------------------------------------------------
-        $mform->addElement('header', 'ratingallocatefieldset', get_string('ratingallocatefieldset', 'ratingallocate'));
-        $mform->addElement('static', 'label2', '', get_string('select_strategy', 'ratingallocate'));
-
-        // Strategiewahl
-        $radioarray = array();
-
+        $elementname = 'strategy';
+        // define options for select
+        $select_options = array();
         foreach (\strategymanager::get_strategies() as $strategy) {
-            $radioarray [] = & $mform->createElement('radio', 'strategy', '', get_string($strategy . '_name', 'ratingallocate'), $strategy);
+            $select_options[$strategy] = get_string($strategy . '_name', self::MOD_NAME);
         }
-
-        $mform->addGroup($radioarray, 'strategy', '', array(
-            ' '
-                ), false);
+        $mform->addElement('select', $elementname, get_string('select_strategy', self::MOD_NAME), $select_options);
+        $mform->addHelpButton($elementname, 'select_strategy', self::MOD_NAME);
         $mform->addRule('strategy', null, 'required', null, 'client');
-        // Start- und Endzeitpunkt
-        $mform->addElement('static', 'label2', get_string('timespan_votes', 'ratingallocate'), get_string('timespan_votes_open', 'ratingallocate'));
-        $mform->addElement('date_time_selector', 'accesstimestart', get_string('from'));
-        $mform->addElement('date_time_selector', 'accesstimestop', get_string('to'));
+
+        // start/end time
+        $elementname = 'accesstimestart';
+        $mform->addElement('date_time_selector', $elementname, get_string('rating_begintime', self::MOD_NAME));
+        $mform->setDefault($elementname, time());
+        $elementname = 'accesstimestop';
+        $mform->addElement('date_time_selector', $elementname, get_string('rating_endtime', self::MOD_NAME));
+        $mform->setDefault($elementname, time() + 7 * 24 * 60 * 60); // default: now + one week
 
         $mform->addElement('date_time_selector', 'publishdate', get_string('publishdate', 'ratingallocate'));
 
@@ -115,11 +122,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                 'id' => $ratingallocateinstanceid
             ));
 
-            // Auch fuer die Strategien
-            $strategyoptions = json_decode($ratingallocate->setting, true);
         } else {
-            $mform->setDefault('accesstimestart', time() + 24 * 60 * 60); // //beginnt morgen abend
-            $mform->setDefault('accesstimestop', time() + 7 * 24 * 60 * 60); // default: now + one week
             $mform->setDefault('publishdate', time() + 9 * 24 * 60 * 60); // default: now + one week
             $mform->setDefault('publishdate_show', 0);
         }
@@ -180,18 +183,20 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $mform->setDefault($elemprefix . '[active]', true);
         }
 
+        // create strategy fields for each strategy
         $attributes = array('size' => '20');
-
         foreach (\strategymanager::get_strategies() as $strategy) {
-            // strategieklasse laden
+            // load strategy class
             $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
             /* @var $strategyclass \strategytemplate */
-            $strategyclass = new $strategyclassp;
+            $strategyclass = new $strategyclassp();
 
-            $mform->addElement('header', 'strategy_' . $strategy . '_fieldset', get_string('strategyoptions_for_strategy', 'ratingallocate', $strategyclass::STRATEGYNAME));
+            $headerid = 'strategy_' . $strategy . '_fieldset';
+            $mform->addElement('header', $headerid, get_string('strategyoptions_for_strategy', self::MOD_NAME, $strategyclass::STRATEGYNAME));
+            $mform->disabledIf($headerid, 'strategy', 'neq', $strategy);
 
             // Add options fields
-            foreach ($strategyclass::get_settingfields() as $key => $value) {
+            foreach($strategyclass::get_settingfields() as $key => $value) {
                 // currently only text supported
                 if ($value[0] == "text") {
                     $curstratid = 'strategyopt[' . $strategy . '][' . $key . ']';
@@ -200,6 +205,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                     if (isset($strategyoptions) && key_exists($strategy, $strategyoptions)) {
                         $mform->setDefault($curstratid, $strategyoptions[$strategy][$key]);
                     }
+                    $mform->disabledIf($curstratid, 'strategy', 'neq', $strategy);
                 }
             }
         }
@@ -211,17 +217,19 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
+    // override if you need to setup the form depending on current values
     public function definition_after_data() {
         parent::definition_after_data();
         $mform = & $this->_form;
 
-        $strategy = $mform->getElementValue('strategy')['strategy'];
+        $strategy = $mform->getElementValue('strategy');
 
         if (!empty($strategy)) { // Make sure the strategy's options are now mandatory
+            $strategy = array_shift($strategy);
             $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
             /* @var $strategyclass \strategytemplate */
-            $strategyclass = new $strategyclassp;
-            foreach (array_keys($strategyclass::get_settingfields()) as $key) {
+            $strategyclass = new $strategyclassp();
+            foreach(array_keys($strategyclass::get_settingfields()) as $key) {
                 $mform->addRule('strategyopt[' . $strategy . '][' . $key . ']', null, 'required', null, 'server');
             }
         }
@@ -233,8 +241,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        if ($data ['accesstimestop'] <= $data ['accesstimestart']) {
-            $errors ['accesstimestart'] = get_string('invalid_dates', 'ratingallocate');
+        if ($data['accesstimestop'] <= $data['accesstimestart']) {
+            $errors['accesstimestart'] = get_string('invalid_dates', self::MOD_NAME);
         }
 
         if ($data ['publishdate_show'] && $data['publishdate'] <= $data ['accesstimestart']) {
@@ -243,10 +251,9 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         // User has to select one strategy
         if (empty($data['strategy'])) {
-            $errors['strategy'] = get_string('strategy_not_specified', 'ratingallocate');
+            $errors['strategy'] = get_string('strategy_not_specified', self::MOD_NAME);
         }
 
         return $errors;
     }
-
 }
