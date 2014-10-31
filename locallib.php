@@ -74,7 +74,6 @@ define('SHOW_TABLE', 'show_table');
 
 /**
  * Wrapper for db-record to have IDE autocomplete feature of fields
- * @author max
  * @property int $id
  * @property int $course
  * @property string $name
@@ -83,7 +82,6 @@ define('SHOW_TABLE', 'show_table');
  * @property int $accesstimestart
  * @property int $accesstimestop
  * @property int $publishdate
- * @property int $publishdate_show
  * @property int $published
  * @property string $setting
  */
@@ -228,7 +226,8 @@ class ratingallocate {
             if ($this->ratingallocate->accesstimestart > $now) {
                 echo $renderer->user_rating_form_tooearly($this);
             } else if ($this->ratingallocate->accesstimestop < $now) {
-                if ($this->ratingallocate->publishdate_show) {
+                // if publishdate is 0 -> than publishdate is not enabled
+                if ($this->ratingallocate->publishdate) {
                     echo $renderer->format_publishdate($this->ratingallocate->publishdate);
                 }
                 // if results already published
@@ -239,7 +238,7 @@ class ratingallocate {
                 }
             } else {
                 echo $renderer->format_text($mform->describe_strategy($this->ratingallocate));
-                if ($this->ratingallocate->publishdate_show) {
+                if ($this->ratingallocate->publishdate) {
                     echo $renderer->format_publishdate($this->ratingallocate->publishdate);
                 }
                 echo $mform->to_html();

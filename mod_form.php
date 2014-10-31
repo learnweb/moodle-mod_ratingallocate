@@ -109,10 +109,10 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', $elementname, get_string('rating_endtime', self::MOD_NAME));
         $mform->setDefault($elementname, time() + 7 * 24 * 60 * 60); // default: now + one week
 
-        $mform->addElement('date_time_selector', 'publishdate', get_string('publishdate', 'ratingallocate'));
+        $elementname = 'publishdate';
+        $mform->addElement('date_time_selector', $elementname, get_string($elementname, self::MOD_NAME),$options = array('optional' => true));
+        $mform->setDefault($elementname, time() + 9 * 24 * 60 * 60);
 
-        $mform->addElement('advcheckbox', 'publishdate_show', get_string('publishdate_show', 'ratingallocate'), '', null, array(0, 1));
-        $mform->addHelpButton('publishdate_show', 'publishdate', 'ratingallocate');
 
         // gucken, ob wir dazu schon was in der DB haben könnten
         if ($action == ACTION_INSTANCE_UPDATE && $DB->record_exists('ratingallocate', array(
@@ -122,9 +122,6 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                 'id' => $ratingallocateinstanceid
             ));
 
-        } else {
-            $mform->setDefault('publishdate', time() + 9 * 24 * 60 * 60); // default: now + one week
-            $mform->setDefault('publishdate_show', 0);
         }
 
         if ($action == ACTION_INSTANCE_ADD) {
@@ -245,8 +242,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $errors['accesstimestart'] = get_string('invalid_dates', self::MOD_NAME);
         }
 
-        if ($data ['publishdate_show'] && $data['publishdate'] <= $data ['accesstimestart']) {
-            $errors ['publishdate'] = get_string('invalid_publishdate', 'ratingallocate');
+        if ($data['publishdate'] && $data['publishdate'] <= $data['accesstimestart']) {
+            $errors['publishdate'] = get_string('invalid_publishdate', self::MOD_NAME);
         }
 
         // User has to select one strategy
