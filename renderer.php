@@ -130,7 +130,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     public function algorithm_control_ready() {
         global $PAGE;
 
-        $starturl = new moodle_url($PAGE->url, array('action' => ACTION_START));
+        $starturl = new moodle_url($PAGE->url, array('action' => RATING_ALLOC_ACTION_START));
 
         $output = $this->heading(get_string('distribution_algorithm', 'ratingallocate'), 2);
 

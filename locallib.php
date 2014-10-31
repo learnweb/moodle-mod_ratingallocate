@@ -64,13 +64,13 @@ class strategymanager {
 
 }
 
-define('ACTION_RATE', 'rate');
-define('ACTION_START', 'start_distribution');
+define('RATING_ALLOC_ACTION_RATE', 'rate');
+define('RATING_ALLOC_ACTION_START', 'start_distribution');
 define('ACTION_ALLOCATE_SHOW_MANUALFORM', 'ACTION_ALLOCATE_SHOW_MANUALFORM');
 define('ACTION_ALLOCATE_MANUAL_SAVE', 'allocate_manual_save');
 define('ACTION_PUBLISH_ALLOCATIONS', 'publish_allocations'); // make them displayable for the users
 define('ACTION_SOLVE_LP_SOLVE', 'solve_lp_solve'); // instead of only generating the mps-file, let it solve
-define('SHOW_TABLE', 'show_table');
+define('RATING_ALLOC_SHOW_TABLE', 'show_table');
 
 /**
  * Wrapper for db-record to have IDE autocomplete feature of fields
@@ -178,7 +178,7 @@ class ratingallocate {
         // Process form: Start distribution and redirect after finishing
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             // Start the distribution algorithm
-            if ($action == ACTION_START) {
+            if ($action == RATING_ALLOC_ACTION_START) {
                 require_capability('mod/ratingallocate:start_distribution', $this->context);
 
                 $distributor = new solver_edmonds_karp();
@@ -200,7 +200,7 @@ class ratingallocate {
             $mform = new $strategyform($PAGE->url->out(), $this);
 
             if ($mform->is_validated() && !$mform->is_cancelled() && $data = $mform->get_data()) {
-                if ($action === ACTION_RATE) {
+                if ($action === RATING_ALLOC_ACTION_RATE) {
                     require_capability('mod/ratingallocate:give_rating', $this->context);
                     $this->save_ratings_to_db($USER->id, $data->data);
                     redirect($PAGE->url->out(), get_string('ratings_saved', 'ratingallocate'));
@@ -296,7 +296,7 @@ class ratingallocate {
             }
 
             // Print ratings table
-            if ($action == SHOW_TABLE) {
+            if ($action == RATING_ALLOC_SHOW_TABLE) {
                 echo $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
                         $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(), $this->get_all_allocations());
             } else {

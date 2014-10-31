@@ -68,7 +68,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
         $renderer = $PAGE->get_renderer('mod_ratingallocate');
 
-        $mform->addElement('hidden', 'action', ACTION_RATE);
+        $mform->addElement('hidden', 'action', RATING_ALLOC_ACTION_RATE);
         $mform->setType('action', PARAM_TEXT);
 
         $mform->addElement('hidden', 'courseid', $COURSE->id);
