@@ -68,7 +68,7 @@ function ratingallocate_supports($feature) {
  *
  * @param object $ratingallocate
  *        	An object from the form in mod_form.php
- * @param mod_ratingallocate_mod_form $mform        	
+ * @param mod_ratingallocate_mod_form $mform
  * @return int The id of the newly inserted ratingallocate record
  */
 function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocate_mod_form $mform = null) {
@@ -78,26 +78,30 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
 
     $transaction = $DB->start_delegated_transaction();
     try {
-
         $ratingallocate->setting = json_encode($ratingallocate->strategyopt);
         // instanz einfuegen, damit wir die ID fuer die Kinder haben
         $id = $DB->insert_record('ratingallocate', $ratingallocate);
 
-        $optionen = explode("\n", $ratingallocate->wahloptionen); // Felder der zur Wahl stehenden Optionen
-        foreach ($optionen as $option) {
-            $optionendetails = explode("|", $option); // Trenne Titel von möglichen Details
+        //TODO fast group insert $optionen = explode("\n", $ratingallocate->wahloptionen); // Felder der zur Wahl stehenden Optionen
+//         foreach ($optionen as $option) {
+//             $optionendetails = explode("|", $option); // Trenne Titel von möglichen Details
 
-            $choicedata = new stdClass ();
-            $choicedata->ratingallocateid = $id;
-            $choicedata->title = $optionendetails [0];
-            if (isset($optionendetails [1])) {
-                $choicedata->explanation = $optionendetails [1];
-            } else {
-                $choicedata->explanation = '';
-            }
-            $choicedata->maxsize = 10;
-            $choicedata->active = 1;
-            $DB->insert_record('ratingallocate_choices', $choicedata); // Kind abspeichern
+//             $choicedata = new stdClass ();
+//             $choicedata->ratingallocateid = $id;
+//             $choicedata->title = $optionendetails [0];
+//             if (isset($optionendetails [1])) {
+//                 $choicedata->explanation = $optionendetails [1];
+//             } else {
+//                 $choicedata->explanation = '';
+//             }
+//             $choicedata->maxsize = 10;
+//             $choicedata->active = 1;
+//             $DB->insert_record('ratingallocate_choices', $choicedata); // Kind abspeichern
+//         }
+        //create choices
+        foreach ($ratingallocate->choices as $choice) {
+            $choice['ratingallocateid'] = $id;
+            $DB->insert_record('ratingallocate_choices', $choice);
         }
 
         $transaction->allow_commit();
@@ -110,14 +114,14 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
 
 /**
  * Updates an instance of the ratingallocate in the database
- *
+ *l
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  *
  * @param object $ratingallocate
  *        	An object from the form in mod_form.php
- * @param mod_ratingallocate_mod_form $mform        	
+ * @param mod_ratingallocate_mod_form $mform
  * @return boolean Success/Fail
  */
 function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallocate_mod_form $mform = null) {
@@ -130,17 +134,12 @@ function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallo
     try {
         $transaction = $DB->start_delegated_transaction();
 
-        // Update groupdistribution (including start/enddate)
-        $old = $DB->get_record('ratingallocate', array(
-            'id' => $ratingallocate->id
-        ));
-
-        // json-array aus den Strategie-Einstellungen machen
+        // serialize strategy settings
         $ratingallocate->setting = json_encode($ratingallocate->strategyopt);
 
         $bool = $DB->update_record('ratingallocate', $ratingallocate);
 
-        // Wahlmöglichkeiten durchgehen und updaten
+        // iterate over choices
         foreach ($ratingallocate->choices as $choiceid => $choiceparam) {
 
             // tickboxes don't come through correctly.
@@ -148,21 +147,20 @@ function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallo
             if (!key_exists('active', $choiceparam)) {
                 $choiceparam['active'] = false;
             }
-
-            if (key_exists('delete', $choiceparam) && $choiceparam['delete'] == true) {
+            if($choiceid <= 0) {
+                //choice is new -> create it
+                $choice['ratingallocateid'] = $ratingallocate->id;
+                $DB->insert_record('ratingallocate_choices', $choice);
+            } else if (key_exists('delete', $choiceparam) && $choiceparam['delete'] == true) {
+                //delete choice
                 $DB->delete_records('ratingallocate_choices', array('id' => $choiceid));
-            } else { // only update this record
+            } else {
+                // update this record
                 $DB->update_record('ratingallocate_choices', $choiceparam);
             }
         }
 
-        if (!empty($ratingallocate->newchoice['title'])) { // he wants to add a new choice option
-            $ratingallocate->newchoice['ratingallocateid'] = $ratingallocate->id;
-            $DB->insert_record('ratingallocate_choices', $ratingallocate->newchoice);
-        }
-
         $transaction->allow_commit();
-
         return $bool;
     } catch (Exception $e) {
         $transaction->rollback($e);
@@ -304,7 +302,7 @@ function ratingallocate_print_recent_mod_activity($activity, $courseid, $detail,
  *
  * @return boolean
  * @todo Finish documenting this function
- *      
+ *
  */
 function ratingallocate_cron() {
     return true;
@@ -330,9 +328,9 @@ function ratingallocate_get_extra_capabilities() {
  * The file area 'intro' for the activity introduction field is added automatically
  * by {@link file_browser::get_file_info_context_module()}
  *
- * @param stdClass $course        	
- * @param stdClass $cm        	
- * @param stdClass $context        	
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param stdClass $context
  * @return array of [(string)filearea] => (string)description
  */
 function ratingallocate_get_file_areas($course, $cm, $context) {
@@ -344,16 +342,16 @@ function ratingallocate_get_file_areas($course, $cm, $context) {
  *
  * @package mod_ratingallocate
  * @category files
- *          
- * @param file_browser $browser        	
- * @param array $areas        	
- * @param stdClass $course        	
- * @param stdClass $cm        	
- * @param stdClass $context        	
- * @param string $filearea        	
- * @param int $itemid        	
- * @param string $filepath        	
- * @param string $filename        	
+ *
+ * @param file_browser $browser
+ * @param array $areas
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param stdClass $context
+ * @param string $filearea
+ * @param int $itemid
+ * @param string $filepath
+ * @param string $filename
  * @return file_info instance or null if not found
  */
 function ratingallocate_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
@@ -365,7 +363,7 @@ function ratingallocate_get_file_info($browser, $areas, $course, $cm, $context, 
  *
  * @package mod_ratingallocate
  * @category files
- *          
+ *
  * @param stdClass $course
  *        	the course object
  * @param stdClass $cm
@@ -404,9 +402,9 @@ function ratingallocate_pluginfile($course, $cm, $context, $filearea, array $arg
  *
  * @param navigation_node $navref
  *        	An object representing the navigation tree node of the ratingallocate module instance
- * @param stdClass $course        	
- * @param stdClass $module        	
- * @param cm_info $cm        	
+ * @param stdClass $course
+ * @param stdClass $module
+ * @param cm_info $cm
  */
 function ratingallocate_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, cm_info $cm) {
 

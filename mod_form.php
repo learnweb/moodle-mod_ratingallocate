@@ -34,7 +34,10 @@ require_once(dirname(__FILE__) . '/locallib.php');
  */
 class mod_ratingallocate_mod_form extends moodleform_mod {
     const MOD_NAME = 'ratingallocate';
-    private $choice_counter = 0;
+    const CHOICE_PLACEHOLDER_IDENTIFIER = 'placeholder_for_choices';
+    const NEW_CHOICE_COUNTER = 'new_choice_counter';
+    const ADD_CHOICE_ACTION = 'add_new_choice';
+    private $new_choice_counter = 0;
 
     /**
      * constructor
@@ -55,18 +58,6 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     public function definition() {
         /* @var $DB moodle_database */
         global $DB, $COURSE;
-
-        define('ACTION_INSTANCE_ADD', 'instance_add');
-        define('ACTION_INSTANCE_UPDATE', 'instance_update');
-
-        $action = '';
-        if (empty($this->_instance)) {
-            // This is a new instance
-            $action = ACTION_INSTANCE_ADD;
-        } else {
-            $ratingallocateinstanceid = $this->_instance;
-            $action = ACTION_INSTANCE_UPDATE;
-        }
 
         $mform = $this->_form;
 
@@ -113,72 +104,15 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', $elementname, get_string($elementname, self::MOD_NAME),$options = array('optional' => true));
         $mform->setDefault($elementname, time() + 9 * 24 * 60 * 60);
 
+        $mform->addElement('static', self::CHOICE_PLACEHOLDER_IDENTIFIER, '', '');
 
-        // gucken, ob wir dazu schon was in der DB haben könnten
-        if ($action == ACTION_INSTANCE_UPDATE && $DB->record_exists('ratingallocate', array(
-                    'id' => $ratingallocateinstanceid
-                ))) {
-            $ratingallocate = $DB->get_record('ratingallocate', array(
-                'id' => $ratingallocateinstanceid
-            ));
+        $mform->addElement('hidden', self::NEW_CHOICE_COUNTER, $this->new_choice_counter);
+        $mform->setType(self::NEW_CHOICE_COUNTER, PARAM_INT);
 
-        }
-
-        if ($action == ACTION_INSTANCE_ADD) {
-            // Schnellanlage-Optionen, nur bei neuer Instanz
-            $mform->addElement('static', 'label2', get_string('choices_options', 'ratingallocate'), get_string('choices_options_oneperline', 'ratingallocate'));
-            $mform->addElement('textarea', 'wahloptionen', get_string('choices_quickadd', 'ratingallocate'), 'wrap="virtual" rows="20" cols="50"');
-            $mform->addHelpButton('wahloptionen', 'choices_quickadd', 'ratingallocate');
-        } else if ($action == ACTION_INSTANCE_UPDATE) {
-
-            $choices = $DB->get_records('ratingallocate_choices', array(
-                'ratingallocateid' => $ratingallocateinstanceid
-                    ), 'title ASC');
-
-            foreach ($choices as $choice) {
-                $elemprefix = 'choices[' . $choice->id . ']';
-                $mform->addElement('hidden', $elemprefix . '[id]', $choice->id); // Save the record's id
-                $mform->setType($elemprefix . '[id]', PARAM_INT);
-
-                $mform->addElement('header', 'fieldset_edit_choice' . $choice->id, get_string('edit_choice', 'ratingallocate', $choice->title));
-                $mform->addElement('text', $elemprefix . '[title]', get_string('choice_title', 'ratingallocate'));
-                $mform->setDefault($elemprefix . '[title]', $choice->title);
-                $mform->setType($elemprefix . '[title]', PARAM_TEXT);
-                $mform->addHelpButton($elemprefix . '[title]', 'choice_title', 'ratingallocate');
-
-                $mform->addElement('text', $elemprefix . '[explanation]', get_string('choice_explanation', 'ratingallocate'));
-                $mform->setDefault($elemprefix . '[explanation]', $choice->explanation);
-                $mform->setType($elemprefix . '[explanation]', PARAM_TEXT);
-
-                $mform->addElement('text', $elemprefix . '[maxsize]', get_string('choice_maxsize', 'ratingallocate'));
-                $mform->setDefault($elemprefix . '[maxsize]', $choice->maxsize);
-                $mform->setType($elemprefix . '[maxsize]', PARAM_INT);
-
-                $mform->addElement('checkbox', $elemprefix . '[active]', get_string('choice_active', 'ratingallocate'));
-                $mform->setDefault($elemprefix . '[active]', $choice->active);
-                $mform->addHelpButton($elemprefix . '[active]', 'choice_active', 'ratingallocate');
-
-                $mform->addElement('checkbox', $elemprefix . '[delete]', get_string('choice_delete', 'ratingallocate'));
-                $mform->setDefault($elemprefix . '[delete]', false);
-            }
-
-            // Form to add a choice
-            $elemprefix = 'newchoice';
-
-            $mform->addElement('header', 'fieldset_edit_newchoice', get_string('newchoice', 'ratingallocate'));
-            $mform->addElement('text', $elemprefix . '[title]', get_string('choice_title', 'ratingallocate'));
-            $mform->setType($elemprefix . '[title]', PARAM_TEXT);
-
-            $mform->addElement('text', $elemprefix . '[explanation]', get_string('choice_explanation', 'ratingallocate'));
-            $mform->setType($elemprefix . '[explanation]', PARAM_TEXT);
-
-            $mform->addElement('text', $elemprefix . '[maxsize]', get_string('choice_maxsize', 'ratingallocate'));
-            $mform->setDefault($elemprefix . '[maxsize]', '10');
-            $mform->setType($elemprefix . '[maxsize]', PARAM_INT);
-
-            $mform->addElement('checkbox', $elemprefix . '[active]', get_string('choice_active', 'ratingallocate'));
-            $mform->setDefault($elemprefix . '[active]', true);
-        }
+        $elementname = self::ADD_CHOICE_ACTION;
+        $mform->registerNoSubmitButton($elementname);
+        $mform->addElement('submit', $elementname, get_string('newchoice', self::MOD_NAME));
+        $mform->closeHeaderBefore($elementname);
 
         // create strategy fields for each strategy
         $attributes = array('size' => '20');
@@ -214,13 +148,112 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
+    /**
+     * method to add choice options to the form
+     *
+     * @param MoodleQuickForm $mform form
+     * @param unknown $choice choice (new (negative id) or existing)
+     */
+    private function addChoiceGroup(MoodleQuickForm $mform, $choice) {
+        $elemprefix = 'choices[' . $choice->id . ']';
+        $mform->addElement('hidden', $elemprefix . '[id]', $choice->id); // Save the record's id
+        $mform->setType($elemprefix . '[id]', PARAM_INT);
+
+        $elementname = 'fieldset_edit_choice' . $choice->id;
+        $mform->addElement('header', $elementname, get_string('edit_choice', self::MOD_NAME, $choice->title));
+        $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
+
+        $elementname = $elemprefix . '[title]';
+        $mform->addElement('text', $elementname, get_string('choice_title', self::MOD_NAME));
+        $mform->setDefault($elementname, $choice->title);
+        $mform->setType($elementname, PARAM_TEXT);
+        $mform->addHelpButton($elementname, 'choice_title', self::MOD_NAME);
+        $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
+
+        $elementname = $elemprefix . '[explanation]';
+        $mform->addElement('text', $elementname, get_string('choice_explanation', self::MOD_NAME));
+        $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
+        $mform->setDefault($elementname, $choice->explanation);
+        $mform->setType($elementname, PARAM_TEXT);
+
+        $elementname = $elemprefix . '[maxsize]';
+        $mform->addElement('text', $elementname, get_string('choice_maxsize', self::MOD_NAME));
+        $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
+        $mform->setDefault($elementname, $choice->maxsize);
+        $mform->setType($elementname, PARAM_INT);
+
+        $elementname = $elemprefix . '[active]';
+        $mform->addElement('checkbox', $elementname, get_string('choice_active', self::MOD_NAME));
+        $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
+        $mform->setDefault($elementname, $choice->active);
+        $mform->addHelpButton($elementname, 'choice_active', self::MOD_NAME);
+
+        $elementname = $elemprefix . '[delete]';
+        $mform->addElement('checkbox', $elementname, get_string('choice_delete', self::MOD_NAME));
+        $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
+        $mform->setDefault($elementname, false);
+    }
+
+    /**
+     * Creates a new unsaved choice (id is negative)
+     * @param integer $i
+     * @return StdClass representing new choice
+     */
+    private function createEmptyChoice($i) {
+        $id = -($i);
+        return (object) array(
+                'id' => $id,
+                'title' => '',
+                'explanation' => '',
+                'maxsize' => 20,
+                'active' => true
+        );
+    }
+
     // override if you need to setup the form depending on current values
     public function definition_after_data() {
         parent::definition_after_data();
         $mform = & $this->_form;
 
-        $strategy = $mform->getElementValue('strategy');
+        $data = $this->current;
 
+        $choices = array();
+
+        if (!empty($data->id)) {
+            global $DB;
+            // $this->get_submitted_data() does only return values for fields that are already
+            // defined->load ids from db -> create fields(values are overwritten by submitted data)
+            $choices = $DB->get_records('ratingallocate_choices', array(
+                    'ratingallocateid' => $data->id
+            ), 'title ASC');
+        } else {
+            $this->new_choice_counter = 2;
+        }
+        // If there is already submitted data?
+        if($this->is_submitted()) {
+            // load new_choice_counter
+            if(property_exists($this->get_submitted_data(), self::NEW_CHOICE_COUNTER)) {
+                $this->new_choice_counter = $this->get_submitted_data()->new_choice_counter;
+            }
+            // increment new choice counter if add_new_choice button was pressed
+            if(property_exists($this->get_submitted_data(), self::ADD_CHOICE_ACTION)) {
+                $this->new_choice_counter++;
+            }
+        }
+
+        for($i = 0; $i < $this->new_choice_counter; $i++) {
+            $choices[] = $this->createEmptyChoice($i+1);
+        }
+
+        //create fields for all choices
+        foreach($choices as $id => $choice) {
+            $this->addChoiceGroup($mform, $choice);
+        }
+        // update new_choice_counter
+        $mform->getElement(self::NEW_CHOICE_COUNTER)->setValue($this->new_choice_counter);
+
+        //make strategy fields for selected strategy required (server-side validation)
+        $strategy = $mform->getElementValue('strategy');
         if (!empty($strategy)) { // Make sure the strategy's options are now mandatory
             $strategy = array_shift($strategy);
             $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
