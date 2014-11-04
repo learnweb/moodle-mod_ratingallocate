@@ -149,17 +149,24 @@ function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallo
             }
             if($choiceid <= 0) {
                 //choice is new -> create it
-                $choice['ratingallocateid'] = $ratingallocate->id;
-                $DB->insert_record('ratingallocate_choices', $choice);
-            } else if (key_exists('delete', $choiceparam) && $choiceparam['delete'] == true) {
-                //delete choice
-                $DB->delete_records('ratingallocate_choices', array('id' => $choiceid));
-            } else {
+                $choiceparam['ratingallocateid'] = $ratingallocate->id;
+                $DB->insert_record('ratingallocate_choices', $choiceparam);
+            }  else {
                 // update this record
                 $DB->update_record('ratingallocate_choices', $choiceparam);
             }
         }
-
+        $array_of_deleted_choices = explode(',', $ratingallocate->deleted_choice_ids);
+            // iterate over deleted choices
+        foreach ($array_of_deleted_choices as $choiceid) {
+            if ($choiceid > 0) {
+                // delete choice
+                $DB->delete_records('ratingallocate_choices', 
+                        array('id' => $choiceid, 'ratingallocateid' => $ratingallocate->id
+                        ));
+            }
+        }
+        
         $transaction->allow_commit();
         return $bool;
     } catch (Exception $e) {

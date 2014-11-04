@@ -197,11 +197,6 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->setDefault($elementname, $choice->active);
         $mform->addHelpButton($elementname, 'choice_active', self::MOD_NAME);
 
-        $elementname = $elemprefix . '[delete]';
-        $mform->addElement('checkbox', $elementname, get_string('choice_delete', self::MOD_NAME));
-        $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
-        $mform->setDefault($elementname, false);
-
         $elementname = self::DELETE_CHOICE_ACTION. $choice->id;
         $mform->registerNoSubmitButton($elementname);
         $mform->addElement('submit', $elementname  , get_string('deletechoice', self::MOD_NAME));
@@ -217,7 +212,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $id = -($i);
         return (object) array(
                 'id' => $id,
-                'title' => '',
+                'title' => 'New Choice '.$i,
                 'explanation' => '',
                 'maxsize' => 20,
                 'active' => true
@@ -303,7 +298,6 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             } else {
             	// the nosubmit button has to be added since the form uses it for no_submit_button_pressed()
                 $mform->registerNoSubmitButton(self::DELETE_CHOICE_ACTION . $choice->id);
-                $choice->delete = true;
             }
         }
 
