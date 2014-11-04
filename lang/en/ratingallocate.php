@@ -98,6 +98,7 @@ $string['rating_begintime'] = 'Rating begins at';
 $string['manual_allocation'] = 'Manual allocation';
 $string['manual_allocation_form'] = 'Manual Allocation Form';
 $string['newchoice'] = 'Add new Choice';
+$string['deletechoice'] = 'Delete Choice';
 $string['no_rating_given'] = '?';
 $string['publishdate'] = 'Publishdate';
 $string['publishdate_help'] = 'With this you can display additional info to your users. This has no effect on (possibly automatic) distribution, it\'s still a manual process. Use it to communicate your intents to the users.';

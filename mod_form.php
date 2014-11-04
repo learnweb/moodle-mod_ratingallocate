@@ -37,6 +37,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     const CHOICE_PLACEHOLDER_IDENTIFIER = 'placeholder_for_choices';
     const NEW_CHOICE_COUNTER = 'new_choice_counter';
     const ADD_CHOICE_ACTION = 'add_new_choice';
+    const DELETE_CHOICE_ACTION = 'delete_choice_';
+    const DELETED_CHOICE_IDS = 'deleted_choice_ids';
     private $new_choice_counter = 0;
 
     /**
@@ -109,6 +111,10 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addElement('hidden', self::NEW_CHOICE_COUNTER, $this->new_choice_counter);
         $mform->setType(self::NEW_CHOICE_COUNTER, PARAM_INT);
 
+        // saves the choices about to be deleted
+        $mform->addElement('hidden', self::DELETED_CHOICE_IDS);
+        $mform->setType(self::DELETED_CHOICE_IDS, PARAM_SEQUENCE);
+
         $elementname = self::ADD_CHOICE_ACTION;
         $mform->registerNoSubmitButton($elementname);
         $mform->addElement('submit', $elementname, get_string('newchoice', self::MOD_NAME));
@@ -169,18 +175,21 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->setType($elementname, PARAM_TEXT);
         $mform->addHelpButton($elementname, 'choice_title', self::MOD_NAME);
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
+        $mform->addRule($elementname, null, 'required', null, 'server');
 
         $elementname = $elemprefix . '[explanation]';
         $mform->addElement('text', $elementname, get_string('choice_explanation', self::MOD_NAME));
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
         $mform->setDefault($elementname, $choice->explanation);
         $mform->setType($elementname, PARAM_TEXT);
+        $mform->addRule($elementname, null, 'required', null, 'server');
 
         $elementname = $elemprefix . '[maxsize]';
         $mform->addElement('text', $elementname, get_string('choice_maxsize', self::MOD_NAME));
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
         $mform->setDefault($elementname, $choice->maxsize);
         $mform->setType($elementname, PARAM_INT);
+        $mform->addRule($elementname, null, 'required', null, 'server');
 
         $elementname = $elemprefix . '[active]';
         $mform->addElement('checkbox', $elementname, get_string('choice_active', self::MOD_NAME));
@@ -192,6 +201,11 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addElement('checkbox', $elementname, get_string('choice_delete', self::MOD_NAME));
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
         $mform->setDefault($elementname, false);
+
+        $elementname = self::DELETE_CHOICE_ACTION. $choice->id;
+        $mform->registerNoSubmitButton($elementname);
+        $mform->addElement('submit', $elementname  , get_string('deletechoice', self::MOD_NAME));
+        $mform->insertElementBefore( $mform->removeElement($elementname , false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
     }
 
     /**
@@ -233,22 +247,73 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         if($this->is_submitted()) {
             // load new_choice_counter
             if(property_exists($this->get_submitted_data(), self::NEW_CHOICE_COUNTER)) {
-                $this->new_choice_counter = $this->get_submitted_data()->new_choice_counter;
+                $this->new_choice_counter = $this->get_submitted_data()->{self::NEW_CHOICE_COUNTER};
             }
             // increment new choice counter if add_new_choice button was pressed
             if(property_exists($this->get_submitted_data(), self::ADD_CHOICE_ACTION)) {
                 $this->new_choice_counter++;
             }
         }
-
+        
         for($i = 0; $i < $this->new_choice_counter; $i++) {
             $choices[] = $this->createEmptyChoice($i+1);
         }
 
-        //create fields for all choices
-        foreach($choices as $id => $choice) {
-            $this->addChoiceGroup($mform, $choice);
+        // generate array with ids of all choices
+        $choice_ids = array_map(function($elem) {return (Integer) $elem->id;}, $choices);
+        
+        // initialize variable
+        $delete_choice_array = array();
+        
+        // If delete choice button was pressed
+        if ($this->is_submitted()) {
+            // retrieve ids of choices to be deleted from the static field
+            if (property_exists($this->get_submitted_data(), self::DELETED_CHOICE_IDS)) {
+                $deleted_choice_ids = $this->get_submitted_data()->{self::DELETED_CHOICE_IDS};
+            }
+            // if the string is not empty the array of choice ids is exploded from it
+            if (!empty($deleted_choice_ids))
+                $delete_choice_array = explode(',', $deleted_choice_ids);
+                
+            // retrieve id of choice to be deleted if delete button was pressed
+            $matches = preg_grep('/' . self::DELETE_CHOICE_ACTION . '([-]?[0-9]+)/', 
+                    array_keys($mform->getSubmitValues()));
+            // only proceed if exaclty one delete button was found in the submitted data
+            if (count($matches) == 1) {
+            	// retrieve the id as an Integer from the button name
+            	$elem = array_pop($matches);
+                $parts = explode('_', $elem);
+                $delete_choice_id = (integer) array_pop($parts);
+                
+                // if the id matches one of the choices add it to the choices to be deleted
+                if (in_array($delete_choice_id, $choice_ids)) {
+                    $delete_choice_array[] = $delete_choice_id;
+                }
+            }
         }
+        
+        // clean array to only contain feasible ids
+        $delete_choice_array = array_intersect($delete_choice_array,$choice_ids);
+            
+            // create fields for all choices
+        foreach ($choices as $id => $choice) {
+            
+            if (!in_array($choice->id, $delete_choice_array)) {
+                $this->addChoiceGroup($mform, $choice);
+            } else {
+            	// the nosubmit button has to be added since the form uses it for no_submit_button_pressed()
+                $mform->registerNoSubmitButton(self::DELETE_CHOICE_ACTION . $choice->id);
+                $choice->delete = true;
+            }
+        }
+
+        // update delete_choice_string
+        if (!empty($delete_choice_array)) {
+            $deleted_choice_ids = implode(',', $delete_choice_array);
+            $mform->getElement(self::DELETED_CHOICE_IDS)->setValue($deleted_choice_ids);
+            $myvar=$mform->getElement(self::DELETED_CHOICE_IDS)->getValue();
+        }
+        
         // update new_choice_counter
         $mform->getElement(self::NEW_CHOICE_COUNTER)->setValue($this->new_choice_counter);
 
