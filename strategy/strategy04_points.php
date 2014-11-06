@@ -126,8 +126,8 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
     }
 
     public function validation($data, $files) {
-        $maxcrossout = json_decode($this->ratingallocate->ratingallocate->setting, true)[strategy::STRATEGYID][strategy::MAXZERO];
-        $totalpoints = json_decode($this->ratingallocate->ratingallocate->setting, true)[strategy::STRATEGYID][strategy::TOTALPOINTS];
+        $maxcrossout = $this->get_strategyoption(strategy::MAXZERO);
+        $totalpoints = $this->get_strategyoption(strategy::TOTALPOINTS);
         $errors = parent::validation($data, $files);
 
         if (!array_key_exists('data', $data) or count($data ['data']) < 2) {

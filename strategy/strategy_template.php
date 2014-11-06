@@ -35,6 +35,26 @@ abstract class ratingallocate_strategyform extends \moodleform  {
     /** @var \ratingallocate pointer to the parent \ratingallocate object*/
     protected $ratingallocate;
 
+    private $strategyoptions;
+
+    /**
+     *
+     * @param string $url The page url
+     * @param \ratingallocate $ratingallocate The calling ratingallocate instance
+     */
+    public function __construct($url, \ratingallocate $ratingallocate) {
+        $this->ratingallocate = $ratingallocate;
+        parent::__construct($url);
+        //load strategy options
+        $allstrategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
+        $strategyid = $ratingallocate->ratingallocate->strategy;
+        if(array_key_exists($strategyid, $allstrategyoptions)) {
+            $this->strategyoptions = $allstrategyoptions[$strategyid];
+        } else {
+            $this->strategyoptions = array();
+        }
+    }
+
     /** inherited from moodleform */
     protected function definition() {
     }
@@ -46,16 +66,6 @@ abstract class ratingallocate_strategyform extends \moodleform  {
     public abstract function describe_strategy();
 
     /**
-     * 
-     * @param string $url The page url
-     * @param \ratingallocate $ratingallocate The calling ratingallocate instance
-     */
-    public function __construct($url, \ratingallocate $ratingallocate) {
-        $this->ratingallocate = $ratingallocate;
-        parent::__construct($url);
-    }
-
-    /**
      * Returns the forms HTML code.
      * So we don't have to call display().
      */
@@ -63,6 +73,17 @@ abstract class ratingallocate_strategyform extends \moodleform  {
         return $this->_form->toHtml();
     }
 
+    /**
+     * returns strategy specific option for a strategy
+     * @param string $key
+     * @returns the specific option or null if it does not exist
+     */
+    protected function get_strategyoption($key) {
+        if(array_key_exists($key, $this->strategyoptions))  {
+            return $this->strategyoptions[$key];
+        }
+        return null;
+    }
 }
 
 /**

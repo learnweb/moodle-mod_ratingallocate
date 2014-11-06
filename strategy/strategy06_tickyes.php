@@ -124,8 +124,8 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
     }
 
     public function validation($data, $files) {
-        $mintickyes = json_decode($this->ratingallocate->ratingallocate->setting, true)[strategy::STRATEGYID][strategy::MINTICKYES];
         $errors = parent::validation($data, $files);
+        $mintickyes = $this->get_strategyoption(strategy::MINTICKYES);
 
         if (!array_key_exists('data', $data) or count($data ['data']) < 2) {
             return $errors;
