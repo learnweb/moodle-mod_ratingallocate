@@ -122,12 +122,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
     }
 
     public function describe_strategy() {
-        $strategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
-
-        $output = get_string('strategyname', 'ratingallocate', strategy::get_strategyname()) . '<br />';
-        $output .= get_string(strategy::STRATEGYID . '_max_no', 'ratingallocate', $strategyoptions [strategy::STRATEGYID] [strategy::MAXNO]);
-
-        return $output;
+        return get_string($this->get_max_nos_string_identyfier(), 'ratingallocate', $this->get_max_amount_of_nos());
     }
 
     public function validation($data, $files) {

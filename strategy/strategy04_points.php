@@ -116,12 +116,9 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
     }
 
     public function describe_strategy() {
-        $strategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
-
-        $output = get_string('strategyname', 'ratingallocate', strategy::get_strategyname()) . '<br />';
-        $output .= get_string(strategy::STRATEGYID . '_explain_distribute_points', 'ratingallocate', $strategyoptions [strategy::STRATEGYID] [strategy::TOTALPOINTS]) . '<br />';
-        $output .= get_string(strategy::STRATEGYID . '_explain_max_zero', 'ratingallocate', $strategyoptions [strategy::STRATEGYID] [strategy::MAXZERO]);
-
+        $output = get_string(strategy::STRATEGYID . '_explain_distribute_points', 'ratingallocate', $this->get_strategyoption(strategy::TOTALPOINTS));
+        $output .= '<br />';
+        $output .= get_string(strategy::STRATEGYID . '_explain_max_zero', 'ratingallocate', $this->get_strategyoption(strategy::MAXZERO));
         return $output;
     }
 

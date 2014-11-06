@@ -237,7 +237,7 @@ class ratingallocate {
                     echo $renderer->format_text(get_string('results_not_yet_published', 'ratingallocate'));
                 }
             } else {
-                echo $renderer->format_text($mform->describe_strategy($this->ratingallocate));
+                echo $renderer->format_text($mform->get_strategy_description_header() . '<br/>' . $mform->describe_strategy());
                 if ($this->ratingallocate->publishdate) {
                     echo $renderer->format_publishdate($this->ratingallocate->publishdate);
                 }

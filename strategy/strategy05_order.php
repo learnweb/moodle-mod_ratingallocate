@@ -106,12 +106,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
     }
 
     public function describe_strategy() {
-        $strategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
-
-        $output = get_string('strategyname', 'ratingallocate', strategy::get_strategyname()) . '<br />';
-        $output .= get_string(strategy::STRATEGYID . '_explain_choices', 'ratingallocate');
-
-        return $output;
+        return get_string(strategy::STRATEGYID . '_explain_choices', 'ratingallocate');
     }
 
     /**

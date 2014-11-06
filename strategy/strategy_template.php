@@ -65,12 +65,20 @@ abstract class ratingallocate_strategyform extends \moodleform  {
      */
     public abstract function describe_strategy();
 
+    public function get_strategy_description_header() {
+        return get_string('strategyname', 'ratingallocate', $this->get_strategyname());
+    }
+
     /**
      * Returns the forms HTML code.
      * So we don't have to call display().
      */
     public function to_html() {
         return $this->_form->toHtml();
+    }
+
+    protected function get_strategyname() {
+        return get_string($this->ratingallocate->ratingallocate->strategy.'_name','ratingallocate');
     }
 
     /**
