@@ -101,13 +101,4 @@ abstract class strategytemplate {
     public static function get_strategyid() {
         return static::get_strategyid();
     }
-    
-    /**
-     * Return the different options for each choice (including titles)
-     * @return array: value_of_option => title_of_option
-     */
-    public static function get_options($param = 0){
-        
-    }
-
 }

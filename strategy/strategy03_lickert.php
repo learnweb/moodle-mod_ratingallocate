@@ -61,7 +61,7 @@ class strategy extends \strategytemplate_options {
         $maxlickert = intval($strategyoptions [strategy::STRATEGYID] [strategy::COUNTLICKERT]);
     }
     
-    public static function get_options($maxlickert=0){
+    public static function get_choiceoptions($maxlickert=0){
         $options = array(
                         0 => '0 - '.get_string(strategy::STRATEGYID . '_rating_exclude', 'ratingallocate')
         );
@@ -73,6 +73,7 @@ class strategy extends \strategytemplate_options {
                 $options[$i] = $i;
             }
         }
+        return $options;
     }
 
 }

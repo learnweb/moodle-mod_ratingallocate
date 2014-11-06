@@ -51,7 +51,7 @@ class strategy extends \strategytemplate_options {
         );
     }
     
-    public static function get_options($param = null){
+    public static function get_choiceoptions($param = null){
         $options = array(
                         0 => get_string(strategy::STRATEGYID . '_rating_crossout', 'ratingallocate'),
                         1 => get_string(strategy::STRATEGYID . '_rating_choose', 'ratingallocate')
