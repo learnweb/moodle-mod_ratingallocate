@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['ratingallocate'] = 'ratingallocate';
 $string['ratingallocatename'] = 'Name of this Voting';
 $string['ratingallocatename_help'] = 'This is the content of the help tooltip associated with the ratingallocatename field. Markdown syntax is supported.';
-$string['modulename'] = 'ratingallocate';
+$string['modulename'] = 'Ratingallocate';
 $string['modulename_help'] = 'The ratingallocate module lets you define choices your users can then rate. You may then distribute the users to choices automatically.';
 $string['modulenameplural'] = 'ratingallocates';
 $string['pluginadministration'] = 'ratingallocate administration';
