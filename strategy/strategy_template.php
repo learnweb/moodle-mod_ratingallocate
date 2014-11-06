@@ -1,4 +1,5 @@
 <?php
+use Symfony\Component\Validator\Constraints\Optional;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -77,17 +78,34 @@ abstract class strategytemplate {
     const STRATEGYID = '';
 
     /**
-     * Return the Settingsfields the strategy needes
+     * Return the dynamic Settingsfields the strategy needes
+     * If any dynamic Settingsfields is returned, a refresh button will be included in the view.
+     * @param $mform The required data can be drawn from the moodleform
      */
-    public static function get_settingfields() {
-
+    public static function get_dynamic_settingfields(moodleform $mform) {
+        
+    }
+    
+    /**
+     * Return the static Settingsfields the strategy needes
+     */
+    public static function get_static_settingfields() {
+    
     }
 
     /**
      * Return the name of the strategy
      */
     public static function get_strategyname() {
-
+        self::STRATEGYNAME;
+    }
+    
+    /**
+     * Return the different options for each choice (including titles)
+     * @return array: value_of_option => title_of_option
+     */
+    public static function get_options($param = 0){
+        
     }
 
 }

@@ -38,7 +38,7 @@ class strategy extends \strategytemplate {
     const STRATEGYID = 'strategy_order';
     const COUNTOPTIONS = 'countoptions';
 
-    public static function get_settingfields() {
+    public static function get_static_settingfields() {
         return array(
             self::COUNTOPTIONS => array(// wie viele Felder es gibt
                 'text',

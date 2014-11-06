@@ -40,7 +40,7 @@ class strategy extends \strategytemplate {
     const MAXZERO = 'maxzero';
     const TOTALPOINTS = 'totalpoints';
 
-    public static function get_settingfields() {
+    public static function get_static_settingfields() {
         return array(
             self::MAXZERO => array(// maximale Anzahl 'kannnicht'
                 'text',

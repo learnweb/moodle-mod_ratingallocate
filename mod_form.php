@@ -122,6 +122,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         // create strategy fields for each strategy
         $attributes = array('size' => '20');
+        
         foreach (\strategymanager::get_strategies() as $strategy) {
             // load strategy class
             $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
@@ -133,7 +134,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $mform->disabledIf($headerid, 'strategy', 'neq', $strategy);
 
             // Add options fields
-            foreach($strategyclass::get_settingfields() as $key => $value) {
+            foreach($strategyclass::get_static_settingfields() as $key => $value) {
                 // currently only text supported
                 if ($value[0] == "text") {
                     $curstratid = 'strategyopt[' . $strategy . '][' . $key . ']';
