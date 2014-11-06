@@ -297,7 +297,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     public function show_ratings_table_button() {
         global $PAGE;
 
-        $tableurl = new moodle_url($PAGE->url, array('action' => SHOW_TABLE));
+        $tableurl = new moodle_url($PAGE->url, array('action' => RATING_ALLOC_SHOW_TABLE));
 
         $output = $this->heading(get_string('ratings_table', 'ratingallocate'), 2);
         $output .= $this->box_start();
