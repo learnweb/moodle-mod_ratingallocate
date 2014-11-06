@@ -319,7 +319,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
             /* @var $strategyclass \strategytemplate */
             $strategyclass = new $strategyclassp();
-            foreach(array_keys($strategyclass::get_settingfields()) as $key) {
+            foreach(array_keys($strategyclass::get_static_settingfields()) as $key) {
                 $mform->addRule('strategyopt[' . $strategy . '][' . $key . ']', null, 'required', null, 'server');
             }
         }
