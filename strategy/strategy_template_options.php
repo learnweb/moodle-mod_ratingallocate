@@ -56,7 +56,7 @@ abstract class strategytemplate_options extends \strategytemplate {
  * - shows the groups name and description
  * - shows a drop down menu from which the user can choose a rating
  */
-class ratingallocate_options_strategyform extends \ratingallocate_strategyform {
+abstract class ratingallocate_options_strategyform extends \ratingallocate_strategyform {
 
     /**
      * Defines forms elements
@@ -94,16 +94,16 @@ class ratingallocate_options_strategyform extends \ratingallocate_strategyform {
             $mform->addElement('html', '<div>' . $data->explanation . '</div>');
 
             // options for each choice
-            $options = strategy::get_options();
+            $choiceoptions = $this->get_choiceoptions();
 
             $radioarray = array();
-            foreach ($options as $id => $option) {
+            foreach ($choiceoptions as $id => $option) {
                 $radioarray [] = & $mform->createElement('radio', $ratingelem, '', $option, $id, '');
             }
             // it is important to set a group name, so that later on errors can be displayed at the correct spot.
             $mform->addGroup($radioarray, 'radioarr_' . $data->choiceid, '', null, false);
 
-			$max_rating = max(array_keys($options));
+			$max_rating = max(array_keys($choiceoptions));
             // try to restore previous ratings
             if (is_numeric($data->rating) && $data->rating >= 0 && $data->rating <= $max_rating) {
                 $mform->setDefault($ratingelem, $data->rating);
@@ -131,7 +131,7 @@ class ratingallocate_options_strategyform extends \ratingallocate_strategyform {
     }
 
     public function validation($data, $files) {
-        $maxno = json_decode($this->ratingallocate->ratingallocate->setting, true)[strategy::STRATEGYID][strategy::MAXNO];
+        $maxno = $this->get_max_amount_of_nos();
         $errors = parent::validation($data, $files);
 
         if (!array_key_exists('data', $data) or count($data ['data']) < 2) {
@@ -150,11 +150,17 @@ class ratingallocate_options_strategyform extends \ratingallocate_strategyform {
         if ($impossibles > $maxno) {
             foreach ($ratings as $cid => $rating) {
                 if ($rating ['rating'] == 0) {
-                    $errors ['radioarr_' . $cid] = get_string(strategy::STRATEGYID . '_max_no', 'ratingallocate', $maxno);
+                    $errors ['radioarr_' . $cid] = get_string($this->get_max_nos_string_identyfier(), 'ratingallocate', $maxno);
                 }
             }
         }
         return $errors;
     }
+    
+    public abstract function get_choiceoptions();
+
+    protected abstract function get_max_amount_of_nos();
+    //TODO remove and make identifier strategy_options specific not strategy specific
+    protected abstract function get_max_nos_string_identyfier();
 
 }

@@ -68,4 +68,16 @@ class strategy extends \strategytemplate_options {
 
 class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform {
     //Already specified by parent class
+
+    public function get_choiceoptions($params = null) {
+        return strategy::get_choiceoptions($params);
+    }
+    
+    protected function get_max_amount_of_nos() {
+        return $this->get_strategyoption(strategy::MAXNO);
+    }
+
+    protected function get_max_nos_string_identyfier() {
+        return strategy::STRATEGYID . '_max_no';
+    }
 }
