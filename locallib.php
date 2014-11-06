@@ -198,7 +198,7 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
 
             $mform = new $strategyform($PAGE->url->out(), $this);
-
+            //TODO make sure, data can only be saved within given timeslot and create form only if neccessary
             if ($mform->is_validated() && !$mform->is_cancelled() && $data = $mform->get_data()) {
                 if ($action === RATING_ALLOC_ACTION_RATE) {
                     require_capability('mod/ratingallocate:give_rating', $this->context);
@@ -223,7 +223,11 @@ class ratingallocate {
         // Print data and controls for students, but not for admins
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
             echo $renderer->heading(get_string('your_rating', 'ratingallocate'), 2);
-            if ($this->ratingallocate->accesstimestart > $now) {
+            global $DB;
+            // if no choice option exists WARN!
+            if (!$DB->record_exists('ratingallocate_choices', array('ratingallocateid' => $this->ratingallocateid))) {
+                echo $renderer->notification(get_string('no_choice_to_rate', 'ratingallocate'));
+            } else if ($this->ratingallocate->accesstimestart > $now) {
                 echo $renderer->user_rating_form_tooearly($this);
             } else if ($this->ratingallocate->accesstimestop < $now) {
                 // if publishdate is 0 -> than publishdate is not enabled

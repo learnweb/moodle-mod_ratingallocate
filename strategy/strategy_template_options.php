@@ -68,8 +68,6 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
 
         $ratingdata = $this->ratingallocate->get_rating_data_for_user($USER->id);
 
-        $renderer = $PAGE->get_renderer('mod_ratingallocate');
-
         $mform->addElement('hidden', 'action', RATING_ALLOC_ACTION_RATE);
         $mform->setType('action', PARAM_TEXT);
 
@@ -113,12 +111,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             // $mform->setType($ratingelem, PARAM_INT);
         }
 
-        if (count($ratingdata) > 0) {
-            $this->add_action_buttons();
-        } else {
-            $box = $renderer->notification(get_string('no_groups_to_rate', 'ratingallocate'));
-            $mform->addElement('html', $box);
-        }
+        $this->add_action_buttons();
     }
 
     public function describe_strategy() {
