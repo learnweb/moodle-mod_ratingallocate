@@ -130,7 +130,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $strategyclass = new $strategyclassp();
 
             $headerid = 'strategy_' . $strategy . '_fieldset';
-            $mform->addElement('header', $headerid, get_string('strategyoptions_for_strategy', self::MOD_NAME, $strategyclass::STRATEGYNAME));
+            $mform->addElement('header', $headerid, get_string('strategyoptions_for_strategy', self::MOD_NAME, $strategyclass::get_strategyname()));
             $mform->disabledIf($headerid, 'strategy', 'neq', $strategy);
 
             // Add options fields

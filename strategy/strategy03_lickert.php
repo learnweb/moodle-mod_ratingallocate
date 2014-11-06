@@ -35,10 +35,13 @@ require_once(dirname(__FILE__) . '/strategy_template_options.php');
 
 class strategy extends \strategytemplate_options {
 
-    const STRATEGYNAME = 'Lickert';
     const STRATEGYID = 'strategy_lickert';
     const MAXNO = 'maxno';
     const COUNTLICKERT = 'countlickert';
+
+    public static function get_strategyid() {
+        return self::STRATEGYID;
+    }
 
     public static function get_static_settingfields() {
         return array(

@@ -35,10 +35,14 @@ require_once(dirname(__FILE__) . '/strategy_template.php');
 
 class strategy extends \strategytemplate {
 
-    const STRATEGYNAME = 'Points';
     const STRATEGYID = 'strategy_points';
     const MAXZERO = 'maxzero';
     const TOTALPOINTS = 'totalpoints';
+
+
+    public static function get_strategyid() {
+        return self::STRATEGYID;
+    }
 
     public static function get_static_settingfields() {
         return array(
@@ -114,7 +118,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
     public function describe_strategy() {
         $strategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
 
-        $output = get_string('strategyname', 'ratingallocate', strategy::STRATEGYNAME) . '<br />';
+        $output = get_string('strategyname', 'ratingallocate', strategy::get_strategyname()) . '<br />';
         $output .= get_string(strategy::STRATEGYID . '_explain_distribute_points', 'ratingallocate', $strategyoptions [strategy::STRATEGYID] [strategy::TOTALPOINTS]) . '<br />';
         $output .= get_string(strategy::STRATEGYID . '_explain_max_zero', 'ratingallocate', $strategyoptions [strategy::STRATEGYID] [strategy::MAXZERO]);
 

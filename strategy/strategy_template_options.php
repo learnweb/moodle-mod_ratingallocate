@@ -32,14 +32,6 @@ require_once(dirname(__FILE__) . '/strategy_template.php');
 
 class strategytemplate_options extends \strategytemplate {
 
-
-    /**
-     * Return the name of the strategy
-     */
-    public static function get_strategyname() {
-
-    }
-
     public static function get_static_settingfields() {
         return array(
             self::MAXCROSSOUT => array(
@@ -125,7 +117,7 @@ class ratingallocate_options_strategyform extends \ratingallocate_strategyform {
     public function describe_strategy() {
         $strategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
 
-        $output = get_string('strategyname', 'ratingallocate', strategy::STRATEGYNAME) . '<br />';
+        $output = get_string('strategyname', 'ratingallocate', strategy::get_strategyname()) . '<br />';
         $output .= get_string(strategy::STRATEGYID . '_max_no', 'ratingallocate', $strategyoptions [strategy::STRATEGYID] [strategy::MAXNO]);
 
         return $output;

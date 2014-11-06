@@ -35,12 +35,11 @@ require_once(dirname(__FILE__) . '/strategy_template_options.php');
 
 class strategy extends \strategytemplate_options {
 
-    const STRATEGYNAME = 'YesNo';
     const STRATEGYID = 'strategy_yesno';
     const MAXCROSSOUT = 'maxcrossout'; // maxcrossout: Anzahl maximaler abzulehnender
 
-    public static function get_strategyname() {
-        return self::STRATEGYNAME;
+    public static function get_strategyid() {
+        return self::STRATEGYID;
     }
 
     public static function get_static_settingfields() {

@@ -35,9 +35,12 @@ require_once(dirname(__FILE__) . '/strategy_template.php');
 
 class strategy extends \strategytemplate {
 
-    const STRATEGYNAME = 'Tickyes';
     const STRATEGYID = 'strategy_tickyes';
     const MINTICKYES = 'mintickyes';
+
+    public static function get_strategyid() {
+        return self::STRATEGYID;
+    }
 
     public static function get_static_settingfields() {
         return array(
@@ -114,7 +117,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
     public function describe_strategy() {
         $strategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
 
-        $output = get_string('strategyname', 'ratingallocate', strategy::STRATEGYNAME) . '<br />';
+        $output = get_string('strategyname', 'ratingallocate', strategy::get_strategyname()) . '<br />';
         $output .= get_string(strategy::STRATEGYID . '_explain_mintickyes', 'ratingallocate', $strategyoptions [strategy::STRATEGYID] [strategy::MINTICKYES]) . '<br />';
 
         return $output;

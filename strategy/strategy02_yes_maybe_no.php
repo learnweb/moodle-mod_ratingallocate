@@ -36,10 +36,13 @@ require_once(dirname(__FILE__) . '/strategy_template_options.php');
 
 class strategy extends \strategytemplate_options {
 
-    const STRATEGYNAME = 'YesMaybeNo';
     const STRATEGYID = 'strategy_yesmaybeno';
     const MAXNO = 'maxno';
 
+    public static function get_strategyid() {
+        return self::STRATEGYID;
+    }
+    
     public static function get_static_settingfields() {
         return array(
             self::MAXNO => array(// maximale Anzahl 'kannnicht'

@@ -72,8 +72,6 @@ abstract class ratingallocate_strategyform extends \moodleform  {
  */
 abstract class strategytemplate {
 
-    /** @const STRATEGYNAME humand-readable name */
-    const STRATEGYNAME = '';
     /** @const STRATEGYID string identifier, for language translation, etc.*/
     const STRATEGYID = '';
 
@@ -97,7 +95,11 @@ abstract class strategytemplate {
      * Return the name of the strategy
      */
     public static function get_strategyname() {
-        self::STRATEGYNAME;
+        return get_string(self::get_strategyid().'_name','ratingallocate');
+    }
+    
+    public static function get_strategyid() {
+        return static::get_strategyid();
     }
     
     /**
