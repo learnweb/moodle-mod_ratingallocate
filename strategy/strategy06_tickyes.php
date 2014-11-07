@@ -35,15 +35,18 @@ require_once(dirname(__FILE__) . '/strategy_template.php');
 
 class strategy extends \strategytemplate {
 
-    const STRATEGYNAME = 'Tickyes';
     const STRATEGYID = 'strategy_tickyes';
     const MINTICKYES = 'mintickyes';
 
-    public static function get_settingfields() {
+    public static function get_strategyid() {
+        return self::STRATEGYID;
+    }
+
+    public static function get_static_settingfields() {
         return array(
             self::MINTICKYES => array(
                 'text',
-                get_string(self::STRATEGYID . '_setting_mintickyes', 'ratingallocate')
+                get_string(self::STRATEGYID . '_setting_mintickyes', ratingallocate_MOD_NAME)
             )
         );
     }
@@ -68,8 +71,6 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
         $ratingdata = $this->ratingallocate->get_rating_data_for_user($USER->id);
 
-        $renderer = $PAGE->get_renderer('mod_ratingallocate');
-
         $mform->addElement('hidden', 'action', RATING_ALLOC_ACTION_RATE);
         $mform->setType('action', PARAM_TEXT);
 
@@ -93,7 +94,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             // Beschreibungstext anzeigen
             $mform->addElement('html', '<div>' . $data->explanation . '</div>');
 
-            $mform->addElement('advcheckbox', $ratingelem, get_string(strategy::STRATEGYID . '_accept', 'ratingallocate'), '', null, array(0, 1));
+            $mform->addElement('advcheckbox', $ratingelem, get_string(strategy::STRATEGYID . '_accept', ratingallocate_MOD_NAME), '', null, array(0, 1));
             $mform->setType($ratingelem, PARAM_INT);
 
             if (is_numeric($data->rating) && $data->rating >= 0) {
@@ -102,27 +103,16 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
                 $mform->setDefault($ratingelem, 1);
             }
         }
-
-        if (count($ratingdata) > 0) {
-            $this->add_action_buttons();
-        } else {
-            $box = $renderer->notification(get_string('no_groups_to_rate', 'ratingallocate'));
-            $mform->addElement('html', $box);
-        }
+        $this->add_action_buttons();
     }
 
     public function describe_strategy() {
-        $strategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
-
-        $output = get_string('strategyname', 'ratingallocate', strategy::STRATEGYNAME) . '<br />';
-        $output .= get_string(strategy::STRATEGYID . '_explain_mintickyes', 'ratingallocate', $strategyoptions [strategy::STRATEGYID] [strategy::MINTICKYES]) . '<br />';
-
-        return $output;
+        return get_string(strategy::STRATEGYID . '_explain_mintickyes', ratingallocate_MOD_NAME, $this->get_strategysetting(strategy::MINTICKYES));
     }
 
     public function validation($data, $files) {
-        $mintickyes = json_decode($this->ratingallocate->ratingallocate->setting, true)[strategy::STRATEGYID][strategy::MINTICKYES];
         $errors = parent::validation($data, $files);
+        $mintickyes = $this->get_strategysetting(strategy::MINTICKYES);
 
         if (!array_key_exists('data', $data) or count($data ['data']) < 2) {
             return $errors;
@@ -139,7 +129,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         if ($checkedaccept < $mintickyes) {
             foreach ($ratings as $cid => $rating) {
                 if ($rating ['rating'] == 0) {
-                    $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_error_mintickyes', 'ratingallocate', $mintickyes);
+                    $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_error_mintickyes', ratingallocate_MOD_NAME, $mintickyes);
                 }
             }
         }

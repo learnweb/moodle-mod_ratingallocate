@@ -48,7 +48,7 @@ $PAGE->set_context($coursecontext);
 echo $OUTPUT->header();
 
 if (! $ratingallocates = get_all_instances_in_course('ratingallocate', $course)) {
-    notice(get_string('noratingallocates', 'ratingallocate'), new moodle_url('/course/view.php', array('id' => $course->id)));
+    notice(get_string('noratingallocates', ratingallocate_MOD_NAME), new moodle_url('/course/view.php', array('id' => $course->id)));
 }
 
 $table = new html_table();
@@ -82,6 +82,6 @@ foreach ($ratingallocates as $ratingallocate) {
     }
 }
 
-echo $OUTPUT->heading(get_string('modulenameplural', 'ratingallocate'), 2);
+echo $OUTPUT->heading(get_string('modulenameplural', ratingallocate_MOD_NAME), 2);
 echo html_writer::table($table);
 echo $OUTPUT->footer();

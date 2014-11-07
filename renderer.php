@@ -49,7 +49,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $a->begin = '<span class="ratingallocate_highlight">' . $begin . '</span>';
         $end = userdate($ratingallocate->accesstimestop);
         $a->end = '<span class="ratingallocate_highlight">' . $end . '</span>';
-        $note = get_string('show_rating_period', 'ratingallocate', $a);
+        $note = get_string('show_rating_period', ratingallocate_MOD_NAME, $a);
         $output .= '<p>' . $note . '</p>';
 
         $output .= $this->box_end();
@@ -70,12 +70,12 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      * Output the rating form section (as long as the rating period has not yet started)
      */
     public function user_rating_form_tooearly(ratingallocate $ratingallocate) {
-        $output = $this->notification(get_string('too_early_to_rate', 'ratingallocate'));
+        $output = $this->notification(get_string('too_early_to_rate', ratingallocate_MOD_NAME));
 
         $choices = $ratingallocate->get_rateable_choices();
 
         if (count($choices) > 0) {
-            $output .= $this->heading(get_string('rateable_choices', 'ratingallocate'), 2);
+            $output .= $this->heading(get_string('rateable_choices', ratingallocate_MOD_NAME), 2);
             foreach ($choices as $choice) {
                 $output .= $this->format_choice($choice, true);
                 $output .= '<hr />';
@@ -90,10 +90,10 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      */
     public function user_rating_form_finished($allocations) {
 
-        $output = $this->notification(get_string('rating_is_over', 'ratingallocate'));
+        $output = $this->notification(get_string('rating_is_over', ratingallocate_MOD_NAME));
 
         if (count($allocations) > 0) {
-            $output .= $this->heading(get_string('your_allocated_choice', 'ratingallocate'), 2);
+            $output .= $this->heading(get_string('your_allocated_choice', ratingallocate_MOD_NAME), 2);
             foreach ($allocations as $alloc) {
                 $output .= $this->format_choice($alloc, true);
             }
@@ -105,7 +105,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     public function format_publishdate($publishdate) {
 
         $output = $this->box_start();
-        $output .= '<p>' . get_string('publishdate_explain', 'ratingallocate', userdate($publishdate)) . '</p>';
+        $output .= '<p>' . get_string('publishdate_explain', ratingallocate_MOD_NAME, userdate($publishdate)) . '</p>';
         $output .= $this->box_end();
 
         return $output;
@@ -115,10 +115,10 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      * Output the ratingallocate algorithm control section (as long as the rating period is not over)
      */
     public function algorithm_control_tooearly() {
-        $output = $this->heading(get_string('distribution_algorithm', 'ratingallocate'), 2);
+        $output = $this->heading(get_string('distribution_algorithm', ratingallocate_MOD_NAME), 2);
 
         // Rating period is not over, tell the user
-        $note = get_string('too_early_to_distribute', 'ratingallocate');
+        $note = get_string('too_early_to_distribute', ratingallocate_MOD_NAME);
         $output .= $this->notification($note);
 
         return $output;
@@ -132,13 +132,13 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $starturl = new moodle_url($PAGE->url, array('action' => RATING_ALLOC_ACTION_START));
 
-        $output = $this->heading(get_string('distribution_algorithm', 'ratingallocate'), 2);
+        $output = $this->heading(get_string('distribution_algorithm', ratingallocate_MOD_NAME), 2);
 
         // print button
         $output .= $this->box_start();
-        $output .= '<p>' . get_string('start_distribution_explanation', 'ratingallocate') . '</p>';
+        $output .= '<p>' . get_string('start_distribution_explanation', ratingallocate_MOD_NAME) . '</p>';
         $output .= $this->box_end();
-        $output .= $this->single_button($starturl->out(), get_string('start_distribution', 'ratingallocate'), 'get');
+        $output .= $this->single_button($starturl->out(), get_string('start_distribution', ratingallocate_MOD_NAME), 'get');
 
         return $output;
     }
@@ -173,7 +173,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $allocationrow[$rating] = $cell;
 
             $cell = new html_table_cell();
-            $cell->text = get_string('rating_raw', 'ratingallocate', $rating);
+            $cell->text = get_string('rating_raw', ratingallocate_MOD_NAME, $rating);
             $allocationhead[$rating] = $cell;
         }
 
@@ -183,14 +183,14 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $allocationrow[] = $cell;
 
         $cell = new html_table_cell();
-        $cell->text = get_string('unassigned_users', 'ratingallocate');
+        $cell->text = get_string('unassigned_users', ratingallocate_MOD_NAME);
         $allocationhead[] = $cell;
 
         $allocationtable = new html_table();
         $allocationtable->data = array($allocationrow);
         $allocationtable->head = $allocationhead;
 
-        $output = $this->heading(get_string('distribution_table', 'ratingallocate'), 2);
+        $output = $this->heading(get_string('distribution_table', ratingallocate_MOD_NAME), 2);
         $output .= $this->box_start();
         $output .= html_writer::table($allocationtable);
         $output .= $this->box_end();
@@ -225,7 +225,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $ratingscells[$rating->userid] = array();
             }
             $cell = new html_table_cell();
-            $cell->text = get_string('rating_raw', 'ratingallocate', $rating->rating);
+            $cell->text = get_string('rating_raw', ratingallocate_MOD_NAME, $rating->rating);
             $cell->attributes['class'] = 'ratingallocate_rating_' . $rating->rating;
 
             $ratingscells[$rating->userid][$rating->choiceid] = $cell;
@@ -242,7 +242,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             foreach ($choicenames as $ratingallocateid2 => $name) {
                 if (!array_key_exists($ratingallocateid2, $ratingscells[$user->id])) {
                     $cell = new html_table_cell();
-                    $cell->text = get_string('no_rating_given', 'ratingallocate');
+                    $cell->text = get_string('no_rating_given', ratingallocate_MOD_NAME);
                     $cell->attributes['class'] = 'ratingallocate_rating_none';
                     $ratingscells[$user->id][$ratingallocateid2] = $cell;
                 }
@@ -282,9 +282,9 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $ratingstable->head = $choicenames;
         $ratingstable->attributes['class'] = 'ratingallocate_ratings_table';
 
-        $output = $this->heading(get_string('ratings_table', 'ratingallocate'), 2);
+        $output = $this->heading(get_string('ratings_table', ratingallocate_MOD_NAME), 2);
         $output .= $this->box_start();
-        // $output .= '<p>' . get_string('view_ratings_table_explanation', 'ratingallocate') . '</p>';
+        // $output .= '<p>' . get_string('view_ratings_table_explanation', ratingallocate_MOD_NAME) . '</p>';
         $output .= $this->box(html_writer::table($ratingstable), 'ratingallocate_ratings_box');
         $output .= $this->box_end();
 
@@ -299,11 +299,11 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $tableurl = new moodle_url($PAGE->url, array('action' => RATING_ALLOC_SHOW_TABLE));
 
-        $output = $this->heading(get_string('ratings_table', 'ratingallocate'), 2);
+        $output = $this->heading(get_string('ratings_table', ratingallocate_MOD_NAME), 2);
         $output .= $this->box_start();
-        // $output .= get_string('view_ratings_table', 'ratingallocate');
+        // $output .= get_string('view_ratings_table', ratingallocate_MOD_NAME);
         // Button to display information about the distribution and ratings
-        $output .= $this->single_button($tableurl->out(), get_string('show_table', 'ratingallocate'), 'get');
+        $output .= $this->single_button($tableurl->out(), get_string('show_table', ratingallocate_MOD_NAME), 'get');
         $output .= $this->box_end();
 
         return $output;
@@ -394,7 +394,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             // during the rating period.
             $a = new stdclass();
             $a->until = userdate($ratingallocate->enddate);
-            $output .= $this->container(get_string('rating_has_begun', 'ratingallocate', $a), 'overview ratingallocate');
+            $output .= $this->container(get_string('rating_has_begun', ratingallocate_MOD_NAME, $a), 'overview ratingallocate');
         }
 
         return $output;

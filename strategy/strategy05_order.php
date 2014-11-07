@@ -34,15 +34,19 @@ require_once(dirname(__FILE__) . '/strategy_template.php');
 
 class strategy extends \strategytemplate {
 
-    const STRATEGYNAME = 'Rank'; // human readable name
     const STRATEGYID = 'strategy_order';
     const COUNTOPTIONS = 'countoptions';
 
-    public static function get_settingfields() {
+
+    public static function get_strategyid() {
+        return self::STRATEGYID;
+    }
+
+    public static function get_static_settingfields() {
         return array(
             self::COUNTOPTIONS => array(// wie viele Felder es gibt
                 'text',
-                get_string(self::STRATEGYID . '_setting_countoptions', 'ratingallocate')
+                get_string(self::STRATEGYID . '_setting_countoptions', ratingallocate_MOD_NAME)
             )
         );
     }
@@ -66,14 +70,12 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
         $ratingdata = $this->ratingallocate->get_rating_data_for_user($USER->id);
 
-        $renderer = $PAGE->get_renderer('mod_ratingallocate');
-
         $mform->addElement('hidden', 'action', RATING_ALLOC_ACTION_RATE);
         $mform->setType('action', PARAM_TEXT);
 
         $mform->addElement('hidden', 'courseid', $COURSE->id);
         $mform->setType('courseid', PARAM_INT);
-        $choicecounter = json_decode($this->ratingallocate->ratingallocate->setting, true)[strategy::STRATEGYID][strategy::COUNTOPTIONS];
+        $choicecounter = $this->get_strategysetting(strategy::COUNTOPTIONS);
         $choices = array();
 
         foreach ($ratingdata as $data) {
@@ -81,7 +83,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         }
 
         for ($i = 1; $i <= $choicecounter; $i++) {
-            $mform->addElement('select', 'choice[' . $i . ']', get_string(strategy::STRATEGYID . '_no_choice', 'ratingallocate', $i), $choices);
+            $mform->addElement('select', 'choice[' . $i . ']', get_string(strategy::STRATEGYID . '_no_choice', ratingallocate_MOD_NAME, $i), $choices);
         }
         foreach ($ratingdata as $data) {
             // If there is a valid value in the databse, choose the according rating
@@ -92,22 +94,11 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             }
         }
 
-        // If there are no groups to rate, notify the user.
-        if (count($ratingdata) > 0) {
-            $this->add_action_buttons();
-        } else {
-            $box = $renderer->notification(get_string('no_groups_to_rate', 'ratingallocate'));
-            $mform->addElement('html', $box);
-        }
+        $this->add_action_buttons();
     }
 
     public function describe_strategy() {
-        $strategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
-
-        $output = get_string('strategyname', 'ratingallocate', strategy::STRATEGYNAME) . '<br />';
-        $output .= get_string(strategy::STRATEGYID . '_explain_choices', 'ratingallocate');
-
-        return $output;
+        return get_string(strategy::STRATEGYID . '_explain_choices', ratingallocate_MOD_NAME);
     }
 
     /**
@@ -140,7 +131,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
         foreach ($data['choice'] as $choiceid => $choice) {
             if (array_key_exists($choice, $usedchoices)) {
-                $errors['choice[' . $choiceid . ']'] = get_string(strategy::STRATEGYID . '_use_only_once', 'ratingallocate');
+                $errors['choice[' . $choiceid . ']'] = get_string(strategy::STRATEGYID . '_use_only_once', ratingallocate_MOD_NAME);
             }
             $usedchoices[$choice] = true;
         }

@@ -1,4 +1,5 @@
 <?php
+use Symfony\Component\Validator\Constraints\Optional;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -34,6 +35,26 @@ abstract class ratingallocate_strategyform extends \moodleform  {
     /** @var \ratingallocate pointer to the parent \ratingallocate object*/
     protected $ratingallocate;
 
+    private $strategyoptions;
+
+    /**
+     *
+     * @param string $url The page url
+     * @param \ratingallocate $ratingallocate The calling ratingallocate instance
+     */
+    public function __construct($url, \ratingallocate $ratingallocate) {
+        $this->ratingallocate = $ratingallocate;
+        parent::__construct($url);
+        //load strategy options
+        $allstrategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
+        $strategyid = $ratingallocate->ratingallocate->strategy;
+        if(array_key_exists($strategyid, $allstrategyoptions)) {
+            $this->strategyoptions = $allstrategyoptions[$strategyid];
+        } else {
+            $this->strategyoptions = array();
+        }
+    }
+
     /** inherited from moodleform */
     protected function definition() {
     }
@@ -44,14 +65,8 @@ abstract class ratingallocate_strategyform extends \moodleform  {
      */
     public abstract function describe_strategy();
 
-    /**
-     * 
-     * @param string $url The page url
-     * @param \ratingallocate $ratingallocate The calling ratingallocate instance
-     */
-    public function __construct($url, \ratingallocate $ratingallocate) {
-        $this->ratingallocate = $ratingallocate;
-        parent::__construct($url);
+    public function get_strategy_description_header() {
+        return get_string('strategyname', ratingallocate_MOD_NAME, $this->get_strategyname());
     }
 
     /**
@@ -62,6 +77,21 @@ abstract class ratingallocate_strategyform extends \moodleform  {
         return $this->_form->toHtml();
     }
 
+    protected function get_strategyname() {
+        return get_string($this->ratingallocate->ratingallocate->strategy.'_name',ratingallocate_MOD_NAME);
+    }
+
+    /**
+     * returns strategy specific option for a strategy
+     * @param string $key
+     * @returns the specific option or null if it does not exist
+     */
+    protected function get_strategysetting($key) {
+        if(array_key_exists($key, $this->strategyoptions))  {
+            return $this->strategyoptions[$key];
+        }
+        return null;
+    }
 }
 
 /**
@@ -71,23 +101,33 @@ abstract class ratingallocate_strategyform extends \moodleform  {
  */
 abstract class strategytemplate {
 
-    /** @const STRATEGYNAME humand-readable name */
-    const STRATEGYNAME = '';
     /** @const STRATEGYID string identifier, for language translation, etc.*/
     const STRATEGYID = '';
 
     /**
-     * Return the Settingsfields the strategy needes
+     * Return the dynamic Settingsfields the strategy needes
+     * If any dynamic Settingsfields is returned, a refresh button will be included in the view.
+     * @param $mform The required data can be drawn from the moodleform
      */
-    public static function get_settingfields() {
-
+    public static function get_dynamic_settingfields(moodleform $mform) {
+        
+    }
+    
+    /**
+     * Return the static Settingsfields the strategy needes
+     */
+    public static function get_static_settingfields() {
+    
     }
 
     /**
      * Return the name of the strategy
      */
     public static function get_strategyname() {
-
+        return get_string(self::get_strategyid().'_name',ratingallocate_MOD_NAME);
     }
-
+    
+    public static function get_strategyid() {
+        return static::get_strategyid();
+    }
 }

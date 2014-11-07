@@ -24,46 +24,43 @@
  * @copyright 2014 M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-// namespace is mandatory!
-
-namespace ratingallocate\strategy_points;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template.php');
 
-class strategy extends \strategytemplate {
-
-    const STRATEGYID = 'strategy_points';
-    const MAXZERO = 'maxzero';
-    const TOTALPOINTS = 'totalpoints';
-
-
-    public static function get_strategyid() {
-        return self::STRATEGYID;
-    }
+abstract class strategytemplate_options extends \strategytemplate {
 
     public static function get_static_settingfields() {
         return array(
-            self::MAXZERO => array(// maximale Anzahl 'kannnicht'
+            self::MAXCROSSOUT => array(
                 'text',
-                get_string(self::STRATEGYID . '_setting_maxzero', ratingallocate_MOD_NAME)
-            ),
-            self::TOTALPOINTS => array(// wie viele Felder es gibt
-                'text',
-                get_string(self::STRATEGYID . '_setting_totalpoints', ratingallocate_MOD_NAME)
+                get_string(self::STRATEGYID . '_setting_crossout', ratingallocate_MOD_NAME)
             )
         );
     }
-
+    
+    /**
+     * Return the different options for each choice (including titles)
+     * @return array: value_of_option => title_of_option
+     */
+    public static function get_choiceoptions($param = null){
+        return static::get_choiceoptions($param);
+    }
 }
 
-// register with the strategymanager
-\strategymanager::add_strategy(strategy::STRATEGYID);
+/**
+ * _Users view_
+ * For every group for which the user can give a rating:
+ * - shows the groups name and description
+ * - shows a drop down menu from which the user can choose a rating
+ */
+abstract class ratingallocate_options_strategyform extends \ratingallocate_strategyform {
 
-class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
-
+    /**
+     * Defines forms elements
+     */
     public function definition() {
         global $COURSE, $PAGE, $DB, $USER;
 
@@ -83,42 +80,46 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             $ratingelem = $elemprefix . '[rating]';
             $groupsidelem = $elemprefix . '[choiceid]';
 
-            // choiceid ablegen
+            // save choiceid
             $mform->addElement('hidden', $groupsidelem, $data->choiceid);
             $mform->setType($groupsidelem, PARAM_INT);
 
-            // title anzeigen
+            // show title
             $mform->addElement('header', $headerelem, $data->title);
             $mform->setExpanded($headerelem);
 
-            // Beschreibungstext anzeigen
+            // show explanation
             $mform->addElement('html', '<div>' . $data->explanation . '</div>');
 
-            $mform->addElement('text', $ratingelem, $data->title);
-            $mform->setType($ratingelem, PARAM_INT);
+            // options for each choice
+            $choiceoptions = $this->get_choiceoptions();
 
+            $radioarray = array();
+            foreach ($choiceoptions as $id => $option) {
+                $radioarray [] = & $mform->createElement('radio', $ratingelem, '', $option, $id, '');
+            }
+            // it is important to set a group name, so that later on errors can be displayed at the correct spot.
+            $mform->addGroup($radioarray, 'radioarr_' . $data->choiceid, '', null, false);
+
+			$max_rating = max(array_keys($choiceoptions));
             // try to restore previous ratings
-            if (is_numeric($data->rating) && $data->rating >= 0) {
+            if (is_numeric($data->rating) && $data->rating >= 0 && $data->rating <= $max_rating) {
                 $mform->setDefault($ratingelem, $data->rating);
             } else {
-                $mform->setDefault($ratingelem, 1);
+                $mform->setDefault($ratingelem, $max_rating);
             }
+            // $mform->setType($ratingelem, PARAM_INT);
         }
 
         $this->add_action_buttons();
-
     }
 
     public function describe_strategy() {
-        $output = get_string(strategy::STRATEGYID . '_explain_distribute_points', ratingallocate_MOD_NAME, $this->get_strategysetting(strategy::TOTALPOINTS));
-        $output .= '<br />';
-        $output .= get_string(strategy::STRATEGYID . '_explain_max_zero', ratingallocate_MOD_NAME, $this->get_strategysetting(strategy::MAXZERO));
-        return $output;
+        return get_string($this->get_max_nos_string_identyfier(), ratingallocate_MOD_NAME, $this->get_max_amount_of_nos());
     }
 
     public function validation($data, $files) {
-        $maxcrossout = $this->get_strategysetting(strategy::MAXZERO);
-        $totalpoints = $this->get_strategysetting(strategy::TOTALPOINTS);
+        $maxno = $this->get_max_amount_of_nos();
         $errors = parent::validation($data, $files);
 
         if (!array_key_exists('data', $data) or count($data ['data']) < 2) {
@@ -127,28 +128,27 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
         $impossibles = 0;
         $ratings = $data ['data'];
-        $currentpoints = 0;
+
         foreach ($ratings as $rating) {
-            if ($rating ['rating'] == 0) {
+            if (key_exists('rating', $rating) && $rating ['rating'] == 0) {
                 $impossibles ++;
             }
-            $currentpoints += $rating['rating'];
         }
 
-        if ($impossibles > $maxcrossout) {
+        if ($impossibles > $maxno) {
             foreach ($ratings as $cid => $rating) {
                 if ($rating ['rating'] == 0) {
-                    $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_max_count_zero', ratingallocate_MOD_NAME, $maxcrossout);
+                    $errors ['radioarr_' . $cid] = get_string($this->get_max_nos_string_identyfier(), ratingallocate_MOD_NAME, $maxno);
                 }
-            }
-        }
-
-        if ($currentpoints <> $totalpoints) {
-            foreach ($ratings as $cid => $rating) {
-                $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_incorrect_totalpoints', ratingallocate_MOD_NAME, $totalpoints);
             }
         }
         return $errors;
     }
+    
+    public abstract function get_choiceoptions();
+
+    protected abstract function get_max_amount_of_nos();
+    //TODO remove and make identifier strategy_options specific not strategy specific
+    protected abstract function get_max_nos_string_identyfier();
 
 }

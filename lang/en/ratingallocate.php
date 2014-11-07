@@ -47,6 +47,7 @@ $string['too_early_to_rate'] = 'Too early to rate';
 $string['your_allocated_choice'] = 'Your Allocation';
 $string['your_rating'] = 'Your Rating';
 $string['results_not_yet_published'] = 'Results have not yet been published';
+$string['no_choice_to_rate'] = 'There is not any choice to rate for!';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Administrator View">
 $string['allocation_manual_explain'] = 'Select choice the user is to assign with. You can only assign user that have rated and select choices the user has rated better than "exclude"';

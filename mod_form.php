@@ -68,7 +68,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field
-        $mform->addElement('text', 'name', get_string('ratingallocatename', 'ratingallocate'), array(
+        $mform->addElement('text', 'name', get_string('ratingallocatename', self::MOD_NAME), array(
             'size' => '64'
         ));
         if (!empty($CFG->formatstringstriptags)) {
@@ -78,7 +78,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('name', 'ratingallocatename', 'ratingallocate');
+        $mform->addHelpButton('name', 'ratingallocatename', self::MOD_NAME);
 
         // Adding the standard "intro" and "introformat" fields
         $this->add_intro_editor();
@@ -122,6 +122,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         // create strategy fields for each strategy
         $attributes = array('size' => '20');
+        
         foreach (\strategymanager::get_strategies() as $strategy) {
             // load strategy class
             $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
@@ -129,11 +130,11 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $strategyclass = new $strategyclassp();
 
             $headerid = 'strategy_' . $strategy . '_fieldset';
-            $mform->addElement('header', $headerid, get_string('strategyoptions_for_strategy', self::MOD_NAME, $strategyclass::STRATEGYNAME));
+            $mform->addElement('header', $headerid, get_string('strategyoptions_for_strategy', self::MOD_NAME, $strategyclass::get_strategyname()));
             $mform->disabledIf($headerid, 'strategy', 'neq', $strategy);
 
             // Add options fields
-            foreach($strategyclass::get_settingfields() as $key => $value) {
+            foreach($strategyclass::get_static_settingfields() as $key => $value) {
                 // currently only text supported
                 if ($value[0] == "text") {
                     $curstratid = 'strategyopt[' . $strategy . '][' . $key . ']';
@@ -318,7 +319,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
             /* @var $strategyclass \strategytemplate */
             $strategyclass = new $strategyclassp();
-            foreach(array_keys($strategyclass::get_settingfields()) as $key) {
+            foreach(array_keys($strategyclass::get_static_settingfields()) as $key) {
                 $mform->addRule('strategyopt[' . $strategy . '][' . $key . ']', null, 'required', null, 'server');
             }
         }

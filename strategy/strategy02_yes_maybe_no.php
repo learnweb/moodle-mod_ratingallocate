@@ -28,24 +28,37 @@
 
 namespace ratingallocate\strategy_yesmaybeno;
 
+use ratingallocate\strategy_yesmaybeno\strategy;
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
-require_once(dirname(__FILE__) . '/strategy_template.php');
+require_once(dirname(__FILE__) . '/strategy_template_options.php');
 
-class strategy extends \strategytemplate {
+class strategy extends \strategytemplate_options {
 
-    const STRATEGYNAME = 'YesMaybeNo';
     const STRATEGYID = 'strategy_yesmaybeno';
     const MAXNO = 'maxno';
 
-    public static function get_settingfields() {
+    public static function get_strategyid() {
+        return self::STRATEGYID;
+    }
+    
+    public static function get_static_settingfields() {
         return array(
             self::MAXNO => array(// maximale Anzahl 'kannnicht'
                 'text',
-                get_string(self::STRATEGYID . '_setting_maxno', 'ratingallocate')
+                get_string(self::STRATEGYID . '_setting_maxno', ratingallocate_MOD_NAME)
             )
         );
+    }
+
+    public static function get_choiceoptions($param = null) {
+        $options = array(
+            0 => get_string(strategy::STRATEGYID . '_rating_no', ratingallocate_MOD_NAME), 
+            3 => get_string(strategy::STRATEGYID . '_rating_maybe', ratingallocate_MOD_NAME), 
+            5 => get_string(strategy::STRATEGYID . '_rating_yes', ratingallocate_MOD_NAME)
+        );
+        return $options;
     }
 
 }
@@ -53,110 +66,18 @@ class strategy extends \strategytemplate {
 // register with the strategymanager
 \strategymanager::add_strategy(strategy::STRATEGYID);
 
-/**
- * _Users view_
- * For every group for which the user can give a rating:
- * - shows the groups name and description
- * - shows a drop down menu from which the user can choose a rating
- */
-class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
+class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform {
+    //Already specified by parent class
 
-    public function definition() {
-        global $COURSE, $PAGE, $DB, $USER;
-
-        $mform = $this->_form;
-
-        $ratingdata = $this->ratingallocate->get_rating_data_for_user($USER->id);
-
-        $renderer = $PAGE->get_renderer('mod_ratingallocate');
-
-        $mform->addElement('hidden', 'action', RATING_ALLOC_ACTION_RATE);
-        $mform->setType('action', PARAM_TEXT);
-
-        $mform->addElement('hidden', 'courseid', $COURSE->id);
-        $mform->setType('courseid', PARAM_INT);
-
-        foreach ($ratingdata as $data) {
-            $headerelem = 'head_ratingallocate_' . $data->choiceid;
-            $elemprefix = 'data[' . $data->choiceid . ']';
-            $ratingelem = $elemprefix . '[rating]';
-            $groupsidelem = $elemprefix . '[choiceid]';
-
-            // choiceid ablegen
-            $mform->addElement('hidden', $groupsidelem, $data->choiceid);
-            $mform->setType($groupsidelem, PARAM_INT);
-
-            // title anzeigen
-            $mform->addElement('header', $headerelem, $data->title);
-            $mform->setExpanded($headerelem);
-
-            // Beschreibungstext anzeigen
-            $mform->addElement('html', '<div>' . $data->explanation . '</div>');
-
-            // wahloptionen
-            $options = array(
-                0 => get_string(strategy::STRATEGYID . '_rating_no', 'ratingallocate'),
-                3 => get_string(strategy::STRATEGYID . '_rating_maybe', 'ratingallocate'),
-                5 => get_string(strategy::STRATEGYID . '_rating_yes', 'ratingallocate')
-            );
-
-            $radioarray = array();
-            foreach ($options as $id => $option) {
-                $radioarray [] = & $mform->createElement('radio', $ratingelem, '', $option, $id, '');
-            }
-            // wichtig, einen Gruppennamen zu setzen, damit später die Errors an der korrekten Stelle angezeigt werden können.
-            $mform->addGroup($radioarray, 'radioarr_' . $data->choiceid, '', null, false);
-
-            // try to restore previous ratings
-            if (is_numeric($data->rating) && $data->rating >= 0 && $data->rating <= 5) {
-                $mform->setDefault($ratingelem, $data->rating);
-            } else {
-                $mform->setDefault($ratingelem, 5);
-            }
-            // $mform->setType($ratingelem, PARAM_INT);
-        }
-        if (count($ratingdata) > 0) {
-            $this->add_action_buttons();
-        } else {
-            $box = $renderer->notification(get_string('no_groups_to_rate', 'ratingallocate'));
-            $mform->addElement('html', $box);
-        }
+    public function get_choiceoptions($params = null) {
+        return strategy::get_choiceoptions($params);
+    }
+    
+    protected function get_max_amount_of_nos() {
+        return $this->get_strategysetting(strategy::MAXNO);
     }
 
-    public function describe_strategy() {
-        $strategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
-
-        $output = get_string('strategyname', 'ratingallocate', strategy::STRATEGYNAME) . '<br />';
-        $output .= get_string(strategy::STRATEGYID . '_max_no', 'ratingallocate', $strategyoptions [strategy::STRATEGYID] [strategy::MAXNO]);
-
-        return $output;
+    protected function get_max_nos_string_identyfier() {
+        return strategy::STRATEGYID . '_max_no';
     }
-
-    public function validation($data, $files) {
-        $maxcrossout = json_decode($this->ratingallocate->ratingallocate->setting, true)[strategy::STRATEGYID][strategy::MAXNO];
-        $errors = parent::validation($data, $files);
-
-        if (!array_key_exists('data', $data) or count($data ['data']) < 2) {
-            return $errors;
-        }
-
-        $impossibles = 0;
-        $ratings = $data ['data'];
-
-        foreach ($ratings as $rating) {
-            if (key_exists('rating', $rating) && $rating ['rating'] == 0) {
-                $impossibles ++;
-            }
-        }
-
-        if ($impossibles > $maxcrossout) {
-            foreach ($ratings as $cid => $rating) {
-                if ($rating ['rating'] == 0) {
-                    $errors ['radioarr_' . $cid] = get_string(strategy::STRATEGYID . '_max_count_no', 'ratingallocate', $maxcrossout);
-                }
-            }
-        }
-        return $errors;
-    }
-
 }
