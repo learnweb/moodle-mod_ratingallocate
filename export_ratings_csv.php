@@ -41,7 +41,11 @@ if ($id) {
 }
 
 require_login($course, true, $cm);
-$ratingallocateobj = new ratingallocate($ratingallocate, $course, $cm);
+
+$context = context_module::instance($cm->id);
+require_capability('mod/ratingallocate:export_ratings', $context);
+
+$ratingallocateobj = new ratingallocate($ratingallocate, $course, $cm, $context);
 
 global $DB;
 // print all the exported data here

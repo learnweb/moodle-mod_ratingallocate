@@ -57,16 +57,23 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ),
+    'mod/ratingallocate:view' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'guest' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
     'mod/ratingallocate:give_rating' => array(
         'contextlevel' => CONTEXT_MODULE,
         'captype' => 'write',
         'archetypes' => array(
             'student' => CAP_ALLOW
         )
-    ),
-    'mod/ratingallocate:group_teacher' => array(
-        'contextlevel' => CONTEXT_MODULE,
-        'captype' => 'read'
     ),
     'mod/ratingallocate:start_distribution' => array(
         'contextlevel' => CONTEXT_MODULE,
@@ -77,14 +84,12 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
-    'mod/ratingallocate:view' => array(
-        'captype' => 'read', 
-        'contextlevel' => CONTEXT_MODULE, 
-        'legacy' => array(
-            'guest' => CAP_ALLOW, 
-            'student' => CAP_ALLOW, 
-            'teacher' => CAP_ALLOW, 
-            'editingteacher' => CAP_ALLOW, 
+    'mod/ratingallocate:export_ratings' => array(
+        'contextlevel' => CONTEXT_MODULE,
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         )
     ),

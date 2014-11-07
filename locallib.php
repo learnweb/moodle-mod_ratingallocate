@@ -143,7 +143,7 @@ class ratingallocate {
         return $raters;
     }
 
-    public function __construct($ratingallocaterecord, $course, $coursem) {
+    public function __construct($ratingallocaterecord, $course, $coursem, context_module $context) {
         global $DB;
         $this->db = & $DB;
 
@@ -152,7 +152,7 @@ class ratingallocate {
         $this->ratingallocateid = $this->ratingallocate->id;
         $this->course = $course;
         $this->coursemodule = $coursem;
-        $this->context = context_module::instance($this->coursemodule->id);
+        $this->context = $context;
     }
 
     /**

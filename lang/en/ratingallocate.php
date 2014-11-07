@@ -34,6 +34,10 @@ $string['modulename_help'] = 'The ratingallocate module lets you define choices 
 $string['modulenameplural'] = 'ratingallocates';
 $string['pluginadministration'] = 'ratingallocate administration';
 $string['pluginname'] = 'ratingallocate';
+$string['ratingallocate:view'] = 'View rating allocation instances';
+$string['ratingallocate:give_rating'] = 'Create/edit own choice';
+$string['ratingallocate:start_distribution'] = 'Start allocation of preferences to choices';
+$string['ratingallocate:export_ratings'] = 'Ability to export user ratings';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Rating Form for Users">
 $string['publishdate_explain'] = 'Results are not published before {$a}';

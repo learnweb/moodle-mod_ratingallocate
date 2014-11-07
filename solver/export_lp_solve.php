@@ -44,8 +44,12 @@ if ($id) {
 }
 
 require_login($course, true, $cm);
+
+$context = context_module::instance($cm->id);
+require_capability('mod/ratingallocate:export_ratings', $context);
+
 /* @var $ratingallocateobj ratingallocate */
-$ratingallocateobj = new ratingallocate($ratingallocate, $course, $cm);
+$ratingallocateobj = new ratingallocate($ratingallocate, $course, $cm, $context);
 
 /**
  * Eine beim csv_export_writer abgeschaute Klasse, die in Dateien schreiben kann und zum Download anbieten.
