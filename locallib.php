@@ -194,24 +194,6 @@ class ratingallocate {
             }
         }
 
-        // suche das richtige Formular nach Strategie
-        /* @var $strategyform ratingallocate_viewform */
-        $strategyform = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
-
-        // Save the user's rating
-        if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
-
-            $mform = new $strategyform($PAGE->url->out(), $this);
-            //TODO make sure, data can only be saved within given timeslot and create form only if neccessary
-            if ($mform->is_validated() && !$mform->is_cancelled() && $data = $mform->get_data()) {
-                if ($action === RATING_ALLOC_ACTION_RATE) {
-                    require_capability('mod/ratingallocate:give_rating', $this->context);
-                    $this->save_ratings_to_db($USER->id, $data->data);
-                    redirect($PAGE->url->out(), get_string('ratings_saved', ratingallocate_MOD_NAME));
-                }
-            }
-        }
-
         // Output starts here
         $output = '';
 
@@ -228,9 +210,13 @@ class ratingallocate {
             // if no choice option exists WARN!
             if (!$DB->record_exists('ratingallocate_choices', array('ratingallocateid' => $this->ratingallocateid))) {
                 $output .= $renderer->notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
-            } else if ($this->ratingallocate->accesstimestart > $now) {
+            } 
+            // To early to rate
+            else if ($this->ratingallocate->accesstimestart > $now) {
                 $output .= $renderer->user_rating_form_tooearly($this);
-            } else if ($this->ratingallocate->accesstimestop < $now) {
+            } 
+            // to late to rate
+            else if ($this->ratingallocate->accesstimestop < $now) {
                 // if publishdate is 0 -> than publishdate is not enabled
                 if ($this->ratingallocate->publishdate) {
                     $output .= $renderer->format_publishdate($this->ratingallocate->publishdate);
@@ -241,7 +227,22 @@ class ratingallocate {
                 } else {
                     $output .= $renderer->format_text(get_string('results_not_yet_published', ratingallocate_MOD_NAME));
                 }
-            } else {
+            } 
+            // rating possible
+            else {
+                // suche das richtige Formular nach Strategie
+                /* @var $strategyform ratingallocate_viewform */
+                $strategyform = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
+                /* @var $mform ratingallocate_strategyform */
+                $mform = new $strategyform($PAGE->url->out(), $this);
+
+                // save submitted data
+                if ($mform->is_validated() && !$mform->is_cancelled() && $data = $mform->get_data()) {
+                    if ($action === RATING_ALLOC_ACTION_RATE) {
+                        $this->save_ratings_to_db($USER->id, $data->data);
+                        redirect($PAGE->url->out(), get_string('ratings_saved', ratingallocate_MOD_NAME));
+                    }
+                }
                 $output .= $renderer->format_text($mform->get_strategy_description_header() . '<br/>' . $mform->describe_strategy());
                 if ($this->ratingallocate->publishdate) {
                     $output .= $renderer->format_publishdate($this->ratingallocate->publishdate);
