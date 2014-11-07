@@ -48,7 +48,9 @@ if ($id) {
 
 
 require_login($course, true, $cm);
+$context = context_module::instance($cm->id);
 
+require_capability('mod/ratingallocate:view', $context);
 $ratingallocateobj = new ratingallocate($ratingallocate, $course, $cm);
 
 $ratingallocateobj->handle_view();
