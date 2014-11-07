@@ -48,11 +48,11 @@ class strategy extends \strategytemplate {
         return array(
             self::MAXZERO => array(// maximale Anzahl 'kannnicht'
                 'text',
-                get_string(self::STRATEGYID . '_setting_maxzero', 'ratingallocate')
+                get_string(self::STRATEGYID . '_setting_maxzero', ratingallocate_MOD_NAME)
             ),
             self::TOTALPOINTS => array(// wie viele Felder es gibt
                 'text',
-                get_string(self::STRATEGYID . '_setting_totalpoints', 'ratingallocate')
+                get_string(self::STRATEGYID . '_setting_totalpoints', ratingallocate_MOD_NAME)
             )
         );
     }
@@ -110,9 +110,9 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
     }
 
     public function describe_strategy() {
-        $output = get_string(strategy::STRATEGYID . '_explain_distribute_points', 'ratingallocate', $this->get_strategyoption(strategy::TOTALPOINTS));
+        $output = get_string(strategy::STRATEGYID . '_explain_distribute_points', ratingallocate_MOD_NAME, $this->get_strategyoption(strategy::TOTALPOINTS));
         $output .= '<br />';
-        $output .= get_string(strategy::STRATEGYID . '_explain_max_zero', 'ratingallocate', $this->get_strategyoption(strategy::MAXZERO));
+        $output .= get_string(strategy::STRATEGYID . '_explain_max_zero', ratingallocate_MOD_NAME, $this->get_strategyoption(strategy::MAXZERO));
         return $output;
     }
 
@@ -138,14 +138,14 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         if ($impossibles > $maxcrossout) {
             foreach ($ratings as $cid => $rating) {
                 if ($rating ['rating'] == 0) {
-                    $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_max_count_zero', 'ratingallocate', $maxcrossout);
+                    $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_max_count_zero', ratingallocate_MOD_NAME, $maxcrossout);
                 }
             }
         }
 
         if ($currentpoints <> $totalpoints) {
             foreach ($ratings as $cid => $rating) {
-                $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_incorrect_totalpoints', 'ratingallocate', $totalpoints);
+                $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_incorrect_totalpoints', ratingallocate_MOD_NAME, $totalpoints);
             }
         }
         return $errors;

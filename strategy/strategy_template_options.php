@@ -36,7 +36,7 @@ abstract class strategytemplate_options extends \strategytemplate {
         return array(
             self::MAXCROSSOUT => array(
                 'text',
-                get_string(self::STRATEGYID . '_setting_crossout', 'ratingallocate')
+                get_string(self::STRATEGYID . '_setting_crossout', ratingallocate_MOD_NAME)
             )
         );
     }
@@ -115,7 +115,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
     }
 
     public function describe_strategy() {
-        return get_string($this->get_max_nos_string_identyfier(), 'ratingallocate', $this->get_max_amount_of_nos());
+        return get_string($this->get_max_nos_string_identyfier(), ratingallocate_MOD_NAME, $this->get_max_amount_of_nos());
     }
 
     public function validation($data, $files) {
@@ -138,7 +138,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
         if ($impossibles > $maxno) {
             foreach ($ratings as $cid => $rating) {
                 if ($rating ['rating'] == 0) {
-                    $errors ['radioarr_' . $cid] = get_string($this->get_max_nos_string_identyfier(), 'ratingallocate', $maxno);
+                    $errors ['radioarr_' . $cid] = get_string($this->get_max_nos_string_identyfier(), ratingallocate_MOD_NAME, $maxno);
                 }
             }
         }

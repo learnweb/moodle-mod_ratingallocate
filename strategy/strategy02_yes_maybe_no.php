@@ -47,16 +47,16 @@ class strategy extends \strategytemplate_options {
         return array(
             self::MAXNO => array(// maximale Anzahl 'kannnicht'
                 'text',
-                get_string(self::STRATEGYID . '_setting_maxno', 'ratingallocate')
+                get_string(self::STRATEGYID . '_setting_maxno', ratingallocate_MOD_NAME)
             )
         );
     }
 
     public static function get_choiceoptions($param = null) {
         $options = array(
-            0 => get_string(strategy::STRATEGYID . '_rating_no', 'ratingallocate'), 
-            3 => get_string(strategy::STRATEGYID . '_rating_maybe', 'ratingallocate'), 
-            5 => get_string(strategy::STRATEGYID . '_rating_yes', 'ratingallocate')
+            0 => get_string(strategy::STRATEGYID . '_rating_no', ratingallocate_MOD_NAME), 
+            3 => get_string(strategy::STRATEGYID . '_rating_maybe', ratingallocate_MOD_NAME), 
+            5 => get_string(strategy::STRATEGYID . '_rating_yes', ratingallocate_MOD_NAME)
         );
         return $options;
     }

@@ -47,11 +47,11 @@ class strategy extends \strategytemplate_options {
         return array(
             self::MAXNO => array(// maximale Anzahl 'kannnicht'
                 'text',
-                get_string(self::STRATEGYID . '_setting_maxno', 'ratingallocate')
+                get_string(self::STRATEGYID . '_setting_maxno', ratingallocate_MOD_NAME)
             ),
             self::COUNTLICKERT => array(// wie viele Felder es gibt
                 'text',
-                get_string(self::STRATEGYID . '_setting_maxlickert', 'ratingallocate')
+                get_string(self::STRATEGYID . '_setting_maxlickert', ratingallocate_MOD_NAME)
             )
         );
     }
@@ -63,12 +63,12 @@ class strategy extends \strategytemplate_options {
     
     public static function get_choiceoptions($maxlickert=0){
         $options = array(
-                        0 => '0 - '.get_string(strategy::STRATEGYID . '_rating_exclude', 'ratingallocate')
+                        0 => '0 - '.get_string(strategy::STRATEGYID . '_rating_exclude', ratingallocate_MOD_NAME)
         );
         
         for ($i = 1; $i <= $maxlickert; $i++) {
             if ($i == $maxlickert) {
-                $options[$i] = $i.' - '.get_string(strategy::STRATEGYID . '_rating_biggestwish', 'ratingallocate');
+                $options[$i] = $i.' - '.get_string(strategy::STRATEGYID . '_rating_biggestwish', ratingallocate_MOD_NAME);
             } else {
                 $options[$i] = $i;
             }

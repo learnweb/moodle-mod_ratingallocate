@@ -46,7 +46,7 @@ class strategy extends \strategytemplate {
         return array(
             self::MINTICKYES => array(
                 'text',
-                get_string(self::STRATEGYID . '_setting_mintickyes', 'ratingallocate')
+                get_string(self::STRATEGYID . '_setting_mintickyes', ratingallocate_MOD_NAME)
             )
         );
     }
@@ -94,7 +94,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             // Beschreibungstext anzeigen
             $mform->addElement('html', '<div>' . $data->explanation . '</div>');
 
-            $mform->addElement('advcheckbox', $ratingelem, get_string(strategy::STRATEGYID . '_accept', 'ratingallocate'), '', null, array(0, 1));
+            $mform->addElement('advcheckbox', $ratingelem, get_string(strategy::STRATEGYID . '_accept', ratingallocate_MOD_NAME), '', null, array(0, 1));
             $mform->setType($ratingelem, PARAM_INT);
 
             if (is_numeric($data->rating) && $data->rating >= 0) {
@@ -107,7 +107,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
     }
 
     public function describe_strategy() {
-        return get_string(strategy::STRATEGYID . '_explain_mintickyes', 'ratingallocate', $this->get_strategyoption(strategy::MINTICKYES));
+        return get_string(strategy::STRATEGYID . '_explain_mintickyes', ratingallocate_MOD_NAME, $this->get_strategyoption(strategy::MINTICKYES));
     }
 
     public function validation($data, $files) {
@@ -129,7 +129,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         if ($checkedaccept < $mintickyes) {
             foreach ($ratings as $cid => $rating) {
                 if ($rating ['rating'] == 0) {
-                    $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_error_mintickyes', 'ratingallocate', $mintickyes);
+                    $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_error_mintickyes', ratingallocate_MOD_NAME, $mintickyes);
                 }
             }
         }

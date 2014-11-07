@@ -86,7 +86,7 @@ class manual_alloc_form extends moodleform {
             $radioarray = array();
             foreach ($userdat as $choiceid => $rat) {
 
-                $optionname = $choices [$choiceid]->title . ' [' . get_string('rated', 'ratingallocate') . ' ' . $rat . "] (" .
+                $optionname = $choices [$choiceid]->title . ' [' . get_string('rated', ratingallocate_MOD_NAME) . ' ' . $rat . "] (" .
                         ($choices [$choiceid]->usercount > 0 ? $choices [$choiceid]->usercount : "0") . "/" . $choices [$choiceid]->maxsize . ")";
                 if ($rat > 0) {
                     $radioarray [] = & $mform->createElement('radio', $ratingelem, '', $optionname, $choiceid, '');
@@ -94,11 +94,11 @@ class manual_alloc_form extends moodleform {
             }
 
             // wichtig, einen Gruppennamen zu setzen, damit später die Errors an der korrekten Stelle angezeigt werden können.
-            $mform->addGroup($radioarray, 'radioarr_' . $userid, get_string('assign_to', 'ratingallocate'), null, false);
+            $mform->addGroup($radioarray, 'radioarr_' . $userid, get_string('assign_to', ratingallocate_MOD_NAME), null, false);
         }
 
         if (!count($ratingdata) > 0) {
-            $mform->addElement('header', 'notification', get_string('no_user_to_allocate', 'ratingallocate'));
+            $mform->addElement('header', 'notification', get_string('no_user_to_allocate', ratingallocate_MOD_NAME));
         } else {
             $this->add_action_buttons();
         }

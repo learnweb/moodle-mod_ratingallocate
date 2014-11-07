@@ -46,7 +46,7 @@ class strategy extends \strategytemplate {
         return array(
             self::COUNTOPTIONS => array(// wie viele Felder es gibt
                 'text',
-                get_string(self::STRATEGYID . '_setting_countoptions', 'ratingallocate')
+                get_string(self::STRATEGYID . '_setting_countoptions', ratingallocate_MOD_NAME)
             )
         );
     }
@@ -83,7 +83,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         }
 
         for ($i = 1; $i <= $choicecounter; $i++) {
-            $mform->addElement('select', 'choice[' . $i . ']', get_string(strategy::STRATEGYID . '_no_choice', 'ratingallocate', $i), $choices);
+            $mform->addElement('select', 'choice[' . $i . ']', get_string(strategy::STRATEGYID . '_no_choice', ratingallocate_MOD_NAME, $i), $choices);
         }
         foreach ($ratingdata as $data) {
             // If there is a valid value in the databse, choose the according rating
@@ -98,7 +98,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
     }
 
     public function describe_strategy() {
-        return get_string(strategy::STRATEGYID . '_explain_choices', 'ratingallocate');
+        return get_string(strategy::STRATEGYID . '_explain_choices', ratingallocate_MOD_NAME);
     }
 
     /**
@@ -131,7 +131,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
         foreach ($data['choice'] as $choiceid => $choice) {
             if (array_key_exists($choice, $usedchoices)) {
-                $errors['choice[' . $choiceid . ']'] = get_string(strategy::STRATEGYID . '_use_only_once', 'ratingallocate');
+                $errors['choice[' . $choiceid . ']'] = get_string(strategy::STRATEGYID . '_use_only_once', ratingallocate_MOD_NAME);
             }
             $usedchoices[$choice] = true;
         }

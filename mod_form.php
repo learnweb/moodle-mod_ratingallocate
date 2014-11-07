@@ -68,7 +68,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field
-        $mform->addElement('text', 'name', get_string('ratingallocatename', 'ratingallocate'), array(
+        $mform->addElement('text', 'name', get_string('ratingallocatename', self::MOD_NAME), array(
             'size' => '64'
         ));
         if (!empty($CFG->formatstringstriptags)) {
@@ -78,7 +78,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('name', 'ratingallocatename', 'ratingallocate');
+        $mform->addHelpButton('name', 'ratingallocatename', self::MOD_NAME);
 
         // Adding the standard "intro" and "introformat" fields
         $this->add_intro_editor();

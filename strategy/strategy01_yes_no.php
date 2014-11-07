@@ -46,15 +46,15 @@ class strategy extends \strategytemplate_options {
         return array(
             self::MAXCROSSOUT => array(
                 'text',
-                get_string(self::STRATEGYID . '_setting_crossout', 'ratingallocate')
+                get_string(self::STRATEGYID . '_setting_crossout', ratingallocate_MOD_NAME)
             )
         );
     }
     
     public static function get_choiceoptions($param = null){
         $options = array(
-                        0 => get_string(strategy::STRATEGYID . '_rating_crossout', 'ratingallocate'),
-                        1 => get_string(strategy::STRATEGYID . '_rating_choose', 'ratingallocate')
+                        0 => get_string(strategy::STRATEGYID . '_rating_crossout', ratingallocate_MOD_NAME),
+                        1 => get_string(strategy::STRATEGYID . '_rating_choose', ratingallocate_MOD_NAME)
         );
         return $options;
     }

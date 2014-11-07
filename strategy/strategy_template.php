@@ -66,7 +66,7 @@ abstract class ratingallocate_strategyform extends \moodleform  {
     public abstract function describe_strategy();
 
     public function get_strategy_description_header() {
-        return get_string('strategyname', 'ratingallocate', $this->get_strategyname());
+        return get_string('strategyname', ratingallocate_MOD_NAME, $this->get_strategyname());
     }
 
     /**
@@ -78,7 +78,7 @@ abstract class ratingallocate_strategyform extends \moodleform  {
     }
 
     protected function get_strategyname() {
-        return get_string($this->ratingallocate->ratingallocate->strategy.'_name','ratingallocate');
+        return get_string($this->ratingallocate->ratingallocate->strategy.'_name',ratingallocate_MOD_NAME);
     }
 
     /**
@@ -124,7 +124,7 @@ abstract class strategytemplate {
      * Return the name of the strategy
      */
     public static function get_strategyname() {
-        return get_string(self::get_strategyid().'_name','ratingallocate');
+        return get_string(self::get_strategyid().'_name',ratingallocate_MOD_NAME);
     }
     
     public static function get_strategyid() {
