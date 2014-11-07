@@ -26,6 +26,7 @@
  */
 defined('MOODLE_INTERNAL') || die();
 require_once(dirname(__FILE__) . '/form_manual_allocation.php');
+require_once(dirname(__FILE__) . '/renderable.php');
 // Takes care of loading all the solvers
 require_once(dirname(__FILE__) . '/solver/ford-fulkerson-koegel.php');
 require_once(dirname(__FILE__) . '/solver/edmonds-karp.php');
@@ -136,6 +137,11 @@ class ratingallocate {
     public $db; // public because solvers need it, too
 
     /**
+     * @var mod_ratingallocate_renderer the custom renderer for this module
+     */
+    protected $renderer;
+
+    /**
      * Returns all users enrolled in the course the ratingallocate is in
      */
     public function get_raters_in_course() {
@@ -168,11 +174,7 @@ class ratingallocate {
         // add_to_log($this->course->id, 'ratingallocate', 'view', "view.php?id={$this->coursemodule->id}", $this->ratingallocate->name, $this->coursemodule->id);
         // Print the page header
 
-        $PAGE->set_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id));
-        $PAGE->set_title(format_string($this->ratingallocate->name));
-        $PAGE->set_heading(format_string($this->course->fullname));
-        $PAGE->set_context($this->context);
-        $PAGE->set_cacheable(false);
+        $PAGE->set_cacheable(false); //TODO necessary
 
         // other things you may want to set - remove if not needed
         // $PAGE->set_focuscontrol('some-html-id');
@@ -211,43 +213,40 @@ class ratingallocate {
         }
 
         // Output starts here
-        echo $OUTPUT->header();
+        $output = '';
 
         /* @var $renderer mod_ratingallocate_renderer */
-        $renderer = $PAGE->get_renderer('mod_ratingallocate');
-        if ($this->ratingallocate->intro) { // Conditions to show the intro can change to look for own settings or whatever
-            echo $OUTPUT->box(format_module_intro(ratingallocate_MOD_NAME, $this->ratingallocate, $this->coursemodule->id), 'generalbox mod_introbox', 'ratingallocateintro');
-        }
+        $renderer = $this->get_renderer();
 
         // Get current time
         $now = time();
 
         // Print data and controls for students, but not for admins
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
-            echo $renderer->heading(get_string('your_rating', ratingallocate_MOD_NAME), 2);
+            $output .= $renderer->heading(get_string('your_rating', ratingallocate_MOD_NAME), 2);
             global $DB;
             // if no choice option exists WARN!
             if (!$DB->record_exists('ratingallocate_choices', array('ratingallocateid' => $this->ratingallocateid))) {
-                echo $renderer->notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
+                $output .= $renderer->notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
             } else if ($this->ratingallocate->accesstimestart > $now) {
-                echo $renderer->user_rating_form_tooearly($this);
+                $output .= $renderer->user_rating_form_tooearly($this);
             } else if ($this->ratingallocate->accesstimestop < $now) {
                 // if publishdate is 0 -> than publishdate is not enabled
                 if ($this->ratingallocate->publishdate) {
-                    echo $renderer->format_publishdate($this->ratingallocate->publishdate);
+                    $output .= $renderer->format_publishdate($this->ratingallocate->publishdate);
                 }
                 // if results already published
                 if ($this->ratingallocate->published == true) {
-                    echo $renderer->user_rating_form_finished($this->get_allocations_for_user($USER->id));
+                    $output .= $renderer->user_rating_form_finished($this->get_allocations_for_user($USER->id));
                 } else {
-                    echo $renderer->format_text(get_string('results_not_yet_published', ratingallocate_MOD_NAME));
+                    $output .= $renderer->format_text(get_string('results_not_yet_published', ratingallocate_MOD_NAME));
                 }
             } else {
-                echo $renderer->format_text($mform->get_strategy_description_header() . '<br/>' . $mform->describe_strategy());
+                $output .= $renderer->format_text($mform->get_strategy_description_header() . '<br/>' . $mform->describe_strategy());
                 if ($this->ratingallocate->publishdate) {
-                    echo $renderer->format_publishdate($this->ratingallocate->publishdate);
+                    $output .= $renderer->format_publishdate($this->ratingallocate->publishdate);
                 }
-                echo $mform->to_html();
+                $output .= $mform->to_html();
             }
         }
 
@@ -257,13 +256,13 @@ class ratingallocate {
             if (!$mform->is_cancelled() && $data = $mform->get_data()) {
                 if ($action == ACTION_ALLOCATE_MANUAL_SAVE) {
                     $this->save_manual_allocation_form($data);
-                    echo $OUTPUT->box(get_string('manual_allocation_saved', ratingallocate_MOD_NAME));
+                    $output .= $OUTPUT->box(get_string('manual_allocation_saved', ratingallocate_MOD_NAME));
                 }
             } else {
-                echo $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
-                echo $OUTPUT->box('<p>' . get_string('allocation_manual_explain', ratingallocate_MOD_NAME) . '</p>');
+                $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
+                $output .= $OUTPUT->box('<p>' . get_string('allocation_manual_explain', ratingallocate_MOD_NAME) . '</p>');
 
-                echo $mform->to_html();
+                $output .= $mform->to_html();
             }
         }
 
@@ -271,53 +270,57 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             // Notify if there aren't at least two rateable groups
             if (count($this->get_rateable_choices()) < 2) {
-                echo $renderer->notification(get_string('at_least_two_rateable_groups', ratingallocate_MOD_NAME));
+                $output .= $renderer->notification(get_string('at_least_two_rateable_groups', ratingallocate_MOD_NAME));
             }
 
             // Print group distribution algorithm control
             if ($this->ratingallocate->accesstimestop < $now) {
-                echo $renderer->algorithm_control_ready();
+                $output .= $renderer->algorithm_control_ready();
             } else {
-                echo $renderer->algorithm_control_tooearly();
+                $output .= $renderer->algorithm_control_tooearly();
             }
 
             // Print distribution table
             if ($this->ratingallocate->accesstimestop < $now) {
-                echo $renderer->distribution_table_for_ratingallocate($this);
+                $output .= $renderer->distribution_table_for_ratingallocate($this);
 
-                echo $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
+                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                     'ratingallocateid' => $this->ratingallocateid,
                     'action' => ACTION_ALLOCATE_SHOW_MANUALFORM)), get_string('manual_allocation_form', ratingallocate_MOD_NAME));
 
                 // if results not published yet, then do now
                 if ($this->ratingallocate->published == false) {
-                    echo $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
+                    $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                         'ratingallocateid' => $this->ratingallocateid,
                         'action' => ACTION_PUBLISH_ALLOCATIONS)), get_string('publish_allocation', ratingallocate_MOD_NAME));
                 }
                 if ($action == ACTION_PUBLISH_ALLOCATIONS) {
                     $this->publish_allocation();
-                    echo $OUTPUT->notification( get_string('distribution_published', ratingallocate_MOD_NAME), 'notifysuccess');
+                    $output .= $OUTPUT->notification( get_string('distribution_published', ratingallocate_MOD_NAME), 'notifysuccess');
                 }
             }
 
             // Print ratings table
             if ($action == RATING_ALLOC_SHOW_TABLE) {
-                echo $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
+                $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
                         $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(), $this->get_all_allocations());
             } else {
-                echo $renderer->show_ratings_table_button();
+                $output .= $renderer->show_ratings_table_button();
             }
 
-            echo $OUTPUT->heading(get_string('export_options', ratingallocate_MOD_NAME), 2);
-            echo $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/export_ratings_csv.php', array('id' => $this->coursemodule->id,
+            $output .= $OUTPUT->heading(get_string('export_options', ratingallocate_MOD_NAME), 2);
+            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/export_ratings_csv.php', array('id' => $this->coursemodule->id,
                 'ratingallocateid' => $this->ratingallocate->id)), get_string('download_votetest_allocation', ratingallocate_MOD_NAME));
-            echo $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/solver/export_lp_solve.php', array('id' => $this->coursemodule->id,
+            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/solver/export_lp_solve.php', array('id' => $this->coursemodule->id,
                 'ratingallocateid' => $this->ratingallocate->id)), get_string('download_problem_mps_format', ratingallocate_MOD_NAME));
         }
 
         // Finish the page
-        echo $OUTPUT->footer();
+        $header_info = new ratingallocate_header($this->ratingallocate, $this->context, true,
+                $this->coursemodule->id);
+        $header = $this->get_renderer()->render($header_info);
+        $footer = $this->get_renderer()->render_footer();
+        return $header . $output . $footer;
     }
 
     /**
@@ -625,4 +628,17 @@ class ratingallocate {
         $transaction->allow_commit();
     }
 
+    /**
+     * Lazy load the page renderer and expose the renderer to plugin.
+     *
+     * @return mod_rlatingallocate_renderer
+     */
+    public function get_renderer() {
+        global $PAGE;
+        if ($this->renderer ) {
+            return $this->renderer;
+        }
+        $this->renderer = $PAGE->get_renderer('mod_ratingallocate');
+        return $this->renderer;
+    }
 }

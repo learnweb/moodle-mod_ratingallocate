@@ -28,6 +28,46 @@ require_once(dirname(__FILE__) . '/locallib.php');
 class mod_ratingallocate_renderer extends plugin_renderer_base {
 
     /**
+     * Render the header.
+     *
+     * @param ratingallocate_header $header
+     * @return string
+     */
+    public function render_ratingallocate_header(ratingallocate_header $header) {
+        $o = '';
+
+        $this->page->set_title(get_string('pluginname', ratingallocate_MOD_NAME));
+        $this->page->set_heading($this->page->course->fullname);
+        // $this->page->requires->css('/mod/ratingallocate/style/ratingallocate.css');
+
+        $o .= $this->output->header();
+        $heading = format_string($header->ratingallocate->name, false, array('context' => $header->context));
+        $o .= $this->output->heading($heading);
+
+        if ($header->showintro) {
+            $intro_text = format_module_intro('ratingallocate', $header->ratingallocate, 
+                    $header->coursemoduleid);
+            if ($intro_text) {
+                $o .= $this->output->box_start('generalbox boxaligncenter', 'intro');
+                $o .= $intro_text;
+                $o .= $this->output->box_end();
+            }
+        }
+        return $o;
+    }
+
+    /**
+     * Page is done - render the footer.
+     *
+     * @return void
+     */
+    public function render_footer() {
+        $o = '';
+        $o .= $this->output->footer();
+        return $o;
+    }
+
+    /**
      * nur allgemeine Informationen
      * @param ratingallocate $ratingallocate
      * @return unknown
