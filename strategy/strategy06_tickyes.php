@@ -107,12 +107,12 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
     }
 
     public function describe_strategy() {
-        return get_string(strategy::STRATEGYID . '_explain_mintickyes', ratingallocate_MOD_NAME, $this->get_strategyoption(strategy::MINTICKYES));
+        return get_string(strategy::STRATEGYID . '_explain_mintickyes', ratingallocate_MOD_NAME, $this->get_strategysetting(strategy::MINTICKYES));
     }
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        $mintickyes = $this->get_strategyoption(strategy::MINTICKYES);
+        $mintickyes = $this->get_strategysetting(strategy::MINTICKYES);
 
         if (!array_key_exists('data', $data) or count($data ['data']) < 2) {
             return $errors;

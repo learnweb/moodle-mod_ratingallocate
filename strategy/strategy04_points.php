@@ -110,15 +110,15 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
     }
 
     public function describe_strategy() {
-        $output = get_string(strategy::STRATEGYID . '_explain_distribute_points', ratingallocate_MOD_NAME, $this->get_strategyoption(strategy::TOTALPOINTS));
+        $output = get_string(strategy::STRATEGYID . '_explain_distribute_points', ratingallocate_MOD_NAME, $this->get_strategysetting(strategy::TOTALPOINTS));
         $output .= '<br />';
-        $output .= get_string(strategy::STRATEGYID . '_explain_max_zero', ratingallocate_MOD_NAME, $this->get_strategyoption(strategy::MAXZERO));
+        $output .= get_string(strategy::STRATEGYID . '_explain_max_zero', ratingallocate_MOD_NAME, $this->get_strategysetting(strategy::MAXZERO));
         return $output;
     }
 
     public function validation($data, $files) {
-        $maxcrossout = $this->get_strategyoption(strategy::MAXZERO);
-        $totalpoints = $this->get_strategyoption(strategy::TOTALPOINTS);
+        $maxcrossout = $this->get_strategysetting(strategy::MAXZERO);
+        $totalpoints = $this->get_strategysetting(strategy::TOTALPOINTS);
         $errors = parent::validation($data, $files);
 
         if (!array_key_exists('data', $data) or count($data ['data']) < 2) {

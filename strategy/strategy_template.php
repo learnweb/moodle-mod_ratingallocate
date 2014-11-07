@@ -86,7 +86,7 @@ abstract class ratingallocate_strategyform extends \moodleform  {
      * @param string $key
      * @returns the specific option or null if it does not exist
      */
-    protected function get_strategyoption($key) {
+    protected function get_strategysetting($key) {
         if(array_key_exists($key, $this->strategyoptions))  {
             return $this->strategyoptions[$key];
         }

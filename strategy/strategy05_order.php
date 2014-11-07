@@ -75,7 +75,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
         $mform->addElement('hidden', 'courseid', $COURSE->id);
         $mform->setType('courseid', PARAM_INT);
-        $choicecounter = $this->get_strategyoption(strategy::COUNTOPTIONS);
+        $choicecounter = $this->get_strategysetting(strategy::COUNTOPTIONS);
         $choices = array();
 
         foreach ($ratingdata as $data) {

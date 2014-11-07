@@ -72,7 +72,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform 
     }
     
     protected function get_max_amount_of_nos() {
-        return $this->get_strategyoption(strategy::MAXCROSSOUT);
+        return $this->get_strategysetting(strategy::MAXCROSSOUT);
     }
 
     protected function get_max_nos_string_identyfier() {
