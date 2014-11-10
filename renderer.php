@@ -67,6 +67,16 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         return $o;
     }
 
+    public function render_ratingallocate_strategyform($mform) {
+        /* @var $mform ratingallocate_strategyform */
+        $o = '';
+        $o .= $this->heading(get_string('your_rating', ratingallocate_MOD_NAME), 2);
+        $o .= $this->format_text($mform->get_strategy_description_header() . '<br/>' . $mform->describe_strategy());
+        $o .= $mform->to_html();
+
+        return $o;
+    }
+
     /**
      * nur allgemeine Informationen
      * @param ratingallocate $ratingallocate
