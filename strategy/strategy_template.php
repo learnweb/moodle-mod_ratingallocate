@@ -44,7 +44,6 @@ abstract class ratingallocate_strategyform extends \moodleform  {
      */
     public function __construct($url, \ratingallocate $ratingallocate) {
         $this->ratingallocate = $ratingallocate;
-        parent::__construct($url);
         //load strategy options
         $allstrategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
         $strategyid = $ratingallocate->ratingallocate->strategy;
@@ -53,10 +52,18 @@ abstract class ratingallocate_strategyform extends \moodleform  {
         } else {
             $this->strategyoptions = array();
         }
+        parent::__construct($url);
     }
 
-    /** inherited from moodleform */
+    /**
+     * inherited from moodleform: a child class must call parent::definition() first to execute
+     * ratingallocate_strategyform::definition
+     */
     protected function definition() {
+        $mform = $this->_form;
+
+        $mform->addElement('hidden', 'action', RATING_ALLOC_ACTION_RATE);
+        $mform->setType('action', PARAM_TEXT);
     }
 
     /**
@@ -74,7 +81,12 @@ abstract class ratingallocate_strategyform extends \moodleform  {
      * So we don't have to call display().
      */
     public function to_html() {
-        return $this->_form->toHtml();
+        /* usually $mform->display() is called which echos the form instead of returning it */
+        $o = '';
+        $this->definition_after_data();
+        $o .= $this->_form->getValidationScript();
+        $o .= $this->_form->toHtml();
+        return $o;
     }
 
     protected function get_strategyname() {

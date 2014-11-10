@@ -176,9 +176,6 @@ class ratingallocate {
 
         $PAGE->set_cacheable(false); //TODO necessary
 
-        // other things you may want to set - remove if not needed
-        // $PAGE->set_focuscontrol('some-html-id');
-        // $PAGE->add_body_class('ratingallocate-'.$somevar);
         // Process form: Start distribution and redirect after finishing
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             // Start the distribution algorithm
@@ -215,7 +212,6 @@ class ratingallocate {
 
         // Print data and controls for students, but not for admins
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
-            $output .= $renderer->heading(get_string('your_rating', ratingallocate_MOD_NAME), 2);
             global $DB;
             // if no choice option exists WARN!
             if (!$DB->record_exists('ratingallocate_choices', array('ratingallocateid' => $this->ratingallocateid))) {
@@ -237,11 +233,7 @@ class ratingallocate {
                     }
                 }
 
-                $output .= $renderer->format_text($mform->get_strategy_description_header() . '<br/>' . $mform->describe_strategy());
-                if ($this->ratingallocate->publishdate) {
-                    $output .= $renderer->format_publishdate($this->ratingallocate->publishdate);
-                }
-                $output .= $mform->to_html();
+                $output .= $renderer->render_ratingallocate_strategyform($mform);
             }
         }
 
@@ -435,15 +427,6 @@ class ratingallocate {
      * Removes all allocations for choices in $ratingallocateid
      */
     public function clear_all_allocations() {
-        /* $memberships = $this->get_all_allocations();
-
-          foreach ($memberships as $userid => $choices) {
-          foreach ($choices as $choiceid => $ignored) {
-          $this->remove_allocation($choiceid, $userid);
-          }
-          } */
-
-        // maybe better performance
         $this->db->delete_records('ratingallocate_allocations', array('ratingallocateid' => intval($this->ratingallocateid)));
     }
 

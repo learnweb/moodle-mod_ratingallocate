@@ -67,6 +67,16 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         return $o;
     }
 
+    public function render_ratingallocate_strategyform($mform) {
+        /* @var $mform ratingallocate_strategyform */
+        $o = '';
+        $o .= $this->heading(get_string('your_rating', ratingallocate_MOD_NAME), 2);
+        $o .= $this->format_text($mform->get_strategy_description_header() . '<br/>' . $mform->describe_strategy());
+        $o .= $mform->to_html();
+
+        return $o;
+    }
+
     /**
      * render current choice status
      * @param ratingallocate_choice_status $status
@@ -248,9 +258,10 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     }
 
     public function format_text($text) {
+        $output = '';
 
-        $output = $this->box_start();
-        $output .= $text;
+        $output .= $this->box_start();
+        $output .= format_text($text);
         $output .= $this->box_end();
 
         return $output;
