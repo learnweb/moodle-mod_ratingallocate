@@ -200,6 +200,16 @@ class ratingallocate {
         /* @var $renderer mod_ratingallocate_renderer */
         $renderer = $this->get_renderer();
 
+        $choice_status = new ratingallocate_choice_status();
+        $choice_status->view_type = ratingallocate_choice_status::STUDENT_VIEW;
+        $choice_status->accesstimestart = $this->ratingallocate->accesstimestart;
+        $choice_status->accesstimestop = $this->ratingallocate->accesstimestop;
+        $choice_status->publishdate = $this->ratingallocate->publishdate;
+        $choice_status->is_published = $this->ratingallocate->published;
+        $choice_status->available_choices = $this->get_rateable_choices();
+        $choice_status->own_choices = array_filter($this->get_rating_data_for_user($USER->id),function($elem) {return !empty($elem->rating);});
+        $output .= $renderer->render($choice_status);
+
         // Get current time
         $now = time();
 
@@ -210,39 +220,23 @@ class ratingallocate {
             // if no choice option exists WARN!
             if (!$DB->record_exists('ratingallocate_choices', array('ratingallocateid' => $this->ratingallocateid))) {
                 $output .= $renderer->notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
-            } 
-            // To early to rate
-            else if ($this->ratingallocate->accesstimestart > $now) {
-                $output .= $renderer->user_rating_form_tooearly($this);
-            } 
-            // to late to rate
-            else if ($this->ratingallocate->accesstimestop < $now) {
-                // if publishdate is 0 -> than publishdate is not enabled
-                if ($this->ratingallocate->publishdate) {
-                    $output .= $renderer->format_publishdate($this->ratingallocate->publishdate);
-                }
-                // if results already published
-                if ($this->ratingallocate->published == true) {
-                    $output .= $renderer->user_rating_form_finished($this->get_allocations_for_user($USER->id));
-                } else {
-                    $output .= $renderer->format_text(get_string('results_not_yet_published', ratingallocate_MOD_NAME));
-                }
-            } 
+            }
             // rating possible
-            else {
+            else if ($this->ratingallocate->accesstimestart < $now && $this->ratingallocate->accesstimestop > $now) {
                 // suche das richtige Formular nach Strategie
                 /* @var $strategyform ratingallocate_viewform */
                 $strategyform = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
                 /* @var $mform ratingallocate_strategyform */
                 $mform = new $strategyform($PAGE->url->out(), $this);
 
-                // save submitted data
+                // save submitted data and redirect
                 if ($mform->is_validated() && !$mform->is_cancelled() && $data = $mform->get_data()) {
                     if ($action === RATING_ALLOC_ACTION_RATE) {
                         $this->save_ratings_to_db($USER->id, $data->data);
                         redirect($PAGE->url->out(), get_string('ratings_saved', ratingallocate_MOD_NAME));
                     }
                 }
+
                 $output .= $renderer->format_text($mform->get_strategy_description_header() . '<br/>' . $mform->describe_strategy());
                 if ($this->ratingallocate->publishdate) {
                     $output .= $renderer->format_publishdate($this->ratingallocate->publishdate);
@@ -270,8 +264,8 @@ class ratingallocate {
         // Print data and controls for teachers
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             // Notify if there aren't at least two rateable groups
-            if (count($this->get_rateable_choices()) < 2) {
-                $output .= $renderer->notification(get_string('at_least_two_rateable_groups', ratingallocate_MOD_NAME));
+            if (count($this->get_rateable_choices()) < 1) {
+                $output .= $renderer->notification(get_string('at_least_one_rateable_choices_needed', ratingallocate_MOD_NAME));
             }
 
             // Print group distribution algorithm control
