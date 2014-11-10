@@ -39,11 +39,11 @@ class strategy extends \strategytemplate_options {
     const MAXNO = 'maxno';
     const COUNTLICKERT = 'countlickert';
 
-    public static function get_strategyid() {
+    public function get_strategyid() {
         return self::STRATEGYID;
     }
 
-    public static function get_static_settingfields() {
+    public function get_static_settingfields() {
         return array(
             self::MAXNO => array(// maximale Anzahl 'kannnicht'
                 'text',
@@ -56,12 +56,12 @@ class strategy extends \strategytemplate_options {
         );
     }
     
-    public static function get_dynamic_settingsfields(moodleform $mform){
+    public function get_dynamic_settingfields(moodleform $mform){
         $strategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
         $maxlickert = intval($strategyoptions [strategy::STRATEGYID] [strategy::COUNTLICKERT]);
     }
     
-    public static function get_choiceoptions($maxlickert=0){
+    public function get_choiceoptions($maxlickert=0){
         $options = array(
                         0 => '0 - '.get_string(strategy::STRATEGYID . '_rating_exclude', ratingallocate_MOD_NAME)
         );

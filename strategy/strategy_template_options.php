@@ -31,23 +31,12 @@ require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template.php');
 
 abstract class strategytemplate_options extends \strategytemplate {
-
-    public static function get_static_settingfields() {
-        return array(
-            self::MAXCROSSOUT => array(
-                'text',
-                get_string(self::STRATEGYID . '_setting_crossout', ratingallocate_MOD_NAME)
-            )
-        );
-    }
-    
+   
     /**
      * Return the different options for each choice (including titles)
      * @return array: value_of_option => title_of_option
      */
-    public static function get_choiceoptions($param = null){
-        return static::get_choiceoptions($param);
-    }
+    public abstract function get_choiceoptions($param = null);
 }
 
 /**

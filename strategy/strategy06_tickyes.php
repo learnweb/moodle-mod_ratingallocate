@@ -38,11 +38,11 @@ class strategy extends \strategytemplate {
     const STRATEGYID = 'strategy_tickyes';
     const MINTICKYES = 'mintickyes';
 
-    public static function get_strategyid() {
+    public function get_strategyid() {
         return self::STRATEGYID;
     }
-
-    public static function get_static_settingfields() {
+    public function get_dynamic_settingfields(moodleform $mform){}
+    public function get_static_settingfields() {
         return array(
             self::MINTICKYES => array(
                 'text',

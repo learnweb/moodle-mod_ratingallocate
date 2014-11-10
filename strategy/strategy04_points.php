@@ -40,11 +40,11 @@ class strategy extends \strategytemplate {
     const TOTALPOINTS = 'totalpoints';
 
 
-    public static function get_strategyid() {
+    public function get_strategyid() {
         return self::STRATEGYID;
     }
-
-    public static function get_static_settingfields() {
+    public function get_dynamic_settingfields(moodleform $mform){}
+    public function get_static_settingfields() {
         return array(
             self::MAXZERO => array(// maximale Anzahl 'kannnicht'
                 'text',

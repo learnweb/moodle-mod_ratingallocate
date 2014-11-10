@@ -38,11 +38,11 @@ class strategy extends \strategytemplate_options {
     const STRATEGYID = 'strategy_yesno';
     const MAXCROSSOUT = 'maxcrossout'; // maxcrossout: Anzahl maximaler abzulehnender
 
-    public static function get_strategyid() {
+    public function get_strategyid() {
         return self::STRATEGYID;
     }
 
-    public static function get_static_settingfields() {
+    public function get_static_settingfields() {
         return array(
             self::MAXCROSSOUT => array(
                 'text',
@@ -51,7 +51,9 @@ class strategy extends \strategytemplate_options {
         );
     }
     
-    public static function get_choiceoptions($param = null){
+    public function get_dynamic_settingfields(moodleform $mform){}
+    
+    public function get_choiceoptions($param = null){
         $options = array(
                         0 => get_string(strategy::STRATEGYID . '_rating_crossout', ratingallocate_MOD_NAME),
                         1 => get_string(strategy::STRATEGYID . '_rating_choose', ratingallocate_MOD_NAME)

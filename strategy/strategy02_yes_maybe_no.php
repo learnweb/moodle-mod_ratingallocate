@@ -39,11 +39,11 @@ class strategy extends \strategytemplate_options {
     const STRATEGYID = 'strategy_yesmaybeno';
     const MAXNO = 'maxno';
 
-    public static function get_strategyid() {
+    public function get_strategyid() {
         return self::STRATEGYID;
     }
     
-    public static function get_static_settingfields() {
+    public function get_static_settingfields() {
         return array(
             self::MAXNO => array(// maximale Anzahl 'kannnicht'
                 'text',
@@ -51,8 +51,8 @@ class strategy extends \strategytemplate_options {
             )
         );
     }
-
-    public static function get_choiceoptions($param = null) {
+    public function get_dynamic_settingfields(moodleform $mform){}
+    public function get_choiceoptions($param = null) {
         $options = array(
             0 => get_string(strategy::STRATEGYID . '_rating_no', ratingallocate_MOD_NAME), 
             3 => get_string(strategy::STRATEGYID . '_rating_maybe', ratingallocate_MOD_NAME), 

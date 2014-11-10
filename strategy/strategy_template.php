@@ -27,6 +27,39 @@ use Symfony\Component\Validator\Constraints\Optional;
  */
 
 /**
+ * Template for Strategies, which present the interface in which the user votes
+ * @copyright 2014 M Schulze
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class strategytemplate {
+
+    /** @const STRATEGYID string identifier, for language translation, etc.*/
+    const STRATEGYID = '';
+
+    /**
+     * Return the dynamic Settingsfields the strategy needes
+     * If any dynamic Settingsfields is returned, a refresh button will be included in the view.
+     * @param $mform The required data can be drawn from the moodleform
+     */
+    public abstract function get_dynamic_settingfields(moodleform $mform);
+
+    /**
+     * Return the static Settingsfields the strategy needes
+     */
+    public abstract function get_static_settingfields();
+
+    /**
+     * Return the name of the strategy
+     */
+    public function get_strategyname() {
+        return get_string($this->get_strategyid().'_name',ratingallocate_MOD_NAME);
+    }
+
+    public abstract function get_strategyid();
+}
+
+
+/**
  * Form that asks users to express their ratings for choices
  * @copyright 2014 M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -103,43 +136,5 @@ abstract class ratingallocate_strategyform extends \moodleform  {
             return $this->strategyoptions[$key];
         }
         return null;
-    }
-}
-
-/**
- * Template for Strategies, which present the interface in which the user votes
- * @copyright 2014 M Schulze
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-abstract class strategytemplate {
-
-    /** @const STRATEGYID string identifier, for language translation, etc.*/
-    const STRATEGYID = '';
-
-    /**
-     * Return the dynamic Settingsfields the strategy needes
-     * If any dynamic Settingsfields is returned, a refresh button will be included in the view.
-     * @param $mform The required data can be drawn from the moodleform
-     */
-    public static function get_dynamic_settingfields(moodleform $mform) {
-        
-    }
-    
-    /**
-     * Return the static Settingsfields the strategy needes
-     */
-    public static function get_static_settingfields() {
-    
-    }
-
-    /**
-     * Return the name of the strategy
-     */
-    public static function get_strategyname() {
-        return get_string(self::get_strategyid().'_name',ratingallocate_MOD_NAME);
-    }
-    
-    public static function get_strategyid() {
-        return static::get_strategyid();
     }
 }
