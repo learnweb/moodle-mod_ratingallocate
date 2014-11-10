@@ -29,6 +29,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/locallib.php');
 
 $id = required_param('id', PARAM_INT);   // course
 
@@ -39,6 +40,7 @@ require_course_login($course);
 add_to_log($course->id, 'ratingallocate', 'view all', 'index.php?id='.$course->id, '');
 
 $coursecontext = context_course::instance($course->id);
+require_capability('mod/ratingallocate:addinstance', $coursecontext);
 
 $PAGE->set_url('/mod/ratingallocate/index.php', array('id' => $id));
 $PAGE->set_title(format_string($course->fullname));
@@ -66,12 +68,12 @@ if ($course->format == 'weeks') {
 foreach ($ratingallocates as $ratingallocate) {
     if (!$ratingallocate->visible) {
         $link = html_writer::link(
-            new moodle_url('/mod/ratingallocate.php', array('id' => $ratingallocate->coursemodule)),
+            new moodle_url('/mod/ratingallocate/view.php', array('id' => $ratingallocate->coursemodule)),
             format_string($ratingallocate->name, true),
             array('class' => 'dimmed'));
     } else {
         $link = html_writer::link(
-            new moodle_url('/mod/ratingallocate.php', array('id' => $ratingallocate->coursemodule)),
+            new moodle_url('/mod/ratingallocate/view.php', array('id' => $ratingallocate->coursemodule)),
             format_string($ratingallocate->name, true));
     }
 
