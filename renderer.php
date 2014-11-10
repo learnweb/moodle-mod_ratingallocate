@@ -108,9 +108,10 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     }
 
     public function format_text($text) {
+        $output = '';
 
-        $output = $this->box_start();
-        $output .= $text;
+        $output .= $this->box_start();
+        $output .= format_text($text);
         $output .= $this->box_end();
 
         return $output;
