@@ -65,17 +65,12 @@ class strategy extends \strategytemplate {
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
     public function definition() {
-        global $COURSE, $PAGE, $DB, $USER;
+        global $USER;
+        parent::definition();
 
         $mform = $this->_form;
 
         $ratingdata = $this->ratingallocate->get_rating_data_for_user($USER->id);
-
-        $mform->addElement('hidden', 'action', RATING_ALLOC_ACTION_RATE);
-        $mform->setType('action', PARAM_TEXT);
-
-        $mform->addElement('hidden', 'courseid', $COURSE->id);
-        $mform->setType('courseid', PARAM_INT);
 
         foreach ($ratingdata as $data) {
             $headerelem = 'head_ratingallocate_' . $data->choiceid;
@@ -106,7 +101,6 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         }
 
         $this->add_action_buttons();
-
     }
 
     public function describe_strategy() {

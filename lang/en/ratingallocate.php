@@ -121,14 +121,14 @@ $string['timespan_votes_open'] = 'Users can give ratings';
 /* Specific to Strategy01, YesNo */
 $string['strategy_yesno_name'] = 'Yes-No';
 $string['strategy_yesno_setting_crossout'] = 'Maximum amount the user can rate with "no"';
-$string['strategy_yesno_max_no'] = 'You may only assign "No" to {$a} groups';
+$string['strategy_yesno_max_no'] = 'You may only assign "No" to {$a} choices';
 $string['strategy_yesno_rating_crossout'] = 'No';
 $string['strategy_yesno_rating_choose'] = 'Yes';
 $string['strategy_yesno_maximum_crossout'] = 'You may only assign "No" to a most {$a} choices';
 
 /* Specific to Strategy02, YesMayBeNo */
 $string['strategy_yesmaybeno_name'] = 'Yes-Maybe-No';
-$string['strategy_yesmaybeno_max_no'] = 'You may only assign "No" to {$a} groups';
+$string['strategy_yesmaybeno_max_no'] = 'You may only assign "No" to {$a} choices';
 $string['strategy_yesmaybeno_rating_no'] = 'No';
 $string['strategy_yesmaybeno_rating_yes'] = 'Yes';
 $string['strategy_yesmaybeno_rating_maybe'] = 'Maybe';

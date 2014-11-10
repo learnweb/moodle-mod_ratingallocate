@@ -55,8 +55,15 @@ abstract class ratingallocate_strategyform extends \moodleform  {
         parent::__construct($url);
     }
 
-    /** inherited from moodleform */
+    /**
+     * inherited from moodleform: a child class must call parent::definition() first to execute
+     * ratingallocate_strategyform::definition
+     */
     protected function definition() {
+        $mform = $this->_form;
+
+        $mform->addElement('hidden', 'action', RATING_ALLOC_ACTION_RATE);
+        $mform->setType('action', PARAM_TEXT);
     }
 
     /**
