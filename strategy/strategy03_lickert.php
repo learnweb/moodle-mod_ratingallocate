@@ -85,6 +85,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform 
     //Already specified by parent class
 
     public function get_choiceoptions($params = null) {
+        $params = $this->get_strategysetting(strategy::COUNTLICKERT);
         return strategy::get_choiceoptions($params);
     }
 

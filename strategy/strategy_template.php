@@ -44,7 +44,6 @@ abstract class ratingallocate_strategyform extends \moodleform  {
      */
     public function __construct($url, \ratingallocate $ratingallocate) {
         $this->ratingallocate = $ratingallocate;
-        parent::__construct($url);
         //load strategy options
         $allstrategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
         $strategyid = $ratingallocate->ratingallocate->strategy;
@@ -53,6 +52,7 @@ abstract class ratingallocate_strategyform extends \moodleform  {
         } else {
             $this->strategyoptions = array();
         }
+        parent::__construct($url);
     }
 
     /** inherited from moodleform */
