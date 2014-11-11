@@ -170,7 +170,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         }
         $mform->disabledIf($strat_field_id, 'strategy', 'neq', $strategyid);
     }
-}
+
     
     /**
      * method to add choice options to the form
