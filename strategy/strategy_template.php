@@ -44,7 +44,9 @@ abstract class strategytemplate {
     
     /**
      * Retrieves the value of a settings field.
-     * @param $key of the settings field
+     * @param $key of the settings field\
+     * @param $consider_defaults states, if the default values should be considered when returning the value. It should only be set to true if the 
+     * function is called at first initialization of the ratingallocate mod. Otherwise the $_strategy_settings should contain the current value of the fieds.
      * @return either the value of the settings the strategy was initialized with or the default value of the strategy.
      */
     protected function get_settings_value($key,$consider_defaults = false){
