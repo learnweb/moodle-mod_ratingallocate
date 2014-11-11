@@ -197,18 +197,18 @@ function ratingallocate_delete_instance($id) {
     }
 
     // Delete any dependent records here #
-    $DB->delete_records('ratingallocate_allocation', array(
-        'ratingallocate' => $ratingallocate->id
+    $DB->delete_records('ratingallocate_allocations', array(
+        'ratingallocateid' => $ratingallocate->id
     ));
 
     $deleteids = $DB->get_records('ratingallocate_choices', array(
-        'ratingallocate' => $ratingallocate->id
+        'ratingallocateid' => $ratingallocate->id
             ), '', 'id');
 
-    $DB->delete_records_list('ratingallocate_ratings', 'choice', array_keys($deleteids));
+    $DB->delete_records_list('ratingallocate_ratings', 'choiceid', array_keys($deleteids));
 
     $DB->delete_records('ratingallocate_choices', array(
-        'ratingallocate' => $ratingallocate->id
+        'ratingallocateid' => $ratingallocate->id
     ));
 
     $DB->delete_records('ratingallocate', array(
