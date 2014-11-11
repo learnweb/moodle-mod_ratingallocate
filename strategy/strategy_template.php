@@ -39,7 +39,7 @@ abstract class strategytemplate {
     private $_strategy_settings;
     
     public function __construct(array $strategy_settings = null){
-        $this->_strategy_settings=$strategy_settings;
+        $this->_strategy_settings = $strategy_settings;
     }
     
     /**
@@ -47,13 +47,13 @@ abstract class strategytemplate {
      * @param $key of the settings field
      * @return either the value of the settings the strategy was initialized with or the default value of the strategy.
      */
-    protected function get_settings_value($key){
+    protected function get_settings_value($key,$consider_defaults = false){
         $value = null;
-        if (array_key_exists($key, $_strategy_settings)) {
-            $value = $_strategy_settings[$key];
-        } elseif (array_key_exists($key, $this->get_default_settings())) {
+        if (isset($this->_strategy_settings) && array_key_exists($key, $this->_strategy_settings)) {
+            $value = $this->_strategy_settings[$key];
+        } elseif ($consider_defaults && array_key_exists($key, $this->get_default_settings())) {
             $value = $this->get_default_settings()[$key];
-        } else 
+        } 
         return $value;
     }
 
