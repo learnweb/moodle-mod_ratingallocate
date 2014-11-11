@@ -40,6 +40,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     const DELETE_CHOICE_ACTION = 'delete_choice_';
     const DELETED_CHOICE_IDS = 'deleted_choice_ids';
     const STRATEGY_OPTIONS = 'strategyopt';
+    const STRATEGY_OPTIONS_PLACEHOLDER = 'placeholder_strategyopt';
     private $new_choice_counter = 0;
 
     /**
@@ -136,7 +137,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                 $field_id = self::STRATEGY_OPTIONS.'[' . $strategy . '][' . $key . ']';
                 $this->add_settings_field($field_id, $value, $strategy, $mform);
             }
-            
+            $mform->addElement('static', self::STRATEGY_OPTIONS_PLACEHOLDER.'[' . $strategy . ']', '', '');
         }
         // -------------------------------------------------------------------------------
         // add standard elements, common to all modules
@@ -339,6 +340,38 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             foreach(array_keys($strategyclass->get_static_settingfields()) as $key) {
                 $mform->addRule('strategyopt[' . $strategy . '][' . $key . ']', null, 'required', null, 'server');
             }
+        }
+        $subdata=$this->get_submitted_data();
+        if ($this->is_submitted()){
+            $allstrategyoptions = $subdata->{self::STRATEGY_OPTIONS};
+        }else{
+            $allstrategyoptions = json_decode($data->setting, true);
+        }
+            // add dynamic settings fields
+        foreach (\strategymanager::get_strategies() as $strategy) {
+            // load strategy class
+            $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
+            /* @var $strategyclass \strategytemplate */
+            $strategyclass = new $strategyclassp($allstrategyoptions[$strategy]);
+            
+            $strategy_placeholder = self::STRATEGY_OPTIONS_PLACEHOLDER . '[' . $strategy . ']';
+            // Add options fields
+            $dynamic_settings_fields = $strategyclass->get_dynamic_settingfields();
+            foreach ($dynamic_settings_fields as $key => $value) {
+                $field_id = self::STRATEGY_OPTIONS . '[' . $strategy . '][' . $key . ']';
+                $this->add_settings_field($field_id, $value, $strategy, $mform);
+                $mform->insertElementBefore($mform->removeElement($field_id, false), 
+                        $strategy_placeholder);
+            }
+            //if any dynamic field is present, add a no submit button to refresh the page
+            if (sizeof($dynamic_settings_fields)>0){
+            $buttonname = self::STRATEGY_OPTIONS.$strategy.'refresh';
+            $mform->registerNoSubmitButton($buttonname);
+            $mform->addElement('submit',$buttonname,get_string('refresh'));
+            $mform->insertElementBefore($mform->removeElement($buttonname, false),
+                    $strategy_placeholder);
+            }
+            $mform->removeElement($strategy_placeholder);
         }
     }
 
