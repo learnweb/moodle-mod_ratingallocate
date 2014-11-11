@@ -39,6 +39,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     const ADD_CHOICE_ACTION = 'add_new_choice';
     const DELETE_CHOICE_ACTION = 'delete_choice_';
     const DELETED_CHOICE_IDS = 'deleted_choice_ids';
+    const STRATEGY_OPTIONS = 'strategyopt';
     private $new_choice_counter = 0;
 
     /**
@@ -119,9 +120,6 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->registerNoSubmitButton($elementname);
         $mform->addElement('submit', $elementname, get_string('newchoice', self::MOD_NAME));
         $mform->closeHeaderBefore($elementname);
-
-        // create strategy fields for each strategy
-        $attributes = array('size' => '20');
         
         foreach (\strategymanager::get_strategies() as $strategy) {
             // load strategy class
@@ -135,17 +133,10 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
             // Add options fields
             foreach($strategyclass->get_static_settingfields() as $key => $value) {
-                // currently only text supported
-                if ($value[0] == "text") {
-                    $curstratid = 'strategyopt[' . $strategy . '][' . $key . ']';
-                    $mform->addElement('text', $curstratid, $value[1], $attributes);
-                    $mform->setType($curstratid, PARAM_TEXT);
-                    if (isset($strategyoptions) && key_exists($strategy, $strategyoptions)) {
-                        $mform->setDefault($curstratid, $strategyoptions[$strategy][$key]);
-                    }
-                    $mform->disabledIf($curstratid, 'strategy', 'neq', $strategy);
-                }
+                $field_id = self::STRATEGY_OPTIONS.'[' . $strategy . '][' . $key . ']';
+                add_settings_field($field_id, $value, $strategy);
             }
+            
         }
         // -------------------------------------------------------------------------------
         // add standard elements, common to all modules
@@ -155,6 +146,32 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
+    // add an settings element to the form 
+    /**
+     * Add an settings element to the form. It is enabled only if the strategy it belongs to is selected.
+     * @param String $strat_field_id id of the element to be added
+     * @param array $value array with the element type and its caption (usually returned by the strategys get settingsfields methods).
+     * @param String $curr_strategyid id of the strategy it belongs to
+     * @param string $default default value for the element
+     */
+    private function add_settings_field(String $strat_field_id, array $value, String $strategyid, $default = null) {
+
+        $attributes = array('size' => '20');
+        
+        if ($value[0] == "text") {
+            $mform->addElement('text', $strat_field_id, $value[1], $attributes);
+            $mform->setType($strat_field_id, PARAM_TEXT);
+        } elseif ($value[0] == "int") {
+            $mform->addElement('text', $strat_field_id, $value[1], $attributes);
+            $mform->setType($strat_field_id, PARAM_INT);
+        }
+        if (isset($default)) {
+            $mform->setDefault($strat_field_id, $default);
+        }
+        $mform->disabledIf($strat_field_id, 'strategy', 'neq', $strategyid);
+    }
+}
+    
     /**
      * method to add choice options to the form
      *
