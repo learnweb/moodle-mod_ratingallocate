@@ -40,6 +40,9 @@ $string['ratingallocate:start_distribution'] = 'Start allocation of preferences 
 $string['ratingallocate:export_ratings'] = 'Ability to export user ratings';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Rating Form for Users">
+$string['choicestatusheading'] = 'Status';
+$string['timeremaining'] = 'Time remaining';
+$string['publishdate_estimated'] = 'Estimated publish date';
 $string['publishdate_explain'] = 'Results are not published before {$a}';
 $string['rateable_choices'] = 'Rateable Choices';
 $string['rating_has_begun'] = 'Rating is open.';

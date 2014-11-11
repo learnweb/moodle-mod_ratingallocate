@@ -78,6 +78,156 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     }
 
     /**
+     * render current choice status
+     * @param ratingallocate_choice_status $status
+     * @return string
+     */
+    public function render_ratingallocate_choice_status(ratingallocate_choice_status $status) {
+        $o = '';
+        $o .= $this->output->container_start('choicestatustable');
+        $o .= $this->output->heading(get_string('choicestatusheading', ratingallocate_MOD_NAME), 3);
+        $time = time();
+
+        $o .= $this->output->box_start('boxaligncenter choicesummarytable');
+        $t = new html_table();
+
+        $accesstimestart = $status->accesstimestart;
+        if ($accesstimestart > $time) {
+            // Access not yet available
+            $this->add_table_row_tuple($t, get_string('rating_begintime', ratingallocate_MOD_NAME), userdate($accesstimestart));
+        }
+
+        $duedate = $status->accesstimestop;
+        if ($duedate > 0) {
+            // Due date.
+            $this->add_table_row_tuple($t, get_string('rating_endtime', ratingallocate_MOD_NAME), userdate($duedate));
+
+                if($accesstimestart > 0 && $accesstimestart < $time) {
+                // Time remaining.
+                $row = new html_table_row();
+                $cell1 = new html_table_cell(get_string('timeremaining', ratingallocate_MOD_NAME));
+                if ($duedate - $time <= 0) {
+                    $cell2 = new html_table_cell(get_string('rating_is_over', ratingallocate_MOD_NAME));
+                } else {
+                    $cell2 = new html_table_cell(format_time($duedate - $time));
+                }
+                $row->cells = array(
+                                $cell1,
+                                $cell2
+                );
+                $t->data[] = $row;
+            }
+        }
+        if ($status->is_published && $status->publishdate) {
+            $this->add_table_row_tuple($t, get_string('publishdate', ratingallocate_MOD_NAME), userdate($status->publishdate));
+        } else if ($status->publishdate) {
+            $this->add_table_row_tuple($t, get_string('publishdate_estimated', ratingallocate_MOD_NAME), userdate($status->publishdate));
+        }
+
+        //print available choices if no choice form is displayed
+        if(!empty($status->available_choices) && ($time < $status->accesstimestart || $status->accesstimestop < $time)) {
+        $row = new html_table_row();
+            $cell1 = new html_table_cell(get_string('rateable_choices', ratingallocate_MOD_NAME));
+
+            $choices_html = '';
+            foreach ($status->available_choices as $choice) {
+                $choices_html .= '<li>';
+                $choices_html .= format_string($choice->title);
+                $choices_html .= '</li>';
+            }
+
+            $cell2 = new html_table_cell('<ul>' . $choices_html . '</ul>');
+//             $cell2->attributes = array('class' => 'submissionnotgraded');
+            $row->cells = array(
+                            $cell1,
+                            $cell2
+            );
+            $t->data[] = $row;
+        }
+
+        //print own choices if no choice form is displayed
+        if(!empty($status->own_choices)) {
+            $row = new html_table_row();
+            $cell1 = new html_table_cell(get_string('your_rating', ratingallocate_MOD_NAME));
+
+            $choices_html = '';
+            foreach ($status->own_choices as $choice) {
+                $choices_html .= '<li>';
+                $choices_html .= format_string($choice->title) . ' (' . s($choice->rating) . ')';
+                $choices_html .= '</li>';
+            }
+
+            $cell2 = new html_table_cell('<ul>' . $choices_html . '</ul>');
+//             $cell2->attributes = array('class' => 'submissionnotgraded');
+            $row->cells = array(
+                            $cell1,
+                            $cell2
+            );
+            $t->data[] = $row;
+        }
+        $o .= html_writer::table($t);
+        $o .= $this->output->box_end();
+
+        $status_summary = array();
+
+        $error = function($text) { return $this->notification($text); };
+        $warning = function($text) { return $this->notification($text); };
+        $info = function($text) { return html_writer::span($text,'info'); };
+
+        if (empty($status->available_choices))
+            $status_summary[] = $error(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
+        // To early to rate
+        if ($status->accesstimestart > $time) {
+            $status_summary[] = $warning(get_string('too_early_to_rate', ratingallocate_MOD_NAME));
+        }
+        // to late to rate
+        else if ($status->accesstimestop < $time) {
+            // if publishdate is 0 -> than publishdate is not enabled
+            if ($status->publishdate) {
+                $status_summary[] = $info(get_string('publishdate_explain', ratingallocate_MOD_NAME, userdate($status->publishdate)));
+            }
+            // if results already published
+            if ($status->is_published == true) {
+                $status_summary[] = $warning(get_string('rating_is_over', ratingallocate_MOD_NAME));
+            } else {
+                $status_summary[] = $info(get_string('results_not_yet_published', ratingallocate_MOD_NAME));
+            }
+        }
+
+        if(!empty($status_summary)) {
+            $o .= $this->output->box_start('box generalbox boxaligncenter');
+            foreach ($status_summary as $elem) {
+                $o .= html_writer::div(format_text($elem));
+            }
+            $o .= $this->output->box_end();
+        }
+     /*   // Links.
+        if ($status->view_type == ratingallocate_choice_status::STUDENT_VIEW) {
+            if ($status->canedit) {
+
+                if (!$status->submission) {
+                    $button_text = get_string('addsubmission', ratingallocate_MOD_NAME);
+                } else {
+                    $button_text = get_string('editsubmission', ratingallocate_MOD_NAME);
+                }
+                $o .= $this->output->box_start('generalbox submissionaction');
+                $urlparams = array(
+                                'id' => $status->coursemoduleid,
+                                'action' => DSBUILDER_ACTION_EDIT_SUBMISSION
+                );
+                $o .= $this->output->single_button(new moodle_url('/mod/dsbuilder/view.php', $urlparams), $button_text, 'get');
+                $o .= $this->output->box_start('boxaligncenter submithelp');
+                $o .= get_string('editsubmission_help', ratingallocate_MOD_NAME);
+                $o .= $this->output->box_end();
+                $o .= $this->output->box_end();
+            }
+        }
+        */
+        $o .= $this->output->container_end();
+        return $o;
+    }
+
+    /**
      * nur allgemeine Informationen
      * @param ratingallocate $ratingallocate
      * @return unknown
@@ -451,4 +601,20 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Utility function to add a row of data to a table with 2 columns. Modified
+     * the table param and does not return a value
+     *
+     * @param html_table $table The table to append the row of data to
+     * @param string $first The first column text
+     * @param string $second The second column text
+     * @return void
+     */
+    private function add_table_row_tuple(html_table $table, $first, $second) {
+        $row = new html_table_row();
+        $cell1 = new html_table_cell($first);
+        $cell2 = new html_table_cell($second);
+        $row->cells = array($cell1, $cell2);
+        $table->data[] = $row;
+    }
 }

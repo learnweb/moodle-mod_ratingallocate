@@ -46,3 +46,18 @@ class ratingallocate_header implements renderable {
         $this->coursemoduleid = $coursemoduleid;
     }
 }
+
+class ratingallocate_choice_status implements renderable {
+    const STUDENT_VIEW = 'student_view';
+    const TEACHER_VIEW = 'teacher_view';
+
+    /** @var string view_type specifies role to the status view should be rendered for */
+    public $view_type;
+
+    public $accesstimestop;
+    public $accesstimestart;
+    public $is_published;
+    public $publishdate;
+    public $available_choices;
+    public $own_choices;
+}
