@@ -63,7 +63,7 @@ abstract class strategytemplate {
      * Defines default settings for the different fields of the strategy
      * @return array of key-value pairs of the settings
      */
-    public abstract function get_default_settings($param = null);
+    public abstract function get_default_settings();
     
     /**
      * Return the dynamic Settingsfields the strategy needes

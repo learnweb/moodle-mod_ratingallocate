@@ -36,7 +36,7 @@ abstract class strategytemplate_options extends \strategytemplate {
      * Return the different options for each choice (including titles)
      * @return array: value_of_option => title_of_option
      */
-    public abstract function get_choiceoptions($consider_default=false, $consider_custom=true, $param = null);
+    public abstract function get_choiceoptions($consider_default=false, $consider_custom=true);
 }
 
 /**
@@ -46,7 +46,7 @@ abstract class strategytemplate_options extends \strategytemplate {
  * - shows a drop down menu from which the user can choose a rating
  */
 abstract class ratingallocate_options_strategyform extends \ratingallocate_strategyform {
-
+    
     /**
      * Defines forms elements
      */

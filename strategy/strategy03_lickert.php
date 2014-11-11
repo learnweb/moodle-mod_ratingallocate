@@ -38,6 +38,15 @@ class strategy extends \strategytemplate_options {
     const STRATEGYID = 'strategy_lickert';
     const MAXNO = 'maxno';
     const COUNTLICKERT = 'countlickert';
+    private $maxlickert;
+
+    public function __construct(array $strategy_settings = null) {
+        parent::__construct($strategy_settings);
+        if (isset($strategy_settings) && array_key_exists(self::COUNTLICKERT, $strategy_settings)) {
+            $this->maxlickert = $strategy_settings[self::COUNTLICKERT];
+        } else
+            $this->maxlickert = $this->get_default_settings()[self::COUNTLICKERT];
+    }
 
     public function get_strategyid() {
         return self::STRATEGYID;
@@ -47,46 +56,48 @@ class strategy extends \strategytemplate_options {
         return array(
             self::MAXNO => array(// maximale Anzahl 'kannnicht'
                 'int',
-                get_string(self::STRATEGYID . '_setting_maxno', ratingallocate_MOD_NAME)
+                get_string(self::STRATEGYID . '_setting_maxno', ratingallocate_MOD_NAME),
+                $this->get_settings_value(self::MAXNO,true,true)
             ),
             self::COUNTLICKERT => array(// wie viele Felder es gibt
                 'int',
-                get_string(self::STRATEGYID . '_setting_maxlickert', ratingallocate_MOD_NAME)
+                get_string(self::STRATEGYID . '_setting_maxlickert', ratingallocate_MOD_NAME),
+                $this->get_settings_value(self::COUNTLICKERT,true,true)
             )
         );
     }
 
     
     public function get_dynamic_settingfields(){
-        $maxlickert = $this->get_settings_value(self::COUNTLICKERT);
         $output = array();
-        foreach($this->get_choiceoptions($maxlickert) as $id => $option){
+        foreach($this->get_choiceoptions(true,false) as $id => $option){
             $output[$id] = array(
                 'text',
-                $option
+                $option,
+                $this->get_settings_value($id,true,true)
             );
         }
         return $output;
     }
 
-    public function get_choiceoptions($consider_dafault = false, $consider_custom = true, $maxlickert = 0) {
+    public function get_choiceoptions($consider_dafault = false, $consider_custom = true) {
         $options = array();
-        for ($i = 0; $i <= $maxlickert; $i++) {
+        for ($i = 0; $i <= $this->maxlickert; $i++) {
             $options[$i] = $this->get_settings_value($i, $consider_dafault, $consider_custom);
         }
         return $options;
     }
 
 
-    public function get_default_settings($maxlickert = 0){
+    public function get_default_settings(){      
         $defaults = array(
                         self::MAXNO => 3,
                         self::COUNTLICKERT => 4,
                         0 => '0 - '.get_string(strategy::STRATEGYID . '_rating_exclude', ratingallocate_MOD_NAME)
         );
         
-        for ($i = 1; $i <= $maxlickert; $i++) {
-            if ($i == $maxlickert) {
+        for ($i = 1; $i <= $this->maxlickert; $i++) {
+            if ($i == $this->maxlickert) {
                 $defaults[$i] = $i.' - '.get_string(strategy::STRATEGYID . '_rating_biggestwish', ratingallocate_MOD_NAME);
             } else {
                 $defaults[$i] = $i;

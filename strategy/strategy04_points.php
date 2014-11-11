@@ -45,14 +45,16 @@ class strategy extends \strategytemplate {
     }
 
     public function get_static_settingfields() {
-        return  array(
-            self::MAXZERO => array(// maximale Anzahl 'kannnicht'
-                'int',
-                get_string(self::STRATEGYID . '_setting_maxzero', ratingallocate_MOD_NAME)
-            ),
-            self::TOTALPOINTS => array(// wie viele Felder es gibt
-                'int',
-                get_string(self::STRATEGYID . '_setting_totalpoints', ratingallocate_MOD_NAME)
+        return array(
+            self::MAXZERO => array( // maximale Anzahl 'kannnicht'
+                'int', 
+                get_string(self::STRATEGYID . '_setting_maxzero', ratingallocate_MOD_NAME), 
+                $this->get_settings_value(self::MAXZERO, true, true)
+            ), 
+            self::TOTALPOINTS => array( // wie viele Felder es gibt
+                'int', 
+                get_string(self::STRATEGYID . '_setting_totalpoints', ratingallocate_MOD_NAME), 
+                $this->get_settings_value(self::TOTALPOINTS, true, true)
             )
         );
     }
@@ -61,7 +63,7 @@ class strategy extends \strategytemplate {
         return array();
     }
     
-    public function get_default_settings($param = null){
+    public function get_default_settings(){
         return array(
                         self::MAXZERO => 3,
                         self::TOTALPOINTS => 100

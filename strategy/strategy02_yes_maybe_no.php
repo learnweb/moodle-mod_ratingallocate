@@ -47,13 +47,15 @@ class strategy extends \strategytemplate_options {
         $output = array(
             self::MAXNO => array(// maximale Anzahl 'kannnicht'
                 'int',
-                get_string(self::STRATEGYID . '_setting_maxno', ratingallocate_MOD_NAME)
+                get_string(self::STRATEGYID . '_setting_maxno', ratingallocate_MOD_NAME),
+                $this->get_settings_value(self::MAXNO, true,true)
             )
         );
-        foreach($this->get_choiceoptions() as $id => $option){
+        foreach($this->get_choiceoptions($consider_dafault=true) as $id => $option){
             $output[$id] = array(
                             'text',
-                            $option
+                            $option,
+                            $this->get_settings_value($id, true,true)
             );
         }
         return $output;
@@ -63,7 +65,7 @@ class strategy extends \strategytemplate_options {
         return array();
     }
 
-    public function get_choiceoptions($consider_dafault = false, $consider_custom = true, $param = null) {
+    public function get_choiceoptions($consider_dafault = false, $consider_custom = true) {
         $options = array(
             0 => $this->get_settings_value(0, $consider_dafault,$consider_custom), 
             3 => $this->get_settings_value(3, $consider_dafault,$consider_custom), 
@@ -72,7 +74,7 @@ class strategy extends \strategytemplate_options {
         return $options;
     }
 
-    public function get_default_settings($param = null){
+    public function get_default_settings(){
         return array(
                         self::MAXNO => 3,
                         0 => get_string(strategy::STRATEGYID . '_rating_no', ratingallocate_MOD_NAME),

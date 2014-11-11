@@ -46,12 +46,15 @@ class strategy extends \strategytemplate {
     public function get_static_settingfields() {
         $output = array(
             self::MINTICKYES => array('int', 
-                get_string(self::STRATEGYID . '_setting_mintickyes', ratingallocate_MOD_NAME)
+                get_string(self::STRATEGYID . '_setting_mintickyes', ratingallocate_MOD_NAME), 
+                $this->get_settings_value(self::MINTICKYES, true, true)
             )
         );
         
-        $output[self::ACCEPT_LABEL] = array('text', get_string(self::STRATEGYID . 
-                '_' . self::ACCEPT_LABEL, ratingallocate_MOD_NAME)
+        $output[self::ACCEPT_LABEL] = array(
+                        'text', 
+                        $this->get_settings_value(self::ACCEPT_LABEL, true, false), 
+                        $this->get_settings_value(self::ACCEPT_LABEL, true, true)
         );
         return $output;
     }
@@ -60,9 +63,10 @@ class strategy extends \strategytemplate {
         return array();
     }
 
-    public function get_default_settings($param = null){
+    public function get_default_settings(){
         return array(
-                        self::MINTICKYES => 3
+                        self::MINTICKYES => 3,
+                        self::ACCEPT_LABEL => get_string(self::STRATEGYID . '_' . self::ACCEPT_LABEL, ratingallocate_MOD_NAME)
         );
     }
 }

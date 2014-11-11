@@ -46,13 +46,15 @@ class strategy extends \strategytemplate_options {
         $output =  array(
             self::MAXCROSSOUT => array(
                 'int',
-                get_string(self::STRATEGYID . '_setting_crossout', ratingallocate_MOD_NAME)
+                get_string(self::STRATEGYID . '_setting_crossout', ratingallocate_MOD_NAME),
+                $this->get_settings_value(self::MAXCROSSOUT, true,true)
             )
         );
         foreach($this->get_choiceoptions($consider_dafault=true) as $id => $option){
             $output[$id] = array(
                             'text',
-                            $option
+                            $option,
+                            $this->get_settings_value($id, true,true)
             );
         }
         return $output;
@@ -62,7 +64,7 @@ class strategy extends \strategytemplate_options {
         return array();
     }
     
-    public function get_choiceoptions($consider_dafault=false, $consider_custom=true, $param = null){
+    public function get_choiceoptions($consider_dafault=false, $consider_custom=true){
         $options = array(
             0 => $this->get_settings_value(0, $consider_dafault,$consider_custom), 
             1 => $this->get_settings_value(1, $consider_dafault,$consider_custom)
@@ -71,7 +73,7 @@ class strategy extends \strategytemplate_options {
     }
 
 
-    public function get_default_settings($param = null){
+    public function get_default_settings(){
         return array(
                         self::MAXCROSSOUT => 3,
                         0 => get_string(strategy::STRATEGYID . '_rating_crossout', ratingallocate_MOD_NAME),
@@ -86,7 +88,7 @@ class strategy extends \strategytemplate_options {
 class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform {
     //Already specified by parent class
 
-    public function get_choiceoptions($params = null) {
+    public function get_choiceoptions() {
         return strategy::get_choiceoptions($params);
     }
     
