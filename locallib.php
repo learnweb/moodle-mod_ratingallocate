@@ -65,8 +65,6 @@ class strategymanager {
 
 }
 
-define('ratingallocate_MOD_NAME', 'ratingallocate');
-
 define('RATING_ALLOC_ACTION_RATE', 'rate');
 define('RATING_ALLOC_ACTION_START', 'start_distribution');
 define('ACTION_ALLOCATE_SHOW_MANUALFORM', 'ACTION_ALLOCATE_SHOW_MANUALFORM');

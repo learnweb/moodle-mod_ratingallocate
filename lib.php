@@ -33,6 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * example constant
  */
+define('ratingallocate_MOD_NAME', 'ratingallocate');
 // define('NEWMODULE_ULTIMATE_ANSWER', 42);
 // //////////////////////////////////////////////////////////////////////////////
 // Moodle core API //
@@ -52,7 +53,8 @@ function ratingallocate_supports($feature) {
             return true;
         case FEATURE_SHOW_DESCRIPTION :
             return true;
-
+         case FEATURE_BACKUP_MOODLE2:
+            return true;
         default :
             return null;
     }
