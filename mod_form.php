@@ -134,7 +134,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             // Add options fields
             foreach($strategyclass->get_static_settingfields() as $key => $value) {
                 $field_id = self::STRATEGY_OPTIONS.'[' . $strategy . '][' . $key . ']';
-                add_settings_field($field_id, $value, $strategy);
+                $this->add_settings_field($field_id, $value, $strategy, $mform);
             }
             
         }
@@ -149,12 +149,12 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     // add an settings element to the form 
     /**
      * Add an settings element to the form. It is enabled only if the strategy it belongs to is selected.
-     * @param String $strat_field_id id of the element to be added
+     * @param string $strat_field_id id of the element to be added
      * @param array $value array with the element type and its caption (usually returned by the strategys get settingsfields methods).
-     * @param String $curr_strategyid id of the strategy it belongs to
+     * @param string $curr_strategyid id of the strategy it belongs to
      * @param string $default default value for the element
      */
-    private function add_settings_field(String $strat_field_id, array $value, String $strategyid, $default = null) {
+    private function add_settings_field($strat_field_id, array $value, $strategyid, $mform, $default = null) {
 
         $attributes = array('size' => '20');
         
