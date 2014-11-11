@@ -41,7 +41,9 @@ class strategy extends \strategytemplate {
     public function get_strategyid() {
         return self::STRATEGYID;
     }
-    public function get_dynamic_settingfields(moodleform $mform){}
+    public function get_dynamic_settingfields(){
+        return array();
+    }
     public function get_static_settingfields() {
         return array(
             self::MINTICKYES => array(
@@ -51,6 +53,11 @@ class strategy extends \strategytemplate {
         );
     }
 
+    public function get_default_settings(){
+        return array(
+                        self::MINTICKYES => 3
+        );
+    }
 }
 
 // register with the strategymanager

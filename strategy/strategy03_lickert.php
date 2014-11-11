@@ -56,9 +56,24 @@ class strategy extends \strategytemplate_options {
         );
     }
     
-    public function get_dynamic_settingfields(moodleform $mform){
-        $strategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
-        $maxlickert = intval($strategyoptions [strategy::STRATEGYID] [strategy::COUNTLICKERT]);
+    public function get_default_settings(){
+        return array(
+                        self::MAXNO => 3,
+                        self::COUNTLICKERT => 4
+        );
+    }
+    
+    public function get_dynamic_settingfields(){
+        $maxlickert = $this->get_settings_value(self::COUNTLICKERT);
+        $output = array();
+//         $output['header'] = array('text', $option );
+        foreach($this->get_choiceoptions($maxlickert) as $id => $option){
+            $output[$id] = array(
+                'text',
+                $option
+            );
+        }
+        return $output;
     }
     
     public function get_choiceoptions($maxlickert=0){

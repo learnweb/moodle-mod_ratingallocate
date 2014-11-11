@@ -43,7 +43,9 @@ class strategy extends \strategytemplate {
     public function get_strategyid() {
         return self::STRATEGYID;
     }
-    public function get_dynamic_settingfields(moodleform $mform){}
+    public function get_dynamic_settingfields(){
+        return array();
+    }
     public function get_static_settingfields() {
         return array(
             self::MAXZERO => array(// maximale Anzahl 'kannnicht'
@@ -54,6 +56,13 @@ class strategy extends \strategytemplate {
                 'text',
                 get_string(self::STRATEGYID . '_setting_totalpoints', ratingallocate_MOD_NAME)
             )
+        );
+    }
+    
+    public function get_default_settings(){
+        return array(
+                        self::MAXZERO => 3,
+                        self::TOTALPOINTS => 100
         );
     }
 

@@ -25,7 +25,7 @@ use Symfony\Component\Validator\Constraints\Optional;
  * @copyright 2014 M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+require_once ($CFG->libdir.'/formslib.php');
 /**
  * Template for Strategies, which present the interface in which the user votes
  * @copyright 2014 M Schulze
@@ -35,13 +35,40 @@ abstract class strategytemplate {
 
     /** @const STRATEGYID string identifier, for language translation, etc.*/
     const STRATEGYID = '';
+        
+    private $_strategy_settings;
+    
+    public function __construct(array $strategy_settings = null){
+        $this->_strategy_settings=$strategy_settings;
+    }
+    
+    /**
+     * Retrieves the value of a settings field.
+     * @param $key of the settings field
+     * @return either the value of the settings the strategy was initialized with or the default value of the strategy.
+     */
+    protected function get_settings_value($key){
+        $value = null;
+        if (array_key_exists($key, $_strategy_settings)) {
+            $value = $_strategy_settings[$key];
+        } elseif (array_key_exists($key, $this->get_default_settings())) {
+            $value = $this->get_default_settings()[$key];
+        } else 
+        return $value;
+    }
 
+    /**
+     * Defines default settings for the different fields of the strategy
+     * @return array of key-value pairs of the settings
+     */
+    public abstract function get_default_settings();
+    
     /**
      * Return the dynamic Settingsfields the strategy needes
      * If any dynamic Settingsfields is returned, a refresh button will be included in the view.
      * @param $mform The required data can be drawn from the moodleform
      */
-    public abstract function get_dynamic_settingfields(moodleform $mform);
+    public abstract function get_dynamic_settingfields();
 
     /**
      * Return the static Settingsfields the strategy needes
@@ -49,7 +76,7 @@ abstract class strategytemplate {
     public abstract function get_static_settingfields();
 
     /**
-     * Return the name of the strategy
+     * Return the name of the strategy to be displayed
      */
     public function get_strategyname() {
         return get_string($this->get_strategyid().'_name',ratingallocate_MOD_NAME);

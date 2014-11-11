@@ -51,7 +51,15 @@ class strategy extends \strategytemplate_options {
         );
     }
     
-    public function get_dynamic_settingfields(moodleform $mform){}
+    public function get_default_settings(){
+        return array(
+                        self::MAXCROSSOUT => 3
+        );
+    }
+    
+    public function get_dynamic_settingfields(){
+        return array();
+    }
     
     public function get_choiceoptions($param = null){
         $options = array(
