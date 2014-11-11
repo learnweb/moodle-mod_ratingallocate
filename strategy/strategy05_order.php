@@ -41,21 +41,23 @@ class strategy extends \strategytemplate {
     public function get_strategyid() {
         return self::STRATEGYID;
     }
-    public function get_dynamic_settingfields(){
-        return array();
-    }
+
     public function get_static_settingfields() {
         return array(
             self::COUNTOPTIONS => array(// wie viele Felder es gibt
-                'text',
+                'int',
                 get_string(self::STRATEGYID . '_setting_countoptions', ratingallocate_MOD_NAME)
             )
         );
     }
     
-    public function get_default_settings(){
+    public function get_dynamic_settingfields(){
+        return array();
+    }
+    
+    public function get_default_settings($param = null){
         return array(
-                        self::COUNTOPTIONS => 3
+                        self::COUNTOPTIONS => 2
         );
     }
 

@@ -49,9 +49,9 @@ abstract class strategytemplate {
      * function is called at first initialization of the ratingallocate mod. Otherwise the $_strategy_settings should contain the current value of the fieds.
      * @return either the value of the settings the strategy was initialized with or the default value of the strategy.
      */
-    protected function get_settings_value($key,$consider_defaults = false){
+    protected function get_settings_value($key, $consider_defaults = false, $consider_custom = true){
         $value = null;
-        if (isset($this->_strategy_settings) && array_key_exists($key, $this->_strategy_settings)) {
+        if ($consider_custom && isset($this->_strategy_settings) && array_key_exists($key, $this->_strategy_settings)) {
             $value = $this->_strategy_settings[$key];
         } elseif ($consider_defaults && array_key_exists($key, $this->get_default_settings())) {
             $value = $this->get_default_settings()[$key];
@@ -63,7 +63,7 @@ abstract class strategytemplate {
      * Defines default settings for the different fields of the strategy
      * @return array of key-value pairs of the settings
      */
-    public abstract function get_default_settings();
+    public abstract function get_default_settings($param = null);
     
     /**
      * Return the dynamic Settingsfields the strategy needes

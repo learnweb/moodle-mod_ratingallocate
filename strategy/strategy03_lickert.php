@@ -46,27 +46,20 @@ class strategy extends \strategytemplate_options {
     public function get_static_settingfields() {
         return array(
             self::MAXNO => array(// maximale Anzahl 'kannnicht'
-                'text',
+                'int',
                 get_string(self::STRATEGYID . '_setting_maxno', ratingallocate_MOD_NAME)
             ),
             self::COUNTLICKERT => array(// wie viele Felder es gibt
-                'text',
+                'int',
                 get_string(self::STRATEGYID . '_setting_maxlickert', ratingallocate_MOD_NAME)
             )
         );
     }
-    
-    public function get_default_settings(){
-        return array(
-                        self::MAXNO => 3,
-                        self::COUNTLICKERT => 4
-        );
-    }
+
     
     public function get_dynamic_settingfields(){
         $maxlickert = $this->get_settings_value(self::COUNTLICKERT);
         $output = array();
-//         $output['header'] = array('text', $option );
         foreach($this->get_choiceoptions($maxlickert) as $id => $option){
             $output[$id] = array(
                 'text',
@@ -75,22 +68,32 @@ class strategy extends \strategytemplate_options {
         }
         return $output;
     }
-    
-    public function get_choiceoptions($maxlickert=0){
-        $options = array(
+
+    public function get_choiceoptions($consider_dafault = false, $consider_custom = true, $maxlickert = 0) {
+        $options = array();
+        for ($i = 0; $i <= $maxlickert; $i++) {
+            $options[$i] = $this->get_settings_value($i, $consider_dafault, $consider_custom);
+        }
+        return $options;
+    }
+
+
+    public function get_default_settings($maxlickert = 0){
+        $defaults = array(
+                        self::MAXNO => 3,
+                        self::COUNTLICKERT => 4,
                         0 => '0 - '.get_string(strategy::STRATEGYID . '_rating_exclude', ratingallocate_MOD_NAME)
         );
         
         for ($i = 1; $i <= $maxlickert; $i++) {
             if ($i == $maxlickert) {
-                $options[$i] = $i.' - '.get_string(strategy::STRATEGYID . '_rating_biggestwish', ratingallocate_MOD_NAME);
+                $defaults[$i] = $i.' - '.get_string(strategy::STRATEGYID . '_rating_biggestwish', ratingallocate_MOD_NAME);
             } else {
-                $options[$i] = $i;
+                $defaults[$i] = $i;
             }
         }
-        return $options;
+        return $defaults;
     }
-
 }
 
 // register with the strategymanager

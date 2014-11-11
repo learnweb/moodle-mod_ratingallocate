@@ -37,23 +37,30 @@ class strategy extends \strategytemplate {
 
     const STRATEGYID = 'strategy_tickyes';
     const MINTICKYES = 'mintickyes';
+    const ACCEPT_LABEL = 'accept';
 
     public function get_strategyid() {
         return self::STRATEGYID;
     }
-    public function get_dynamic_settingfields(){
-        return array();
-    }
+
     public function get_static_settingfields() {
-        return array(
-            self::MINTICKYES => array(
-                'text',
+        $output = array(
+            self::MINTICKYES => array('int', 
                 get_string(self::STRATEGYID . '_setting_mintickyes', ratingallocate_MOD_NAME)
             )
         );
+        
+        $output[self::ACCEPT_LABEL] = array('text', get_string(self::STRATEGYID . 
+                '_' . self::ACCEPT_LABEL, ratingallocate_MOD_NAME)
+        );
+        return $output;
+    }
+    
+    public function get_dynamic_settingfields(){
+        return array();
     }
 
-    public function get_default_settings(){
+    public function get_default_settings($param = null){
         return array(
                         self::MINTICKYES => 3
         );
