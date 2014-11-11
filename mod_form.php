@@ -166,8 +166,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $mform->addElement('text', $strat_field_id, $value[1], $attributes);
             $mform->setType($strat_field_id, PARAM_INT);
         }
-        if (isset($default)) {
-            $mform->setDefault($strat_field_id, $default);
+        if (isset($value[2])) {
+            $mform->setDefault($strat_field_id, $value[2]);
         }
         $mform->disabledIf($strat_field_id, 'strategy', 'neq', $strategyid);
     }
@@ -344,16 +344,19 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $subdata=$this->get_submitted_data();
         if ($this->is_submitted()){
             $allstrategyoptions = $subdata->{self::STRATEGY_OPTIONS};
-        }else{
+        }elseif (isset($data->setting)){
             $allstrategyoptions = json_decode($data->setting, true);
         }
-            // add dynamic settings fields
+        // add dynamic settings fields
         foreach (\strategymanager::get_strategies() as $strategy) {
             // load strategy class
             $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
             /* @var $strategyclass \strategytemplate */
-            $strategyclass = new $strategyclassp($allstrategyoptions[$strategy]);
-            
+            if (isset($allstrategyoptions)) {
+                $strategyclass = new $strategyclassp($allstrategyoptions[$strategy]);
+            } else {
+                $strategyclass = new $strategyclassp();
+            }
             $strategy_placeholder = self::STRATEGY_OPTIONS_PLACEHOLDER . '[' . $strategy . ']';
             // Add options fields
             $dynamic_settings_fields = $strategyclass->get_dynamic_settingfields();
