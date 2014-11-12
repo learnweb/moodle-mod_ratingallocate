@@ -77,6 +77,10 @@ class strategy extends \strategytemplate {
 
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
+    protected function construct_strategy($strategyoptions){
+        return new strategy($strategyoptions);
+    }
+    
     public function definition() {
         global $USER;
         parent::definition();

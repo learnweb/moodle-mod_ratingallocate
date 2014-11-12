@@ -74,6 +74,11 @@ class strategy extends \strategytemplate {
  * - shows a drop down menu from which the user can choose a rating
  */
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
+    
+    protected function construct_strategy($strategyoptions){
+        return new strategy($strategyoptions);
+    }
+    
     public function definition() {
         global $USER;
         parent::definition();

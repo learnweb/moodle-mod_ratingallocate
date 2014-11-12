@@ -45,17 +45,25 @@ abstract class strategytemplate {
     /**
      * Retrieves the value of a settings field.
      * @param $key of the settings field\
-     * @param $consider_defaults states, if the default values should be considered when returning the value. It should only be set to true if the 
-     * function is called at first initialization of the ratingallocate mod. Otherwise the $_strategy_settings should contain the current value of the fieds.
-     * @return either the value of the settings the strategy was initialized with or the default value of the strategy.
+     * @return either the value of the setting the strategy was initialized with or the default value of the setting.
      */
-    protected function get_settings_value($key, $consider_defaults = false, $consider_custom = true){
+    protected function get_settings_value($key){
+        if (isset($this->_strategy_settings) && array_key_exists($key, $this->_strategy_settings)) {
+            return $value = $this->_strategy_settings[$key];
+        }
+        return $this->get_settings_default_value($key);
+    }
+    
+    /**
+     * Retrieves the default value of a settings field.
+     * @param $key of the settings field\
+     * @return the default value of the setting.
+     */
+    protected function get_settings_default_value($key){
         $value = null;
-        if ($consider_custom && isset($this->_strategy_settings) && array_key_exists($key, $this->_strategy_settings)) {
-            $value = $this->_strategy_settings[$key];
-        } elseif ($consider_defaults && array_key_exists($key, $this->get_default_settings())) {
+        if (array_key_exists($key, $this->get_default_settings())) {
             $value = $this->get_default_settings()[$key];
-        } 
+        }
         return $value;
     }
 
@@ -98,6 +106,8 @@ abstract class ratingallocate_strategyform extends \moodleform  {
     protected $ratingallocate;
 
     private $strategyoptions;
+    
+    private $strategy;
 
     /**
      *
@@ -114,7 +124,21 @@ abstract class ratingallocate_strategyform extends \moodleform  {
         } else {
             $this->strategyoptions = array();
         }
+        $this->strategy=$this->construct_strategy($this->strategyoptions);
         parent::__construct($url);
+    }
+    
+    /**
+     * This method creates an instance of the strategy class for the form
+     * @return \strategytemplate
+     */
+    protected abstract function construct_strategy($strategyoptions);
+    
+    /**
+     * @return \strategytemplate Returns the underlying strategy object.
+     */
+    protected function get_strategy(){
+        return $this->strategy;
     }
 
     /**

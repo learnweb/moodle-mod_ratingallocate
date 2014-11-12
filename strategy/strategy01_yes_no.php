@@ -47,14 +47,14 @@ class strategy extends \strategytemplate_options {
             self::MAXCROSSOUT => array(
                 'int',
                 get_string(self::STRATEGYID . '_setting_crossout', ratingallocate_MOD_NAME),
-                $this->get_settings_value(self::MAXCROSSOUT, true,true)
+                $this->get_settings_value(self::MAXCROSSOUT)
             )
         );
-        foreach($this->get_choiceoptions($consider_dafault=true) as $id => $option){
+        foreach($this->get_choiceoptions() as $id => $option){
             $output[$id] = array(
                             'text',
-                            $option,
-                            $this->get_settings_value($id, true,true)
+                            $this->get_settings_default_value($id),
+                            $option
             );
         }
         return $output;
@@ -64,14 +64,13 @@ class strategy extends \strategytemplate_options {
         return array();
     }
     
-    public function get_choiceoptions($consider_dafault=false, $consider_custom=true){
+    public function get_choiceoptions(){
         $options = array(
-            0 => $this->get_settings_value(0, $consider_dafault,$consider_custom), 
-            1 => $this->get_settings_value(1, $consider_dafault,$consider_custom)
+            0 => $this->get_settings_value(0), 
+            1 => $this->get_settings_value(1)
         );
         return $options;
     }
-
 
     public function get_default_settings(){
         return array(
@@ -88,8 +87,12 @@ class strategy extends \strategytemplate_options {
 class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform {
     //Already specified by parent class
 
+    protected function construct_strategy($strategyoptions){
+        return new strategy($strategyoptions);
+    }
+    
     public function get_choiceoptions() {
-        return strategy::get_choiceoptions($params);
+        return $this->get_strategy()->get_choiceoptions();
     }
     
     protected function get_max_amount_of_nos() {

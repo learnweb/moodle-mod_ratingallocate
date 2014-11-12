@@ -48,14 +48,15 @@ class strategy extends \strategytemplate_options {
             self::MAXNO => array(// maximale Anzahl 'kannnicht'
                 'int',
                 get_string(self::STRATEGYID . '_setting_maxno', ratingallocate_MOD_NAME),
-                $this->get_settings_value(self::MAXNO, true,true)
+                $this->get_settings_value(self::MAXNO)
             )
         );
-        foreach($this->get_choiceoptions($consider_dafault=true) as $id => $option){
+        foreach($this->get_choiceoptions() as $id => $option){
             $output[$id] = array(
                             'text',
-                            $option,
-                            $this->get_settings_value($id, true,true)
+                            $this->get_settings_default_value($id),
+                            $option
+                            
             );
         }
         return $output;
@@ -65,11 +66,11 @@ class strategy extends \strategytemplate_options {
         return array();
     }
 
-    public function get_choiceoptions($consider_dafault = false, $consider_custom = true) {
+    public function get_choiceoptions() {
         $options = array(
-            0 => $this->get_settings_value(0, $consider_dafault,$consider_custom), 
-            3 => $this->get_settings_value(3, $consider_dafault,$consider_custom), 
-            5 => $this->get_settings_value(5, $consider_dafault,$consider_custom)
+            0 => $this->get_settings_value(0), 
+            3 => $this->get_settings_value(3), 
+            5 => $this->get_settings_value(5)
         );
         return $options;
     }
@@ -90,8 +91,12 @@ class strategy extends \strategytemplate_options {
 class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform {
     //Already specified by parent class
 
-    public function get_choiceoptions($params = null) {
-        return strategy::get_choiceoptions($params);
+    protected function construct_strategy($strategyoptions){
+        return new strategy($strategyoptions);
+    }
+    
+    public function get_choiceoptions() {
+        return $this->get_strategy()->get_choiceoptions();
     }
     
     protected function get_max_amount_of_nos() {

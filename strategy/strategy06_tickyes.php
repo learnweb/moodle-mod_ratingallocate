@@ -62,6 +62,10 @@ class strategy extends \strategytemplate {
     public function get_dynamic_settingfields(){
         return array();
     }
+    
+    public function get_accept_label(){
+        return $this->get_settings_value(self::ACCEPT_LABEL);
+    }
 
     public function get_default_settings(){
         return array(
@@ -82,6 +86,10 @@ class strategy extends \strategytemplate {
  */
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
+    protected function construct_strategy($strategyoptions){
+        return new strategy($strategyoptions);
+    }
+    
     public function definition() {
         global $USER;
         parent::definition();
@@ -106,7 +114,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             // Beschreibungstext anzeigen
             $mform->addElement('html', '<div>' . $data->explanation . '</div>');
 
-            $mform->addElement('advcheckbox', $ratingelem, get_string(strategy::STRATEGYID . '_accept', ratingallocate_MOD_NAME), '', null, array(0, 1));
+            $mform->addElement('advcheckbox', $ratingelem, $this->get_strategy()->get_accept_label(), '', null, array(0, 1));
             $mform->setType($ratingelem, PARAM_INT);
 
             if (is_numeric($data->rating) && $data->rating >= 0) {
