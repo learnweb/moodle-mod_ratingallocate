@@ -51,7 +51,11 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         // pre parse mod data if exists (in case not new)
         if($current && property_exists($current, 'setting')) {
             $strategyoptions = json_decode($current->setting, true);
-            $current->strategyopt = $strategyoptions;
+            foreach ($strategyoptions as $stratkey => $strategy) {
+                foreach ($strategy as $key => $option) {
+                    $current->{$this->get_settingsfield_identifier($stratkey, $key)} = $option;
+                }
+            }
         }
         parent::moodleform_mod($current, $section, $cm, $course);
     }
@@ -121,7 +125,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->registerNoSubmitButton($elementname);
         $mform->addElement('submit', $elementname, get_string('newchoice', self::MOD_NAME));
         $mform->closeHeaderBefore($elementname);
-        
+              
         foreach (\strategymanager::get_strategies() as $strategy) {
             // load strategy class
             $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
@@ -134,7 +138,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
             // Add options fields
             foreach($strategyclass->get_static_settingfields() as $key => $value) {
-                $field_id = self::STRATEGY_OPTIONS.'[' . $strategy . '][' . $key . ']';
+                $field_id = $this->get_settingsfield_identifier($strategy,$key);
                 $this->add_settings_field($field_id, $value, $strategy, $mform);
             }
             $mform->addElement('static', self::STRATEGY_OPTIONS_PLACEHOLDER.'[' . $strategy . ']', '', '');
@@ -147,7 +151,6 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
-    // add an settings element to the form 
     /**
      * Add an settings element to the form. It is enabled only if the strategy it belongs to is selected.
      * @param string $strat_field_id id of the element to be added
@@ -155,7 +158,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      * @param string $curr_strategyid id of the strategy it belongs to
      * @param string $default default value for the element
      */
-    private function add_settings_field($strat_field_id, array $value, $strategyid, $mform, $default = null) {
+    private function add_settings_field($strat_field_id, array $value, $strategyid, MoodleQuickForm $mform, $default = null) {
 
         $attributes = array('size' => '20');
         
@@ -340,9 +343,9 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             foreach(array_keys($strategyclass->get_static_settingfields()) as $key) {
                 $mform->addRule('strategyopt[' . $strategy . '][' . $key . ']', null, 'required', null, 'server');
             }
-        }
-        $subdata=$this->get_submitted_data();
+        }        
         if ($this->is_submitted()){
+            $subdata=$this->get_submitted_data();
             $allstrategyoptions = $subdata->{self::STRATEGY_OPTIONS};
         }elseif (isset($data->setting)){
             $allstrategyoptions = json_decode($data->setting, true);
@@ -352,7 +355,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             // load strategy class
             $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
             /* @var $strategyclass \strategytemplate */
-            if (isset($allstrategyoptions)) {
+            if (isset($allstrategyoptions) && array_key_exists($strategy, $allstrategyoptions)) {
                 $strategyclass = new $strategyclassp($allstrategyoptions[$strategy]);
             } else {
                 $strategyclass = new $strategyclassp();
@@ -361,7 +364,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             // Add options fields
             $dynamic_settings_fields = $strategyclass->get_dynamic_settingfields();
             foreach ($dynamic_settings_fields as $key => $value) {
-                $field_id = self::STRATEGY_OPTIONS . '[' . $strategy . '][' . $key . ']';
+                $field_id = $this->get_settingsfield_identifier($strategy,$key);
                 $this->add_settings_field($field_id, $value, $strategy, $mform);
                 $mform->insertElementBefore($mform->removeElement($field_id, false), 
                         $strategy_placeholder);
@@ -375,7 +378,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                     $strategy_placeholder);
             }
             $mform->removeElement($strategy_placeholder);
-        }
+        }        
     }
 
     /**
@@ -399,4 +402,14 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         return $errors;
     }
+    /**
+     * Returns a valid identifier for a settings field
+     * @param $strategy identifier of the strategy
+     * @param $key identifier of the key
+     * @return string
+     */
+    private function get_settingsfield_identifier($strategy, $key){
+        return self::STRATEGY_OPTIONS . '[' . $strategy . '][' . $key . ']';
+    }
+    
 }
