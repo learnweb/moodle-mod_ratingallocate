@@ -47,14 +47,15 @@ class strategy extends \strategytemplate {
         $output = array(
             self::MINTICKYES => array('int', 
                 get_string(self::STRATEGYID . '_setting_mintickyes', ratingallocate_MOD_NAME), 
-                $this->get_settings_value(self::MINTICKYES, true, true)
+                $this->get_settings_value(self::MINTICKYES)
             )
         );
         
         $output[self::ACCEPT_LABEL] = array(
-                        'text', 
-                        $this->get_settings_value(self::ACCEPT_LABEL, true, false), 
-                        $this->get_settings_value(self::ACCEPT_LABEL, true, true)
+                        'text',
+                        $this->get_settings_default_value(self::ACCEPT_LABEL),
+                        $this->get_settings_value(self::ACCEPT_LABEL)
+                        
         );
         return $output;
     }
