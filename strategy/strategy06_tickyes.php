@@ -124,7 +124,6 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
                 $mform->setDefault($ratingelem, 1);
             }
         }
-        $this->add_action_buttons();
     }
 
     public function describe_strategy() {

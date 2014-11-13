@@ -93,8 +93,6 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             }
             // $mform->setType($ratingelem, PARAM_INT);
         }
-
-        $this->add_action_buttons();
     }
 
     public function describe_strategy() {

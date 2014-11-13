@@ -224,7 +224,7 @@ class ratingallocate {
                 $mform = new $strategyform($PAGE->url->out(), $this);
 
                 // save submitted data and redirect
-                if ($mform->is_validated() && !$mform->is_cancelled() && $data = $mform->get_data()) {
+                if ($mform->is_validated() && !$mform->is_cancelled() && $data = $mform->get_submitted_data()) {
                     if ($action === RATING_ALLOC_ACTION_RATE) {
                         $this->save_ratings_to_db($USER->id, $data->data);
                         redirect($PAGE->url->out(), get_string('ratings_saved', ratingallocate_MOD_NAME));

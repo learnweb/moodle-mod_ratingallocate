@@ -64,9 +64,6 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        /* @var $DB moodle_database */
-        global $DB, $COURSE;
-
         $mform = $this->_form;
 
         // -------------------------------------------------------------------------------

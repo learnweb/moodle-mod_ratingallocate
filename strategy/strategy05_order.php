@@ -104,8 +104,6 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
                 $mform->getElement('choice[' . ($choicecounter - ($data->rating - 1)) . ']')->setSelected($data->choiceid);
             }
         }
-
-        $this->add_action_buttons();
     }
 
     public function describe_strategy() {
