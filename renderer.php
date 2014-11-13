@@ -38,7 +38,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $this->page->set_title(get_string('pluginname', ratingallocate_MOD_NAME));
         $this->page->set_heading($this->page->course->fullname);
-        // $this->page->requires->css('/mod/ratingallocate/style/ratingallocate.css');
+        $this->page->requires->css('/mod/ratingallocate/styles.css');
 
         $o .= $this->output->header();
         $heading = format_string($header->ratingallocate->name, false, array('context' => $header->context));

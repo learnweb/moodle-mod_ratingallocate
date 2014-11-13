@@ -78,13 +78,19 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             $choiceoptions = $this->get_choiceoptions();
 
             $radioarray = array();
+            // add static elements to provide a list with choices annotated with css classes
+            $radioarray [] =& $mform->createElement('static', 'li', null, '<ul class="horizontal choices">');
             foreach ($choiceoptions as $id => $option) {
-                $radioarray [] = & $mform->createElement('radio', $ratingelem, '', $option, $id, '');
+                $radioarray [] =& $mform->createElement('static', 'static' . $id, null, '<li class="option">');
+                $radioarray [] =& $mform->createElement('radio', $ratingelem, '', $option, $id);
+                $radioarray [] =& $mform->createElement('static', 'static' . $id, null, '</li>');
             }
+            $radioarray [] =& $mform->createElement('static', 'static' , null, '</ul>');
+
             // it is important to set a group name, so that later on errors can be displayed at the correct spot.
             $mform->addGroup($radioarray, 'radioarr_' . $data->choiceid, '', null, false);
 
-			$max_rating = max(array_keys($choiceoptions));
+            $max_rating = max(array_keys($choiceoptions));
             // try to restore previous ratings
             if (is_numeric($data->rating) && $data->rating >= 0 && $data->rating <= $max_rating) {
                 $mform->setDefault($ratingelem, $data->rating);
