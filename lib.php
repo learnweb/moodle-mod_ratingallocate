@@ -1,4 +1,5 @@
 <?php
+use ratingallocate\db as db;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -35,6 +36,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 define('ratingallocate_MOD_NAME', 'ratingallocate');
 // define('NEWMODULE_ULTIMATE_ANSWER', 42);
+
+require_once(dirname(__FILE__).'/db/db_structure.php');
+
 // //////////////////////////////////////////////////////////////////////////////
 // Moodle core API //
 // //////////////////////////////////////////////////////////////////////////////
