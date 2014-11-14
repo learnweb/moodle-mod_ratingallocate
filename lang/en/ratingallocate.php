@@ -79,6 +79,8 @@ $string['export_options'] = 'Export Options';
 $string['manual_allocation_saved'] = 'Your manual allocation has been saved.';
 $string['publish_allocation'] = 'Publish allocation';
 $string['distribution_published'] = 'Distribution has been published.';
+$string['create_moodle_groups'] = 'Create Moodle groups from allocation';
+$string['moodlegroups_created'] = 'The corresponding Moodle-Grouping and Groups have been created.';
 
 $string['rating_short_0'] = '0';
 $string['rating_short_1'] = '1';
