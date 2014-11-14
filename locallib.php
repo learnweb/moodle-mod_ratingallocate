@@ -433,6 +433,12 @@ class ratingallocate {
     /**
      * Set the published to yes and allow users to see their allocation
      */
+    public function publish_allocation()
+    {
+        global $USER;
+        $this->origdbrecord->published   = true;
+        $this->origdbrecord->publishdate = time();
+        $this->ratingallocate            = new ratingallocate_db_wrapper($this->origdbrecord);
     public function publish_allocation() {
         $this->origdbrecord->published = true;
         $this->ratingallocate = new ratingallocate_db_wrapper($this->origdbrecord);
