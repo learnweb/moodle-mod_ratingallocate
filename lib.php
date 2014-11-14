@@ -1,5 +1,4 @@
 <?php
-use ratingallocate\db as db;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -38,6 +37,7 @@ define('ratingallocate_MOD_NAME', 'ratingallocate');
 // define('NEWMODULE_ULTIMATE_ANSWER', 42);
 
 require_once(dirname(__FILE__).'/db/db_structure.php');
+use ratingallocate\db as mod_db;
 
 // //////////////////////////////////////////////////////////////////////////////
 // Moodle core API //
@@ -84,9 +84,9 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
 
     $transaction = $DB->start_delegated_transaction();
     try {
-        $ratingallocate->setting = json_encode($ratingallocate->strategyopt);
+        $ratingallocate->{mod_db\ratingallocate::SETTING} = json_encode($ratingallocate->strategyopt);
         // instanz einfuegen, damit wir die ID fuer die Kinder haben
-        $id = $DB->insert_record('ratingallocate', $ratingallocate);
+        $id = $DB->insert_record(mod_db\ratingallocate::TABLE, $ratingallocate);
 
         //TODO fast group insert $optionen = explode("\n", $ratingallocate->wahloptionen); // Felder der zur Wahl stehenden Optionen
 //         foreach ($optionen as $option) {
@@ -106,8 +106,8 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
 //         }
         //create choices
         foreach ($ratingallocate->choices as $choice) {
-            $choice['ratingallocateid'] = $id;
-            $DB->insert_record('ratingallocate_choices', $choice);
+            $choice[mod_db\ratingallocate_choices::RATINGALLOCATEID] = $id;
+            $DB->insert_record(mod_db\ratingallocate_choices::TABLE, $choice);
         }
 
         $transaction->allow_commit();
@@ -120,7 +120,7 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
 
 /**
  * Updates an instance of the ratingallocate in the database
- *l
+ *
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
