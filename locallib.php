@@ -444,7 +444,7 @@ class ratingallocate {
         $allocations = $this->get_all_allocations();
         foreach ($allocations as $userid => $allocarr) {
             // get the assigned choice_id
-            $alloc_choic_id = array_keys($allocarr);
+            $alloc_choic_id = array_keys($allocarr)[0];
             
             $eventdata                    = new stdClass();
             $eventdata->component         = 'mod_ratingallocate'; // your component name
@@ -459,6 +459,7 @@ class ratingallocate {
             $eventdata->notification      = 1; // this is only set to 0 for personal messages
             // between users
             message_send($eventdata);
+        }
     }
 
     /**
