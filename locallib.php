@@ -452,7 +452,7 @@ class ratingallocate {
             $eventdata->userfrom          = $USER;
             $eventdata->userto            = $userid;
             $eventdata->subject           = get_string('allocation_notification_message_subject', ratingallocate_MOD_NAME);
-            $eventdata->fullmessage       = get_string('allocation_notification_message_subject', ratingallocate_MOD_NAME, array('ratingallocate' => $this->ratingallocate->name, 'choice' => $choices[$alloc_choic_id]->title ));
+            $eventdata->fullmessage       = get_string('allocation_notification_message', ratingallocate_MOD_NAME, array('ratingallocate' => $this->ratingallocate->name, 'choice' => $choices[$alloc_choic_id]->title ));
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml   = '';
             $eventdata->smallmessage      = '';
