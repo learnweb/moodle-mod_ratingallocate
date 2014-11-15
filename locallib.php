@@ -41,11 +41,6 @@ require_once(dirname(__FILE__) . '/strategy/strategy04_points.php');
 require_once(dirname(__FILE__) . '/strategy/strategy05_order.php');
 require_once(dirname(__FILE__) . '/strategy/strategy06_tickyes.php');
 
-//very ugly hack because some group-management functions are not provided in lib/grouplib.php
-// but does not add too much overhead since it does not include more files...
-require_once(dirname(__FILE__) . '/../../group/lib.php');
-
-
 /**
  * Simulate a static/singleton class that holds all the strategies that registered with him
  */
@@ -452,80 +447,83 @@ class ratingallocate {
         $this->ratingallocate = new ratingallocate_db_wrapper($this->origdbrecord);
         $this->db->update_record('ratingallocate', $this->origdbrecord);
     }
-    
+
     /**
      * create a moodle grouping with the name of the ratingallocate instance
-     * and create groups according to the distribution done
+     * and create groups according to the distribution. Groups are identified 
+     * by their idnumber. If a group exists, all users are removed.
      */
     public function create_moodle_groups() {
-        
         $allgroupings = groups_get_all_groupings($this->course->id);
         $groupingidname = ratingallocate_MOD_NAME . '_instid_' . $this->ratingallocateid;
         // search if there is already a grouping from us
-        $groupingknown = groups_get_grouping_by_idnumber($this->course->id,$groupingidname);
-        if(!$groupingknown){
+        $grouping = groups_get_grouping_by_idnumber($this->course->id, $groupingidname);
+        $groupingid = null;
+        if (!$grouping) {
             // create grouping
             $data = new stdClass();
             $data->name = 'created from ' . $this->ratingallocate->name;
             $data->idnumber = $groupingidname;
             $data->courseid = $this->course->id;
-            $groupingknown = groups_create_grouping($data);
+            $groupingid = groups_create_grouping($data);
         } else {
-            $groupingknown = $groupingknown->id;
+            $groupingid = $grouping->id;
         }
+
+        $group_identifier_from_choice_id = function ($choiceid) {
+            return ratingallocate_MOD_NAME . '_c_' . $choiceid;
+        };
+
         $choices = $this->get_choices_with_allocationcount();
-        $choiceidents = array();
+
         // make a new array containing only the identifiers of the choices
-        
-        foreach($choices as $key => $choice) {
-            $choiceidents[ratingallocate_MOD_NAME.'_c_'.$choice->id] = array('key'=>$key);
-        }        
+        $choice_identifiers = array();
+        foreach ($choices as $id => $choice) {
+            $choice_identifiers[$group_identifier_from_choice_id($choice->id)] = array('key' => $id
+            );
+        }
+
         // find all associated groups in this grouping
-        $groups = groups_get_all_groups($this->course->id,0,$groupingknown);
- 
-        // loop through the groups in the grouping: if the choice does not exist anymore, delete, otherwise, empty
-        // participants or create new
-        foreach($groups as $group){
-            if(array_key_exists($group->idnumber, $choiceidents)) {
+        $groups = groups_get_all_groups($this->course->id, 0, $groupingid);
+
+        // loop through the groups in the grouping: if the choice does not exist anymore -> delete
+        // otherwise mark it
+        foreach ($groups as $group) {
+            if (array_key_exists($group->idnumber, $choice_identifiers)) {
                 // group exists, mark
-                $choiceidents[$group->idnumber]['exists'] = true;
-                $choiceidents[$group->idnumber]['groupid'] = $group->id;
-                // remove all participants
+                $choice_identifiers[$group->idnumber]['exists'] = true;
+                $choice_identifiers[$group->idnumber]['groupid'] = $group->id;
             } else {
                 // delete group $group->id
                 groups_delete_group($group->id);
-            }            
+            }
         }
 
-        // add all groups which don't exist yet
-        foreach($choiceidents as $idnumber => $choice){
-            if (key_exists('exists', $choice)){
-            // remove all members
-            groups_delete_group_members_by_group($choice['groupid']);
-        }
-            else  {
+        // create groups groups for new identifiers or empty group if it exists
+        foreach ($choice_identifiers as $group_idnumber => $choice) {
+            if (key_exists('exists', $choice)) {
+                // remove all members
+                groups_delete_group_members_by_group($choice['groupid']);
+            } else {
                 $data = new stdClass();
                 $data->courseid = $this->course->id;
                 $data->name = $choices[$choice['key']]->title;
-                $data->idnumber = $idnumber;
+                $data->idnumber = $group_idnumber;
                 $createdid = groups_create_group($data);
-                groups_assign_grouping($groupingknown, $createdid);
-                $choiceidents[$idnumber]['groupid'] = $createdid;
+                groups_assign_grouping($groupingid, $createdid);
+                $choice_identifiers[$group_idnumber]['groupid'] = $createdid;
             }
-
         }
-        
-        
+
         // add all participants in the correct group
         $allocations = $this->get_all_allocations();
-        foreach($allocations as $userid => $choice) {
-            $choiceidnumber = ratingallocate_MOD_NAME.'_c_'.array_keys($choice)[0];
-            groups_add_member($choiceidents[$choiceidnumber]['groupid'], $userid);
+        foreach ($allocations as $userid => $choice) {
+            $choice_id = array_keys($choice)[0];
+            $choiceidnumber = $group_identifier_from_choice_id($choice_id);
+            groups_add_member($choice_identifiers[$choiceidnumber]['groupid'], $userid);
         }
-       
         // Invalidate the grouping cache for the course
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($this->course->id));
-        
     }
 
     /**
@@ -709,47 +707,35 @@ class ratingallocate {
         return $this->renderer;
     }
 }
+
 /**
- * Remove all users (or one user) from one group, invented by MxS by copying from group/lib.php because it didn't exist there
+ * Remove all users (or one user) from one group, invented by MxS by copying from group/lib.php
+ * because it didn't exist there
  *
  * @param int $courseid
- * @param int $userid 0 means all users
- * @param bool $showfeedback
  * @return bool success
  */
-function groups_delete_group_members_by_group($groupid, $userid=0, $showfeedback=false) {
+function groups_delete_group_members_by_group($groupid) {
     global $DB, $OUTPUT;
-
+    
     if (is_bool($userid)) {
         debugging('Incorrect userid function parameter');
         return false;
     }
-
+    
     // Select * so that the function groups_remove_member() gets the whole record.
     $groups = $DB->get_recordset('groups', array('id' => $groupid));
+    
     foreach ($groups as $group) {
-        if ($userid) {
-            $userids = array($userid);
-        } else {
-            $userids = $DB->get_fieldset_select('groups_members', 'userid', 'groupid = :groupid', array('groupid' => $group->id));
-        }
+        $userids = $DB->get_fieldset_select('groups_members', 'userid', 'groupid = :groupid', 
+            array('groupid' => $group->id));
 
+        // very ugly hack because some group-management functions are not provided in lib/grouplib.php
+        // but does not add too much overhead since it does not include more files...
+        require_once (dirname(dirname(dirname(__FILE__))) . '/group/lib.php');
         foreach ($userids as $id) {
             groups_remove_member($group, $id);
         }
     }
-
-    // TODO MDL-41312 Remove events_trigger_legacy('groups_members_removed').
-    // This event is kept here for backwards compatibility, because it cannot be
-    // translated to a new event as it is wrong.
-    $eventdata = new stdClass();
-    $eventdata->courseid = $group->courseid;
-    $eventdata->userid   = $userid;
-    events_trigger_legacy('groups_members_removed', $eventdata);
-
-    if ($showfeedback) {
-        echo $OUTPUT->notification(get_string('deleted').' - '.get_string('groupmembers', 'group'), 'notifysuccess');
-    }
-
     return true;
 }
