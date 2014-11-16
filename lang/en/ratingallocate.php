@@ -106,6 +106,7 @@ $string['rating_begintime'] = 'Rating begins at';
 $string['manual_allocation'] = 'Manual allocation';
 $string['manual_allocation_form'] = 'Manual Allocation Form';
 $string['newchoice'] = 'Add new Choice';
+$string['newchoicetitle'] = 'New choice {$a}';
 $string['deletechoice'] = 'Delete Choice';
 $string['no_rating_given'] = '?';
 $string['publishdate'] = 'Publishdate';

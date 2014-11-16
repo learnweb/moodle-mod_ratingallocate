@@ -231,7 +231,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $id = -($i);
         return (object) array(
                 'id' => $id,
-                'title' => 'New Choice '.$i,
+                'title' => get_string('newchoicetitle',ratingallocate_MOD_NAME,$i),
                 'explanation' => '',
                 'maxsize' => 20,
                 'active' => true
