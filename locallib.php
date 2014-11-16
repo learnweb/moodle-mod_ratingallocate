@@ -490,6 +490,8 @@ class ratingallocate {
                     $rating->ratingallocateid = $this->ratingallocateid;
                     $DB->insert_record('ratingallocate_ratings', $rating);
                 }
+                $completion = new completion_info($this->course);
+                $completion->set_module_viewed($this->coursemodule);
             }
             $transaction->allow_commit();
         } catch (Exception $e) {
