@@ -37,7 +37,7 @@ define('ratingallocate_MOD_NAME', 'ratingallocate');
 // define('NEWMODULE_ULTIMATE_ANSWER', 42);
 
 require_once(dirname(__FILE__).'/db/db_structure.php');
-use ratingallocate\db as mod_db;
+use ratingallocate\db as this_db;
 
 // //////////////////////////////////////////////////////////////////////////////
 // Moodle core API //
@@ -86,9 +86,9 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
 
     $transaction = $DB->start_delegated_transaction();
     try {
-        $ratingallocate->{mod_db\ratingallocate::SETTING} = json_encode($ratingallocate->strategyopt);
+        $ratingallocate->{this_db\ratingallocate::SETTING} = json_encode($ratingallocate->strategyopt);
         // instanz einfuegen, damit wir die ID fuer die Kinder haben
-        $id = $DB->insert_record(mod_db\ratingallocate::TABLE, $ratingallocate);
+        $id = $DB->insert_record(this_db\ratingallocate::TABLE, $ratingallocate);
 
         //TODO fast group insert $optionen = explode("\n", $ratingallocate->wahloptionen); // Felder der zur Wahl stehenden Optionen
 //         foreach ($optionen as $option) {
@@ -108,8 +108,8 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
 //         }
         //create choices
         foreach ($ratingallocate->choices as $choice) {
-            $choice[mod_db\ratingallocate_choices::RATINGALLOCATEID] = $id;
-            $DB->insert_record(mod_db\ratingallocate_choices::TABLE, $choice);
+            $choice[this_db\ratingallocate_choices::RATINGALLOCATEID] = $id;
+            $DB->insert_record(this_db\ratingallocate_choices::TABLE, $choice);
         }
 
         $transaction->allow_commit();

@@ -1,5 +1,5 @@
 <?php
-use ratingallocate\db as db;
+use ratingallocate\db as this_db;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -518,10 +518,10 @@ class ratingallocate {
      */
     public function get_rateable_choices() {
         global $DB;
-        return $DB->get_records(db\ratingallocate_choices::TABLE,
-            array(db\ratingallocate_choices::RATINGALLOCATEID => $this->ratingallocateid,
-                  db\ratingallocate_choices::ACTIVE => true,
-            ),db\ratingallocate_choices::TITLE);
+        return $DB->get_records(this_db\ratingallocate_choices::TABLE,
+            array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->ratingallocateid,
+                  this_db\ratingallocate_choices::ACTIVE => true,
+            ),this_db\ratingallocate_choices::TITLE);
     }
 
     /**
