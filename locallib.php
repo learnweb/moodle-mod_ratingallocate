@@ -180,14 +180,10 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             // Start the distribution algorithm
             if ($action == RATING_ALLOC_ACTION_START) {
-                require_capability('mod/ratingallocate:start_distribution', $this->context);
+                //distribute choices
+                $time_needed = $this->distrubute_choices();
 
-                $distributor = new solver_edmonds_karp();
-                // $distributor = new solver_ford_fulkerson();
-                $timestart = microtime(true);
-                $distributor->distribute_users($this);
-                // echo memory_get_peak_usage();
-                redirect($PAGE->url->out(), get_string('distribution_saved', ratingallocate_MOD_NAME, (microtime(true) - $timestart)));
+                redirect($PAGE->url->out(), get_string('distribution_saved', ratingallocate_MOD_NAME, $time_needed));
             }
         }
 
@@ -333,6 +329,20 @@ class ratingallocate {
         return $fromraters;
     }
 
+    /**
+     * distribution of choices for each user
+     */
+    public function distrubute_choices() {
+        require_capability('mod/ratingallocate:start_distribution', $this->context);
+
+        $distributor = new solver_edmonds_karp();
+        // $distributor = new solver_ford_fulkerson();
+        $timestart = microtime(true);
+        $distributor->distribute_users($this);
+        $time_needed = (microtime(true) - $timestart);
+        // echo memory_get_peak_usage();
+        return $time_needed;
+    }
     /**
      * Returns all users, that have not been allocated but have given ratings
      *
