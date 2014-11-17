@@ -350,7 +350,7 @@ class ratingallocate {
     /**
      * Returns all users, that have not been allocated but have given ratings
      *
-     * @param unknown $ratingallocateid        	
+     * @param unknown $ratingallocateid
      * @return array;
      */
     public function get_ratings_for_rateable_choices_for_raters_without_alloc() {
@@ -380,14 +380,14 @@ class ratingallocate {
      */
     public function get_choices_with_allocationcount() {
         $sql = 'SELECT c.*, al.usercount
-			FROM {ratingallocate_choices} AS c
-			LEFT JOIN (
-				SELECT choiceid, count( userid ) AS usercount
-				FROM {ratingallocate_allocations}
-				WHERE ratingallocateid =:ratingallocateid1
-				GROUP BY choiceid
-			) AS al ON c.id = al.choiceid
-			WHERE c.ratingallocateid =:ratingallocateid and c.active = :active';
+            FROM {ratingallocate_choices} AS c
+            LEFT JOIN (
+                SELECT choiceid, count( userid ) AS usercount
+                FROM {ratingallocate_allocations}
+                WHERE ratingallocateid =:ratingallocateid1
+                GROUP BY choiceid
+            ) AS al ON c.id = al.choiceid
+            WHERE c.ratingallocateid =:ratingallocateid and c.active = :active';
 
         $choices = $this->db->get_records_sql($sql, array(
             'ratingallocateid' => $this->ratingallocateid,
@@ -529,13 +529,13 @@ class ratingallocate {
      */
     public function get_allocations_for_user($userid) {
         $sql = 'SELECT m.id AS ratingallocateid, c.title, c.explanation, al.choiceid
-			FROM {ratingallocate} m
-			JOIN {ratingallocate_allocations} al
-			ON m.id = al.ratingallocateid
-			JOIN {ratingallocate_choices} c
-			ON al.choiceid = c.id
-			WHERE al.ratingallocateid = :ratingallocateid
-			AND al.userid = :userid';
+            FROM {ratingallocate} m
+            JOIN {ratingallocate_allocations} al
+            ON m.id = al.ratingallocateid
+            JOIN {ratingallocate_choices} c
+            ON al.choiceid = c.id
+            WHERE al.ratingallocateid = :ratingallocateid
+            AND al.userid = :userid';
 
         return $this->db->get_records_sql($sql, array(
                     'ratingallocateid' => $this->ratingallocateid,

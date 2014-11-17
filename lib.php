@@ -276,24 +276,17 @@ function ratingallocate_print_recent_activity($course, $viewfullnames, $timestar
  * custom activity records. These records are then rendered into HTML via
  * {@link ratingallocate_print_recent_mod_activity()}.
  *
- * @param array $activities
- *        	sequentially indexed array of objects with the 'cmid' property
- * @param int $index
- *        	the index in the $activities to use for the next record
- * @param int $timestart
- *        	append activity since this time
- * @param int $courseid
- *        	the id of the course we produce the report for
- * @param int $cmid
- *        	course module id
- * @param int $userid
- *        	check for a particular user's activity only, defaults to 0 (all users)
- * @param int $groupid
- *        	check for a particular group's activity only, defaults to 0 (all groups)
+ * @param array $activities sequentially indexed array of objects with the 'cmid' property
+ * @param int $index the index in the $activities to use for the next record
+ * @param int $timestart append activity since this time
+ * @param int $courseid the id of the course we produce the report for
+ * @param int $cmid course module id
+ * @param int $userid check for a particular user's activity only, defaults to 0 (all users)
+ * @param int $groupid check for a particular group's activity only, defaults to 0 (all groups)
  * @return void adds items into $activities and increases $index
  */
-function ratingallocate_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid = 0, $groupid = 0) {
-
+function ratingallocate_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, 
+        $userid = 0, $groupid = 0) {
 }
 
 /**
