@@ -65,7 +65,6 @@ class locallib_test extends advanced_testcase {
         
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $teacher);
         $choices = $ratingallocate->get_rateable_choices();
-        print_r($choices);
 
         $choice1 = reset($choices);
         $choice2 = end($choices);
