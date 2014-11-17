@@ -180,6 +180,9 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             // Start the distribution algorithm
             if ($action == RATING_ALLOC_ACTION_START) {
+                // try to get some more memory, 500 users in 10 groups take about 15mb
+                raise_memory_limit(MEMORY_EXTRA);
+                set_time_limit(120);
                 //distribute choices
                 $time_needed = $this->distrubute_choices();
 
@@ -331,6 +334,7 @@ class ratingallocate {
 
     /**
      * distribution of choices for each user
+     * take care about max_execution_time and memory_limit
      */
     public function distrubute_choices() {
         require_capability('mod/ratingallocate:start_distribution', $this->context);
