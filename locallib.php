@@ -364,21 +364,21 @@ class ratingallocate {
     /*
      * Returns all active choices with allocation count
      */
-
     public function get_choices_with_allocationcount() {
-        $sql = 'SELECT *
-			FROM mdl_ratingallocate_choices AS c
+        $sql = 'SELECT c.*, al.usercount
+			FROM {ratingallocate_choices} AS c
 			LEFT JOIN (
-				SELECT choiceid, count( userid ) usercount
+				SELECT choiceid, count( userid ) AS usercount
 				FROM {ratingallocate_allocations}
 				WHERE ratingallocateid =:ratingallocateid1
 				GROUP BY choiceid
 			) AS al ON c.id = al.choiceid
-			WHERE c.ratingallocateid =:ratingallocateid and c.active = 1';
+			WHERE c.ratingallocateid =:ratingallocateid and c.active = :active';
 
         $choices = $this->db->get_records_sql($sql, array(
             'ratingallocateid' => $this->ratingallocateid,
-            'ratingallocateid1' => $this->ratingallocateid
+            'ratingallocateid1' => $this->ratingallocateid,
+            'active' => true,
         ));
         return $choices;
     }
@@ -503,13 +503,11 @@ class ratingallocate {
      * Returns all choices in the instance with $ratingallocateid
      */
     public function get_rateable_choices() {
-        $sql = 'SELECT *
-            FROM {ratingallocate_choices} c
-            WHERE c.ratingallocateid = :ratingallocateid AND c.active = 1
-            ORDER by c.title';
-        return $this->db->get_records_sql($sql, array(
-                    'ratingallocateid' => $this->ratingallocateid
-        ));
+        global $DB;
+        return $DB->get_records(db\ratingallocate_choices::TABLE,
+            array(db\ratingallocate_choices::RATINGALLOCATEID => $this->ratingallocateid,
+                  db\ratingallocate_choices::ACTIVE => true,
+            ),db\ratingallocate_choices::TITLE);
     }
 
     /**
