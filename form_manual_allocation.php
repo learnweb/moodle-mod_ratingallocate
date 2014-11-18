@@ -50,16 +50,37 @@ class manual_alloc_form extends moodleform {
      */
     public function definition() {
         global $COURSE, $PAGE, $DB, $USER;
+        
+        //TODO: Needs to be replaced by a transmitted value.
+        $show_all = false;
 
         $mform = $this->_form;
 
-        $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices_for_raters_without_alloc();
+        if ($show_all){
+            $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices();
+        } else {
+            $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices_for_raters_without_alloc();
+        }
+        
         $choices = $this->ratingallocate->get_choices_with_allocationcount();
 
         $userdata = array();
+        If ($show_all) {
+            // Create one entry for each user choice combination
+            $possible_choices = $this->ratingallocate->get_rateable_choices();
+            foreach ($this->ratingallocate->get_rateable_choices() as $choiceid => $choice) {
+                foreach ($this->ratingallocate->get_raters_in_course() as $userid => $users) {
+                    $userdata[$userid][$choiceid] = '?';
+                }
+            }
+        }
+        // Add actual rating data to userdata
         foreach ($ratingdata as $rating) {
             if (!array_key_exists($rating->userid, $userdata)) {
                 $userdata[$rating->userid] = array();
+                foreach ($this->ratingallocate->get_rateable_choices() as $choiceid => $choice){
+                    $userdata[$rating->userid][$choiceid] = '?';
+                }
             }
             $userdata[$rating->userid][$rating->choiceid] = $rating->rating;
         }
@@ -88,13 +109,16 @@ class manual_alloc_form extends moodleform {
 
                 $optionname = $choices [$choiceid]->title . ' [' . get_string('rated', ratingallocate_MOD_NAME) . ' ' . $rat . "] (" .
                         ($choices [$choiceid]->usercount > 0 ? $choices [$choiceid]->usercount : "0") . "/" . $choices [$choiceid]->maxsize . ")";
-                if ($rat > 0) {
                     $radioarray [] = & $mform->createElement('radio', $ratingelem, '', $optionname, $choiceid, '');
-                }
             }
 
             // wichtig, einen Gruppennamen zu setzen, damit später die Errors an der korrekten Stelle angezeigt werden können.
             $mform->addGroup($radioarray, 'radioarr_' . $userid, get_string('assign_to', ratingallocate_MOD_NAME), null, false);
+            $userallocations = $this->ratingallocate->get_allocations_for_user($userid);
+            $allocation = array_pop($userallocations);
+            if (isset($allocation)){
+                $mform->setDefault($ratingelem, $allocation->choiceid);
+            }
         }
 
         if (!count($ratingdata) > 0) {
