@@ -204,6 +204,7 @@ class ratingallocate {
         $choice_status->is_published = $this->ratingallocate->published;
         $choice_status->available_choices = $this->get_rateable_choices();
         $choice_status->own_choices = array_filter($this->get_rating_data_for_user($USER->id),function($elem) {return !empty($elem->rating);});
+        $choice_status->allocations = $this->get_allocations_for_user($USER->id);
         $output .= $renderer->render($choice_status);
 
         // Get current time

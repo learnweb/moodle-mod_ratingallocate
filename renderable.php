@@ -60,4 +60,5 @@ class ratingallocate_choice_status implements renderable {
     public $publishdate;
     public $available_choices;
     public $own_choices;
+    public $allocations;
 }

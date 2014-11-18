@@ -165,6 +165,26 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             );
             $t->data[] = $row;
         }
+        
+        if (!empty($status->allocations) && $status->is_published) {
+            $row = new html_table_row();
+            $cell1 = new html_table_cell(get_string('your_allocated_choice', ratingallocate_MOD_NAME));
+            $choices_html = '';
+            foreach ($status->allocations as $choice) {
+                $choices_html .= '<li>';
+                $choices_html .= format_string($choice->title);
+                $choices_html .= '</li>';
+            }
+        
+            $cell2 = new html_table_cell('<ul>' . $choices_html . '</ul>');
+            //             $cell2->attributes = array('class' => 'submissionnotgraded');
+            $row->cells = array(
+                            $cell1,
+                            $cell2
+            );
+            $t->data[] = $row;            
+        }
+
         $o .= html_writer::table($t);
         $o .= $this->output->box_end();
 
@@ -183,7 +203,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         // to late to rate
         else if ($status->accesstimestop < $time) {
             // if publishdate is 0 -> than publishdate is not enabled
-            if ($status->publishdate) {
+            if ($status->publishdate && !$status->is_published) {
                 $status_summary[] = $info(get_string('publishdate_explain', ratingallocate_MOD_NAME, userdate($status->publishdate)));
             }
             // if results already published
