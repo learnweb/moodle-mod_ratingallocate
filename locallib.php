@@ -236,22 +236,6 @@ class ratingallocate {
             }
         }
 
-        if (has_capability('mod/ratingallocate:start_distribution', $this->context) && ($action == ACTION_ALLOCATE_SHOW_MANUALFORM || $action == ACTION_ALLOCATE_MANUAL_SAVE)) {
-            $mform = new manual_alloc_form($PAGE->url->out(), $this);
-
-            if (!$mform->is_cancelled() && $data = $mform->get_data()) {
-                if ($action == ACTION_ALLOCATE_MANUAL_SAVE) {
-                    $this->save_manual_allocation_form($data);
-                    $output .= $OUTPUT->box(get_string('manual_allocation_saved', ratingallocate_MOD_NAME));
-                }
-            } else {
-                $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
-                $output .= $OUTPUT->box('<p>' . get_string('allocation_manual_explain', ratingallocate_MOD_NAME) . '</p>');
-
-                $output .= $mform->to_html();
-            }
-        }
-
         // Print data and controls for teachers
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             // Notify if there aren't at least two rateable groups
@@ -270,11 +254,7 @@ class ratingallocate {
             if ($this->ratingallocate->accesstimestop < $now) {
                 $output .= $renderer->distribution_table_for_ratingallocate($this);
 
-                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
-                    'ratingallocateid' => $this->ratingallocateid,
-                    'action' => ACTION_ALLOCATE_SHOW_MANUALFORM)), get_string('manual_allocation_form', ratingallocate_MOD_NAME));
-
-                // if results not published yet, then do now
+               // if results not published yet, then do now
                 if ($this->ratingallocate->published == false) {
                     $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                         'ratingallocateid' => $this->ratingallocateid,
@@ -285,7 +265,32 @@ class ratingallocate {
                     $output .= $OUTPUT->notification( get_string('distribution_published', ratingallocate_MOD_NAME), 'notifysuccess');
                 }
             }
+            
+            if (has_capability('mod/ratingallocate:start_distribution', $this->context) && ($action == ACTION_ALLOCATE_SHOW_MANUALFORM || $action == ACTION_ALLOCATE_MANUAL_SAVE)) {
+                $mform = new manual_alloc_form($PAGE->url->out(), $this);
+            
+                if (!$mform->is_cancelled() && $data = $mform->get_data()) {
+                    if ($action == ACTION_ALLOCATE_MANUAL_SAVE) {
+                        $this->save_manual_allocation_form($data);
+                        $output .= $OUTPUT->box(get_string('manual_allocation_saved', ratingallocate_MOD_NAME));
+                    }
+                } else {
+                    $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
+                    $output .= $OUTPUT->box('<p>' . get_string('allocation_manual_explain', ratingallocate_MOD_NAME) . '</p>');
+            
+                    $output .= $mform->to_html();
+                }
+            }
+            
+            if ($this->ratingallocate->accesstimestop < $now) {
+                $output .= $renderer->add_manual_allocation_filter();
 
+                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
+                                'ratingallocateid' => $this->ratingallocateid,
+                                'action' => ACTION_ALLOCATE_SHOW_MANUALFORM)), get_string('manual_allocation_form', ratingallocate_MOD_NAME));
+            }
+            
+            
             // Print ratings table
             if ($action == RATING_ALLOC_SHOW_TABLE) {
                 $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),

@@ -494,4 +494,16 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $row->cells = array($cell1, $cell2);
         $table->data[] = $row;
     }
+    
+    /**
+     * Output the manual allocation filter
+     */
+    public function manual_allocation_filter(){
+        $options = array(
+            0 => get_string('manual_allocation_filter_only_raters', ratingallocate_MOD_NAME),
+            1 => get_string('manual_allocation_filter_all', ratingallocate_MOD_NAME)
+        );
+        $output = html_writer::select($options, 'manual_allocation_filter',0,false);
+        return $output;
+    }
 }
