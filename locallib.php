@@ -25,7 +25,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
-use ratingallocate\db as db;
+use ratingallocate\db as this_db;
 require_once(dirname(__FILE__) . '/lib.php');
 require_once(dirname(__FILE__) . '/form_manual_allocation.php');
 require_once(dirname(__FILE__) . '/renderable.php');
@@ -436,30 +436,11 @@ class ratingallocate {
     public function publish_allocation()
     {
         global $USER;
-        $this->origdbrecord->published   = true;
-        $this->origdbrecord->publishdate = time();
+        $this->origdbrecord->{this_db\ratingallocate::PUBLISHED}   = true;
+        $this->origdbrecord->{this_db\ratingallocate::PUBLISHDATE} = time();
+        $this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} = -1; // cron will look after this
         $this->ratingallocate            = new ratingallocate_db_wrapper($this->origdbrecord);
-        $this->db->update_record('ratingallocate', $this->origdbrecord);
-        $choices     = $this->get_choices_with_allocationcount();
-        $allocations = $this->get_all_allocations();
-        foreach ($allocations as $userid => $allocarr) {
-            // get the assigned choice_id
-            $alloc_choic_id = array_keys($allocarr)[0];
-            
-            $eventdata                    = new stdClass();
-            $eventdata->component         = 'mod_ratingallocate'; // your component name
-            $eventdata->name              = 'notifyalloc'; // this is the message name from messages.php
-            $eventdata->userfrom          = $USER;
-            $eventdata->userto            = $userid;
-            $eventdata->subject           = get_string('allocation_notification_message_subject', ratingallocate_MOD_NAME);
-            $eventdata->fullmessage       = get_string('allocation_notification_message', ratingallocate_MOD_NAME, array('ratingallocate' => $this->ratingallocate->name, 'choice' => $choices[$alloc_choic_id]->title ));
-            $eventdata->fullmessageformat = FORMAT_PLAIN;
-            $eventdata->fullmessagehtml   = '';
-            $eventdata->smallmessage      = '';
-            $eventdata->notification      = 1; // this is only set to 0 for personal messages
-            // between users
-            message_send($eventdata);
-        }
+        $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);        
     }
 
     /**

@@ -318,6 +318,27 @@ function ratingallocate_print_recent_mod_activity($activity, $courseid, $detail,
  *
  */
 function ratingallocate_cron() {
+
+    $choices     = $this->get_choices_with_allocationcount();
+    $allocations = $this->get_all_allocations();
+    foreach ($allocations as $userid => $allocarr) {
+        // get the assigned choice_id
+        $alloc_choic_id = array_keys($allocarr)[0];
+    
+        $eventdata                    = new stdClass();
+        $eventdata->component         = 'mod_ratingallocate'; // your component name
+        $eventdata->name              = 'notifyalloc'; // this is the message name from messages.php
+        $eventdata->userfrom          = $USER;
+        $eventdata->userto            = $userid;
+        $eventdata->subject           = get_string('allocation_notification_message_subject', ratingallocate_MOD_NAME);
+        $eventdata->fullmessage       = get_string('allocation_notification_message', ratingallocate_MOD_NAME, array('ratingallocate' => $this->ratingallocate->name, 'choice' => $choices[$alloc_choic_id]->title ));
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml   = '';
+        $eventdata->smallmessage      = '';
+        $eventdata->notification      = 1; // this is only set to 0 for personal messages
+        // between users
+        message_send($eventdata);
+    }
     return true;
 }
 
