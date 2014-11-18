@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+require_once(dirname(__FILE__) . '/backup_restore_helper.php');
+use ratingallocate\db as this_db;
 /**
  * @package moodlecore
  * @subpackage backup-moodle2
@@ -33,16 +35,20 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
         $userinfo = $this->get_setting_value('userinfo');
 
         // Define each element separated
-        $ratingallocate = new backup_nested_element('ratingallocate', array('id'), array('course', 'name', 'intro', 'introformat', 'timecreated', 'timemodified', 'accesstimestart', 'accesstimestop', 'setting', 'strategy', 'publishdate', 'published'));
+        $class = this_db\ratingallocate::class;
+        $ratingallocate = new backup_nested_element(get_tablename_for_tableClass($class), get_id_for_tableClass($class), get_fields_for_tableClass($class));
 
-        $ratingallocate_choices = new backup_nested_element('ratingallocate_choices' . 's');
-        $ratingallocate_choice = new backup_nested_element('ratingallocate_choices', array('id'), array('ratingallocateid', 'title', 'explanation', 'maxsize', 'active'));
+        $class = this_db\ratingallocate_choices::class;
+        $ratingallocate_choices = new backup_nested_element(get_tablename_for_tableClass($class) . 's');
+        $ratingallocate_choice = new backup_nested_element(get_tablename_for_tableClass($class), get_id_for_tableClass($class), get_fields_for_tableClass($class));
 
-        $ratingallocate_ratings = new backup_nested_element('ratingallocate_ratings' . 's');
-        $ratingallocate_rating = new backup_nested_element('ratingallocate_ratings',  array('id'), array('choiceid', 'userid', 'rating'));
+        $class = this_db\ratingallocate_ratings::class;
+        $ratingallocate_ratings = new backup_nested_element(get_tablename_for_tableClass($class) . 's');
+        $ratingallocate_rating = new backup_nested_element(get_tablename_for_tableClass($class), get_id_for_tableClass($class), get_fields_for_tableClass($class));
 
-        $ratingallocate_allocations = new backup_nested_element('ratingallocate_allocations' . 's');
-        $ratingallocate_allocation = new backup_nested_element('ratingallocate_allocations',  array('id'), array('userid', 'ratingallocateid', 'choiceid'));
+        $class = this_db\ratingallocate_allocations::class;
+        $ratingallocate_allocations = new backup_nested_element(get_tablename_for_tableClass($class) . 's');
+        $ratingallocate_allocation = new backup_nested_element(get_tablename_for_tableClass($class), get_id_for_tableClass($class), get_fields_for_tableClass($class));
 
         // Build the tree
         $ratingallocate->add_child($ratingallocate_choices);
@@ -55,17 +61,17 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
         $ratingallocate_allocations->add_child($ratingallocate_allocation);
 
         // Define sources
-        $ratingallocate->set_source_table('ratingallocate', array('id' => backup::VAR_ACTIVITYID));
-        $ratingallocate_choice->set_source_table('ratingallocate_choices', array('ratingallocateid' => backup::VAR_PARENTID), 'id ASC');
+        $ratingallocate->set_source_table(get_tablename_for_tableClass(this_db\ratingallocate::class), array(this_db\ratingallocate::ID => backup::VAR_ACTIVITYID), this_db\ratingallocate_choices::ID . ' ASC');
+        $ratingallocate_choice->set_source_table(get_tablename_for_tableClass(this_db\ratingallocate_choices::class), array(this_db\ratingallocate_choices::RATINGALLOCATEID => backup::VAR_PARENTID), this_db\ratingallocate_choices::ID . ' ASC');
 
         if ($userinfo) {
-            $ratingallocate_rating->set_source_table('ratingallocate_ratings', array('choiceid' => backup::VAR_PARENTID), 'id ASC');
-            $ratingallocate_allocation->set_source_table('ratingallocate_allocations', array('ratingallocateid' => backup::VAR_ACTIVITYID, 'choiceid' => backup::VAR_PARENTID), 'id ASC');
+            $ratingallocate_rating->set_source_table(get_tablename_for_tableClass(this_db\ratingallocate_ratings::class), array(this_db\ratingallocate_ratings::CHOICEID => backup::VAR_PARENTID), this_db\ratingallocate_ratings::ID . ' ASC');
+            $ratingallocate_allocation->set_source_table(get_tablename_for_tableClass(this_db\ratingallocate_allocations::class), array(this_db\ratingallocate_allocations::RATINGALLOCATEID => backup::VAR_ACTIVITYID, this_db\ratingallocate_allocations::CHOICEID => backup::VAR_PARENTID), this_db\ratingallocate_allocations::ID . ' ASC');
         }
 
         // Define id annotations
-        $ratingallocate_allocation->annotate_ids('user', 'userid');
-        $ratingallocate_rating->annotate_ids('user', 'userid');
+        $ratingallocate_allocation->annotate_ids('user', this_db\ratingallocate_allocations::USERID);
+        $ratingallocate_rating->annotate_ids('user', this_db\ratingallocate_ratings::USERID);
 
         // Define file annotations
         $ratingallocate->annotate_files('mod_' . ratingallocate_MOD_NAME, 'intro', null);
