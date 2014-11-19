@@ -398,27 +398,34 @@ class ratingallocate {
     }
 
     /**
+     * @return all allocation objects that belong this ratingallocate
+     */
+    public function get_allocations() {
+        $query = 'SELECT al.*, r.rating
+                FROM {ratingallocate_allocations} al
+           LEFT JOIN {ratingallocate_choices} c ON al.choiceid = c.id
+           LEFT JOIN {ratingallocate_ratings} r ON al.choiceid = r.choiceid AND al.userid = r.userid
+               WHERE al.ratingallocateid = :ratingallocateid AND c.active = 1';
+        $records = $this->db->get_records_sql($query, array(
+                        'ratingallocateid' => $this->ratingallocateid
+        ));
+        return $records;
+    }
+
+    /**
      * Returns all group memberships from users who can give ratings,
      * for rateable groups in the course with id $courseid.
      * Also contains the rating the user gave for that group or null if he gave none.
      * *Known Limitation* Does only return 1 Allocation only
-     *
+     * @deprecated
      * @return array of the form array($userid => array($groupid => $rating, ...), ...)
      *         i.e. for every user who is a member of at least one rateable group,
      *         the array contains a set of ids representing the groups the user is a member of
      *         and possibly the respective rating.
      */
     public function get_all_allocations() {
-        $query = 'SELECT al.id, al.userid, al.choiceid, r.rating
-                FROM {ratingallocate_allocations} al
-           LEFT JOIN {ratingallocate_choices} c
-                  ON al.choiceid = c.id
-           LEFT JOIN {ratingallocate_ratings} r
-                  ON al.choiceid = r.choiceid AND al.userid = r.userid
-               WHERE al.ratingallocateid = :ratingallocateid AND c.active = 1';
-        $records = $this->db->get_records_sql($query, array(
-            'ratingallocateid' => $this->ratingallocateid
-        ));
+        debugging('get_all_allocations() has been deprecated, please rewrite your code to use get_allocations', DEBUG_DEVELOPER); //TODO
+        $records = $this->get_allocations();
         $memberships = array();
 
         $raters = $this->get_raters_in_course();
