@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use ratingallocate\db as this_db;
+
 /**
  * @package    mod
  * @subpackage mod_ratingallocate
@@ -165,6 +167,23 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             );
             $t->data[] = $row;
         }
+
+        if (!empty($status->allocations) && $status->is_published) {
+            $row = new html_table_row();
+            $cell1 = new html_table_cell(
+                    get_string('your_allocated_choice', ratingallocate_MOD_NAME));
+            $allocation_html = '';
+            foreach ($status->allocations as $allocation) {
+                $allocation_html .= '<li>';
+                $allocation_html .= format_string($allocation->{this_db\ratingallocate_choices::TITLE});
+                $allocation_html .= '</li>';
+            }
+            $allocation_html = '<ul>' . $allocation_html . '</ul>';
+            $cell2 = new html_table_cell($allocation_html);
+            $row->cells = array($cell1, $cell2);
+            $t->data[] = $row;
+        }
+
         $o .= html_writer::table($t);
         $o .= $this->output->box_end();
 
@@ -183,7 +202,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         // to late to rate
         else if ($status->accesstimestop < $time) {
             // if publishdate is 0 -> than publishdate is not enabled
-            if ($status->publishdate) {
+            if ($status->publishdate && !$status->is_published) {
                 $status_summary[] = $info(get_string('publishdate_explain', ratingallocate_MOD_NAME, userdate($status->publishdate)));
             }
             // if results already published
