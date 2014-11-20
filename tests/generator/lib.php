@@ -144,7 +144,7 @@ class mod_ratingallocate_generated_module {
     var $allocations;
 
     /**
-     *
+     * Generates a fully set up mod_ratingallocate module
      * @param advanced_testcase $tc
      * @param array $record
      * @param boolean $assert_intermediate_result
