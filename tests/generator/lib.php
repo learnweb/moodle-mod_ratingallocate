@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+require_once(dirname(__FILE__) . '/../../locallib.php');
+
 /**
  * mod_dsbuilder generator tests
 *
@@ -25,6 +27,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use ratingallocate\db as this_db;
 
 class mod_ratingallocate_generator extends testing_module_generator {
 
@@ -67,6 +70,62 @@ class mod_ratingallocate_generator extends testing_module_generator {
         }
         return self::$_default_value;
     }
-
     private static $_default_value;
+
+    /**
+     * creates a user and enroles him into the given course as teacher or student
+     * @param advanced_testcase $tc
+     * @param unknown $course
+     * @param string $is_teacher
+     * @return stdClass
+     */
+    public static function create_user_and_enrol(advanced_testcase $tc, $course, $is_teacher = false) {
+        $user = $tc->getDataGenerator()->create_user();
+
+        if ($is_teacher) {
+            global $DB;
+            // enrole teacher and student
+            $teacher_role = $DB->get_record('role',
+                    array('shortname' => 'editingteacher'
+                    ));
+            $enroled = $tc->getDataGenerator()->enrol_user($user->id, $course->id,
+                    $teacher_role->id);
+        } else {
+            $enroled = $tc->getDataGenerator()->enrol_user($user->id, $course->id);
+        }
+        $tc->assertTrue($enroled, 'trying to enrol already enroled user');
+        return $user;
+    }
+
+    /**
+     * login with given user and save his rating
+     * @param advanced_testcase $tc
+     * @param unknown $mod_ratingallocate
+     * @param unknown $user
+     * @param unknown $rating
+     */
+    public static function save_rating_for_user(advanced_testcase $tc, $mod_ratingallocate, $user,
+            $rating) {
+        $ratingallocate = self::get_ratingallocate_for_user($tc, $mod_ratingallocate, $user);
+        $ratingallocate->save_ratings_to_db($user->id, $rating);
+    }
+
+    /**
+     * login the given user and return ratingallocate object for him.
+     *
+     * @param advanced_testcase $tc
+     * @param unknown $ratingallocate_db db object representing ratingallocate object
+     * @param unknown $user
+     * @return ratingallocate
+     */
+    public static function get_ratingallocate_for_user(advanced_testcase $tc, $ratingallocate_db,
+            $user) {
+        $tc->setUser($user);
+        $cm = get_coursemodule_from_instance(ratingallocate_MOD_NAME,
+                $ratingallocate_db->{this_db\ratingallocate::ID});
+        $course = get_course($cm->course);
+        $context = context_module::instance($cm->id);
+
+        return new ratingallocate($ratingallocate_db, $course, $cm, $context);
+    }
 }

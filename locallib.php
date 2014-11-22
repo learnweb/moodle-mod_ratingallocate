@@ -180,14 +180,13 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             // Start the distribution algorithm
             if ($action == RATING_ALLOC_ACTION_START) {
-                require_capability('mod/ratingallocate:start_distribution', $this->context);
+                // try to get some more memory, 500 users in 10 groups take about 15mb
+                raise_memory_limit(MEMORY_EXTRA);
+                set_time_limit(120);
+                //distribute choices
+                $time_needed = $this->distrubute_choices();
 
-                $distributor = new solver_edmonds_karp();
-                // $distributor = new solver_ford_fulkerson();
-                $timestart = microtime(true);
-                $distributor->distribute_users($this);
-                // echo memory_get_peak_usage();
-                redirect($PAGE->url->out(), get_string('distribution_saved', ratingallocate_MOD_NAME, (microtime(true) - $timestart)));
+                redirect($PAGE->url->out(), get_string('distribution_saved', ratingallocate_MOD_NAME, $time_needed));
             }
         }
 
@@ -334,9 +333,24 @@ class ratingallocate {
     }
 
     /**
+     * distribution of choices for each user
+     * take care about max_execution_time and memory_limit
+     */
+    public function distrubute_choices() {
+        require_capability('mod/ratingallocate:start_distribution', $this->context);
+
+        $distributor = new solver_edmonds_karp();
+        // $distributor = new solver_ford_fulkerson();
+        $timestart = microtime(true);
+        $distributor->distribute_users($this);
+        $time_needed = (microtime(true) - $timestart);
+        // echo memory_get_peak_usage();
+        return $time_needed;
+    }
+    /**
      * Returns all users, that have not been allocated but have given ratings
      *
-     * @param unknown $ratingallocateid        	
+     * @param unknown $ratingallocateid
      * @return array;
      */
     public function get_ratings_for_rateable_choices_for_raters_without_alloc() {
@@ -364,21 +378,21 @@ class ratingallocate {
     /*
      * Returns all active choices with allocation count
      */
-
     public function get_choices_with_allocationcount() {
-        $sql = 'SELECT *
-			FROM mdl_ratingallocate_choices AS c
-			LEFT JOIN (
-				SELECT choiceid, count( userid ) usercount
-				FROM {ratingallocate_allocations}
-				WHERE ratingallocateid =:ratingallocateid1
-				GROUP BY choiceid
-			) AS al ON c.id = al.choiceid
-			WHERE c.ratingallocateid =:ratingallocateid and c.active = 1';
+        $sql = 'SELECT c.*, al.usercount
+            FROM {ratingallocate_choices} AS c
+            LEFT JOIN (
+                SELECT choiceid, count( userid ) AS usercount
+                FROM {ratingallocate_allocations}
+                WHERE ratingallocateid =:ratingallocateid1
+                GROUP BY choiceid
+            ) AS al ON c.id = al.choiceid
+            WHERE c.ratingallocateid =:ratingallocateid and c.active = :active';
 
         $choices = $this->db->get_records_sql($sql, array(
             'ratingallocateid' => $this->ratingallocateid,
-            'ratingallocateid1' => $this->ratingallocateid
+            'ratingallocateid1' => $this->ratingallocateid,
+            'active' => true,
         ));
         return $choices;
     }
@@ -494,6 +508,8 @@ class ratingallocate {
                     $rating->ratingallocateid = $this->ratingallocateid;
                     $DB->insert_record('ratingallocate_ratings', $rating);
                 }
+                $completion = new completion_info($this->course);
+                $completion->set_module_viewed($this->coursemodule);
             }
             $transaction->allow_commit();
         } catch (Exception $e) {
@@ -505,13 +521,11 @@ class ratingallocate {
      * Returns all choices in the instance with $ratingallocateid
      */
     public function get_rateable_choices() {
-        $sql = 'SELECT *
-            FROM {ratingallocate_choices} c
-            WHERE c.ratingallocateid = :ratingallocateid AND c.active = 1
-            ORDER by c.title';
-        return $this->db->get_records_sql($sql, array(
-                    'ratingallocateid' => $this->ratingallocateid
-        ));
+        global $DB;
+        return $DB->get_records(this_db\ratingallocate_choices::TABLE,
+            array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->ratingallocateid,
+                  this_db\ratingallocate_choices::ACTIVE => true,
+            ),this_db\ratingallocate_choices::TITLE);
     }
 
     /**
@@ -519,13 +533,13 @@ class ratingallocate {
      */
     public function get_allocations_for_user($userid) {
         $sql = 'SELECT m.id AS ratingallocateid, c.title, c.explanation, al.choiceid
-			FROM {ratingallocate} m
-			JOIN {ratingallocate_allocations} al
-			ON m.id = al.ratingallocateid
-			JOIN {ratingallocate_choices} c
-			ON al.choiceid = c.id
-			WHERE al.ratingallocateid = :ratingallocateid
-			AND al.userid = :userid';
+            FROM {ratingallocate} m
+            JOIN {ratingallocate_allocations} al
+            ON m.id = al.ratingallocateid
+            JOIN {ratingallocate_choices} c
+            ON al.choiceid = c.id
+            WHERE al.ratingallocateid = :ratingallocateid
+            AND al.userid = :userid';
 
         return $this->db->get_records_sql($sql, array(
                     'ratingallocateid' => $this->ratingallocateid,

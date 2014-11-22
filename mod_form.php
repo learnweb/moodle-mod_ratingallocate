@@ -231,7 +231,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $id = -($i);
         return (object) array(
                 'id' => $id,
-                'title' => 'New Choice '.$i,
+                'title' => get_string('newchoicetitle',ratingallocate_MOD_NAME,$i),
                 'explanation' => '',
                 'maxsize' => 20,
                 'active' => true
@@ -294,8 +294,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                     array_keys($mform->getSubmitValues()));
             // only proceed if exaclty one delete button was found in the submitted data
             if (count($matches) == 1) {
-            	// retrieve the id as an Integer from the button name
-            	$elem = array_pop($matches);
+                // retrieve the id as an Integer from the button name
+                $elem = array_pop($matches);
                 $parts = explode('_', $elem);
                 $delete_choice_id = (integer) array_pop($parts);
                 

@@ -87,10 +87,7 @@ class distributor {
      */
     public function distribute_users(\ratingallocate $ratingallocate) {
         // Extend PHP time limit
-        set_time_limit(0);
-
-        // try to get some more memory, 500 users in 10 groups take about 15mb
-        ini_set('memory_limit', '64M');
+//        set_time_limit(0);
 
         // Load data from database
         $choicerecords = $ratingallocate->get_rateable_choices();

@@ -223,36 +223,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         return $o;
     }
 
-    /**
-     * nur allgemeine Informationen
-     * @param ratingallocate $ratingallocate
-     * @return unknown
-     */
-    public function format_ratingallocate(ratingallocate $ratingallocate) {
-        global $COURSE;
-
-        $output = $this->heading(format_string($ratingallocate->name), 2);
-
-        if ($ratingallocate->intro) {
-            $cm = get_coursemodule_from_instance('ratingallocate', $ratingallocate->id, $COURSE->id, false, MUST_EXIST);
-            $output .= $this->box(format_module_intro('ratingallocate', $ratingallocate, $cm->id), 'generalbox', 'intro');
-        }
-
-        $output .= $this->box_start();
-
-        $a = new stdClass();
-        $begin = userdate($ratingallocate->accesstimestart);
-        $a->begin = '<span class="ratingallocate_highlight">' . $begin . '</span>';
-        $end = userdate($ratingallocate->accesstimestop);
-        $a->end = '<span class="ratingallocate_highlight">' . $end . '</span>';
-        $note = get_string('show_rating_period', ratingallocate_MOD_NAME, $a);
-        $output .= '<p>' . $note . '</p>';
-
-        $output .= $this->box_end();
-
-        return $output;
-    }
-
     public function format_text($text) {
         $output = '';
 
@@ -263,50 +233,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         return $output;
     }
 
-    /**
-     * Output the rating form section (as long as the rating period has not yet started)
-     */
-    public function user_rating_form_tooearly(ratingallocate $ratingallocate) {
-        $output = $this->notification(get_string('too_early_to_rate', ratingallocate_MOD_NAME));
-
-        $choices = $ratingallocate->get_rateable_choices();
-
-        if (count($choices) > 0) {
-            $output .= $this->heading(get_string('rateable_choices', ratingallocate_MOD_NAME), 2);
-            foreach ($choices as $choice) {
-                $output .= $this->format_choice($choice, true);
-                $output .= '<hr />';
-            }
-        }
-
-        return $output;
-    }
-
-    /**
-     * Output the rating form section (as long as the rating period has already finished)
-     */
-    public function user_rating_form_finished($allocations) {
-
-        $output = $this->notification(get_string('rating_is_over', ratingallocate_MOD_NAME));
-
-        if (count($allocations) > 0) {
-            $output .= $this->heading(get_string('your_allocated_choice', ratingallocate_MOD_NAME), 2);
-            foreach ($allocations as $alloc) {
-                $output .= $this->format_choice($alloc, true);
-            }
-        }
-
-        return $output;
-    }
-
-    public function format_publishdate($publishdate) {
-
-        $output = $this->box_start();
-        $output .= '<p>' . get_string('publishdate_explain', ratingallocate_MOD_NAME, userdate($publishdate)) . '</p>';
-        $output .= $this->box_end();
-
-        return $output;
-    }
 
     /**
      * Output the ratingallocate algorithm control section (as long as the rating period is not over)
@@ -507,39 +433,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Formats the $description and return HTML.
-     */
-    public function format_choice_description($description) {
-        $output = $this->box_start('ratingallocate_description clearfix');
-        $output .= format_text($description);
-        $output .= $this->box_end();
-
-        return $output;
-    }
-
-    /**
-     * Format a choice for displaying it to students
-     * @param stdclass $choice
-     * @param boolean $showheading
-     * @return string
-     */
-    public function format_choice($choice, $showheading) {
-        $output = $this->box_start('generalbox');
-
-        if ($showheading) {
-            $output .= $this->heading($choice->title, 3, 'ratingallocate_heading');
-        }
-
-        if ($choice->explanation !== '') {
-            $output .= $this->format_choice_description($choice->explanation);
-        }
-
-        $output .= $this->box_end();
-
-        return $output;
-    }
-
-    /**
      * Format the users in the rating table
      */
     public function format_user_data($data) {
@@ -577,22 +470,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         }
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('div');
-
-        return $output;
-    }
-
-    /**
-     * Formats the notifications for the recent activity block and the course overview block
-     */
-    public function format_notifications($ratingallocate, $timestart) {
-        $output = '';
-
-        if ($ratingallocate->accesstimestart < time() and time() < $ratingallocate->accesstimestop) {
-            // during the rating period.
-            $a = new stdclass();
-            $a->until = userdate($ratingallocate->enddate);
-            $output .= $this->container(get_string('rating_has_begun', ratingallocate_MOD_NAME, $a), 'overview ratingallocate');
-        }
 
         return $output;
     }
