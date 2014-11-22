@@ -40,4 +40,5 @@ class ratingallocate_allocations {
     const USERID = 'userid';
     const RATINGALLOCATEID = 'ratingallocateid';
     const CHOICEID = 'choiceid';
+    const TIMENOTIFIED = 'timenotified';
 }

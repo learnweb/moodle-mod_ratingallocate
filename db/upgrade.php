@@ -70,7 +70,7 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         }
     }
     
-    if ($oldversion < 2014111800) {
+    if ($oldversion < 2014112202) {
 
         // Define field notification_send to be added to ratingallocate.
         $table = new xmldb_table('ratingallocate');
@@ -80,9 +80,18 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-
+        
+        $table2 = new xmldb_table('ratingallocate_allocations');
+        $field2 = new xmldb_field('timenotified', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'choiceid');
+        
+        
+        // Conditionally launch add field id.
+        if (!$dbman->field_exists($table2, $field2)) {
+            $dbman->add_field($table2, $field2);
+        }
+        
         // Ratingallocate savepoint reached.
-        upgrade_mod_savepoint(true, 2014111800, 'ratingallocate');
+        upgrade_mod_savepoint(true, 2014112202, 'ratingallocate');
     }
     
     return true;
