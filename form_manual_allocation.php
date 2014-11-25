@@ -165,7 +165,10 @@ class manual_alloc_form extends moodleform {
                         ($choicesWithAllocations [$choiceid]->usercount > 0 ? $choicesWithAllocations [$choiceid]->usercount : "0") . "/" . $choicesWithAllocations [$choiceid]->maxsize . ")";
                 $radioarray [] = & $mform->createElement('radio', $ratingelem, '', $optionname, $choiceid, '');
             }
-        
+            
+            // Adding static elements to support css
+            $radioarray = $this->ratingallocate->prepare_horizontal_radio_choice($radioarray, $mform);
+            
             // wichtig, einen Gruppennamen zu setzen, damit später die Errors an der korrekten Stelle angezeigt werden können.
 //             $mform->addGroup($radioarray, 'radioarr_' . $userid, get_string('assign_to', ratingallocate_MOD_NAME), null, false);
             $mform->addGroup($radioarray, 'radioarr_' . $userid, fullname($usersincourse[$userid]), null, false);

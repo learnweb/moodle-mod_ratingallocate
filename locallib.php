@@ -661,4 +661,24 @@ class ratingallocate {
         return $this->renderer;
     }
     
+    /**
+     * Adds static elements to the radioarray to make use of css for formatting
+     * @param unknown $radioarray
+     * @param unknown $mform
+     * @return enriched radioarray
+     */
+    public function prepare_horizontal_radio_choice($radioarray, $mform){
+        $result = array();
+        // add static elements to provide a list with choices annotated with css classes
+        $result [] =& $mform->createElement('static', 'li', null, '<ul class="horizontal choices">');
+        foreach ($radioarray as $id => $radio) {
+            $result [] =& $mform->createElement('static', 'static' . $id, null, '<li class="option">');
+            $result [] = $radio;
+            $result [] =& $mform->createElement('static', 'static' . $id, null, '</li>');
+        }
+        $result [] =& $mform->createElement('static', 'static' , null, '</ul>');
+        
+        return $result;
+    }
+    
 }
