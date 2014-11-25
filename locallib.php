@@ -69,8 +69,7 @@ class strategymanager {
 
 define('RATING_ALLOC_ACTION_RATE', 'rate');
 define('RATING_ALLOC_ACTION_START', 'start_distribution');
-define('ACTION_ALLOCATE_SHOW_MANUALFORM', 'ACTION_ALLOCATE_SHOW_MANUALFORM');
-define('ACTION_ALLOCATE_MANUAL_SAVE', 'allocate_manual_save');
+define('ACTION_ALLOCATE_PROCESS_MANUALFORM', 'ACTION_ALLOCATE_PROCESS_MANUALFORM');
 define('ACTION_PUBLISH_ALLOCATIONS', 'publish_allocations'); // make them displayable for the users
 define('ACTION_SOLVE_LP_SOLVE', 'solve_lp_solve'); // instead of only generating the mps-file, let it solve
 define('RATING_ALLOC_SHOW_TABLE', 'show_table');
@@ -266,28 +265,27 @@ class ratingallocate {
                 }
             }
             
-            if (has_capability('mod/ratingallocate:start_distribution', $this->context) && ($action == ACTION_ALLOCATE_SHOW_MANUALFORM || $action == ACTION_ALLOCATE_MANUAL_SAVE)) {
+            // Manual allocation
+            if (has_capability('mod/ratingallocate:start_distribution', $this->context) && ($action == ACTION_ALLOCATE_PROCESS_MANUALFORM)) {
                 $mform = new manual_alloc_form($PAGE->url->out(), $this);
-            
-                if (!$mform->is_cancelled() && $data = $mform->get_data()) {
-                    if ($action == ACTION_ALLOCATE_MANUAL_SAVE) {
+
+                if (!$mform->no_submit_button_pressed() && $data = $mform->get_submitted_data()) {                    
+                    if (!$mform->is_cancelled() ) { 
                         $this->save_manual_allocation_form($data);
                         $output .= $OUTPUT->box(get_string('manual_allocation_saved', ratingallocate_MOD_NAME));
                     }
                 } else {
                     $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
                     $output .= $OUTPUT->box('<p>' . get_string('allocation_manual_explain', ratingallocate_MOD_NAME) . '</p>');
-            
+                    
                     $output .= $mform->to_html();
                 }
             }
             
             if ($this->ratingallocate->accesstimestop < $now) {
-                $output .= $renderer->add_manual_allocation_filter();
-
                 $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                                 'ratingallocateid' => $this->ratingallocateid,
-                                'action' => ACTION_ALLOCATE_SHOW_MANUALFORM)), get_string('manual_allocation_form', ratingallocate_MOD_NAME));
+                                'action' => ACTION_ALLOCATE_PROCESS_MANUALFORM)), get_string('manual_allocation_form', ratingallocate_MOD_NAME));
             }
             
             
@@ -638,4 +636,5 @@ class ratingallocate {
         $this->renderer = $PAGE->get_renderer('mod_ratingallocate');
         return $this->renderer;
     }
+    
 }
