@@ -152,11 +152,13 @@ class manual_alloc_form extends moodleform {
             $headerelem = 'head_ratingallocate_u' . $userid;
             $elemprefix = 'data[' . $userid . ']';
             $ratingelem = $elemprefix . '[assign]';
-        
+            
+            $rating_titles = $this->ratingallocate->get_options_titles($userdat);
+            
             $radioarray = array();
             foreach ($userdat as $choiceid => $rat) {
-        
-                $optionname = $choicesWithAllocations [$choiceid]->title . ' [' . get_string('rated', ratingallocate_MOD_NAME) . ' ' . $rat . "] (" .
+                $title = key_exists($rat, $rating_titles)?$rating_titles[$rat]:$rat;
+                $optionname = $choicesWithAllocations [$choiceid]->title . ' [' . get_string('rated', ratingallocate_MOD_NAME) . ' ' . $title . "] (" .
                         ($choicesWithAllocations [$choiceid]->usercount > 0 ? $choicesWithAllocations [$choiceid]->usercount : "0") . "/" . $choicesWithAllocations [$choiceid]->maxsize . ")";
                 $radioarray [] = & $mform->createElement('radio', $ratingelem, '', $optionname, $choiceid, '');
             }

@@ -92,6 +92,16 @@ abstract class strategytemplate {
     }
 
     public abstract function get_strategyid();
+    
+    public function translate_ratings_to_titles(array $ratings){
+        $result = array();
+        foreach ($ratings as $id => $rating){
+           if (is_numeric($rating)){
+           $result[$rating] = $this->get_settings_value($rating);
+           }
+        }
+        return $result;
+    }
 }
 
 

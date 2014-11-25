@@ -681,4 +681,10 @@ class ratingallocate {
         return $result;
     }
     
+    public function get_options_titles(array $ratings){
+        $strategyclassp = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\strategy';
+        $strategyclass = new $strategyclassp(json_decode($this->ratingallocate->setting,true));
+        return $strategyclass->translate_ratings_to_titles($ratings);
+    }
+    
 }
