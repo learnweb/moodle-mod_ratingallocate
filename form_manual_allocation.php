@@ -153,11 +153,6 @@ class manual_alloc_form extends moodleform {
             $elemprefix = 'data[' . $userid . ']';
             $ratingelem = $elemprefix . '[assign]';
         
-            // title anzeigen
-        
-//             $mform->addElement('header', $headerelem, fullname($usersincourse[$userid]));
-//             $mform->setExpanded($headerelem);
-        
             $radioarray = array();
             foreach ($userdat as $choiceid => $rat) {
         
@@ -170,7 +165,6 @@ class manual_alloc_form extends moodleform {
             $radioarray = $this->ratingallocate->prepare_horizontal_radio_choice($radioarray, $mform);
             
             // wichtig, einen Gruppennamen zu setzen, damit später die Errors an der korrekten Stelle angezeigt werden können.
-//             $mform->addGroup($radioarray, 'radioarr_' . $userid, get_string('assign_to', ratingallocate_MOD_NAME), null, false);
             $mform->addGroup($radioarray, 'radioarr_' . $userid, fullname($usersincourse[$userid]), null, false);
             $userallocations = $this->ratingallocate->get_allocations_for_user($userid);
             $allocation = array_pop($userallocations);
