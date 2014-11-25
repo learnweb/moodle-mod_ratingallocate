@@ -562,8 +562,17 @@ class ratingallocate {
             foreach ($allocdata as $id => $choiceallocationid) {
                 // Is this user in this course?
                 if (key_exists($id, $allusers) && key_exists($choiceallocationid['assign'], $allchoices)) {
-                    // Create new allocation
-                    $this->add_allocation($choiceallocationid['assign'], $id, $this->ratingallocateid);
+                    $existing_allocations = $this->get_allocations_for_user($id);
+                    $existing_allocation = array_pop($existing_allocations);
+                    if (empty($existing_allocation)) {
+                        // Create new allocation
+                        $this->add_allocation($choiceallocationid['assign'], $id);
+                    } else {
+                        // Alter existing allocation
+                        $this->alter_allocation(
+                            $existing_allocation->{this_db\ratingallocate_allocations::CHOICEID}, 
+                            $choiceallocationid['assign'], $id);
+                    }
                 }
             }
             $transaction->allow_commit();
@@ -598,6 +607,21 @@ class ratingallocate {
             'choiceid' => $choiceid,
             'userid' => $userid,
             'ratingallocateid' => $this->ratingallocateid
+        ));
+        return true;
+    }
+    
+    /**
+     * alter an allocation between old_choiceid and userid
+     * @param int $old_choiceid
+     * @param int $new_choiceid
+     * @param int $userid
+     * @return boolean
+     */
+    public function alter_allocation($old_choiceid, $new_choiceid, $userid) {
+        $this->db->set_field(this_db\ratingallocate_allocations::TABLE, this_db\ratingallocate_allocations::CHOICEID, $new_choiceid, array(
+                        'choiceid' => $old_choiceid,
+                        'userid' => $userid
         ));
         return true;
     }
