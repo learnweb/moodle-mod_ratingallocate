@@ -104,10 +104,8 @@ abstract class strategytemplate {
     public function translate_ratings_to_titles(array $ratings){
         $result = array();
         foreach ($ratings as $id => $rating){
-           if (is_numeric($rating)){
-                $value = $this->get_settings_value($rating);
-           }
-           $result[$rating] = empty($value) ? $rating: $value;
+           $value = is_numeric($rating)?$this->get_settings_value($rating):null;
+           $result[$rating] = is_null($value) ? $rating: $value;
         }
         return $result;
     }
