@@ -291,10 +291,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         }
         
         // get rating titles
-        $titles = $ratingallocate->get_options_titles(array_keys($distributiondata));
-        foreach ($titles as $id => $title){
-            $titles[$id] = empty($title) ? get_string('unrated', ratingallocate_MOD_NAME): get_string('rating_raw', ratingallocate_MOD_NAME, $title);
-        }
+        $titles = $this->get_options_titles(array_keys($distributiondata),$ratingallocate);
 
         krsort($distributiondata);
         $allocationrow = array();
@@ -337,7 +334,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      *
      * @return HTML code
      */
-    public function ratings_table_for_ratingallocate($choices, $ratings, $users, $memberships) {
+    public function ratings_table_for_ratingallocate($choices, $ratings, $users, $memberships, $ratingallocate) {
 
         // MAXDO maybe a setting in the future?
         // $config_show_names = get_config('mod_ratingallocate', 'show_names');
@@ -349,6 +346,9 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $choicenames[$choice->id] = $choice->title;
         }
 
+        // get rating titles
+        $titles = $this->get_options_titles(array_map(function($rating) {return $rating->rating;},$ratings), $ratingallocate);
+        
         // $ratings = all_ratings_for_rateable_choices_from_raters($ratingallocateid);
         $ratingscells = array();
         foreach ($ratings as $rating) {
@@ -358,9 +358,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $ratingscells[$rating->userid] = array();
             }
             $cell = new html_table_cell();
-            $cell->text = get_string('rating_raw', ratingallocate_MOD_NAME, $rating->rating);
-            $cell->attributes['class'] = 'ratingallocate_rating_' . $rating->rating;
-
+            $cell->text = $titles[$rating->rating];
             $ratingscells[$rating->userid][$rating->choiceid] = $cell;
         }
 
@@ -376,7 +374,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 if (!array_key_exists($ratingallocateid2, $ratingscells[$user->id])) {
                     $cell = new html_table_cell();
                     $cell->text = get_string('no_rating_given', ratingallocate_MOD_NAME);
-                    $cell->attributes['class'] = 'ratingallocate_rating_none';
                     $ratingscells[$user->id][$ratingallocateid2] = $cell;
                 }
             }
@@ -420,8 +417,23 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         // $output .= '<p>' . get_string('view_ratings_table_explanation', ratingallocate_MOD_NAME) . '</p>';
         $output .= $this->box(html_writer::table($ratingstable), 'ratingallocate_ratings_box');
         $output .= $this->box_end();
-
+        
         return $output;
+    }
+    
+    /**
+     * Formats the ratings
+     * @param unknown $ratings
+     * @return multitype:Ambigous <string, lang_string>
+     */
+    private function get_options_titles($ratings, ratingallocate $ratingallocate){
+        $titles = array();
+        $unique_ratings = array_unique($ratings);
+        $options = $ratingallocate->get_options_titles($unique_ratings);
+        foreach ($options as $id => $option){
+            $titles[$id] = empty($option) ? get_string('no_rating_given', ratingallocate_MOD_NAME): get_string('rating_raw', ratingallocate_MOD_NAME, $option);
+        }
+        return $titles;
     }
 
     /**

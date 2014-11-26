@@ -291,7 +291,7 @@ class ratingallocate {
             // Print ratings table
             if ($action == RATING_ALLOC_SHOW_TABLE) {
                 $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
-                        $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(), $this->get_all_allocations());
+                        $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(), $this->get_all_allocations(), $this);
             } else {
                 $output .= $renderer->show_ratings_table_button();
             }

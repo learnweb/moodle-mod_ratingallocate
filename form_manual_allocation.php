@@ -133,7 +133,7 @@ class manual_alloc_form extends moodleform {
         }
         $empty_preferences = array();
         foreach ($this->ratingallocate->get_rateable_choices() as $choiceid => $choice){
-            $empty_preferences[$choiceid] = get_string('unrated' , ratingallocate_MOD_NAME);
+            $empty_preferences[$choiceid] = get_string('no_rating_given' , ratingallocate_MOD_NAME);
         }
         $userdata = array();
         If ($this->filter_state==self::FILTER_ALL) {
