@@ -69,6 +69,12 @@ class strategy extends \strategytemplate {
                         self::TOTALPOINTS => 100
         );
     }
+    
+    protected function getValidationInfo(){
+        return array(self::MAXZERO => array(true,0),
+                     self::TOTALPOINTS => array(true,1)
+        );
+    }
 
 }
 

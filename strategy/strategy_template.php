@@ -1,4 +1,5 @@
 <?php
+use Doctrine\Common\Annotations\Annotation\Required;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -46,11 +47,11 @@ abstract class strategytemplate {
      * @param $key of the settings field\
      * @return either the value of the setting the strategy was initialized with or the default value of the setting.
      */
-    protected function get_settings_value($key){
+    protected function get_settings_value($key, $default = true){
         if (isset($this->_strategy_settings) && array_key_exists($key, $this->_strategy_settings)) {
             return $value = $this->_strategy_settings[$key];
         }
-        return $this->get_settings_default_value($key);
+        return $default ? $this->get_settings_default_value($key) : null;
     }
     
     /**
@@ -110,6 +111,45 @@ abstract class strategytemplate {
         }
         return $result;
     }
+    
+    /**
+     * Validates the current settings for requried fields or value restrictions
+     * @return array of validation errors. Keys are the field identifiers and values 
+     * are the error messages, which should be displayed.
+     */
+    public function validate_settings(){
+        $validation_info = $this->getValidationInfo();
+        $errors = array();
+        foreach ($validation_info as $key => $info){
+            if (isset($info[0]) && $info[0]===true){
+                if(array_key_exists($key, $this->_strategy_settings) && is_null($this->_strategy_settings[$key])){
+                    $errors[$key] = get_string('err_required', ratingallocate_MOD_NAME);
+                    break;
+                }
+            }
+            if (isset($info[1])){
+                if(array_key_exists($key, $this->_strategy_settings) && $this->_strategy_settings[$key]<$info[1]){
+                    $errors[$key] = get_string('err_minimum', ratingallocate_MOD_NAME,$info[1]);
+                    break;
+                }
+            }
+            if (isset($info[2])){
+                if(array_key_exists($key, $this->_strategy_settings) && $this->_strategy_settings[$key]>$info[1]){
+                    $errors[$key] = get_string('err_maximum', ratingallocate_MOD_NAME,$info[2]);
+                    break;
+                }
+            }
+        }
+        return $errors;
+    }
+    
+    /**
+     * @return array of arrays:     key - identifier of setting_dependenc
+     *                              value[0] - is setting required
+     *                              value[1] - min value of setting (if numeric)
+     *                              value[2] - max value of setting (if numeric)
+     */
+    protected abstract function getValidationInfo();
 }
 
 

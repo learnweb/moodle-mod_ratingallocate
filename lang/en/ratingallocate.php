@@ -123,6 +123,9 @@ $string['show_table'] = 'Show Table';
 $string['strategy_not_specified'] = 'You have to select a strategy';
 $string['strategyoptions_for_strategy'] = 'Options for Strategy "{$a}"';
 $string['timespan_votes_open'] = 'Users can give ratings';
+$string['err_required'] = 'You need to provide a value for this field.';
+$string['err_minimum'] = 'The minimum value for this field is {$a}.';
+$string['err_maximum'] = 'The maximum value for this field is {$a}.';
 // </editor-fold>
 
 

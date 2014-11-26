@@ -74,6 +74,11 @@ class strategy extends \strategytemplate {
                         self::ACCEPT_LABEL => get_string(self::STRATEGYID . '_' . self::ACCEPT_LABEL, ratingallocate_MOD_NAME)
         );
     }
+    
+    protected function getValidationInfo(){
+        return array(self::MINTICKYES => array(true,1)
+        );
+    }
 }
 
 // register with the strategymanager

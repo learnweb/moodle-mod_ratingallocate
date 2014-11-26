@@ -83,6 +83,9 @@ class strategy extends \strategytemplate_options {
                         5 => get_string(strategy::STRATEGYID . '_rating_yes', ratingallocate_MOD_NAME)
         );
     }
+    protected function getValidationInfo(){
+        return array(self::MAXNO => array(true,0));
+    }
 }
 
 // register with the strategymanager

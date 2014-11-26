@@ -61,6 +61,11 @@ class strategy extends \strategytemplate {
                         self::COUNTOPTIONS => 2
         );
     }
+    
+    protected function getValidationInfo(){
+        return array(self::COUNTOPTIONS => array(true,1)
+        );
+    }
 
 }
 

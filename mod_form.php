@@ -395,6 +395,15 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         // User has to select one strategy
         if (empty($data['strategy'])) {
             $errors['strategy'] = get_string('strategy_not_specified', self::MOD_NAME);
+        }else{
+            $strategyclassp = 'ratingallocate\\' . $data['strategy'] . '\\strategy';
+            if (array_key_exists($data['strategy'], $data['strategyopt'])){
+                $strategyclass = new $strategyclassp($data['strategyopt'][$data['strategy']]);
+                $setting_errors = $strategyclass->validate_settings();
+                foreach($setting_errors as $id => $error){
+                    $errors[$this->get_settingsfield_identifier($data['strategy'], $id)] = $error;
+                }
+            }
         }
 
         return $errors;
