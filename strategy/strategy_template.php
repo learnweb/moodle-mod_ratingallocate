@@ -93,12 +93,20 @@ abstract class strategytemplate {
 
     public abstract function get_strategyid();
     
+    /**
+     * Searches for the given array of ratings, if a setting for its title is set. 
+     * If so, it returns the title with the ratings value as id.
+     * If not, it returns the ratings value in both id and value of the array entry.
+     * @param array $ratings
+     * @return array of rating titles
+     */
     public function translate_ratings_to_titles(array $ratings){
         $result = array();
         foreach ($ratings as $id => $rating){
            if (is_numeric($rating)){
-           $result[$rating] = $this->get_settings_value($rating);
+                $value = $this->get_settings_value($rating);
            }
+           $result[$rating] = empty($value) ? $rating: $value;
         }
         return $result;
     }

@@ -128,7 +128,7 @@ class manual_alloc_form extends moodleform {
         }
         $empty_preferences = array();
         foreach ($this->ratingallocate->get_rateable_choices() as $choiceid => $choice){
-            $empty_preferences[$choiceid] = '?';
+            $empty_preferences[$choiceid] = get_string('unrated' , ratingallocate_MOD_NAME);
         }
         $userdata = array();
         If ($this->filter_state==self::FILTER_ALL) {
@@ -138,12 +138,15 @@ class manual_alloc_form extends moodleform {
                 }        
         }
         
+        $different_ratings = array();
+        
         // Add actual rating data to userdata
         foreach ($ratingdata as $rating) {
             if (!array_key_exists($rating->userid, $userdata)) {
                 $userdata[$rating->userid] = $empty_preferences;
             }
             $userdata[$rating->userid][$rating->choiceid] = $rating->rating;
+            $different_ratings[$rating->rating] = $rating->rating;
         }
                
         $usersincourse = $this->ratingallocate->get_raters_in_course();
@@ -153,12 +156,12 @@ class manual_alloc_form extends moodleform {
             $elemprefix = 'data[' . $userid . ']';
             $ratingelem = $elemprefix . '[assign]';
             
-            $rating_titles = $this->ratingallocate->get_options_titles($userdat);
+            $rating_titles = $this->ratingallocate->get_options_titles($different_ratings);
             
             $radioarray = array();
             foreach ($userdat as $choiceid => $rat) {
-                $title = key_exists($rat, $rating_titles)?$rating_titles[$rat]:$rat;
-                $optionname = $choicesWithAllocations [$choiceid]->title . ' [' . get_string('rated', ratingallocate_MOD_NAME) . ' ' . $title . "] (" .
+                $title = key_exists($rat, $rating_titles)?get_string('rated', ratingallocate_MOD_NAME,$rating_titles[$rat]):$rat;
+                $optionname = $choicesWithAllocations [$choiceid]->title . ' [' . $title . "] (" .
                         ($choicesWithAllocations [$choiceid]->usercount > 0 ? $choicesWithAllocations [$choiceid]->usercount : "0") . "/" . $choicesWithAllocations [$choiceid]->maxsize . ")";
                 $radioarray [] = & $mform->createElement('radio', $ratingelem, '', $optionname, $choiceid, '');
             }
