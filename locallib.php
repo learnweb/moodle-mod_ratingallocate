@@ -680,6 +680,10 @@ class ratingallocate {
         return $result;
     }
     
+    /**
+     * Return a set of option titles for the given array of rating values
+     * @param array $ratings
+     */
     public function get_options_titles(array $ratings){
         $strategyclassp = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\strategy';
         $strategyclass = new $strategyclassp(json_decode($this->ratingallocate->setting,true));
