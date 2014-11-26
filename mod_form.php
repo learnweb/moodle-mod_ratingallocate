@@ -165,6 +165,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         } elseif ($value[0] == "int") {
             $mform->addElement('text', $strat_field_id, $value[1], $attributes);
             $mform->setType($strat_field_id, PARAM_INT);
+            $mform->addRule($strat_field_id, '', 'numeric'); //TODO: only validate if not disabled
         }
         if (isset($value[2])) {
             $mform->setDefault($strat_field_id, $value[2]);
