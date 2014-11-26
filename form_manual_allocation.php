@@ -109,28 +109,22 @@ class manual_alloc_form extends moodleform {
                 self::EXLPANATION_PLACEHOLDER);
         $mform->removeElement(self::EXLPANATION_PLACEHOLDER);
         
-        // rename filter button manual_allocation_filter_only_raters
+        // operations epending on filter_state
+        // * rename filter button
+        // * set rating data
         $filter_button_text = 'Filter';
         switch ($this->filter_state) {
             case self::FILTER_ALL:
                 $filter_button_text = get_string('manual_allocation_filter_only_raters', ratingallocate_MOD_NAME);
+                $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices();
                 break;
             case self::FILTER_ONLY_RATERS:
                 $filter_button_text = get_string('manual_allocation_filter_all', ratingallocate_MOD_NAME);
+                $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices_for_raters_without_alloc();
                 break;
         }
         $mform->getElement(self::FILTER_BUTTON)->setValue($filter_button_text);
         
-        
-        $ratingdata = array();
-        switch ($this->filter_state) {
-            case self::FILTER_ALL:
-                $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices();
-                break;
-            case self::FILTER_ONLY_RATERS:
-                $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices_for_raters_without_alloc();
-                break;
-        }
         $empty_preferences = array();
         foreach ($this->ratingallocate->get_rateable_choices() as $choiceid => $choice){
             $empty_preferences[$choiceid] = get_string('no_rating_given' , ratingallocate_MOD_NAME);
