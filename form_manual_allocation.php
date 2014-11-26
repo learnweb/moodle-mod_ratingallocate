@@ -35,11 +35,12 @@ class manual_alloc_form extends moodleform {
     /** @var $ratingallocate ratingallocate */
     private $ratingallocate;
     
-    const FILTER_ALL = 'filter_all';
-    const FILTER_ONLY_RATERS = 'filter_only_raters';
+    const FILTER_ALL = 'all';
+    const FILTER_ONLY_RATERS = 'only_raters';
     const FILTER_STATE = 'filter_state';
     const FILTER_BUTTON = 'filter_button';
     const FORM_ACTION = 'action';
+    const EXLPANATION_PLACEHOLDER = 'exlpanation_placeholder';
     private $filter_state = self::FILTER_ONLY_RATERS;
     
 
@@ -63,11 +64,12 @@ class manual_alloc_form extends moodleform {
         $mform = $this->_form;
         
         $show_all=false;
+
+        $mform->addElement('static', self::EXLPANATION_PLACEHOLDER,'','');
         
         //Button to filter the users, which are desplayed
         $mform->registerNoSubmitButton(self::FILTER_BUTTON);
         $mform->addElement('submit',self::FILTER_BUTTON, '');
-        $mform->registerNoSubmitButton(self::FILTER_BUTTON);
 
         $mform->addElement('hidden', self::FORM_ACTION, ACTION_ALLOCATE_PROCESS_MANUALFORM);
         $mform->setType(self::FORM_ACTION, PARAM_TEXT);
@@ -78,9 +80,6 @@ class manual_alloc_form extends moodleform {
         
         $mform->addElement('hidden', 'courseid', $COURSE->id);
         $mform->setType('courseid', PARAM_INT);
-
-        echo '<pre>';print_r($this->get_submitted_data());echo '</pre>';
-
     }
     
     public function definition_after_data(){
@@ -104,6 +103,12 @@ class manual_alloc_form extends moodleform {
             }
         }
 
+        // add explanation as html
+        $mform->insertElementBefore($mform->createElement('html', 
+                '<p>'.get_string('allocation_manual_explain_'.$this->filter_state, ratingallocate_MOD_NAME).'</p>'), 
+                self::EXLPANATION_PLACEHOLDER);
+        $mform->removeElement(self::EXLPANATION_PLACEHOLDER);
+        
         // rename filter button manual_allocation_filter_only_raters
         $filter_button_text = 'Filter';
         switch ($this->filter_state) {

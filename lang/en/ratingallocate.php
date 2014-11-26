@@ -57,7 +57,7 @@ $string['results_not_yet_published'] = 'Results have not yet been published';
 $string['no_choice_to_rate'] = 'There is not any choice to rate for!';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Administrator View">
-$string['allocation_manual_explain_only_rated'] = 'Select a choice to be assign to each user. You can only assign users that have rated.';
+$string['allocation_manual_explain_only_raters'] = 'Select a choice to be assign to each user. Only those users are listed, that rated at least one choice.';
 $string['allocation_manual_explain_all'] = 'Select a choice to be assign to each user.';
 $string['allocation_saved'] = 'Allocation saved.';
 $string['distribution_algorithm'] = 'Distribution Algorithm';

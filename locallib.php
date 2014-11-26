@@ -276,7 +276,6 @@ class ratingallocate {
                     }
                 } else {
                     $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
-                    $output .= $OUTPUT->box('<p>' . get_string('allocation_manual_explain', ratingallocate_MOD_NAME) . '</p>');
                     
                     $output .= $mform->to_html();
                 }
