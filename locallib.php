@@ -69,8 +69,7 @@ class strategymanager {
 
 define('RATING_ALLOC_ACTION_RATE', 'rate');
 define('RATING_ALLOC_ACTION_START', 'start_distribution');
-define('ACTION_ALLOCATE_SHOW_MANUALFORM', 'ACTION_ALLOCATE_SHOW_MANUALFORM');
-define('ACTION_ALLOCATE_MANUAL_SAVE', 'allocate_manual_save');
+define('ACTION_ALLOCATE_PROCESS_MANUALFORM', 'ACTION_ALLOCATE_PROCESS_MANUALFORM');
 define('ACTION_PUBLISH_ALLOCATIONS', 'publish_allocations'); // make them displayable for the users
 define('ACTION_SOLVE_LP_SOLVE', 'solve_lp_solve'); // instead of only generating the mps-file, let it solve
 define('RATING_ALLOC_SHOW_TABLE', 'show_table');
@@ -237,22 +236,6 @@ class ratingallocate {
             }
         }
 
-        if (has_capability('mod/ratingallocate:start_distribution', $this->context) && ($action == ACTION_ALLOCATE_SHOW_MANUALFORM || $action == ACTION_ALLOCATE_MANUAL_SAVE)) {
-            $mform = new manual_alloc_form($PAGE->url->out(), $this);
-
-            if (!$mform->is_cancelled() && $data = $mform->get_data()) {
-                if ($action == ACTION_ALLOCATE_MANUAL_SAVE) {
-                    $this->save_manual_allocation_form($data);
-                    $output .= $OUTPUT->box(get_string('manual_allocation_saved', ratingallocate_MOD_NAME));
-                }
-            } else {
-                $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
-                $output .= $OUTPUT->box('<p>' . get_string('allocation_manual_explain', ratingallocate_MOD_NAME) . '</p>');
-
-                $output .= $mform->to_html();
-            }
-        }
-
         // Print data and controls for teachers
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             // Notify if there aren't at least two rateable groups
@@ -271,11 +254,7 @@ class ratingallocate {
             if ($this->ratingallocate->accesstimestop < $now) {
                 $output .= $renderer->distribution_table_for_ratingallocate($this);
 
-                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
-                    'ratingallocateid' => $this->ratingallocateid,
-                    'action' => ACTION_ALLOCATE_SHOW_MANUALFORM)), get_string('manual_allocation_form', ratingallocate_MOD_NAME));
-
-                // if results not published yet, then do now
+               // if results not published yet, then do now
                 if ($this->ratingallocate->published == false) {
                     $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                         'ratingallocateid' => $this->ratingallocateid,
@@ -286,11 +265,34 @@ class ratingallocate {
                     $output .= $OUTPUT->notification( get_string('distribution_published', ratingallocate_MOD_NAME), 'notifysuccess');
                 }
             }
+            
+            // Manual allocation
+            if (has_capability('mod/ratingallocate:start_distribution', $this->context) && ($action == ACTION_ALLOCATE_PROCESS_MANUALFORM)) {
+                $mform = new manual_alloc_form($PAGE->url->out(), $this);
 
+                if (!$mform->no_submit_button_pressed() && $data = $mform->get_submitted_data()) {                    
+                    if (!$mform->is_cancelled() ) { 
+                        $this->save_manual_allocation_form($data);
+                        $output .= $OUTPUT->box(get_string('manual_allocation_saved', ratingallocate_MOD_NAME));
+                    }
+                } else {
+                    $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
+                    
+                    $output .= $mform->to_html();
+                }
+            }
+            
+            if ($this->ratingallocate->accesstimestop < $now) {
+                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
+                                'ratingallocateid' => $this->ratingallocateid,
+                                'action' => ACTION_ALLOCATE_PROCESS_MANUALFORM)), get_string('manual_allocation_form', ratingallocate_MOD_NAME));
+            }
+            
+            
             // Print ratings table
             if ($action == RATING_ALLOC_SHOW_TABLE) {
                 $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
-                        $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(), $this->get_all_allocations());
+                        $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(), $this->get_all_allocations(), $this);
             } else {
                 $output .= $renderer->show_ratings_table_button();
             }
@@ -567,8 +569,17 @@ class ratingallocate {
             foreach ($allocdata as $id => $choiceallocationid) {
                 // Is this user in this course?
                 if (key_exists($id, $allusers) && key_exists($choiceallocationid['assign'], $allchoices)) {
-                    // Create new allocation
-                    $this->add_allocation($choiceallocationid['assign'], $id, $this->ratingallocateid);
+                    $existing_allocations = $this->get_allocations_for_user($id);
+                    $existing_allocation = array_pop($existing_allocations);
+                    if (empty($existing_allocation)) {
+                        // Create new allocation
+                        $this->add_allocation($choiceallocationid['assign'], $id);
+                    } else {
+                        // Alter existing allocation
+                        $this->alter_allocation(
+                            $existing_allocation->{this_db\ratingallocate_allocations::CHOICEID}, 
+                            $choiceallocationid['assign'], $id);
+                    }
                 }
             }
             $transaction->allow_commit();
@@ -603,6 +614,21 @@ class ratingallocate {
             'choiceid' => $choiceid,
             'userid' => $userid,
             'ratingallocateid' => $this->ratingallocateid
+        ));
+        return true;
+    }
+    
+    /**
+     * alter an allocation between old_choiceid and userid
+     * @param int $old_choiceid
+     * @param int $new_choiceid
+     * @param int $userid
+     * @return boolean
+     */
+    public function alter_allocation($old_choiceid, $new_choiceid, $userid) {
+        $this->db->set_field(this_db\ratingallocate_allocations::TABLE, this_db\ratingallocate_allocations::CHOICEID, $new_choiceid, array(
+                        'choiceid' => $old_choiceid,
+                        'userid' => $userid
         ));
         return true;
     }
@@ -641,4 +667,35 @@ class ratingallocate {
         $this->renderer = $PAGE->get_renderer('mod_ratingallocate');
         return $this->renderer;
     }
+    
+    /**
+     * Adds static elements to the radioarray to make use of css for formatting
+     * @param unknown $radioarray
+     * @param unknown $mform
+     * @return enriched radioarray
+     */
+    public function prepare_horizontal_radio_choice($radioarray, $mform){
+        $result = array();
+        // add static elements to provide a list with choices annotated with css classes
+        $result [] =& $mform->createElement('static', 'li', null, '<ul class="horizontal choices">');
+        foreach ($radioarray as $id => $radio) {
+            $result [] =& $mform->createElement('static', 'static' . $id, null, '<li class="option">');
+            $result [] = $radio;
+            $result [] =& $mform->createElement('static', 'static' . $id, null, '</li>');
+        }
+        $result [] =& $mform->createElement('static', 'static' , null, '</ul>');
+        
+        return $result;
+    }
+    
+    /**
+     * Return a set of option titles for the given array of rating values
+     * @param array $ratings
+     */
+    public function get_options_titles(array $ratings){
+        $strategyclassp = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\strategy';
+        $strategyclass = new $strategyclassp(json_decode($this->ratingallocate->setting,true));
+        return $strategyclass->translate_ratings_to_titles($ratings);
+    }
+    
 }
