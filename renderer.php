@@ -289,6 +289,12 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $distributiondata[$rating] = 1;
             }
         }
+        
+        // get rating titles
+        $titles = $ratingallocate->get_options_titles(array_keys($distributiondata));
+        foreach ($titles as $id => $title){
+            $titles[$id] = empty($title) ? get_string('unrated', ratingallocate_MOD_NAME): get_string('rating_raw', ratingallocate_MOD_NAME, $title);
+        }
 
         krsort($distributiondata);
         $allocationrow = array();
@@ -300,7 +306,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $allocationrow[$rating] = $cell;
 
             $cell = new html_table_cell();
-            $cell->text = get_string('rating_raw', ratingallocate_MOD_NAME, $rating);
+            $cell->text = $titles[$rating];
             $allocationhead[$rating] = $cell;
         }
 
