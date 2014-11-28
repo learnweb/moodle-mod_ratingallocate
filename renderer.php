@@ -312,7 +312,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         // get rating titles
         $titles = $this->get_options_titles(array_keys($distributiondata),$ratingallocate);
 
-        krsort($distributiondata);
+        krsort($distributiondata, SORT_STRING);
         $allocationrow = array();
         $allocationhead = array();
         foreach ($distributiondata as $rating => $count) {
