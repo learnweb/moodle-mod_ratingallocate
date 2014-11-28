@@ -312,6 +312,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         // get rating titles
         $titles = $this->get_options_titles(array_keys($distributiondata),$ratingallocate);
 
+        // Although al indizes should be numeric or null, 
+        // SORT_STRING cares for the correct comparison of null and 0
         krsort($distributiondata, SORT_STRING);
         $allocationrow = array();
         $allocationhead = array();
