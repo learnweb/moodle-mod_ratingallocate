@@ -497,13 +497,13 @@ class ratingallocate {
         }
         
         $choices     = $this->get_choices_with_allocationcount();
-        $allocations = $this->get_all_allocations();
-        foreach ($allocations as $userid => $allocarr) {
+        $allocations = $this->get_allocations();
+        foreach ($allocations as $userid => $allocobj) {
             // get the assigned choice_id
-            $alloc_choic_id = array_keys($allocarr)[0];
+            $alloc_choic_id = $allocobj->choiceid;
 
             // Prepare the email to be sent to the user
-            $userto = get_complete_user_data('id', $userid);
+            $userto = get_complete_user_data('id', $allocobj->userid);
             cron_setup_user($userto);
             
             // prepare Text
