@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
+use ratingallocate\db as this_db;
+
 /**
  *
  * @package moodlecore
@@ -27,13 +29,13 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $paths = array();
         $userinfo = $this->get_setting_value('userinfo');
 
-        $ratingallocate_path = '/activity/'. 'ratingallocate';
-        $paths[] = new restore_path_element('ratingallocate', $ratingallocate_path );
-        $choices_path = $ratingallocate_path . '/' . 'ratingallocate_choices' . 's/' . 'ratingallocate_choices';
-        $paths[] = new restore_path_element('ratingallocate_choices', $choices_path);
+        $ratingallocate_path = '/activity/'. this_db\ratingallocate::TABLE;
+        $paths[] = new restore_path_element(this_db\ratingallocate::TABLE, $ratingallocate_path );
+        $choices_path = $ratingallocate_path . '/' . this_db\ratingallocate_choices::TABLE . 's/' . this_db\ratingallocate_choices::TABLE;
+        $paths[] = new restore_path_element(this_db\ratingallocate_choices::TABLE, $choices_path);
         if ($userinfo) {
-            $paths[] = new restore_path_element('ratingallocate_ratings',     $choices_path .'/' . 'ratingallocate_ratings' .'s/' . 'ratingallocate_ratings');
-            $paths[] = new restore_path_element('ratingallocate_allocations', $choices_path .'/' . 'ratingallocate_allocations' .'s/' . 'ratingallocate_allocations');
+            $paths[] = new restore_path_element(this_db\ratingallocate_ratings::TABLE,     $choices_path .'/' . this_db\ratingallocate_ratings::TABLE .'s/' . this_db\ratingallocate_ratings::TABLE);
+            $paths[] = new restore_path_element(this_db\ratingallocate_allocations::TABLE, $choices_path .'/' . this_db\ratingallocate_allocations::TABLE .'s/' . this_db\ratingallocate_allocations::TABLE);
         }
 
         // Return the paths wrapped into standard activity structure
@@ -44,15 +46,15 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         global $DB;
         $data = (object) $data;
         $oldid = $data->id;
-        $data->{'course'} = $this->get_courseid();
-        $data->{'timecreated'} = $this->apply_date_offset($data->{'timecreated'});
-        $data->{'timemodified'} = $this->apply_date_offset($data->{'timemodified'});
-        $data->{'accesstimestart'} = $this->apply_date_offset($data->{'accesstimestart'});
-        $data->{'accesstimestop'} = $this->apply_date_offset($data->{'accesstimestop'});
-        $data->{'publishdate'} = $this->apply_date_offset($data->{'publishdate'});
+        $data->{this_db\ratingallocate::COURSE} = $this->get_courseid();
+        $data->{this_db\ratingallocate::TIMECREATED} = $this->apply_date_offset($data->{this_db\ratingallocate::TIMECREATED});
+        $data->{this_db\ratingallocate::TIMEMODIFIED} = $this->apply_date_offset($data->{this_db\ratingallocate::TIMEMODIFIED});
+        $data->{this_db\ratingallocate::ACCESSTIMESTART} = $this->apply_date_offset($data->{this_db\ratingallocate::ACCESSTIMESTART});
+        $data->{this_db\ratingallocate::ACCESSTIMESTOP} = $this->apply_date_offset($data->{this_db\ratingallocate::ACCESSTIMESTOP});
+        $data->{this_db\ratingallocate::PUBLISHDATE} = $this->apply_date_offset($data->{this_db\ratingallocate::PUBLISHDATE});
 
         // insert the record
-        $newitemid = $DB->insert_record('ratingallocate', $data);
+        $newitemid = $DB->insert_record(this_db\ratingallocate::TABLE, $data);
         // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
@@ -62,11 +64,11 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $data = (object) $data;
         $oldid = $data->id;
 
-        $data->{'ratingallocateid'} = $this->get_new_parentid('ratingallocate');
-        $newitemid = $DB->insert_record('ratingallocate_choices', $data);
+        $data->{this_db\ratingallocate_choices::RATINGALLOCATEID} = $this->get_new_parentid(this_db\ratingallocate::TABLE);
+        $newitemid = $DB->insert_record(this_db\ratingallocate_choices::TABLE, $data);
         // No need to save this mapping as far as nothing depend on it
         // (child paths, file areas nor links decoder)
-        $this->set_mapping('ratingallocate_choices', $oldid, $newitemid);
+        $this->set_mapping(this_db\ratingallocate_choices::TABLE, $oldid, $newitemid);
     }
 
     protected function process_ratingallocate_ratings($data) {
@@ -74,11 +76,11 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $data = (object) $data;
         $oldid = $data->id;
 
-        $data->{'choiceid'} = $this->get_new_parentid('ratingallocate_choices');
-        $data->{'userid'} = $this->get_mappingid('user', $data->{'userid'});
+        $data->{this_db\ratingallocate_ratings::CHOICEID} = $this->get_new_parentid(this_db\ratingallocate_choices::TABLE);
+        $data->{this_db\ratingallocate_ratings::USERID} = $this->get_mappingid('user', $data->{this_db\ratingallocate_ratings::USERID});
 
-        $newitemid = $DB->insert_record('ratingallocate_ratings', $data);
-        $this->set_mapping('ratingallocate_ratings', $oldid, $newitemid);
+        $newitemid = $DB->insert_record(this_db\ratingallocate_ratings::TABLE, $data);
+        $this->set_mapping(this_db\ratingallocate_ratings::TABLE, $oldid, $newitemid);
     }
 
     protected function process_ratingallocate_allocations($data) {
@@ -86,12 +88,12 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $data = (object) $data;
         $oldid = $data->id;
 
-        $data->{'choiceid'} = $this->get_new_parentid('ratingallocate_choices');
-        $data->{'ratingallocateid'} = $this->get_new_parentid('ratingallocate');
-        $data->{'userid'} = $this->get_mappingid('user', $data->{'userid'});
+        $data->{this_db\ratingallocate_allocations::CHOICEID} = $this->get_new_parentid(this_db\ratingallocate_choices::TABLE);
+        $data->{this_db\ratingallocate_allocations::RATINGALLOCATEID} = $this->get_new_parentid(this_db\ratingallocate::TABLE);
+        $data->{this_db\ratingallocate_allocations::USERID} = $this->get_mappingid('user', $data->{this_db\ratingallocate_allocations::USERID});
 
-        $newitemid = $DB->insert_record('ratingallocate_allocations', $data);
-        $this->set_mapping('ratingallocate_allocations', $oldid, $newitemid);
+        $newitemid = $DB->insert_record(this_db\ratingallocate_allocations::TABLE, $data);
+        $this->set_mapping(this_db\ratingallocate_allocations::TABLE, $oldid, $newitemid);
     }
 
     protected function after_execute() {

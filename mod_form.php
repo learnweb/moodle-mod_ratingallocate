@@ -165,6 +165,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         } elseif ($value[0] == "int") {
             $mform->addElement('text', $strat_field_id, $value[1], $attributes);
             $mform->setType($strat_field_id, PARAM_INT);
+            $mform->addRule($strat_field_id, '', 'numeric'); //TODO: only validate if not disabled
         }
         if (isset($value[2])) {
             $mform->setDefault($strat_field_id, $value[2]);
@@ -395,6 +396,15 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         // User has to select one strategy
         if (empty($data['strategy'])) {
             $errors['strategy'] = get_string('strategy_not_specified', self::MOD_NAME);
+        }else{
+            $strategyclassp = 'ratingallocate\\' . $data['strategy'] . '\\strategy';
+            if (array_key_exists($data['strategy'], $data['strategyopt'])){
+                $strategyclass = new $strategyclassp($data['strategyopt'][$data['strategy']]);
+                $setting_errors = $strategyclass->validate_settings();
+                foreach($setting_errors as $id => $error){
+                    $errors[$this->get_settingsfield_identifier($data['strategy'], $id)] = $error;
+                }
+            }
         }
 
         return $errors;

@@ -57,6 +57,7 @@ class locallib_test extends advanced_testcase {
         
         // create activity
         $mod = $this->getDataGenerator()->create_module(ratingallocate_MOD_NAME, $data);
+        $this->assertEquals(2, $DB->count_records(this_db\ratingallocate_choices::TABLE), array(this_db\ratingallocate_choices::ID => $mod->id));
         
         $student_1 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         $student_2 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);

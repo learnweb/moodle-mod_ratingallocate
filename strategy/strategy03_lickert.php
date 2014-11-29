@@ -105,6 +105,12 @@ class strategy extends \strategytemplate_options {
         }
         return $defaults;
     }
+    
+    protected function getValidationInfo(){
+        return array(self::MAXNO => array(true,0),
+                     self::COUNTLICKERT => array(true,2)
+        );
+    }
 }
 
 // register with the strategymanager
