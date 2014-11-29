@@ -173,5 +173,5 @@ $string['strategy_tickyes_explain_mintickyes'] = 'You have to tick a minimum of 
 
 // As message provider, for the notification after allocation
 $string['messageprovider:notifyalloc'] = 'Notification of option allocation';
-$string['allocation_notification_message_subject'] = 'Notification of finished allocation';
+$string['allocation_notification_message_subject'] = 'Notification of finished allocation for {$a}';
 $string['allocation_notification_message'] = 'Conerning the "{$a->ratingallocate}", you have been assigned to the choice "{$a->choice}"';
