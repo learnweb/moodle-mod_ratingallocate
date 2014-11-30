@@ -33,7 +33,7 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course();
-
+        
         // There should not be any module for that course first
         $this->assertFalse(
                 $DB->record_exists('ratingallocate', array('course' => $course->id
@@ -111,5 +111,22 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
         $this->assertEquals(0, count($records));
         $records = $DB->get_records('ratingallocate_allocations', array(), 'id');
         $this->assertEquals(0, count($records));
+    }
+
+    public function test_mod_ratingallocate_generated_module() {
+        $record = mod_ratingallocate_generator::get_default_values();
+        foreach ($record['choices'] as $id => &$choice) {
+            $choice['maxsize'] = 10;
+            $choice['active'] = true;
+        }
+        $record['num_students'] = 22;
+        $test_module = new mod_ratingallocate_generated_module($this,$record);
+        $this->assertCount($record['num_students'], $test_module->students);
+        $this->assertCount(20, $test_module->allocations);
+
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+        foreach ($ratingallocate->get_choices_with_allocationcount() as $choice) {
+            $this->assertEquals(10, $choice->{'usercount'});
+        }
     }
 }

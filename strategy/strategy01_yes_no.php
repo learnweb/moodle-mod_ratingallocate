@@ -79,6 +79,10 @@ class strategy extends \strategytemplate_options {
                         1 => get_string(strategy::STRATEGYID . '_rating_choose', ratingallocate_MOD_NAME)
         );
     }
+    
+    protected function getValidationInfo(){
+        return array(self::MAXCROSSOUT => array(true,0));
+    }
 }
 
 // register with the strategymanager

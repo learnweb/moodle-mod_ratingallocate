@@ -16,6 +16,7 @@ class ratingallocate {
     const STRATEGY = 'strategy';
     const PUBLISHDATE = 'publishdate';
     const PUBLISHED = 'published';
+    const NOTIFICATIONSEND = 'notificationsend';
 }
 class ratingallocate_choices {
     const TABLE = 'ratingallocate_choices';

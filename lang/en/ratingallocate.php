@@ -57,7 +57,8 @@ $string['results_not_yet_published'] = 'Results have not yet been published';
 $string['no_choice_to_rate'] = 'There is not any choice to rate for!';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Administrator View">
-$string['allocation_manual_explain'] = 'Select choice the user is to assign with. You can only assign user that have rated and select choices the user has rated better than "exclude"';
+$string['allocation_manual_explain_only_raters'] = 'Select a choice to be assign to each user. Only those users are listed, that rated at least one choice.';
+$string['allocation_manual_explain_all'] = 'Select a choice to be assign to each user.';
 $string['allocation_saved'] = 'Allocation saved.';
 $string['distribution_algorithm'] = 'Distribution Algorithm';
 $string['distribution_saved'] = 'Distribution saved (in {$a}s).';
@@ -74,13 +75,17 @@ $string['view_ratings_table'] = 'Click on the following button to view the curre
 $string['view_ratings_table_explanation'] = 'Ratings the users have given';
 $string['invalid_publishdate'] = 'Publishdate is invalid. Must be after vote close.';
 $string['assign_to'] = 'Assign to choice';
-$string['rated'] = 'rated';
+$string['rated'] = 'rated {$a}';
+$string['no_rating_given'] = 'unrated';
 $string['export_options'] = 'Export Options';
 $string['manual_allocation_saved'] = 'Your manual allocation has been saved.';
 $string['publish_allocation'] = 'Publish allocation';
 $string['distribution_published'] = 'Distribution has been published.';
 $string['create_moodle_groups'] = 'Create Moodle groups from allocation';
 $string['moodlegroups_created'] = 'The corresponding Moodle-Grouping and Groups have been created.';
+
+$string['manual_allocation_filter_only_raters'] = 'Show only users, with ratings.';
+$string['manual_allocation_filter_all'] = 'Show all users.';
 
 $string['rating_short_0'] = '0';
 $string['rating_short_1'] = '1';
@@ -108,8 +113,8 @@ $string['rating_begintime'] = 'Rating begins at';
 $string['manual_allocation'] = 'Manual allocation';
 $string['manual_allocation_form'] = 'Manual Allocation Form';
 $string['newchoice'] = 'Add new Choice';
+$string['newchoicetitle'] = 'New choice {$a}';
 $string['deletechoice'] = 'Delete Choice';
-$string['no_rating_given'] = '?';
 $string['publishdate'] = 'Publishdate';
 $string['publishdate_help'] = 'With this you can display additional info to your users. This has no effect on (possibly automatic) distribution, it\'s still a manual process. Use it to communicate your intents to the users.';
 $string['publishdate_show'] = 'Show publishdate?';
@@ -120,6 +125,9 @@ $string['show_table'] = 'Show Table';
 $string['strategy_not_specified'] = 'You have to select a strategy';
 $string['strategyoptions_for_strategy'] = 'Options for Strategy "{$a}"';
 $string['timespan_votes_open'] = 'Users can give ratings';
+$string['err_required'] = 'You need to provide a value for this field.';
+$string['err_minimum'] = 'The minimum value for this field is {$a}.';
+$string['err_maximum'] = 'The maximum value for this field is {$a}.';
 // </editor-fold>
 
 
@@ -171,3 +179,8 @@ $string['strategy_tickyes_accept'] = 'Accept';
 $string['strategy_tickyes_setting_mintickyes'] = 'Minimum of choices to accept';
 $string['strategy_tickyes_error_mintickyes'] = 'You have to tick at least {$a} boxes';
 $string['strategy_tickyes_explain_mintickyes'] = 'You have to tick a minimum of {$a} boxes.';
+
+// As message provider, for the notification after allocation
+$string['messageprovider:notifyalloc'] = 'Notification of option allocation';
+$string['allocation_notification_message_subject'] = 'Notification of finished allocation for {$a}';
+$string['allocation_notification_message'] = 'Conerning the "{$a->ratingallocate}", you have been assigned to the choice "{$a->choice}"';
