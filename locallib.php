@@ -490,22 +490,23 @@ class ratingallocate {
         // queue it
         \core\task\manager::queue_adhoc_task($domination);
     }
-    
+
     /**
      * Gets called by the adhoc_taskmanager and its task in send_distribution_notification
+     * 
      * @param user $userfrom
      */
     public function notify_users_distribution($userfrom) {
         global $CFG;
         $userfrom = get_complete_user_data('id', $userfrom);
-        
+
         // make sure we have not sent them yet
-        if($this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} != -1) {
+        if ($this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} != -1) {
             mtrace('seems we have sent them already');
             return true;
         }
-        
-        $choices     = $this->get_choices_with_allocationcount();
+
+        $choices = $this->get_choices_with_allocationcount();
         $allocations = $this->get_allocations();
         foreach ($allocations as $userid => $allocobj) {
             // get the assigned choice_id
@@ -514,36 +515,40 @@ class ratingallocate {
             // Prepare the email to be sent to the user
             $userto = get_complete_user_data('id', $allocobj->userid);
             cron_setup_user($userto);
-            
+
             // prepare Text
             $notiftext = $this->make_mail_text($choices[$alloc_choic_id]);
             $notifhtml = $this->make_mail_html($choices[$alloc_choic_id]);
-            
-            $notifsubject = format_string($this->course->shortname,true) . ': '. get_string('allocation_notification_message_subject', 'ratingallocate', $this->ratingallocate->name);
+
+            $notifsubject = format_string($this->course->shortname, true) . ': ' .
+                     get_string('allocation_notification_message_subject', 'ratingallocate',
+                     $this->ratingallocate->name);
             // Send the post now!
             if (empty($userto->mailformat) || $userto->mailformat != 1) {
                 // This user DOESN'T want to receive HTML
                 $notifhtml = '';
             }
-            
+
             $attachment = $attachname = '';
 
-            $mailresult = email_to_user($userto, $userfrom, $notifsubject, $notiftext, $notifhtml, $attachment, $attachname);
-            
+            $mailresult = email_to_user($userto, $userfrom, $notifsubject, $notiftext, $notifhtml,
+                    $attachment, $attachname);
             if (!$mailresult) {
-                mtrace("ERROR: mod/ratingallocate/locallib.php: Could not send out digest mail to user $userto->id ".
-                        "($userto->email)... not trying again.");
+                mtrace(
+                        "ERROR: mod/ratingallocate/locallib.php: Could not send out digest mail to user $userto->id " .
+                                 "($userto->email)... not trying again.");
             } else {
                 mtrace("success.");
             }
         }
-         
+
         // update the 'notified' flag
         $this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} = 1;
-        $this->ratingallocate            = new ratingallocate_db_wrapper($this->origdbrecord);
-        
+        $this->ratingallocate = new ratingallocate_db_wrapper($this->origdbrecord);
+
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
     }
+
     /**
      * Builds and returns the body of the email notification in plain text.
      *
@@ -551,18 +556,17 @@ class ratingallocate {
      */
     function make_mail_text($choice) {
         global $CFG;
-       
         $notiftext = '';
-    
+
         $notiftext .= "\n";
         $notiftext .= $CFG->wwwroot.'/mod/ratingallocate/view.php?id='.$this->coursemodule->id;
         $notiftext .= "\n---------------------------------------------------------------------\n";
         $notiftext .= format_string($this->ratingallocate->name,true);
-    
+
         $notiftext .= "\n---------------------------------------------------------------------\n";
         $notiftext .= get_string('allocation_notification_message', 'ratingallocate', array('ratingallocate'=>$this->ratingallocate->name, 'choice' => $choice->title));
         $notiftext .= "\n\n";
-    
+
         return $notiftext;
     }
     /**
@@ -572,13 +576,13 @@ class ratingallocate {
      */
     function make_mail_html($choice) {
         global $CFG;
-                
+
         $shortname = format_string($this->course->shortname, true, array('context' => context_course::instance($this->course->id)));
-        
+
         $notifhtml = '<head>';
         $notifhtml .= '</head>';
         $notifhtml .= "\n<body id=\"email\">\n\n";
-        
+
         $notifhtml .= '<div class="navbar">'.
                 '<a target="_blank" href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.$shortname.'</a> &raquo; '.
                 '<a target="_blank" href="'.$CFG->wwwroot.'/mod/ratingallocate/view.php?id='.$this->coursemodule->id.'">'.format_string($this->ratingallocate->name,true).'</a>';
@@ -587,12 +591,13 @@ class ratingallocate {
         $options = new stdClass();
         $options->para = true;
         $notifhtml .= format_text(get_string('allocation_notification_message', 'ratingallocate', array('ratingallocate'=>$this->ratingallocate->name, 'choice' => $choice->title)),FORMAT_HTML,$options,$this->course->id);
-        
-        $notifhtml .= '<hr />';        
+
+        $notifhtml .= '<hr />';
         $notifhtml .= '</body>';
-        
+
         return $notifhtml;
     }
+
     /**
      * create a moodle grouping with the name of the ratingallocate instance
      * and create groups according to the distribution. Groups are identified 
