@@ -336,19 +336,18 @@ class ratingallocate {
                 'ratingallocateid' => $this->ratingallocate->id)), get_string('download_votetest_allocation', ratingallocate_MOD_NAME));
             $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/solver/export_lp_solve.php', array('id' => $this->coursemodule->id,
                 'ratingallocateid' => $this->ratingallocate->id)), get_string('download_problem_mps_format', ratingallocate_MOD_NAME));
+            
+            //Logging
+            $event = \mod_ratingallocate\event\ratingallocate_viewed::create_simple(
+                    context_course::instance($this->course->id), $this->ratingallocateid);
+            $event->trigger();
         }
 
         // Finish the page
         $header_info = new ratingallocate_header($this->ratingallocate, $this->context, true,
                 $this->coursemodule->id);
         $header = $this->get_renderer()->render($header_info);
-        $footer = $this->get_renderer()->render_footer();
-        
-        //Logging
-        $event = \mod_ratingallocate\event\ratingallocate_viewed::create_simple(
-                context_course::instance($this->course->id), $this->ratingallocateid);
-        $event->trigger();
-        
+        $footer = $this->get_renderer()->render_footer();        
         return $header . $output . $footer;
     }
 
