@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - PUT INFO HERE
+ *      - array rating: new values of rating
  * }
  *
  * @since     Moodle 2.7
@@ -39,7 +39,9 @@ defined('MOODLE_INTERNAL') || die();
 class rating_updated extends \core\event\base {
     
     public static function create_simple($context, $objectid, $rating){
-        return self::create(array('context' => $context, 'objectid' => $objectid, 'other' => json_encode($rating)));        
+        // the values of other need to be encoded since the base checks for equality of a decoded encoded other instance with the original.
+        // this is not given for nested arrays
+        return self::create(array('context' => $context, 'objectid' => $objectid, 'other' => array('rating'=>json_encode($rating))));        
     }
     protected function init() {
         $this->data['crud'] = 'u';

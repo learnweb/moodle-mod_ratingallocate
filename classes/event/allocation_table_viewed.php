@@ -26,12 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * The mod_ratingallocate allocation_table_viewed event class.
  *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      - PUT INFO HERE
- * }
- *
  * @since     Moodle 2.7
  * @copyright 2014 Tobias Reischmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

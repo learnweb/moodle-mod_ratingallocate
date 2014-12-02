@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - PUT INFO HERE
+ *      - array allocations: changes of allocations
  * }
  *
  * @since     Moodle 2.7
@@ -39,8 +39,10 @@ defined('MOODLE_INTERNAL') || die();
 class manual_allocation_saved extends \core\event\base {
     
     public static function create_simple($context, $objectid, $allocations){
+        // the values of other need to be encoded since the base checks for equality of a decoded encoded other instance with the original.
+        // this is not given for doubles or nested arrays
         return self::create(array('context' => $context, 'objectid' => $objectid, 
-                        'other' => json_encode(array('allocations'=>$allocations))));        
+                        'other' => array('allocations'=>json_encode($allocations))));        
     }
     protected function init() {
         $this->data['crud'] = 'u';
