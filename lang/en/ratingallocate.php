@@ -186,11 +186,8 @@ $string['allocation_notification_message_subject'] = 'Notification of finished a
 $string['allocation_notification_message'] = 'Conerning the "{$a->ratingallocate}", you have been assigned to the choice "{$a->choice}"';
 
 // Logging
-$string['rating_created'] = 'User rating created';
-$string['rating_created_description'] = 'The user with id \'{$a->userid}\' created a rating for the ratingallocate with id \'{$a->ratingallocateid}\'.';
-
-$string['rating_updated'] = 'User rating updated';
-$string['rating_updated_description'] =  'The user with id \'{$a->userid}\' updated his rating for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+$string['rating_saved'] = 'User rating saved';
+$string['rating_saved_description'] =  'The user with id \'{$a->userid}\' saved his rating for the ratingallocate with id \'{$a->ratingallocateid}\'.';
 
 $string['rating_viewed'] = 'User rating viewed';
 $string['rating_viewed_description'] =  'The user with id \'{$a->userid}\' viewed its rating for the ratingallocate with id \'{$a->ratingallocateid}\'.';

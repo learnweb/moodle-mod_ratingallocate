@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
  
 /**
- * The mod_ratingallocate rating_created event.
+ * The mod_ratingallocate rating_saved event.
  *
  * @package    mod_ratingallocate
  * @copyright  2014 Tobias Reischmann
@@ -24,38 +24,37 @@
 namespace mod_ratingallocate\event;
 defined('MOODLE_INTERNAL') || die();
 /**
- * The mod_ratingallocate rating_created event class.
+ * The mod_ratingallocate rating_saved event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - array rating: created rating
+ *      - array rating: new values of rating
  * }
  *
  * @since     Moodle 2.7
  * @copyright 2014 Tobias Reischmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
-class rating_created extends \core\event\base {
+class rating_saved extends \core\event\base {
     
     public static function create_simple($context, $objectid, $rating){
         // the values of other need to be encoded since the base checks for equality of a decoded encoded other instance with the original.
         // this is not given for nested arrays
         return self::create(array('context' => $context, 'objectid' => $objectid, 'other' => array('rating'=>json_encode($rating))));        
     }
-    
     protected function init() {
-        $this->data['crud'] = 'c';
+        $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'ratingallocate_ratings';
     }
  
     public static function get_name() {
-        return get_string('rating_created', 'mod_ratingallocate');
+        return get_string('rating_saved', 'mod_ratingallocate');
     }
  
     public function get_description() {
-        return get_string('rating_created_description', 'mod_ratingallocate', array('userid' => $this->userid, 'ratingallocateid' => $this->objectid));
+        return get_string('rating_saved_description', 'mod_ratingallocate', array('userid' => $this->userid, 'ratingallocateid' => $this->objectid));
     }
  
     public function get_url() {
