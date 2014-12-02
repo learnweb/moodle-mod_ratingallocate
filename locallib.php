@@ -300,10 +300,6 @@ class ratingallocate {
                     if (!$mform->is_cancelled() ) { 
                         $this->save_manual_allocation_form($data);
                         $output .= $OUTPUT->box(get_string('manual_allocation_saved', ratingallocate_MOD_NAME));
-                        //Logging
-                        $event = \mod_ratingallocate\event\manual_allocation_saved::create_simple(
-                                context_course::instance($this->course->id), $this->ratingallocateid, $data->data);
-                        $event->trigger();
                     }
                 } else {
                     $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
@@ -830,6 +826,7 @@ class ratingallocate {
     public function save_manual_allocation_form($data) {
         try {
             $transaction = $this->db->start_delegated_transaction();
+            $loggingdata = array();
 
             $allusers = $this->get_raters_in_course();
             $allchoices = $this->get_rateable_choices();
@@ -843,14 +840,26 @@ class ratingallocate {
                     if (empty($existing_allocation)) {
                         // Create new allocation
                         $this->add_allocation($choiceallocationid['assign'], $id);
+                        // Logging
+                        array_push($loggingdata, array('userid' => $id,'assign' => $choiceallocationid['assign']));
                     } else {
+                        if ($existing_allocation->{this_db\ratingallocate_allocations::CHOICEID}!=$choiceallocationid['assign']){
                         // Alter existing allocation
                         $this->alter_allocation(
                             $existing_allocation->{this_db\ratingallocate_allocations::CHOICEID}, 
                             $choiceallocationid['assign'], $id);
+                        array_push($loggingdata, array('userid' => $id,'assign' => $choiceallocationid['assign']));
+                        }
                     }
                 }
             }
+            //Logging
+            if (count($loggingdata)>0){
+            $event = \mod_ratingallocate\event\manual_allocation_saved::create_simple(
+                    context_course::instance($this->course->id), $this->ratingallocateid, $loggingdata);
+            $event->trigger();
+            }
+            
             $transaction->allow_commit();
         } catch (Exception $e) {
             $transaction->rollback($e);
