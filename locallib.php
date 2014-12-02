@@ -641,11 +641,9 @@ class ratingallocate {
                 }
             }
             //Logging
-            if (count($loggingdata)>0){
             $event = \mod_ratingallocate\event\manual_allocation_saved::create_simple(
                     context_course::instance($this->course->id), $this->ratingallocateid, $loggingdata);
             $event->trigger();
-            }
             
             $transaction->allow_commit();
         } catch (Exception $e) {
