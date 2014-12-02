@@ -177,7 +177,7 @@ class manual_alloc_form extends moodleform {
             }
         }
         
-        if (!count($ratingdata) > 0) {
+        if (!count($userdata) > 0) {
             $mform->addElement('header', 'notification', get_string('no_user_to_allocate', ratingallocate_MOD_NAME));
         } else {
             $this->add_action_buttons();
