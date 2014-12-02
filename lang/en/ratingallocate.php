@@ -177,3 +177,29 @@ $string['strategy_tickyes_accept'] = 'Accept';
 $string['strategy_tickyes_setting_mintickyes'] = 'Minimum of choices to accept';
 $string['strategy_tickyes_error_mintickyes'] = 'You have to tick at least {$a} boxes';
 $string['strategy_tickyes_explain_mintickyes'] = 'You have to tick a minimum of {$a} boxes.';
+
+// Logging
+$string['rating_created'] = 'User rating created';
+$string['rating_created_description'] = 'The user with id \'{$a->userid}\' created a rating for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+
+$string['rating_updated'] = 'User rating updated';
+$string['rating_updated_description'] =  'The user with id \'{$a->userid}\' updated his rating for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+
+$string['rating_viewed'] = 'User rating viewed';
+$string['rating_viewed_description'] =  'The user with id \'{$a->userid}\' viewed its rating for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+
+$string['allocation_published'] = 'Allocation published';
+$string['allocation_published_description'] =  'The user with id \'{$a->userid}\' published the allocation for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+
+$string['distribution_triggered'] = 'Distribution triggered';
+$string['distribution_triggered_description'] =  'The user with id \'{$a->userid}\' triggered the distribution for the ratingallocate with id \'{$a->ratingallocateid}\'. The algorithm needed {$a->time_needed}sec.';
+
+$string['manual_allocation_saved'] = 'Manual allocation saved';
+$string['manual_allocation_saved_description'] =  'The user with id \'{$a->userid}\' saved a manual allocation for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+
+$string['ratingallocate_viewed'] = 'Ratingallocate viewed';
+$string['ratingallocate_viewed_description'] =  'The user with id \'{$a->userid}\' viewed the ratingallocate with id \'{$a->ratingallocateid}\'.';
+
+$string['allocation_table_viewed'] = 'Allocation table viewed';
+$string['allocation_table_viewed_description'] =  'The user with id \'{$a->userid}\' viewed the allocation table for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+
