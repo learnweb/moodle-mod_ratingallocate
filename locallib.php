@@ -572,7 +572,7 @@ class ratingallocate {
             }
             $transaction->allow_commit();
             //Logging
-            $event = \mod_ratingallocate\event\rating_updated::create_simple(
+            $event = \mod_ratingallocate\event\rating_saved::create_simple(
                     context_course::instance($this->course->id), $this->ratingallocateid, $loggingdata);
             $event->trigger();
         } catch (Exception $e) {
