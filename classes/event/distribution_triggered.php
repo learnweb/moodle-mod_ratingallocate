@@ -29,7 +29,8 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - PUT INFO HERE
+ *      - array allocations: created allocations
+ *      - double time_needed: time needed to finish the distribution
  * }
  *
  * @since     Moodle 2.7
@@ -39,8 +40,10 @@ defined('MOODLE_INTERNAL') || die();
 class distribution_triggered extends \core\event\base {
     
     public static function create_simple($context, $objectid, $allocations, $time_needed){
+        // the values of other need to be encoded since the base checks for equality of a decoded encoded other instance with the original.
+        // this is not given for doubles or nested arrays 
         return self::create(array('context' => $context, 'objectid' => $objectid, 
-                        'other' => json_encode(array('allocations'=> $allocations,'time_needed'=>$time_needed))));        
+                        'other' => array('allocations'=> json_encode($allocations),'time_needed'=>json_encode($time_needed))));        
     }
     protected function init() {
         $this->data['crud'] = 'u';
@@ -56,7 +59,7 @@ class distribution_triggered extends \core\event\base {
         return get_string('distribution_triggered_description', 'mod_ratingallocate', 
                 array('userid' => $this->userid, 
                       'ratingallocateid' => $this->objectid, 
-                      'time_needed' => json_decode($this->other)->time_needed));
+                      'time_needed' => $this->other['time_needed']));
     }
  
     public function get_url() {
