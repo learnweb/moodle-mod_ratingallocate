@@ -747,6 +747,7 @@ class ratingallocate {
         /* @var $DB moodle_database */
         global $DB;
         $transaction = $DB->start_delegated_transaction();
+        $loggingdata = array();
         try {
             foreach ($data as $id => $rdata) {
                 $rating = new stdClass ();
@@ -761,12 +762,13 @@ class ratingallocate {
                     // We get the id from the database
  
                     $oldrating = $DB->get_record('ratingallocate_ratings', $ratingexists);
-                    $rating->id = $oldrating->id;
-                    $DB->update_record('ratingallocate_ratings', $rating);
-                    //Logging
-                    $event = \mod_ratingallocate\event\rating_updated::create_simple(
-                            context_course::instance($this->course->id), $this->ratingallocateid, $rating);
-                    $event->trigger();
+                    if ($oldrating->{this_db\ratingallocate_ratings::RATING}!=$rating->rating){
+                        $rating->id = $oldrating->id;
+                        $DB->update_record('ratingallocate_ratings', $rating);
+                        
+                        //Logging
+                        array_push($loggingdata,array('choiceid' => $oldrating->choiceid, 'rating' => $rating->rating));
+                    }
                 } else {
                     // Create a new rating in the table
 
@@ -774,15 +776,18 @@ class ratingallocate {
                     $rating->choiceid = $rdata ['choiceid'];
                     $rating->ratingallocateid = $this->ratingallocateid;
                     $DB->insert_record('ratingallocate_ratings', $rating);
+                    
                     //Logging
-                    $event = \mod_ratingallocate\event\rating_updated::create_simple(
-                            context_course::instance($this->course->id), $this->ratingallocateid, $rating);
-                    $event->trigger();
+                    array_push($loggingdata,array('choiceid' => $rating->choiceid, 'rating' => $rating->rating));
                 }
                 $completion = new completion_info($this->course);
                 $completion->set_module_viewed($this->coursemodule);
             }
             $transaction->allow_commit();
+            //Logging
+            $event = \mod_ratingallocate\event\rating_updated::create_simple(
+                    context_course::instance($this->course->id), $this->ratingallocateid, $loggingdata);
+            $event->trigger();
         } catch (Exception $e) {
             $transaction->rollback($e);
         }
