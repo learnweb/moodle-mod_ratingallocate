@@ -311,6 +311,7 @@ function ratingallocate_cron() {
     return true;
 }
 
+
 /**
  * Returns all other caps used in the module
  *

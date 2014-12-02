@@ -201,10 +201,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         }
         // to late to rate
         else if ($status->accesstimestop < $time) {
-            // if publishdate is 0 -> than publishdate is not enabled
-            if ($status->publishdate && !$status->is_published) {
-                $status_summary[] = $info(get_string('publishdate_explain', ratingallocate_MOD_NAME, userdate($status->publishdate)));
-            }
             // if results already published
             if ($status->is_published == true) {
                 $status_summary[] = $warning(get_string('rating_is_over', ratingallocate_MOD_NAME));

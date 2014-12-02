@@ -81,6 +81,8 @@ $string['export_options'] = 'Export Options';
 $string['manual_allocation_saved'] = 'Your manual allocation has been saved.';
 $string['publish_allocation'] = 'Publish allocation';
 $string['distribution_published'] = 'Distribution has been published.';
+$string['create_moodle_groups'] = 'Create Moodle groups from allocation';
+$string['moodlegroups_created'] = 'The corresponding Moodle-Grouping and Groups have been created.';
 
 $string['manual_allocation_filter_only_raters'] = 'Show only users, with ratings.';
 $string['manual_allocation_filter_all'] = 'Show all users.';
@@ -177,3 +179,8 @@ $string['strategy_tickyes_accept'] = 'Accept';
 $string['strategy_tickyes_setting_mintickyes'] = 'Minimum of choices to accept';
 $string['strategy_tickyes_error_mintickyes'] = 'You have to tick at least {$a} boxes';
 $string['strategy_tickyes_explain_mintickyes'] = 'You have to tick a minimum of {$a} boxes.';
+
+// As message provider, for the notification after allocation
+$string['messageprovider:notifyalloc'] = 'Notification of option allocation';
+$string['allocation_notification_message_subject'] = 'Notification of finished allocation for {$a}';
+$string['allocation_notification_message'] = 'Conerning the "{$a->ratingallocate}", you have been assigned to the choice "{$a->choice}"';

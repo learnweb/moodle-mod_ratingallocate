@@ -1,5 +1,4 @@
 <?php
-use ratingallocate\db as this_db;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,9 +25,11 @@ use ratingallocate\db as this_db;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
+use ratingallocate\db as this_db;
 require_once(dirname(__FILE__) . '/lib.php');
 require_once(dirname(__FILE__) . '/form_manual_allocation.php');
 require_once(dirname(__FILE__) . '/renderable.php');
+
 // Takes care of loading all the solvers
 require_once(dirname(__FILE__) . '/solver/ford-fulkerson-koegel.php');
 require_once(dirname(__FILE__) . '/solver/edmonds-karp.php');
@@ -73,6 +74,7 @@ define('ACTION_ALLOCATE_PROCESS_MANUALFORM', 'ACTION_ALLOCATE_PROCESS_MANUALFORM
 define('ACTION_PUBLISH_ALLOCATIONS', 'publish_allocations'); // make them displayable for the users
 define('ACTION_SOLVE_LP_SOLVE', 'solve_lp_solve'); // instead of only generating the mps-file, let it solve
 define('RATING_ALLOC_SHOW_TABLE', 'show_table');
+define('ACTION_ALLOCATION_TO_GROUPING', 'ACTION_ALLOCATION_TO_GROUPING');
 
 /**
  * Wrapper for db-record to have IDE autocomplete feature of fields
@@ -264,6 +266,14 @@ class ratingallocate {
                     $this->publish_allocation();
                     $output .= $OUTPUT->notification( get_string('distribution_published', ratingallocate_MOD_NAME), 'notifysuccess');
                 }
+                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
+                                'ratingallocateid' => $this->ratingallocateid,
+                                'action' => ACTION_ALLOCATION_TO_GROUPING)), get_string('create_moodle_groups', ratingallocate_MOD_NAME));
+                if ($action == ACTION_ALLOCATION_TO_GROUPING) {
+                    $this->create_moodle_groups();
+                    $output .= $OUTPUT->notification( get_string('moodlegroups_created', ratingallocate_MOD_NAME), 'notifysuccess');
+                }
+                
             }
             
             // Manual allocation
@@ -457,10 +467,213 @@ class ratingallocate {
     /**
      * Set the published to yes and allow users to see their allocation
      */
-    public function publish_allocation() {
-        $this->origdbrecord->published = true;
+    public function publish_allocation()
+    {
+        global $USER;
+        $this->origdbrecord->{this_db\ratingallocate::PUBLISHED}   = true;
+        $this->origdbrecord->{this_db\ratingallocate::PUBLISHDATE} = time();
+        $this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} = -1;
+        $this->ratingallocate            = new ratingallocate_db_wrapper($this->origdbrecord);
+        $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+
+        // create the instance
+        $domination = new mod_ratingallocate\task\send_distribution_notification();
+        // set blocking if required (it probably isn't)
+        // $domination->set_blocking(true);
+        // add custom data
+        $domination->set_component('mod_ratingallocate');
+        $domination->set_custom_data(array(
+                        'userid' => $USER->id, // will be the sending user
+                        'ratingallocateid' => $this->ratingallocateid
+        ));
+        
+        // queue it
+        \core\task\manager::queue_adhoc_task($domination);
+    }
+
+    /**
+     * Gets called by the adhoc_taskmanager and its task in send_distribution_notification
+     * 
+     * @param user $userfrom
+     */
+    public function notify_users_distribution($userfrom) {
+        global $CFG;
+        $userfrom = get_complete_user_data('id', $userfrom);
+
+        // make sure we have not sent them yet
+        if ($this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} != -1) {
+            mtrace('seems we have sent them already');
+            return true;
+        }
+
+        $choices = $this->get_choices_with_allocationcount();
+        $allocations = $this->get_allocations();
+        foreach ($allocations as $userid => $allocobj) {
+            // get the assigned choice_id
+            $alloc_choic_id = $allocobj->choiceid;
+
+            // Prepare the email to be sent to the user
+            $userto = get_complete_user_data('id', $allocobj->userid);
+            cron_setup_user($userto);
+
+            // prepare Text
+            $notiftext = $this->make_mail_text($choices[$alloc_choic_id]);
+            $notifhtml = $this->make_mail_html($choices[$alloc_choic_id]);
+
+            $notifsubject = format_string($this->course->shortname, true) . ': ' .
+                     get_string('allocation_notification_message_subject', 'ratingallocate',
+                     $this->ratingallocate->name);
+            // Send the post now!
+            if (empty($userto->mailformat) || $userto->mailformat != 1) {
+                // This user DOESN'T want to receive HTML
+                $notifhtml = '';
+            }
+
+            $attachment = $attachname = '';
+
+            $mailresult = email_to_user($userto, $userfrom, $notifsubject, $notiftext, $notifhtml,
+                    $attachment, $attachname);
+            if (!$mailresult) {
+                mtrace(
+                        "ERROR: mod/ratingallocate/locallib.php: Could not send out digest mail to user $userto->id " .
+                                 "($userto->email)... not trying again.");
+            } else {
+                mtrace("success.");
+            }
+        }
+
+        // update the 'notified' flag
+        $this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} = 1;
         $this->ratingallocate = new ratingallocate_db_wrapper($this->origdbrecord);
-        $this->db->update_record('ratingallocate', $this->origdbrecord);
+
+        $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+    }
+
+    /**
+     * Builds and returns the body of the email notification in plain text.
+     *
+     * @return string The email body in plain text format.
+     */
+    function make_mail_text($choice) {
+        global $CFG;
+        $notiftext = '';
+
+        $notiftext .= "\n";
+        $notiftext .= $CFG->wwwroot.'/mod/ratingallocate/view.php?id='.$this->coursemodule->id;
+        $notiftext .= "\n---------------------------------------------------------------------\n";
+        $notiftext .= format_string($this->ratingallocate->name,true);
+
+        $notiftext .= "\n---------------------------------------------------------------------\n";
+        $notiftext .= get_string('allocation_notification_message', 'ratingallocate', array('ratingallocate'=>$this->ratingallocate->name, 'choice' => $choice->title));
+        $notiftext .= "\n\n";
+
+        return $notiftext;
+    }
+    /**
+     * Builds and returns the body of the email notification in html
+     *
+     * @return string The email body in html format.
+     */
+    function make_mail_html($choice) {
+        global $CFG;
+
+        $shortname = format_string($this->course->shortname, true, array('context' => context_course::instance($this->course->id)));
+
+        $notifhtml = '<head>';
+        $notifhtml .= '</head>';
+        $notifhtml .= "\n<body id=\"email\">\n\n";
+
+        $notifhtml .= '<div class="navbar">'.
+                '<a target="_blank" href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.$shortname.'</a> &raquo; '.
+                '<a target="_blank" href="'.$CFG->wwwroot.'/mod/ratingallocate/view.php?id='.$this->coursemodule->id.'">'.format_string($this->ratingallocate->name,true).'</a>';
+        $notifhtml .= '</div><hr />';
+        // format the post body
+        $options = new stdClass();
+        $options->para = true;
+        $notifhtml .= format_text(get_string('allocation_notification_message', 'ratingallocate', array('ratingallocate'=>$this->ratingallocate->name, 'choice' => $choice->title)),FORMAT_HTML,$options,$this->course->id);
+
+        $notifhtml .= '<hr />';
+        $notifhtml .= '</body>';
+
+        return $notifhtml;
+    }
+
+    /**
+     * create a moodle grouping with the name of the ratingallocate instance
+     * and create groups according to the distribution. Groups are identified 
+     * by their idnumber. If a group exists, all users are removed.
+     */
+    public function create_moodle_groups() {
+        $allgroupings = groups_get_all_groupings($this->course->id);
+        $groupingidname = ratingallocate_MOD_NAME . '_instid_' . $this->ratingallocateid;
+        // search if there is already a grouping from us
+        $grouping = groups_get_grouping_by_idnumber($this->course->id, $groupingidname);
+        $groupingid = null;
+        if (!$grouping) {
+            // create grouping
+            $data = new stdClass();
+            $data->name = 'created from ' . $this->ratingallocate->name;
+            $data->idnumber = $groupingidname;
+            $data->courseid = $this->course->id;
+            $groupingid = groups_create_grouping($data);
+        } else {
+            $groupingid = $grouping->id;
+        }
+
+        $group_identifier_from_choice_id = function ($choiceid) {
+            return ratingallocate_MOD_NAME . '_c_' . $choiceid;
+        };
+
+        $choices = $this->get_choices_with_allocationcount();
+
+        // make a new array containing only the identifiers of the choices
+        $choice_identifiers = array();
+        foreach ($choices as $id => $choice) {
+            $choice_identifiers[$group_identifier_from_choice_id($choice->id)] = array('key' => $id
+            );
+        }
+
+        // find all associated groups in this grouping
+        $groups = groups_get_all_groups($this->course->id, 0, $groupingid);
+
+        // loop through the groups in the grouping: if the choice does not exist anymore -> delete
+        // otherwise mark it
+        foreach ($groups as $group) {
+            if (array_key_exists($group->idnumber, $choice_identifiers)) {
+                // group exists, mark
+                $choice_identifiers[$group->idnumber]['exists'] = true;
+                $choice_identifiers[$group->idnumber]['groupid'] = $group->id;
+            } else {
+                // delete group $group->id
+                groups_delete_group($group->id);
+            }
+        }
+
+        // create groups groups for new identifiers or empty group if it exists
+        foreach ($choice_identifiers as $group_idnumber => $choice) {
+            if (key_exists('exists', $choice)) {
+                // remove all members
+                groups_delete_group_members_by_group($choice['groupid']);
+            } else {
+                $data = new stdClass();
+                $data->courseid = $this->course->id;
+                $data->name = $choices[$choice['key']]->title;
+                $data->idnumber = $group_idnumber;
+                $createdid = groups_create_group($data);
+                groups_assign_grouping($groupingid, $createdid);
+                $choice_identifiers[$group_idnumber]['groupid'] = $createdid;
+            }
+        }
+
+        // add all participants in the correct group
+        $allocations = $this->get_all_allocations();
+        foreach ($allocations as $userid => $choice) {
+            $choice_id = array_keys($choice)[0];
+            $choiceidnumber = $group_identifier_from_choice_id($choice_id);
+            groups_add_member($choice_identifiers[$choiceidnumber]['groupid'], $userid);
+        }
+        // Invalidate the grouping cache for the course
+        cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($this->course->id));
     }
 
     /**
@@ -698,4 +911,36 @@ class ratingallocate {
         return $strategyclass->translate_ratings_to_titles($ratings);
     }
     
+}
+
+/**
+ * Remove all users (or one user) from one group, invented by MxS by copying from group/lib.php
+ * because it didn't exist there
+ *
+ * @param int $courseid
+ * @return bool success
+ */
+function groups_delete_group_members_by_group($groupid) {
+    global $DB, $OUTPUT;
+    
+    if (is_bool($userid)) {
+        debugging('Incorrect userid function parameter');
+        return false;
+    }
+    
+    // Select * so that the function groups_remove_member() gets the whole record.
+    $groups = $DB->get_recordset('groups', array('id' => $groupid));
+    
+    foreach ($groups as $group) {
+        $userids = $DB->get_fieldset_select('groups_members', 'userid', 'groupid = :groupid', 
+            array('groupid' => $group->id));
+
+        // very ugly hack because some group-management functions are not provided in lib/grouplib.php
+        // but does not add too much overhead since it does not include more files...
+        require_once (dirname(dirname(dirname(__FILE__))) . '/group/lib.php');
+        foreach ($userids as $id) {
+            groups_remove_member($group, $id);
+        }
+    }
+    return true;
 }

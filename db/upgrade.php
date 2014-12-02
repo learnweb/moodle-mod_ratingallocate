@@ -70,5 +70,20 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         }
     }
     
+    if ($oldversion < 2014111800) {
+
+        // Define field notification_send to be added to ratingallocate.
+        $table = new xmldb_table('ratingallocate');
+        $field = new xmldb_field('notificationsend', XMLDB_TYPE_INTEGER, '4', null, null, null, '0', 'published');
+
+        // Conditionally launch add field notification_send.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Ratingallocate savepoint reached.
+        upgrade_mod_savepoint(true, 2014111800, 'ratingallocate');
+    }
+    
     return true;
 }
