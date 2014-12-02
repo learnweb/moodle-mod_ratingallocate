@@ -187,10 +187,10 @@ class ratingallocate {
                 set_time_limit(120);
                 //distribute choices
                 $time_needed = $this->distrubute_choices();
-                
+
                 //Logging
                 $event = \mod_ratingallocate\event\distribution_triggered::create_simple(
-                        context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations(), $time_needed);
+                        context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations_for_logging(), $time_needed);
                 $event->trigger();
 
                 redirect($PAGE->url->out(), get_string('distribution_saved', ratingallocate_MOD_NAME, $time_needed));
@@ -277,7 +277,7 @@ class ratingallocate {
                     
                     //Logging
                     $event = \mod_ratingallocate\event\allocation_published::create_simple(
-                            context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations());
+                            context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations_for_logging());
                     $event->trigger();
                     
                     $output .= $OUTPUT->notification( get_string('distribution_published', ratingallocate_MOD_NAME), 'notifysuccess');
@@ -448,6 +448,20 @@ class ratingallocate {
                 FROM {ratingallocate_allocations} al
            LEFT JOIN {ratingallocate_choices} c ON al.choiceid = c.id
            LEFT JOIN {ratingallocate_ratings} r ON al.choiceid = r.choiceid AND al.userid = r.userid
+               WHERE al.ratingallocateid = :ratingallocateid AND c.active = 1';
+        $records = $this->db->get_records_sql($query, array(
+                        'ratingallocateid' => $this->ratingallocateid
+        ));
+        return $records;
+    }
+    
+    /**
+     * @return attributes needed for logging of all allocation objects that belong this ratingallocate
+     */
+    private function get_allocations_for_logging() {
+        $query = 'SELECT al.userid, al.choiceid
+                FROM {ratingallocate_allocations} al
+                LEFT JOIN {ratingallocate_choices} c ON al.choiceid = c.id
                WHERE al.ratingallocateid = :ratingallocateid AND c.active = 1';
         $records = $this->db->get_records_sql($query, array(
                         'ratingallocateid' => $this->ratingallocateid
