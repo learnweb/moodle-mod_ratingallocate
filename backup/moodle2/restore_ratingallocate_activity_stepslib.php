@@ -52,6 +52,10 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $data->{this_db\ratingallocate::ACCESSTIMESTART} = $this->apply_date_offset($data->{this_db\ratingallocate::ACCESSTIMESTART});
         $data->{this_db\ratingallocate::ACCESSTIMESTOP} = $this->apply_date_offset($data->{this_db\ratingallocate::ACCESSTIMESTOP});
         $data->{this_db\ratingallocate::PUBLISHDATE} = $this->apply_date_offset($data->{this_db\ratingallocate::PUBLISHDATE});
+        $userinfo = $this->get_setting_value('userinfo');
+        if(!$userinfo) {
+            $data->{this_db\ratingallocate::PUBLISHED} = false;
+        }
 
         // insert the record
         $newitemid = $DB->insert_record(this_db\ratingallocate::TABLE, $data);
