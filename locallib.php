@@ -291,13 +291,6 @@ class ratingallocate {
                 }
                 if ($action == ACTION_PUBLISH_ALLOCATIONS) {
                     $this->publish_allocation();
-                    
-                    //Logging
-                    $event = \mod_ratingallocate\event\allocation_published::create_simple(
-                            context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations_for_logging());
-                    $event->trigger();
-                    
-                    $output .= $OUTPUT->notification( get_string('distribution_published', ratingallocate_MOD_NAME), 'notifysuccess');
                 }
                 $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                                 'ratingallocateid' => $this->ratingallocateid,
@@ -545,6 +538,13 @@ class ratingallocate {
         
         // queue it
         \core\task\manager::queue_adhoc_task($domination);
+        
+        //Logging
+        $event = \mod_ratingallocate\event\allocation_published::create_simple(
+                context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations_for_logging());
+        $event->trigger();
+        
+        $output .= $OUTPUT->notification( get_string('distribution_published', ratingallocate_MOD_NAME), 'notifysuccess');
     }
 
     /**
