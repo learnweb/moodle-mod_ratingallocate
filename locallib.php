@@ -399,36 +399,26 @@ class ratingallocate {
             // Print group distribution algorithm control
             if ($this->ratingallocate->accesstimestop < $now) {
                 $output .= $renderer->algorithm_control_ready();
-            } else {
-                $output .= $renderer->algorithm_control_tooearly();
-            }
-        
-            // Print distribution table
-            if ($this->ratingallocate->accesstimestop < $now) {
+                
                 $output .= $renderer->distribution_table_for_ratingallocate($this);
-        
+                
                 // if results not published yet, then do now
                 if ($this->ratingallocate->published == false) {
                     $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                                     'ratingallocateid' => $this->ratingallocateid,
                                     'action' => ACTION_PUBLISH_ALLOCATIONS)), get_string('publish_allocation', ratingallocate_MOD_NAME));
                 }
-        
+                
                 $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                                 'ratingallocateid' => $this->ratingallocateid,
                                 'action' => ACTION_ALLOCATION_TO_GROUPING)), get_string('create_moodle_groups', ratingallocate_MOD_NAME));
-        
-        
-            }
-        
-        
-        
-            if ($this->ratingallocate->accesstimestop < $now) {
+                
                 $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                                 'ratingallocateid' => $this->ratingallocateid,
                                 'action' => ACTION_ALLOCATE_PROCESS_MANUALFORM)), get_string('manual_allocation_form', ratingallocate_MOD_NAME));
+            } else {
+                $output .= $renderer->algorithm_control_tooearly();
             }
-        
         
             $output .= $renderer->show_ratings_table_button();
         
