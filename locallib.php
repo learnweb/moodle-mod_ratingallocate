@@ -218,6 +218,28 @@ class ratingallocate {
         return $output;
     }
     
+    private function process_action_allocate_process_manualform(){
+        // Manual allocation
+        $output = '';
+        if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
+            global $OUTPUT,$PAGE;
+
+            $mform = new manual_alloc_form($PAGE->url->out(), $this);
+        
+            if (!$mform->no_submit_button_pressed() && $data = $mform->get_submitted_data()) {
+                if (!$mform->is_cancelled() ) {
+                    $this->save_manual_allocation_form($data);
+                    $output .= $OUTPUT->box(get_string('manual_allocation_saved', ratingallocate_MOD_NAME));
+                }
+            } else {
+                $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
+        
+                $output .= $mform->to_html();
+            }
+        }
+        return $output;
+    }
+    
     /**
      * This is what the view.php calls to make the output
      */
@@ -302,20 +324,8 @@ class ratingallocate {
                 
             }
             
-            // Manual allocation
-            if (has_capability('mod/ratingallocate:start_distribution', $this->context) && ($action == ACTION_ALLOCATE_PROCESS_MANUALFORM)) {
-                $mform = new manual_alloc_form($PAGE->url->out(), $this);
-
-                if (!$mform->no_submit_button_pressed() && $data = $mform->get_submitted_data()) {                    
-                    if (!$mform->is_cancelled() ) { 
-                        $this->save_manual_allocation_form($data);
-                        $output .= $OUTPUT->box(get_string('manual_allocation_saved', ratingallocate_MOD_NAME));
-                    }
-                } else {
-                    $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
-                    
-                    $output .= $mform->to_html();
-                }
+            if ($action == ACTION_ALLOCATE_PROCESS_MANUALFORM){
+            $output .= $this->process_action_allocate_process_manualform();
             }
             
             if ($this->ratingallocate->accesstimestop < $now) {
