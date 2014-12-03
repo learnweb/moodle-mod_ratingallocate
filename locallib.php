@@ -440,7 +440,7 @@ class ratingallocate {
      * This is what the view.php calls to make the output
      */
     public function handle_view() {
-        global $PAGE, $OUTPUT, $USER;
+        global $PAGE, $USER;
         $action = optional_param('action', '', PARAM_TEXT);
         /* if ($action=='populate_test') {
           $this->addtestdata();
@@ -468,8 +468,6 @@ class ratingallocate {
         $choice_status->allocations = $this->get_allocations_for_user($USER->id);
         $output .= $renderer->render($choice_status);
 
-        // Get current time
-        $now = time();
         switch ($action) {
             case RATING_ALLOC_ACTION_START:
                 $output .= $this->process_rating_alloc_action_start();
