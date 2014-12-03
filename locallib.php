@@ -181,6 +181,39 @@ class ratingallocate {
         }
     }
     
+    private function process_rating_alloc_action_rate(){
+        // Print data and controls for students, but not for admins
+        if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
+            global $DB;
+            // if no choice option exists WARN!
+            if (!$DB->record_exists('ratingallocate_choices', array('ratingallocateid' => $this->ratingallocateid))) {
+                $output .= $renderer->notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
+            }
+            // rating possible
+            else if ($this->ratingallocate->accesstimestart < $now && $this->ratingallocate->accesstimestop > $now) {
+                // suche das richtige Formular nach Strategie
+                /* @var $strategyform ratingallocate_viewform */
+                $strategyform = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
+                /* @var $mform ratingallocate_strategyform */
+                $mform = new $strategyform($PAGE->url->out(), $this);
+        
+                // save submitted data and redirect
+                if ($mform->is_validated() && !$mform->is_cancelled() && $data = $mform->get_submitted_data()) {
+                    if ($action === RATING_ALLOC_ACTION_RATE) {
+                        $this->save_ratings_to_db($USER->id, $data->data);
+                        redirect($PAGE->url->out(), get_string('ratings_saved', ratingallocate_MOD_NAME));
+                    }
+                }
+        
+                $output .= $renderer->render_ratingallocate_strategyform($mform);
+                //Logging
+                $event = \mod_ratingallocate\event\rating_viewed::create_simple(
+                        context_course::instance($this->course->id), $this->ratingallocateid);
+                $event->trigger();
+            }
+        }
+    }
+    
     /**
      * This is what the view.php calls to make the output
      */
@@ -220,36 +253,7 @@ class ratingallocate {
         // Get current time
         $now = time();
 
-        // Print data and controls for students, but not for admins
-        if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
-            global $DB;
-            // if no choice option exists WARN!
-            if (!$DB->record_exists('ratingallocate_choices', array('ratingallocateid' => $this->ratingallocateid))) {
-                $output .= $renderer->notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
-            }
-            // rating possible
-            else if ($this->ratingallocate->accesstimestart < $now && $this->ratingallocate->accesstimestop > $now) {
-                // suche das richtige Formular nach Strategie
-                /* @var $strategyform ratingallocate_viewform */
-                $strategyform = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
-                /* @var $mform ratingallocate_strategyform */
-                $mform = new $strategyform($PAGE->url->out(), $this);
-
-                // save submitted data and redirect
-                if ($mform->is_validated() && !$mform->is_cancelled() && $data = $mform->get_submitted_data()) {
-                    if ($action === RATING_ALLOC_ACTION_RATE) {
-                        $this->save_ratings_to_db($USER->id, $data->data);
-                        redirect($PAGE->url->out(), get_string('ratings_saved', ratingallocate_MOD_NAME));
-                    }
-                }
-
-                $output .= $renderer->render_ratingallocate_strategyform($mform);
-                //Logging
-                $event = \mod_ratingallocate\event\rating_viewed::create_simple(
-                        context_course::instance($this->course->id), $this->ratingallocateid);
-                $event->trigger();
-            }
-        }
+        $this->process_rating_alloc_action_rate();
 
         // Print data and controls for teachers
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
