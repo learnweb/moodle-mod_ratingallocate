@@ -163,6 +163,24 @@ class ratingallocate {
         $this->context = $context;
     }
 
+    private function process_rating_alloc_action_start(){
+        // Process form: Start distribution and redirect after finishing
+        if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
+            // try to get some more memory, 500 users in 10 groups take about 15mb
+            raise_memory_limit(MEMORY_EXTRA);
+            set_time_limit(120);
+            //distribute choices
+            $time_needed = $this->distrubute_choices();
+    
+            //Logging
+            $event = \mod_ratingallocate\event\distribution_triggered::create_simple(
+                    context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations_for_logging(), $time_needed);
+            $event->trigger();
+    
+            redirect($PAGE->url->out(), get_string('distribution_saved', ratingallocate_MOD_NAME, $time_needed));
+        }
+    }
+    
     /**
      * This is what the view.php calls to make the output
      */
@@ -178,23 +196,8 @@ class ratingallocate {
 
         $PAGE->set_cacheable(false); //TODO necessary
 
-        // Process form: Start distribution and redirect after finishing
-        if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
-            // Start the distribution algorithm
-            if ($action == RATING_ALLOC_ACTION_START) {
-                // try to get some more memory, 500 users in 10 groups take about 15mb
-                raise_memory_limit(MEMORY_EXTRA);
-                set_time_limit(120);
-                //distribute choices
-                $time_needed = $this->distrubute_choices();
-
-                //Logging
-                $event = \mod_ratingallocate\event\distribution_triggered::create_simple(
-                        context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations_for_logging(), $time_needed);
-                $event->trigger();
-
-                redirect($PAGE->url->out(), get_string('distribution_saved', ratingallocate_MOD_NAME, $time_needed));
-            }
+        if ($action == RATING_ALLOC_ACTION_START) {
+            $this->process_rating_alloc_action_start();
         }
 
         // Output starts here
