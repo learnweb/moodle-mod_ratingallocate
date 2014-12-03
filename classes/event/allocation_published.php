@@ -41,8 +41,9 @@ class allocation_published extends \core\event\base {
     public static function create_simple($context, $objectid, $allocations){
         // the values of other need to be encoded since the base checks for equality of a decoded encoded other instance with the original.
         // this is not given for nested arrays
+        $allocations_json_valide = json_decode(json_encode($allocations), true);
         return self::create(array('context'=>$context,'objectid'=>$objectid, 
-                        'other' => array('allocations'=> json_encode($allocations))));
+                        'other' => array('allocations'=> $allocations_json_valide)));
     }
     
     protected function init() {

@@ -41,9 +41,11 @@ class distribution_triggered extends \core\event\base {
     
     public static function create_simple($context, $objectid, $allocations, $time_needed){
         // the values of other need to be encoded since the base checks for equality of a decoded encoded other instance with the original.
-        // this is not given for doubles or nested arrays 
+        // this is not given for doubles or nested arrays
+        $allocations_json_valid = json_decode(json_encode($allocations),true);
+        $time_needed_json_valid = json_decode(json_encode($time_needed),true);
         return self::create(array('context' => $context, 'objectid' => $objectid, 
-                        'other' => array('allocations'=> json_encode($allocations),'time_needed'=>json_encode($time_needed))));        
+                        'other' => array('allocations'=> $allocations_json_valid,'time_needed'=>$time_needed_json_valid)));        
     }
     protected function init() {
         $this->data['crud'] = 'u';
