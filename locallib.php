@@ -400,23 +400,30 @@ class ratingallocate {
 
         // Get current time
         $now = time();
-        if ($action == RATING_ALLOC_ACTION_START) {
-            $this->process_rating_alloc_action_start();
-        }
-        if ($action === RATING_ALLOC_ACTION_RATE) {
-            $output .= $this->process_rating_alloc_action_rate($action); 
-        }
-        if ($action == ACTION_PUBLISH_ALLOCATIONS) {
-            $output .= $this->process_publish_allocations();
-        }
-        if ($action == ACTION_ALLOCATION_TO_GROUPING) {
-            $output .= $this->process_action_allocation_to_grouping();
-        }
-        if ($action == ACTION_ALLOCATE_PROCESS_MANUALFORM){
-            $output .= $this->process_action_allocate_process_manualform();
-        }
-        if ($action == RATING_ALLOC_SHOW_TABLE) {
-            $output .= $this->process_rating_alloc_show_table();
+        switch ($action) {
+            case RATING_ALLOC_ACTION_START:
+                $output .= $this->process_rating_alloc_action_start();
+                break;
+            
+            case RATING_ALLOC_ACTION_RATE:
+                $output .= $this->process_rating_alloc_action_rate($action);
+                break;
+            
+            case ACTION_PUBLISH_ALLOCATIONS:
+                $output .= $this->process_publish_allocations();
+                break;
+            
+            case ACTION_ALLOCATION_TO_GROUPING:
+                $output .= $this->process_action_allocation_to_grouping();
+                break;
+            
+            case ACTION_ALLOCATE_PROCESS_MANUALFORM:
+                $output .= $this->process_action_allocate_process_manualform();
+                break;
+            
+            case RATING_ALLOC_SHOW_TABLE:
+                $output .= $this->process_rating_alloc_show_table();
+                break;
         }
         if (empty($action)){
         $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
