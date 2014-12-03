@@ -448,12 +448,6 @@ class ratingallocate {
     public function handle_view() {
         global $PAGE, $USER;
         $action = optional_param('action', '', PARAM_TEXT);
-        /* if ($action=='populate_test') {
-          $this->addtestdata();
-          } */
-
-        // add_to_log($this->course->id, 'ratingallocate', 'view', "view.php?id={$this->coursemodule->id}", $this->ratingallocate->name, $this->coursemodule->id);
-        // Print the page header
 
         $PAGE->set_cacheable(false); //TODO necessary
 
