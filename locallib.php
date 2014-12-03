@@ -203,10 +203,9 @@ class ratingallocate {
         
                 // save submitted data and redirect
                 if ($mform->is_validated() && !$mform->is_cancelled() && $data = $mform->get_submitted_data()) {
-                    if ($action === RATING_ALLOC_ACTION_RATE) {
+
                         $this->save_ratings_to_db($USER->id, $data->data);
-                        redirect($PAGE->url->out(), get_string('ratings_saved', ratingallocate_MOD_NAME));
-                    }
+                        redirect($PAGE->url->out(), get_string('ratings_saved', ratingallocate_MOD_NAME));           
                 }
         
                 $output .= $renderer->render_ratingallocate_strategyform($mform);
@@ -257,8 +256,14 @@ class ratingallocate {
 
         // Get current time
         $now = time();
-
-        $output .= $this->process_rating_alloc_action_rate($action);
+        if ($action === RATING_ALLOC_ACTION_RATE) {
+        $output .= $this->process_rating_alloc_action_rate($action); 
+        }
+        if (empty($action)){
+        $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
+                        'ratingallocateid' => $this->ratingallocateid,
+                        'action' => RATING_ALLOC_ACTION_RATE)), 'Edit Rating'); //TODO: Include in choice_status
+        }
 
         // Print data and controls for teachers
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
