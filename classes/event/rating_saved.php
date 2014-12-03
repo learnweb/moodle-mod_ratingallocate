@@ -41,7 +41,8 @@ class rating_saved extends \core\event\base {
     public static function create_simple($context, $objectid, $rating){
         // the values of other need to be encoded since the base checks for equality of a decoded encoded other instance with the original.
         // this is not given for nested arrays
-        return self::create(array('context' => $context, 'objectid' => $objectid, 'other' => array('ratings'=>json_encode($rating))));        
+        $rating_json_valid = json_decode(json_encode($rating),true);
+        return self::create(array('context' => $context, 'objectid' => $objectid, 'other' => array('ratings'=>$rating_json_valid)));        
     }
     protected function init() {
         $this->data['crud'] = 'u';
