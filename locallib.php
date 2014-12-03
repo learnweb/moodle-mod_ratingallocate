@@ -250,9 +250,13 @@ class ratingallocate {
         $output = '';
         // Print ratings table
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
+            global $OUTPUT;
             $renderer = $this->get_renderer();
             $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
                     $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(), $this->get_all_allocations(), $this);
+            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
+                            'ratingallocateid' => $this->ratingallocateid,
+                            'action' => '')), get_string('cancel'));
             //Logging
             $event = \mod_ratingallocate\event\allocation_table_viewed::create_simple(
                     context_course::instance($this->course->id), $this->ratingallocateid);
