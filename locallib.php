@@ -834,21 +834,21 @@ class ratingallocate {
             $allocdata = $data->data;
             foreach ($allocdata as $id => $choiceallocationid) {
                 // Is this user in this course?
-                if (key_exists($id, $allusers) && key_exists($choiceallocationid['assign'], $allchoices)) {
+                if (key_exists($id, $allusers) && key_exists($choiceallocationid[manual_alloc_form::ASSIGN], $allchoices)) {
                     $existing_allocations = $this->get_allocations_for_user($id);
                     $existing_allocation = array_pop($existing_allocations);
                     if (empty($existing_allocation)) {
                         // Create new allocation
-                        $this->add_allocation($choiceallocationid['assign'], $id);
+                        $this->add_allocation($choiceallocationid[manual_alloc_form::ASSIGN], $id);
                         // Logging
-                        array_push($loggingdata, array('userid' => $id,'assign' => $choiceallocationid['assign']));
+                        array_push($loggingdata, array('userid' => $id,'choiceid' => $choiceallocationid[manual_alloc_form::ASSIGN]));
                     } else {
-                        if ($existing_allocation->{this_db\ratingallocate_allocations::CHOICEID}!=$choiceallocationid['assign']){
+                        if ($existing_allocation->{this_db\ratingallocate_allocations::CHOICEID}!=$choiceallocationid[manual_alloc_form::ASSIGN]){
                         // Alter existing allocation
                         $this->alter_allocation(
                             $existing_allocation->{this_db\ratingallocate_allocations::CHOICEID}, 
-                            $choiceallocationid['assign'], $id);
-                        array_push($loggingdata, array('userid' => $id,'assign' => $choiceallocationid['assign']));
+                            $choiceallocationid[manual_alloc_form::ASSIGN], $id);
+                        array_push($loggingdata, array('userid' => $id,'choiceid' => $choiceallocationid[manual_alloc_form::ASSIGN]));
                         }
                     }
                 }
