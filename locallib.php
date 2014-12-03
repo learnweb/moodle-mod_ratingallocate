@@ -181,10 +181,14 @@ class ratingallocate {
         }
     }
     
-    private function process_rating_alloc_action_rate(){
+    private function process_rating_alloc_action_rate($action){
+        // Get current time
+        $now = time();
+        $output='';
+        $renderer = $this->get_renderer();
         // Print data and controls for students, but not for admins
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
-            global $DB;
+            global $DB,$PAGE,$USER;
             // if no choice option exists WARN!
             if (!$DB->record_exists('ratingallocate_choices', array('ratingallocateid' => $this->ratingallocateid))) {
                 $output .= $renderer->notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
@@ -212,6 +216,7 @@ class ratingallocate {
                 $event->trigger();
             }
         }
+        return $output;
     }
     
     /**
@@ -253,7 +258,7 @@ class ratingallocate {
         // Get current time
         $now = time();
 
-        $this->process_rating_alloc_action_rate();
+        $output .= $this->process_rating_alloc_action_rate($action);
 
         // Print data and controls for teachers
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
