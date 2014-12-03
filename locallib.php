@@ -246,7 +246,7 @@ class ratingallocate {
         return $output;
     }
     
-    private function process_rating_alloc_show_table(){ //TODO: Cancel button
+    private function process_rating_alloc_show_table(){
         $output = '';
         // Print ratings table
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
