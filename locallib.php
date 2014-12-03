@@ -187,7 +187,7 @@ class ratingallocate {
         }
     }
     
-    private function process_rating_alloc_action_rate($action){
+    private function process_rating_alloc_action_rate(){
         // Get current time
         $now = time();
         $output='';
@@ -480,7 +480,7 @@ class ratingallocate {
                 break;
             
             case RATING_ALLOC_ACTION_RATE:
-                $output .= $this->process_rating_alloc_action_rate($action);
+                $output .= $this->process_rating_alloc_action_rate();
                 break;
             
             case ACTION_PUBLISH_ALLOCATIONS:
