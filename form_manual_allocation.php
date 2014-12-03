@@ -41,6 +41,7 @@ class manual_alloc_form extends moodleform {
     const FILTER_BUTTON = 'filter_button';
     const FORM_ACTION = 'action';
     const EXLPANATION_PLACEHOLDER = 'exlpanation_placeholder';
+    const ASSIGN = 'assign';
     private $filter_state = self::FILTER_ONLY_RATERS;
     
 
@@ -153,7 +154,7 @@ class manual_alloc_form extends moodleform {
         foreach ($userdata as $userid => $userdat) {
             $headerelem = 'head_ratingallocate_u' . $userid;
             $elemprefix = 'data[' . $userid . ']';
-            $ratingelem = $elemprefix . '[assign]';
+            $ratingelem = $elemprefix . '['.self::ASSIGN.']';
             
             $rating_titles = $this->ratingallocate->get_options_titles($different_ratings);
             

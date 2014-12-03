@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 use ratingallocate\db as this_db;
 require_once(dirname(__FILE__) . '/lib.php');
+require_once($CFG->libdir  . '/eventslib.php');
 require_once(dirname(__FILE__) . '/form_manual_allocation.php');
 require_once(dirname(__FILE__) . '/renderable.php');
 
@@ -187,6 +188,11 @@ class ratingallocate {
                 //distribute choices
                 $time_needed = $this->distrubute_choices();
 
+                //Logging
+                $event = \mod_ratingallocate\event\distribution_triggered::create_simple(
+                        context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations_for_logging(), $time_needed);
+                $event->trigger();
+
                 redirect($PAGE->url->out(), get_string('distribution_saved', ratingallocate_MOD_NAME, $time_needed));
             }
         }
@@ -235,6 +241,10 @@ class ratingallocate {
                 }
 
                 $output .= $renderer->render_ratingallocate_strategyform($mform);
+                //Logging
+                $event = \mod_ratingallocate\event\rating_viewed::create_simple(
+                        context_course::instance($this->course->id), $this->ratingallocateid);
+                $event->trigger();
             }
         }
 
@@ -255,7 +265,7 @@ class ratingallocate {
             // Print distribution table
             if ($this->ratingallocate->accesstimestop < $now) {
                 $output .= $renderer->distribution_table_for_ratingallocate($this);
-
+                
                // if results not published yet, then do now
                 if ($this->ratingallocate->published == false) {
                     $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
@@ -264,6 +274,12 @@ class ratingallocate {
                 }
                 if ($action == ACTION_PUBLISH_ALLOCATIONS) {
                     $this->publish_allocation();
+                    
+                    //Logging
+                    $event = \mod_ratingallocate\event\allocation_published::create_simple(
+                            context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations_for_logging());
+                    $event->trigger();
+                    
                     $output .= $OUTPUT->notification( get_string('distribution_published', ratingallocate_MOD_NAME), 'notifysuccess');
                 }
                 $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
@@ -303,6 +319,10 @@ class ratingallocate {
             if ($action == RATING_ALLOC_SHOW_TABLE) {
                 $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
                         $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(), $this->get_all_allocations(), $this);
+                //Logging
+                $event = \mod_ratingallocate\event\allocation_table_viewed::create_simple(
+                        context_course::instance($this->course->id), $this->ratingallocateid);
+                $event->trigger();
             } else {
                 $output .= $renderer->show_ratings_table_button();
             }
@@ -312,13 +332,18 @@ class ratingallocate {
                 'ratingallocateid' => $this->ratingallocate->id)), get_string('download_votetest_allocation', ratingallocate_MOD_NAME));
             $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/solver/export_lp_solve.php', array('id' => $this->coursemodule->id,
                 'ratingallocateid' => $this->ratingallocate->id)), get_string('download_problem_mps_format', ratingallocate_MOD_NAME));
+            
+            //Logging
+            $event = \mod_ratingallocate\event\ratingallocate_viewed::create_simple(
+                    context_course::instance($this->course->id), $this->ratingallocateid);
+            $event->trigger();
         }
 
         // Finish the page
         $header_info = new ratingallocate_header($this->ratingallocate, $this->context, true,
                 $this->coursemodule->id);
         $header = $this->get_renderer()->render($header_info);
-        $footer = $this->get_renderer()->render_footer();
+        $footer = $this->get_renderer()->render_footer();        
         return $header . $output . $footer;
     }
 
@@ -418,6 +443,20 @@ class ratingallocate {
                 FROM {ratingallocate_allocations} al
            LEFT JOIN {ratingallocate_choices} c ON al.choiceid = c.id
            LEFT JOIN {ratingallocate_ratings} r ON al.choiceid = r.choiceid AND al.userid = r.userid
+               WHERE al.ratingallocateid = :ratingallocateid AND c.active = 1';
+        $records = $this->db->get_records_sql($query, array(
+                        'ratingallocateid' => $this->ratingallocateid
+        ));
+        return $records;
+    }
+    
+    /**
+     * @return attributes needed for logging of all allocation objects that belong this ratingallocate
+     */
+    private function get_allocations_for_logging() {
+        $query = 'SELECT al.userid, al.choiceid
+                FROM {ratingallocate_allocations} al
+                LEFT JOIN {ratingallocate_choices} c ON al.choiceid = c.id
                WHERE al.ratingallocateid = :ratingallocateid AND c.active = 1';
         $records = $this->db->get_records_sql($query, array(
                         'ratingallocateid' => $this->ratingallocateid
@@ -703,6 +742,7 @@ class ratingallocate {
         /* @var $DB moodle_database */
         global $DB;
         $transaction = $DB->start_delegated_transaction();
+        $loggingdata = array();
         try {
             foreach ($data as $id => $rdata) {
                 $rating = new stdClass ();
@@ -715,10 +755,15 @@ class ratingallocate {
                 if ($DB->record_exists('ratingallocate_ratings', $ratingexists)) {
                     // The rating exists, we need to update its value
                     // We get the id from the database
-
+ 
                     $oldrating = $DB->get_record('ratingallocate_ratings', $ratingexists);
-                    $rating->id = $oldrating->id;
-                    $DB->update_record('ratingallocate_ratings', $rating);
+                    if ($oldrating->{this_db\ratingallocate_ratings::RATING}!=$rating->rating){
+                        $rating->id = $oldrating->id;
+                        $DB->update_record('ratingallocate_ratings', $rating);
+                        
+                        //Logging
+                        array_push($loggingdata,array('choiceid' => $oldrating->choiceid, 'rating' => $rating->rating));
+                    }
                 } else {
                     // Create a new rating in the table
 
@@ -726,11 +771,18 @@ class ratingallocate {
                     $rating->choiceid = $rdata ['choiceid'];
                     $rating->ratingallocateid = $this->ratingallocateid;
                     $DB->insert_record('ratingallocate_ratings', $rating);
+                    
+                    //Logging
+                    array_push($loggingdata,array('choiceid' => $rating->choiceid, 'rating' => $rating->rating));
                 }
                 $completion = new completion_info($this->course);
                 $completion->set_module_viewed($this->coursemodule);
             }
             $transaction->allow_commit();
+            //Logging
+            $event = \mod_ratingallocate\event\rating_saved::create_simple(
+                    context_course::instance($this->course->id), $this->ratingallocateid, $loggingdata);
+            $event->trigger();
         } catch (Exception $e) {
             $transaction->rollback($e);
         }
@@ -774,6 +826,7 @@ class ratingallocate {
     public function save_manual_allocation_form($data) {
         try {
             $transaction = $this->db->start_delegated_transaction();
+            $loggingdata = array();
 
             $allusers = $this->get_raters_in_course();
             $allchoices = $this->get_rateable_choices();
@@ -781,20 +834,30 @@ class ratingallocate {
             $allocdata = $data->data;
             foreach ($allocdata as $id => $choiceallocationid) {
                 // Is this user in this course?
-                if (key_exists($id, $allusers) && key_exists($choiceallocationid['assign'], $allchoices)) {
+                if (key_exists($id, $allusers) && key_exists($choiceallocationid[manual_alloc_form::ASSIGN], $allchoices)) {
                     $existing_allocations = $this->get_allocations_for_user($id);
                     $existing_allocation = array_pop($existing_allocations);
                     if (empty($existing_allocation)) {
                         // Create new allocation
-                        $this->add_allocation($choiceallocationid['assign'], $id);
+                        $this->add_allocation($choiceallocationid[manual_alloc_form::ASSIGN], $id);
+                        // Logging
+                        array_push($loggingdata, array('userid' => $id,'choiceid' => $choiceallocationid[manual_alloc_form::ASSIGN]));
                     } else {
+                        if ($existing_allocation->{this_db\ratingallocate_allocations::CHOICEID}!=$choiceallocationid[manual_alloc_form::ASSIGN]){
                         // Alter existing allocation
                         $this->alter_allocation(
                             $existing_allocation->{this_db\ratingallocate_allocations::CHOICEID}, 
-                            $choiceallocationid['assign'], $id);
+                            $choiceallocationid[manual_alloc_form::ASSIGN], $id);
+                        array_push($loggingdata, array('userid' => $id,'choiceid' => $choiceallocationid[manual_alloc_form::ASSIGN]));
+                        }
                     }
                 }
             }
+            //Logging
+            $event = \mod_ratingallocate\event\manual_allocation_saved::create_simple(
+                    context_course::instance($this->course->id), $this->ratingallocateid, $loggingdata);
+            $event->trigger();
+            
             $transaction->allow_commit();
         } catch (Exception $e) {
             $transaction->rollback($e);
