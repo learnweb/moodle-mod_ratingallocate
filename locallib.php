@@ -240,6 +240,21 @@ class ratingallocate {
         return $output;
     }
     
+    private function process_rating_alloc_show_table(){ //TODO: Cancel button
+        $output = '';
+        // Print ratings table
+        if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
+            $renderer = $this->get_renderer();
+            $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
+                    $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(), $this->get_all_allocations(), $this);
+            //Logging
+            $event = \mod_ratingallocate\event\allocation_table_viewed::create_simple(
+                    context_course::instance($this->course->id), $this->ratingallocateid);
+            $event->trigger();
+        }
+        return $output;
+    }
+    
     /**
      * This is what the view.php calls to make the output
      */
@@ -334,16 +349,11 @@ class ratingallocate {
                                 'action' => ACTION_ALLOCATE_PROCESS_MANUALFORM)), get_string('manual_allocation_form', ratingallocate_MOD_NAME));
             }
             
-            
-            // Print ratings table
             if ($action == RATING_ALLOC_SHOW_TABLE) {
-                $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
-                        $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(), $this->get_all_allocations(), $this);
-                //Logging
-                $event = \mod_ratingallocate\event\allocation_table_viewed::create_simple(
-                        context_course::instance($this->course->id), $this->ratingallocateid);
-                $event->trigger();
-            } else {
+                $output .= $this->process_rating_alloc_show_table();
+            }
+
+            if (empty($action)){
                 $output .= $renderer->show_ratings_table_button();
             }
 
