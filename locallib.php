@@ -142,6 +142,11 @@ class ratingallocate {
      * @var mod_ratingallocate_renderer the custom renderer for this module
      */
     protected $renderer;
+    
+    /**
+     * @var string rendered notifications to output for handle_view()
+     */
+    private $notifications ='';
 
     /**
      * Returns all users enrolled in the course the ratingallocate is in
@@ -166,6 +171,7 @@ class ratingallocate {
     private function process_rating_alloc_action_start(){
         // Process form: Start distribution and redirect after finishing
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
+            global $PAGE;
             // try to get some more memory, 500 users in 10 groups take about 15mb
             raise_memory_limit(MEMORY_EXTRA);
             set_time_limit(120);
@@ -191,7 +197,7 @@ class ratingallocate {
             global $DB,$PAGE,$USER;
             // if no choice option exists WARN!
             if (!$DB->record_exists('ratingallocate_choices', array('ratingallocateid' => $this->ratingallocateid))) {
-                $output .= $renderer->notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
+                $this->notifications .= $renderer->notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
             }
             // rating possible
             else if ($this->ratingallocate->accesstimestart < $now && $this->ratingallocate->accesstimestop > $now) {
@@ -229,7 +235,7 @@ class ratingallocate {
             if (!$mform->no_submit_button_pressed() && $data = $mform->get_submitted_data()) {
                 if (!$mform->is_cancelled() ) {
                     $this->save_manual_allocation_form($data);
-                    $output .= $OUTPUT->box(get_string('manual_allocation_saved', ratingallocate_MOD_NAME));
+                    $output .= $OUTPUT->notification(get_string('manual_allocation_saved', ratingallocate_MOD_NAME),'notifysuccess');
                 }
             } else {
                 $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
@@ -284,7 +290,7 @@ class ratingallocate {
                     context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations_for_logging());
             $event->trigger();
             
-            $output .= $OUTPUT->notification( get_string('distribution_published', ratingallocate_MOD_NAME), 'notifysuccess');
+            $this->notifications .= $OUTPUT->notification( get_string('distribution_published', ratingallocate_MOD_NAME), 'notifysuccess');
             return $output;
         }
     }
@@ -363,7 +369,7 @@ class ratingallocate {
             }
             // Invalidate the grouping cache for the course
             cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($this->course->id));
-            $output .= $OUTPUT->notification( get_string('moodlegroups_created', ratingallocate_MOD_NAME), 'notifysuccess');
+            $this->notifications .= $OUTPUT->notification( get_string('moodlegroups_created', ratingallocate_MOD_NAME), 'notifysuccess');
         }
         return $output;
     }
@@ -383,7 +389,7 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             // Notify if there aren't at least two rateable groups
             if (count($this->get_rateable_choices()) < 1) {
-                $output .= $renderer->notification(get_string('at_least_one_rateable_choices_needed', ratingallocate_MOD_NAME));
+                $this->notifications .= $renderer->notification(get_string('at_least_one_rateable_choices_needed', ratingallocate_MOD_NAME));
             }
         
             // Print group distribution algorithm control
@@ -502,7 +508,7 @@ class ratingallocate {
                 $this->coursemodule->id);
         $header = $this->get_renderer()->render($header_info);
         $footer = $this->get_renderer()->render_footer();        
-        return $header . $output . $footer;
+        return $header . $this->notifications . $output . $footer;
     }
 
     /**
