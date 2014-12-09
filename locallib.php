@@ -142,6 +142,8 @@ class ratingallocate {
      * @var mod_ratingallocate_renderer the custom renderer for this module
      */
     protected $renderer;
+    
+    const NOTIFY_SUCCESS = 'notifysuccess';
 
     /**
      * Returns all users enrolled in the course the ratingallocate is in
@@ -180,7 +182,7 @@ class ratingallocate {
             
             /* @var $renderer mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
-            $renderer->add_notification(get_string('distribution_saved', ratingallocate_MOD_NAME, $time_needed));
+            $renderer->add_notification(get_string('distribution_saved', ratingallocate_MOD_NAME, $time_needed), self::NOTIFY_SUCCESS);
             return $this->process_default();
         }
     }
@@ -210,7 +212,7 @@ class ratingallocate {
                 if ($mform->is_validated() && !$mform->is_cancelled() && $data = $mform->get_submitted_data()) {
 
                         $this->save_ratings_to_db($USER->id, $data->data);
-                        $renderer->add_notification(get_string('ratings_saved', ratingallocate_MOD_NAME));
+                        $renderer->add_notification(get_string('ratings_saved', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
                         return $this->process_default();
                 }
         
@@ -237,7 +239,7 @@ class ratingallocate {
                     $this->save_manual_allocation_form($data);
                     /* @var $renderer mod_ratingallocate_renderer */
                     $renderer = $this->get_renderer();
-                    $renderer->add_notification(get_string('manual_allocation_saved', ratingallocate_MOD_NAME),'notifysuccess');
+                    $renderer->add_notification(get_string('manual_allocation_saved', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
                 }
                 // If form was submitted using save or cancel, show the default page.
                 return $this->process_default();
@@ -300,7 +302,7 @@ class ratingallocate {
             
             /* @var $renderer mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
-            $renderer->add_notification( get_string('distribution_published', ratingallocate_MOD_NAME), 'notifysuccess');
+            $renderer->add_notification( get_string('distribution_published', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
             return $output;
         }
     }
@@ -380,7 +382,7 @@ class ratingallocate {
             // Invalidate the grouping cache for the course
             cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($this->course->id));
             $renderer = $this->get_renderer();
-            $renderer->add_notification( get_string('moodlegroups_created', ratingallocate_MOD_NAME), 'notifysuccess');
+            $renderer->add_notification( get_string('moodlegroups_created', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
         }
         return $output;
     }

@@ -60,6 +60,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $o .= $this->output->box_end();
             }
         }
+        $o .= $this->notifications;
         return $o;
     }
 
@@ -243,7 +244,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             }
         }
         */
-        $o .= $this->notifications;
+
         $o .= $this->output->container_end();
         return $o;
     }
@@ -263,8 +264,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      * This notification will be rendered in the header of the site.
      * @param $note Text to be viewed in the notification
      */
-    public function add_notification($note){
-        $this->notifications .= $this->notification($note);
+    public function add_notification($note, $classes = 'notifyproblem'){
+        $this->notifications .= $this->notification($note, $classes);
     }
 
 
