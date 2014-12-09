@@ -290,13 +290,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $starturl = new moodle_url($PAGE->url, array('action' => RATING_ALLOC_ACTION_START));
 
-        $output = $this->heading(get_string('distribution_algorithm', ratingallocate_MOD_NAME), 2);
-
         // print button
-        $output .= $this->box_start();
-        $output .= '<p>' . get_string('start_distribution_explanation', ratingallocate_MOD_NAME) . '</p>';
-        $output .= $this->box_end();
-        $output .= $this->single_button($starturl->out(), get_string('start_distribution', ratingallocate_MOD_NAME), 'get');
+        $output = $this->single_button($starturl->out(), get_string('start_distribution', ratingallocate_MOD_NAME), 'get', array('tooltip'=>get_string('start_distribution_explanation', ratingallocate_MOD_NAME)));
 
         return $output;
     }
@@ -487,12 +482,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $tableurl = new moodle_url($PAGE->url, array('action' => RATING_ALLOC_SHOW_TABLE));
 
-        $output = $this->heading(get_string('ratings_table', ratingallocate_MOD_NAME), 2);
-        $output .= $this->box_start();
-        // $output .= get_string('view_ratings_table', ratingallocate_MOD_NAME);
         // Button to display information about the distribution and ratings
-        $output .= $this->single_button($tableurl->out(), get_string('show_table', ratingallocate_MOD_NAME), 'get');
-        $output .= $this->box_end();
+        $output = $this->single_button($tableurl->out(), get_string('show_table', ratingallocate_MOD_NAME), 'get');
 
         return $output;
     }
