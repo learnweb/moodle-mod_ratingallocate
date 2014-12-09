@@ -32,7 +32,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * @var string rendered notifications to output for handle_view()
      */
-    private $notifications ='';
+    private $notifications = array();
 
     /**
      * Render the header.
@@ -60,7 +60,14 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $o .= $this->output->box_end();
             }
         }
-        $o .= $this->notifications;
+        //$o .= $this->notifications;
+        if(!empty($this->notifications)) {
+            $o .= $this->output->box_start('box generalbox boxaligncenter');
+            foreach ($this->notifications as $elem) {
+                $o .= html_writer::div(format_text($elem));
+            }
+            $o .= $this->output->box_end();
+        }
         return $o;
     }
 
@@ -200,28 +207,21 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $info = function($text) { return html_writer::span($text,'info'); };
 
         if (empty($status->available_choices))
-            $status_summary[] = $error(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
+             $this->add_notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
         // To early to rate
         if ($status->accesstimestart > $time) {
-            $status_summary[] = $warning(get_string('too_early_to_rate', ratingallocate_MOD_NAME));
+             $this->add_notification(get_string('too_early_to_rate', ratingallocate_MOD_NAME));
         }
         // to late to rate
         else if ($status->accesstimestop < $time) {
             // if results already published
             if ($status->is_published == true) {
-                $status_summary[] = $warning(get_string('rating_is_over', ratingallocate_MOD_NAME));
+                $this->add_notification(get_string('rating_is_over', ratingallocate_MOD_NAME));
             } else {
-                $status_summary[] = $info(get_string('results_not_yet_published', ratingallocate_MOD_NAME));
+                $this->add_notification(get_string('results_not_yet_published', ratingallocate_MOD_NAME),'info');
             }
         }
 
-        if(!empty($status_summary)) {
-            $o .= $this->output->box_start('box generalbox boxaligncenter');
-            foreach ($status_summary as $elem) {
-                $o .= html_writer::div(format_text($elem));
-            }
-            $o .= $this->output->box_end();
-        }
      /*   // Links.
         if ($status->view_type == ratingallocate_choice_status::STUDENT_VIEW) {
             if ($status->canedit) {
@@ -265,7 +265,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      * @param $note Text to be viewed in the notification
      */
     public function add_notification($note, $classes = 'notifyproblem'){
-        $this->notifications .= $this->notification($note, $classes);
+        array_push($this->notifications, $this->notification($note, $classes));
     }
 
 
