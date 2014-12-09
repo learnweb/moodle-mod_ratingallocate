@@ -104,7 +104,7 @@ abstract class strategytemplate {
     public function translate_ratings_to_titles(array $ratings){
         $result = array();
         foreach ($ratings as $id => $rating){
-           $result[$rating] = translate_rating_to_titles($rating);
+           $result[$rating] = $this->translate_rating_to_titles($rating);
         }
         return $result;
     }
