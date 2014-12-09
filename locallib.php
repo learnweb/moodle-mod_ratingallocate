@@ -384,9 +384,11 @@ class ratingallocate {
         $now = time();
         $renderer = $this->get_renderer();
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
+            if ($this->ratingallocate->accesstimestop >= $now) {
             $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                             'ratingallocateid' => $this->ratingallocateid,
                             'action' => RATING_ALLOC_ACTION_RATE)), 'Edit Rating'); //TODO: Include in choice_status
+            }
         }
         
         // Print data and controls for teachers
