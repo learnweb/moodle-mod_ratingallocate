@@ -161,7 +161,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $choices_html = '';
             foreach ($status->own_choices as $choice) {
                 $choices_html .= '<li>';
-                $choices_html .= format_string($choice->title) . ' (' . s($choice->rating) . ')';
+                $choices_html .= format_string($choice->title) . ' (' . s($this->get_option_title($choice->rating, $status->strategy)) . ')';
                 $choices_html .= '</li>';
             }
 
@@ -467,6 +467,16 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $titles[$id] = empty($option) ? get_string('no_rating_given', ratingallocate_MOD_NAME): get_string('rating_raw', ratingallocate_MOD_NAME, $option);
         }
         return $titles;
+    }
+    
+    /**
+     * Formats the rating
+     * @param unknown $rating
+     * @return multitype:Ambigous <string, lang_string>
+     */
+    private function get_option_title($rating, strategytemplate $strategy){
+        $option = $strategy->translate_rating_to_titles($rating);
+        return empty($option) ? get_string('no_rating_given', ratingallocate_MOD_NAME): get_string('rating_raw', ratingallocate_MOD_NAME, $option);
     }
 
     /**

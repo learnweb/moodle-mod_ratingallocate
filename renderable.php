@@ -61,4 +61,5 @@ class ratingallocate_choice_status implements renderable {
     public $available_choices;
     public $own_choices;
     public $allocations;
+    public $strategy;
 }

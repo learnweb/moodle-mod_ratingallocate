@@ -472,6 +472,7 @@ class ratingallocate {
         $choice_status->available_choices = $this->get_rateable_choices();
         $choice_status->own_choices = array_filter($this->get_rating_data_for_user($USER->id),function($elem) {return !empty($elem->rating);});
         $choice_status->allocations = $this->get_allocations_for_user($USER->id);
+        $choice_status->strategy = $this->get_strategy_class();
         $output .= $renderer->render($choice_status);
         
         switch ($action) {
@@ -1046,9 +1047,15 @@ class ratingallocate {
      * @param array $ratings
      */
     public function get_options_titles(array $ratings){
+        return $this->get_strategy_class()->translate_ratings_to_titles($ratings);
+    }
+    
+    /**
+     * Returns the strategy class for the ratingallocate
+     */
+    private function get_strategy_class(){
         $strategyclassp = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\strategy';
-        $strategyclass = new $strategyclassp(json_decode($this->ratingallocate->setting,true));
-        return $strategyclass->translate_ratings_to_titles($ratings);
+        return new $strategyclassp(json_decode($this->ratingallocate->setting,true));
     }
     
 }
