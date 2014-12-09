@@ -463,6 +463,17 @@ class ratingallocate {
         /* @var $renderer mod_ratingallocate_renderer */
         $renderer = $this->get_renderer();
 
+        $choice_status = new ratingallocate_choice_status();
+        $choice_status->view_type = ratingallocate_choice_status::STUDENT_VIEW;
+        $choice_status->accesstimestart = $this->ratingallocate->accesstimestart;
+        $choice_status->accesstimestop = $this->ratingallocate->accesstimestop;
+        $choice_status->publishdate = $this->ratingallocate->publishdate;
+        $choice_status->is_published = $this->ratingallocate->published;
+        $choice_status->available_choices = $this->get_rateable_choices();
+        $choice_status->own_choices = array_filter($this->get_rating_data_for_user($USER->id),function($elem) {return !empty($elem->rating);});
+        $choice_status->allocations = $this->get_allocations_for_user($USER->id);
+        $output .= $renderer->render($choice_status);
+        
         switch ($action) {
             case RATING_ALLOC_ACTION_START:
                 $output .= $this->process_rating_alloc_action_start();
@@ -489,26 +500,14 @@ class ratingallocate {
                 break;
             default:
                 $output .= $this->process_default();
-        }
+        }        
         
-        $choice_status = new ratingallocate_choice_status();
-        $choice_status->view_type = ratingallocate_choice_status::STUDENT_VIEW;
-        $choice_status->accesstimestart = $this->ratingallocate->accesstimestart;
-        $choice_status->accesstimestop = $this->ratingallocate->accesstimestop;
-        $choice_status->publishdate = $this->ratingallocate->publishdate;
-        $choice_status->is_published = $this->ratingallocate->published;
-        $choice_status->available_choices = $this->get_rateable_choices();
-        $choice_status->own_choices = array_filter($this->get_rating_data_for_user($USER->id),function($elem) {return !empty($elem->rating);});
-        $choice_status->allocations = $this->get_allocations_for_user($USER->id);
-        $choice_status_output = $renderer->render($choice_status);
-        
-        
-        // Finish the page
+        // Finish the page (Since the header renders the notifications, it needs to be rendered after the actions)
         $header_info = new ratingallocate_header($this->ratingallocate, $this->context, true,
                 $this->coursemodule->id);
         $header = $this->get_renderer()->render($header_info);
         $footer = $this->get_renderer()->render_footer();        
-        return $header .$choice_status_output. $output . $footer;
+        return $header . $output . $footer;
     }
 
     /**
