@@ -28,6 +28,11 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(__FILE__) . '/locallib.php');
 
 class mod_ratingallocate_renderer extends plugin_renderer_base {
+    
+    /**
+     * @var string rendered notifications to output for handle_view()
+     */
+    private $notifications ='';
 
     /**
      * Render the header.
@@ -238,6 +243,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             }
         }
         */
+        $o .= $this->notifications;
         $o .= $this->output->container_end();
         return $o;
     }
@@ -250,6 +256,15 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $output .= $this->box_end();
 
         return $output;
+    }
+    
+    /**
+     * Add a notification with the given $note to the renderer. 
+     * This notification will be rendered in the header of the site.
+     * @param $note Text to be viewed in the notification
+     */
+    public function add_notification($note){
+        $this->notifications .= $this->notification($note);
     }
 
 
