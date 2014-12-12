@@ -209,7 +209,7 @@ class ratingallocate {
                 $mform = new $strategyform($PAGE->url->out(), $this);
         
                 // save submitted data and call default page
-                if ($mform->is_validated() && !$mform->is_cancelled() && $data = $mform->get_submitted_data()) {
+                if ($data = $mform->get_submitted_data() && $mform->is_validated() && !$mform->is_cancelled()) {
 
                         $this->save_ratings_to_db($USER->id, $data->data);
                         $renderer->add_notification(get_string('ratings_saved', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
