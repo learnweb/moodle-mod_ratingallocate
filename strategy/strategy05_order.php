@@ -57,10 +57,14 @@ class strategy extends \strategytemplate {
     }
     
     public function get_default_settings(){
+        $default_count_options = 2;
         $output = array(
-                        self::COUNTOPTIONS => 2
+                        self::COUNTOPTIONS => $default_count_options
         );
-        $count_options = $this->get_settings_value(self::COUNTOPTIONS);
+        $count_options = $this->get_settings_value(self::COUNTOPTIONS, false);
+        if (is_null($count_options)){
+            $count_options = $default_count_options;
+        }
         // $rating_value_counter defines the id/value of the label (first choice has a high value)
         for ($i = 1, $rating_value_counter = $count_options; $i <= $count_options; $i++,$rating_value_counter--) {
             $output[$rating_value_counter] =  get_string(strategy::STRATEGYID . '_no_choice', ratingallocate_MOD_NAME, $i);
