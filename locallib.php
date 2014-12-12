@@ -1061,7 +1061,12 @@ class ratingallocate {
      */
     private function get_strategy_class(){
         $strategyclassp = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\strategy';
-        return new $strategyclassp(json_decode($this->ratingallocate->setting,true));
+        $allsettings = json_decode($this->ratingallocate->setting,true);
+        if (array_key_exists($this->ratingallocate->strategy, $allsettings)){
+            return new $strategyclassp($allsettings[$this->ratingallocate->strategy]);
+        } else {
+            return new $strategyclassp();
+        }
     }
     
 }
