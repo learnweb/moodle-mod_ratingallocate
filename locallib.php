@@ -69,13 +69,13 @@ class strategymanager {
 
 }
 
-define('RATING_ALLOC_ACTION_RATE', 'rate');
-define('RATING_ALLOC_ACTION_START', 'start_distribution');
-define('ACTION_ALLOCATE_PROCESS_MANUALFORM', 'ACTION_ALLOCATE_PROCESS_MANUALFORM');
+define('ACTION_GIVE_RATING', 'give_rating');
+define('ACTION_START_DISTRIBUTION', 'start_distribution');
+define('ACTION_MANUAL_ALLOCATION', 'manual_allocation');
 define('ACTION_PUBLISH_ALLOCATIONS', 'publish_allocations'); // make them displayable for the users
 define('ACTION_SOLVE_LP_SOLVE', 'solve_lp_solve'); // instead of only generating the mps-file, let it solve
-define('RATING_ALLOC_SHOW_TABLE', 'show_table');
-define('ACTION_ALLOCATION_TO_GROUPING', 'ACTION_ALLOCATION_TO_GROUPING');
+define('ACTION_SHOW_ALLOC_TABLE', 'show_alloc_table');
+define('ACTION_ALLOCATION_TO_GROUPING', 'allocation_to_gropuping');
 
 /**
  * Wrapper for db-record to have IDE autocomplete feature of fields
@@ -165,7 +165,7 @@ class ratingallocate {
         $this->context = $context;
     }
 
-    private function process_rating_alloc_action_start(){
+    private function process_action_start_distribution(){
         // Process form: Start distribution and call default page after finishing
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             global $PAGE;
@@ -187,7 +187,7 @@ class ratingallocate {
         }
     }
     
-    private function process_rating_alloc_action_rate(){
+    private function process_action_give_rating(){
         // Get current time
         $now = time();
         $output='';
@@ -226,7 +226,7 @@ class ratingallocate {
         return $output;
     }
     
-    private function process_action_allocate_process_manualform(){
+    private function process_action_manual_allocation(){
         // Manual allocation
         $output = '';
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
@@ -252,7 +252,7 @@ class ratingallocate {
         return $output;
     }
     
-    private function process_rating_alloc_show_table(){
+    private function process_action_show_alloc_table(){
         $output = '';
         // Print ratings table
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
@@ -397,7 +397,7 @@ class ratingallocate {
             if ($this->ratingallocate->accesstimestop > $now) {
             $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                             'ratingallocateid' => $this->ratingallocateid,
-                            'action' => RATING_ALLOC_ACTION_RATE)), 'Edit Rating'); //TODO: Include in choice_status
+                            'action' => ACTION_GIVE_RATING)), 'Edit Rating'); //TODO: Include in choice_status
             }
         }
         
@@ -429,7 +429,7 @@ class ratingallocate {
                 
                 $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                                 'ratingallocateid' => $this->ratingallocateid,
-                                'action' => ACTION_ALLOCATE_PROCESS_MANUALFORM)), get_string('manual_allocation_form', ratingallocate_MOD_NAME));
+                                'action' => ACTION_MANUAL_ALLOCATION)), get_string('manual_allocation_form', ratingallocate_MOD_NAME));
             } else {
                 $output .= $renderer->algorithm_control_tooearly();
             }
@@ -469,12 +469,12 @@ class ratingallocate {
         $renderer = $this->get_renderer();
         
         switch ($action) {
-            case RATING_ALLOC_ACTION_START:
-                $output .= $this->process_rating_alloc_action_start();
+            case ACTION_START_DISTRIBUTION:
+                $output .= $this->process_action_start_distribution();
                 break;
             
-            case RATING_ALLOC_ACTION_RATE:
-                $output .= $this->process_rating_alloc_action_rate();
+            case ACTION_GIVE_RATING:
+                $output .= $this->process_action_give_rating();
                 break;
             
             case ACTION_PUBLISH_ALLOCATIONS:
@@ -485,12 +485,12 @@ class ratingallocate {
                 $output .= $this->process_action_allocation_to_grouping();
                 break;
             
-            case ACTION_ALLOCATE_PROCESS_MANUALFORM:
-                $output .= $this->process_action_allocate_process_manualform();
+            case ACTION_MANUAL_ALLOCATION:
+                $output .= $this->process_action_manual_allocation();
                 break;
             
-            case RATING_ALLOC_SHOW_TABLE:
-                $output .= $this->process_rating_alloc_show_table();
+            case ACTION_SHOW_ALLOC_TABLE:
+                $output .= $this->process_action_show_alloc_table();
                 break;
             default:
                 $output .= $this->process_default();
