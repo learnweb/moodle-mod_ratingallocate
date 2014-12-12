@@ -72,7 +72,7 @@ class manual_alloc_form extends moodleform {
         $mform->registerNoSubmitButton(self::FILTER_BUTTON);
         $mform->addElement('submit',self::FILTER_BUTTON, '');
 
-        $mform->addElement('hidden', self::FORM_ACTION, ACTION_ALLOCATE_PROCESS_MANUALFORM);
+        $mform->addElement('hidden', self::FORM_ACTION, ACTION_MANUAL_ALLOCATION);
         $mform->setType(self::FORM_ACTION, PARAM_TEXT);
         
         //saves the current filter

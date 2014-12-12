@@ -288,7 +288,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     public function algorithm_control_ready() {
         global $PAGE;
 
-        $starturl = new moodle_url($PAGE->url, array('action' => RATING_ALLOC_ACTION_START));
+        $starturl = new moodle_url($PAGE->url, array('action' => ACTION_START_DISTRIBUTION));
 
         // print button
         $output = $this->single_button($starturl->out(), get_string('start_distribution', ratingallocate_MOD_NAME), 'get', array('tooltip'=>get_string('start_distribution_explanation', ratingallocate_MOD_NAME)));
@@ -480,7 +480,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     public function show_ratings_table_button() {
         global $PAGE;
 
-        $tableurl = new moodle_url($PAGE->url, array('action' => RATING_ALLOC_SHOW_TABLE));
+        $tableurl = new moodle_url($PAGE->url, array('action' => ACTION_SHOW_ALLOC_TABLE));
 
         // Button to display information about the distribution and ratings
         $output = $this->single_button($tableurl->out(), get_string('show_table', ratingallocate_MOD_NAME), 'get');
