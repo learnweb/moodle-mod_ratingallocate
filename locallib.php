@@ -410,9 +410,11 @@ class ratingallocate {
         
             // Print group distribution algorithm control
             if ($this->ratingallocate->accesstimestop < $now) {
-                $output .= $renderer->algorithm_control_ready();
                 
                 $output .= $renderer->distribution_table_for_ratingallocate($this);
+                
+                $output .= $renderer->algorithm_control_ready();
+                
                 
                 // if results not published yet, then do now
                 if ($this->ratingallocate->published == false) {
@@ -504,7 +506,7 @@ class ratingallocate {
         $choice_status->allocations = $this->get_allocations_for_user($USER->id);
         $choice_status->strategy = $this->get_strategy_class();
         $choice_status->show_distribution_info = has_capability('mod/ratingallocate:start_distribution', $this->context);
-        $choice_status->show_user_info = has_capability('mod/ratingallocate:give_rating', $this->context);
+        $choice_status->show_user_info = has_capability('mod/ratingallocate:give_rating', $this->context, null, false);
         $choice_status_output = $renderer->render($choice_status);
         
         // Finish the page (Since the header renders the notifications, it needs to be rendered after the actions)
