@@ -51,10 +51,10 @@ class strategy extends \strategytemplate {
             )
         );
         
-        $output[self::ACCEPT_LABEL] = array(
+        $output[1] = array(
                         'text',
-                        $this->get_settings_default_value(self::ACCEPT_LABEL),
-                        $this->get_settings_value(self::ACCEPT_LABEL)
+                        $this->get_settings_default_value(1),
+                        $this->get_settings_value(1)
                         
         );
         return $output;
@@ -65,13 +65,14 @@ class strategy extends \strategytemplate {
     }
     
     public function get_accept_label(){
-        return $this->get_settings_value(self::ACCEPT_LABEL);
+        return $this->get_settings_value(1);
     }
 
     public function get_default_settings(){
         return array(
                         self::MINTICKYES => 3,
-                        self::ACCEPT_LABEL => get_string(self::STRATEGYID . '_' . self::ACCEPT_LABEL, ratingallocate_MOD_NAME)
+                        1 => get_string(self::STRATEGYID . '_' . self::ACCEPT_LABEL, ratingallocate_MOD_NAME),
+                        0 => get_string(self::STRATEGYID . '_not_' . self::ACCEPT_LABEL, ratingallocate_MOD_NAME)
         );
     }
     

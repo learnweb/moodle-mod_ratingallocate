@@ -176,6 +176,7 @@ $string['strategy_order_setting_countoptions'] = 'Number of fields the user is p
 // Specific to Strategy06, tickyes
 $string['strategy_tickyes_name'] = 'TickAccept';
 $string['strategy_tickyes_accept'] = 'Accept';
+$string['strategy_tickyes_not_accept'] = '-';
 $string['strategy_tickyes_setting_mintickyes'] = 'Minimum of choices to accept';
 $string['strategy_tickyes_error_mintickyes'] = 'You have to tick at least {$a} boxes';
 $string['strategy_tickyes_explain_mintickyes'] = 'You have to tick a minimum of {$a} boxes.';
