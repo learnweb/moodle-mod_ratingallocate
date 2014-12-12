@@ -492,7 +492,6 @@ class ratingallocate {
         }        
         
         $choice_status = new ratingallocate_choice_status();
-        $choice_status->view_type = ratingallocate_choice_status::STUDENT_VIEW;
         $choice_status->accesstimestart = $this->ratingallocate->accesstimestart;
         $choice_status->accesstimestop = $this->ratingallocate->accesstimestop;
         $choice_status->publishdate = $this->ratingallocate->publishdate;
@@ -501,6 +500,8 @@ class ratingallocate {
         $choice_status->own_choices = $this->get_rating_data_for_user($USER->id);
         $choice_status->allocations = $this->get_allocations_for_user($USER->id);
         $choice_status->strategy = $this->get_strategy_class();
+        $choice_status->show_distribution_info = has_capability('mod/ratingallocate:start_distribution', $this->context);
+        $choice_status->show_user_info = has_capability('mod/ratingallocate:give_rating', $this->context);
         $choice_status_output = $renderer->render($choice_status);
         
         // Finish the page (Since the header renders the notifications, it needs to be rendered after the actions)

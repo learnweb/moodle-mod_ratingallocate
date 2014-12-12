@@ -48,11 +48,6 @@ class ratingallocate_header implements renderable {
 }
 
 class ratingallocate_choice_status implements renderable {
-    const STUDENT_VIEW = 'student_view';
-    const TEACHER_VIEW = 'teacher_view';
-
-    /** @var string view_type specifies role to the status view should be rendered for */
-    public $view_type;
 
     public $accesstimestop;
     public $accesstimestart;
@@ -62,4 +57,8 @@ class ratingallocate_choice_status implements renderable {
     public $own_choices;
     public $allocations;
     public $strategy;
+    /** @var bool show_distribution_info specifies if the info regarding the distribution should be displayed. **/
+    public $show_distribution_info;
+    /** @var bool show_user_info specifies if the current ratings of the user shoulld be renderer. **/
+    public $show_user_info;
 }

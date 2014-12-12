@@ -140,7 +140,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         }
 
         //print available choices if no choice form is displayed
-        if(!empty($status->available_choices) && ($time < $status->accesstimestart || $status->accesstimestop < $time)) {
+        if(!empty($status->available_choices) && ($time < $status->accesstimestart || $status->accesstimestop < $time) && $status->show_distribution_info) {
         $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('rateable_choices', ratingallocate_MOD_NAME));
 
@@ -161,7 +161,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         }
 
         //print own choices if no choice form is displayed
-        if(!empty($status->own_choices)) {
+        if(!empty($status->own_choices) && $status->show_user_info) {
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('your_rating', ratingallocate_MOD_NAME));
 
