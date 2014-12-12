@@ -215,7 +215,7 @@ abstract class ratingallocate_strategyform extends \moodleform  {
     protected function definition() {
         $mform = $this->_form;
 
-        $mform->addElement('hidden', 'action', RATING_ALLOC_ACTION_RATE);
+        $mform->addElement('hidden', 'action', ACTION_GIVE_RATING);
         $mform->setType('action', PARAM_TEXT);
     }
 
