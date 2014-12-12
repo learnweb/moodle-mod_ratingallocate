@@ -433,18 +433,21 @@ class ratingallocate {
             }
         
             $output .= $renderer->show_ratings_table_button();
+        }
         
+        if (has_capability('mod/ratingallocate:export_ratings', $this->context)) {
             $output .= $OUTPUT->heading(get_string('export_options', ratingallocate_MOD_NAME), 2);
             $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/export_ratings_csv.php', array('id' => $this->coursemodule->id,
                             'ratingallocateid' => $this->ratingallocate->id)), get_string('download_votetest_allocation', ratingallocate_MOD_NAME));
             $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/solver/export_lp_solve.php', array('id' => $this->coursemodule->id,
                             'ratingallocateid' => $this->ratingallocate->id)), get_string('download_problem_mps_format', ratingallocate_MOD_NAME));
-        
-            //Logging
-            $event = \mod_ratingallocate\event\ratingallocate_viewed::create_simple(
-                    context_course::instance($this->course->id), $this->ratingallocateid);
-            $event->trigger();
         }
+        
+        //Logging
+        $event = \mod_ratingallocate\event\ratingallocate_viewed::create_simple(
+                context_course::instance($this->course->id), $this->ratingallocateid);
+        $event->trigger();
+        
         return $output;
     }
     
