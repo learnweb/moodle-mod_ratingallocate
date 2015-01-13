@@ -34,12 +34,7 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
          * Tests if process_publish_allocations is not working before time runs out
          */
         public function test_publishing_before_accesstimestop(){
-            $record = mod_ratingallocate_generator::get_default_values();
-            $record['accesstimestart'] = time() + (0 * 24 * 60 * 60);
-            $record['accesstimestop'] = time() + (6 * 24 * 60 * 60);
-            $record['publishdate'] = time() + (7 * 24 * 60 * 60);
-            $test_module = new mod_ratingallocate_generated_module($this,$record);
-            $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+            $ratingallocate = mod_ratingallocate_generator::get_open_ratingallocate_for_teacher($this);
             $this->assertEquals(0,$ratingallocate->ratingallocate->published);
             $this->call_private_ratingallocate_method($ratingallocate,'process_publish_allocations');
             $this->assertEquals(0,$ratingallocate->ratingallocate->published);
@@ -48,12 +43,7 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
          * Tests if process_publish_allocations is working after time runs out
          */
         public function test_publishing_after_accesstimestop(){
-            $record = mod_ratingallocate_generator::get_default_values();
-            $record['accesstimestart'] = time() - (7 * 24 * 60 * 60);
-            $record['accesstimestop'] = time() - (1 * 24 * 60 * 60);
-            $record['publishdate'] = time() + (0 * 24 * 60 * 60);
-            $test_module = new mod_ratingallocate_generated_module($this,$record);
-            $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+            $ratingallocate = mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
             $this->assertEquals(0,$ratingallocate->ratingallocate->published);
             $this->call_private_ratingallocate_method($ratingallocate,'process_publish_allocations');
             $this->assertEquals(1,$ratingallocate->ratingallocate->published);
@@ -63,12 +53,7 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
          */
         public function test_grouping_before_accesstimestop(){
             global $DB;
-            $record = mod_ratingallocate_generator::get_default_values();
-            $record['accesstimestart'] = time() + (0 * 24 * 60 * 60);
-            $record['accesstimestop'] = time() + (6 * 24 * 60 * 60);
-            $record['publishdate'] = time() + (7 * 24 * 60 * 60);
-            $test_module = new mod_ratingallocate_generated_module($this,$record);
-            $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+            $ratingallocate = mod_ratingallocate_generator::get_open_ratingallocate_for_teacher($this);
             $this->assertEquals(0, $DB->count_records('groupings'));
             $this->call_private_ratingallocate_method($ratingallocate,'process_action_allocation_to_grouping');
             $this->assertEquals(0, $DB->count_records('groupings'));
@@ -78,12 +63,7 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
          */
         public function test_grouping_after_accesstimestop(){
             global $DB;
-            $record = mod_ratingallocate_generator::get_default_values();
-            $record['accesstimestart'] = time() - (7 * 24 * 60 * 60);
-            $record['accesstimestop'] = time() - (1 * 24 * 60 * 60);
-            $record['publishdate'] = time() + (0 * 24 * 60 * 60);
-            $test_module = new mod_ratingallocate_generated_module($this,$record);
-            $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+            $ratingallocate = mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
             $this->assertEquals(0, $DB->count_records('groupings'));
             $this->call_private_ratingallocate_method($ratingallocate,'process_action_allocation_to_grouping');
             $this->assertEquals(1, $DB->count_records('groupings'));
