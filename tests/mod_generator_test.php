@@ -62,7 +62,8 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
             'setting' => '{"strategy_yesno":{"maxcrossout":"1"}}',
             'strategy' => 'strategy_yesno',
             'publishdate' => reset($records)->{'publishdate'},
-            'published' => '0'
+            'published' => '0',
+            'notificationsend' => '0'
         );
 
         $this->assertEquals(json_decode(json_encode($expected_values_db, false)), reset($records));
