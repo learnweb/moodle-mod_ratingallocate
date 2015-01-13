@@ -30,6 +30,7 @@ require_once(dirname(__FILE__) . '/lib.php');
 require_once($CFG->libdir  . '/eventslib.php');
 require_once(dirname(__FILE__) . '/form_manual_allocation.php');
 require_once(dirname(__FILE__) . '/renderable.php');
+require_once($CFG->dirroot.'/group/lib.php');
 
 // Takes care of loading all the solvers
 require_once(dirname(__FILE__) . '/solver/ford-fulkerson-koegel.php');
@@ -272,13 +273,14 @@ class ratingallocate {
     }
     
     private function process_publish_allocations(){
+        $now = time();
         if ($this->ratingallocate->accesstimestop < $now){
             global $USER,$OUTPUT;
     
             $this->origdbrecord->{this_db\ratingallocate::PUBLISHED}   = true;
             $this->origdbrecord->{this_db\ratingallocate::PUBLISHDATE} = time();
             $this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} = -1;
-            $this->ratingallocate            = new ratingallocate_db_wrapper($this->origdbrecord);
+            $this->ratingallocate = new ratingallocate_db_wrapper($this->origdbrecord);
             $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
             
             // create the instance
@@ -303,12 +305,12 @@ class ratingallocate {
             /* @var $renderer mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
             $renderer->add_notification( get_string('distribution_published', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
-            return $output;
+            return $this->process_default();
         }
     }
     
     private function process_action_allocation_to_grouping(){
-        $output ='';
+        $now = time();
         if ($this->ratingallocate->accesstimestop < $now){
             global $OUTPUT;
             $allgroupings = groups_get_all_groupings($this->course->id);
@@ -384,7 +386,7 @@ class ratingallocate {
             $renderer = $this->get_renderer();
             $renderer->add_notification( get_string('moodlegroups_created', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
         }
-        return $output;
+        return $this->process_default();
     }
     
     private function process_default(){
@@ -1081,8 +1083,8 @@ class ratingallocate {
 function groups_delete_group_members_by_group($groupid) {
     global $DB, $OUTPUT;
     
-    if (is_bool($userid)) {
-        debugging('Incorrect userid function parameter');
+    if (is_bool($groupid)) {
+        debugging('Incorrect groupid function parameter');
         return false;
     }
     
