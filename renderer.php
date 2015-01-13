@@ -305,10 +305,10 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         // Count the number of allocations with a specific rating
         $distributiondata = array();
 
-        $memberships = $ratingallocate->get_all_allocations();
+        $memberships = $ratingallocate->get_allocations();
 
-        foreach ($memberships as $userid => $choice) {
-            $rating = array_shift($choice);
+        foreach ($memberships as $id => $membership) {
+            $rating = $membership->rating;
             if (key_exists($rating, $distributiondata)) {
                 $distributiondata[$rating] ++;
             } else {
