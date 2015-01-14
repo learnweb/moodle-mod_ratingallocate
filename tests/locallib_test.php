@@ -110,9 +110,14 @@ class locallib_test extends advanced_testcase {
         $alloc1 = self::filter_allocations_by_choice($allocations,$choice1->{this_db\ratingallocate_choices::ID});
         $alloc2 = self::filter_allocations_by_choice($allocations,$choice2->{this_db\ratingallocate_choices::ID});
         
-        $this->assertEquals(array($student_1->id,$student_2->id), array_values(array_map($map_user_id, $alloc1)));
-        $this->assertEquals(array($student_3->id,$student_4->id), array_values(array_map($map_user_id, $alloc2)));
-
+        //Assert, that student 1 was allocated to choice 1
+        $this->assertContains($student_1->id, array_map($map_user_id, $alloc1));
+        //Assert, that student 2 was allocated to choice 1
+        $this->assertContains($student_2->id, array_map($map_user_id, $alloc1));
+        //Assert, that student 3 was allocated to choice 2
+        $this->assertContains($student_3->id, array_map($map_user_id, $alloc2));
+        //Assert, that student 4 was allocated to choice 2
+        $this->assertContains($student_4->id, array_map($map_user_id, $alloc2));
     }
     private static function filter_allocations_by_choice($allocations, $choiceid) {
         $filter_choice_id = function($elem) use ($choiceid) { return $elem->{this_db\ratingallocate_allocations::CHOICEID} == $choiceid; };
