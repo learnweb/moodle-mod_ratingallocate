@@ -20,7 +20,7 @@
  * @package    mod_ratingallocate
  * @category   test
  * @group mod_ratingallocate
- * @copyright  usener
+ * @copyright  reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_ratingallocate_processor_testcase extends advanced_testcase {
