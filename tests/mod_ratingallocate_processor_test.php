@@ -86,11 +86,4 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
             $method->invokeArgs($ratingallocate, $args);
         }
     
-    
-    
-    
-    
-    
-    
-    
 }
