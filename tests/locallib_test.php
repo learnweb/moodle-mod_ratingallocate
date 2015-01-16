@@ -123,5 +123,14 @@ class locallib_test extends advanced_testcase {
         $filter_choice_id = function($elem) use ($choiceid) { return $elem->{this_db\ratingallocate_allocations::CHOICEID} == $choiceid; };
         return array_filter($allocations, $filter_choice_id);
     }
- 
+    /**
+     * Default data has two choices but only one is active.
+     * Test if count of rateable choices is 1.
+     */
+    public function test_get_ratable_choices(){
+        $record = mod_ratingallocate_generator::get_default_values();
+        $test_module = new mod_ratingallocate_generated_module($this,$record);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+        $this->assertCount(1,$ratingallocate->get_rateable_choices());
+    } 
 }
