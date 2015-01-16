@@ -133,4 +133,69 @@ class locallib_test extends advanced_testcase {
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
         $this->assertCount(1,$ratingallocate->get_rateable_choices());
     } 
+    
+    /**
+     * Test if option titles are returned according to the default values
+     */
+    public function test_get_option_titles_default(){       
+        $expected_result = array(1 => 'Yes',0 => 'No'); //Depends on language file
+        $ratings = array(0,1,1,1,0);
+        
+        $record = mod_ratingallocate_generator::get_default_values();
+        $test_module = new mod_ratingallocate_generated_module($this,$record);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+
+        $result = $ratingallocate->get_options_titles($ratings);
+        $this->assertEquals($expected_result,$result);
+    }
+    
+    /**
+     * Test if option titles are returned according to defined custom values
+     */
+    public function test_get_option_titles_custom(){
+        $expected_result = array(1 => 'Ja1234', 0 => 'Nein1234'); //Test data
+        $ratings = array(1,1,1,0,1,1);
+    
+        $record = mod_ratingallocate_generator::get_default_values();
+        $record['strategyopt']['strategy_yesno'] = $expected_result;
+        $test_module = new mod_ratingallocate_generated_module($this,$record);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+    
+        $result = $ratingallocate->get_options_titles($ratings);
+        $this->assertEquals($expected_result,$result);
+    }
+    
+    /**
+     * Test if option titles are returned according to defined custom values, if ratings consist of just one rating
+     */
+    public function test_get_option_titles_custom1(){
+        $expected_result = array(1 => 'Ja1234'); //Test data
+        $ratings = array(1,1,1,1,1);
+        
+        $record = mod_ratingallocate_generator::get_default_values();
+        $record['strategyopt']['strategy_yesno'] = $expected_result;
+        $test_module = new mod_ratingallocate_generated_module($this,$record);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+    
+        $result = $ratingallocate->get_options_titles($ratings);
+        $this->assertEquals($expected_result,$result);
+    }
+    
+    /**
+     * Test if option titles are returned according to a mixture of defined and custom values,
+     */
+    public function test_get_option_titles_mixed(){
+        $settings = array(1 => 'Ja1234'); //Test data
+        $ratings = array(0,1,1,1,1);
+        $expected_result = $settings;
+        $expected_result [0] = 'No'; //Depends on language file
+    
+        $record = mod_ratingallocate_generator::get_default_values();
+        $record['strategyopt']['strategy_yesno'] = $settings;
+        $test_module = new mod_ratingallocate_generated_module($this,$record);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+    
+        $result = $ratingallocate->get_options_titles($ratings);
+        $this->assertEquals($expected_result,$result);
+    }
 }
