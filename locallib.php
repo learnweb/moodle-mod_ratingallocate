@@ -405,10 +405,6 @@ class ratingallocate {
         
         // Print data and controls for teachers
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
-            // Notify if there aren't at least two rateable groups
-            if (count($this->get_rateable_choices()) < 1) {
-                $renderer->add_notification(get_string('at_least_one_rateable_choices_needed', ratingallocate_MOD_NAME));
-            }
         
             // Print group distribution algorithm control
             if ($this->ratingallocate->accesstimestop < $now) {
