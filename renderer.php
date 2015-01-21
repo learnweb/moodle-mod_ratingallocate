@@ -442,7 +442,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $output = $this->heading(get_string('ratings_table', ratingallocate_MOD_NAME), 2);
         $output .= $this->box_start();
-        // $output .= '<p>' . get_string('view_ratings_table_explanation', ratingallocate_MOD_NAME) . '</p>';
         $output .= $this->box(html_writer::table($ratingstable), 'ratingallocate_ratings_box');
         $output .= $this->box_end();
         
