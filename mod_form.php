@@ -42,6 +42,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     const STRATEGY_OPTIONS = 'strategyopt';
     const STRATEGY_OPTIONS_PLACEHOLDER = 'placeholder_strategyopt';
     private $new_choice_counter = 0;
+    private $MSG_ERR_REQUIRED;
 
     /**
      * constructor
@@ -58,6 +59,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             }
         }
         parent::moodleform_mod($current, $section, $cm, $course);
+        $this->MSG_ERR_REQUIRED = get_string('err_required','form');
     }
 
     /**
@@ -116,7 +118,9 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         // saves the choices about to be deleted
         $mform->addElement('hidden', self::DELETED_CHOICE_IDS);
-        $mform->setType(self::DELETED_CHOICE_IDS, PARAM_SEQUENCE);
+        // PARAM_SEQUENCE does not allow negative numbers.
+        // Comma separation and integer values are enforced in definition after data.
+        $mform->setType(self::DELETED_CHOICE_IDS, PARAM_TEXT);
 
         $elementname = self::ADD_CHOICE_ACTION;
         $mform->registerNoSubmitButton($elementname);
@@ -195,21 +199,21 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->setType($elementname, PARAM_TEXT);
         $mform->addHelpButton($elementname, 'choice_title', self::MOD_NAME);
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
-        $mform->addRule($elementname, null, 'required', null, 'server');
+        $mform->addRule($elementname, $this->MSG_ERR_REQUIRED , 'required', null, 'server');
 
         $elementname = $elemprefix . '[explanation]';
         $mform->addElement('text', $elementname, get_string('choice_explanation', self::MOD_NAME));
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
         $mform->setDefault($elementname, $choice->explanation);
         $mform->setType($elementname, PARAM_TEXT);
-        $mform->addRule($elementname, null, 'required', null, 'server');
+        $mform->addRule($elementname,  $this->MSG_ERR_REQUIRED , 'required', null, 'server');
 
         $elementname = $elemprefix . '[maxsize]';
         $mform->addElement('text', $elementname, get_string('choice_maxsize', self::MOD_NAME));
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
         $mform->setDefault($elementname, $choice->maxsize);
         $mform->setType($elementname, PARAM_INT);
-        $mform->addRule($elementname, null, 'required', null, 'server');
+        $mform->addRule($elementname, $this->MSG_ERR_REQUIRED , 'required', null, 'server');
 
         $elementname = $elemprefix . '[active]';
         $mform->addElement('checkbox', $elementname, get_string('choice_active', self::MOD_NAME));
@@ -289,6 +293,10 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             // if the string is not empty the array of choice ids is exploded from it
             if (!empty($deleted_choice_ids))
                 $delete_choice_array = explode(',', $deleted_choice_ids);
+
+            // Parses all delete choice ids to integers
+            $integer_check = function($elem){return (integer)$elem;};
+            array_map($integer_check,$delete_choice_array);
                 
             // retrieve id of choice to be deleted if delete button was pressed
             $matches = preg_grep('/' . self::DELETE_CHOICE_ACTION . '([-]?[0-9]+)/', 
@@ -320,16 +328,6 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                 $mform->registerNoSubmitButton(self::DELETE_CHOICE_ACTION . $choice->id);
             }
         }
-
-        // update delete_choice_string
-        if (!empty($delete_choice_array)) {
-            $deleted_choice_ids = implode(',', $delete_choice_array);
-            $mform->getElement(self::DELETED_CHOICE_IDS)->setValue($deleted_choice_ids);
-            $myvar=$mform->getElement(self::DELETED_CHOICE_IDS)->getValue();
-        }
-        
-        // update new_choice_counter
-        $mform->getElement(self::NEW_CHOICE_COUNTER)->setValue($this->new_choice_counter);
 
         //make strategy fields for selected strategy required (server-side validation)
         $strategy = $mform->getElementValue('strategy');
@@ -376,7 +374,17 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                     $strategy_placeholder);
             }
             $mform->removeElement($strategy_placeholder);
-        }        
+        }
+
+        //!!!!UPDATE OF FORM VALUES NEEDS TO BE EXECUTED IN THE END!!!
+        // update new_choice_counter
+        $mform->getElement(self::NEW_CHOICE_COUNTER)->setValue($this->new_choice_counter);
+
+        // update delete_choice_string
+        if (!empty($delete_choice_array)) {
+            $deleted_choice_ids = implode(',', $delete_choice_array);
+            $mform->getElement(self::DELETED_CHOICE_IDS)->setValue($deleted_choice_ids);
+        }
     }
 
     /**
@@ -406,7 +414,6 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                 }
             }
         }
-
         return $errors;
     }
     /**
