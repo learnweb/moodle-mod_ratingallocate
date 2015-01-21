@@ -36,7 +36,7 @@ $string['pluginadministration'] = 'ratingallocate administration';
 $string['pluginname'] = 'ratingallocate';
 $string['ratingallocate:view'] = 'View rating allocation instances';
 $string['ratingallocate:give_rating'] = 'Create/edit own choice';
-$string['ratingallocate:start_distribution'] = 'Start allocation of preferences to choices';
+$string['ratingallocate:start_distribution'] = 'Start allocation of users to choices';
 $string['ratingallocate:export_ratings'] = 'Ability to export user ratings';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Rating Form for Users">
@@ -52,6 +52,7 @@ $string['your_allocated_choice'] = 'Your Allocation';
 $string['your_rating'] = 'Your Rating';
 $string['results_not_yet_published'] = 'Results have not yet been published';
 $string['no_choice_to_rate'] = 'There is not any choice to rate for!';
+$string['at_least_one_rateable_choices_needed'] = 'You need at least one choice to be active.';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Administrator View">
 $string['allocation_manual_explain_only_raters'] = 'Select a choice to be assign to each user. Only those users are listed, that rated at least one choice.';
@@ -162,7 +163,7 @@ $string['strategy_tickyes_explain_mintickyes'] = 'You have to tick a minimum of 
 // As message provider, for the notification after allocation
 $string['messageprovider:notifyalloc'] = 'Notification of option allocation';
 $string['allocation_notification_message_subject'] = 'Notification of finished allocation for {$a}';
-$string['allocation_notification_message'] = 'Conerning the "{$a->ratingallocate}", you have been assigned to the choice "{$a->choice}"';
+$string['allocation_notification_message'] = 'Concerning the "{$a->ratingallocate}", you have been assigned to the choice "{$a->choice}"';
 
 // Logging
 $string['log_rating_saved'] = 'User rating saved';
