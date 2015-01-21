@@ -51,11 +51,11 @@ class rating_saved extends \core\event\base {
     }
  
     public static function get_name() {
-        return get_string('rating_saved', 'mod_ratingallocate');
+        return get_string('log_rating_saved', 'mod_ratingallocate');
     }
  
     public function get_description() {
-        return get_string('rating_saved_description', 'mod_ratingallocate', array('userid' => $this->userid, 'ratingallocateid' => $this->objectid));
+        return get_string('log_rating_saved_description', 'mod_ratingallocate', array('userid' => $this->userid, 'ratingallocateid' => $this->objectid));
     }
  
     public function get_url() {

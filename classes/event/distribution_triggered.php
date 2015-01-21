@@ -54,11 +54,11 @@ class distribution_triggered extends \core\event\base {
     }
  
     public static function get_name() {
-        return get_string('distribution_triggered', 'mod_ratingallocate');
+        return get_string('log_distribution_triggered', 'mod_ratingallocate');
     }
  
     public function get_description() {
-        return get_string('distribution_triggered_description', 'mod_ratingallocate', 
+        return get_string('log_distribution_triggered_description', 'mod_ratingallocate', 
                 array('userid' => $this->userid, 
                       'ratingallocateid' => $this->objectid, 
                       'time_needed' => $this->other['time_needed']));

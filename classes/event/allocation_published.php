@@ -53,11 +53,11 @@ class allocation_published extends \core\event\base {
     }
  
     public static function get_name() {
-        return get_string('allocation_published', 'mod_ratingallocate');
+        return get_string('log_allocation_published', 'mod_ratingallocate');
     }
  
     public function get_description() {
-        return get_string('allocation_published_description', 'mod_ratingallocate', array('userid' => $this->userid, 'ratingallocateid' => $this->objectid));
+        return get_string('log_allocation_published_description', 'mod_ratingallocate', array('userid' => $this->userid, 'ratingallocateid' => $this->objectid));
     }
  
     public function get_url() {

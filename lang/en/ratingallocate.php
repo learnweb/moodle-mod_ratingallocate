@@ -165,23 +165,23 @@ $string['allocation_notification_message_subject'] = 'Notification of finished a
 $string['allocation_notification_message'] = 'Conerning the "{$a->ratingallocate}", you have been assigned to the choice "{$a->choice}"';
 
 // Logging
-$string['rating_saved'] = 'User rating saved';
-$string['rating_saved_description'] =  'The user with id \'{$a->userid}\' saved his rating for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+$string['log_rating_saved'] = 'User rating saved';
+$string['log_rating_saved_description'] =  'The user with id \'{$a->userid}\' saved his rating for the ratingallocate with id \'{$a->ratingallocateid}\'.';
 
-$string['rating_viewed'] = 'User rating viewed';
-$string['rating_viewed_description'] =  'The user with id \'{$a->userid}\' viewed its rating for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+$string['log_rating_viewed'] = 'User rating viewed';
+$string['log_rating_viewed_description'] =  'The user with id \'{$a->userid}\' viewed its rating for the ratingallocate with id \'{$a->ratingallocateid}\'.';
 
-$string['allocation_published'] = 'Allocation published';
-$string['allocation_published_description'] =  'The user with id \'{$a->userid}\' published the allocation for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+$string['log_allocation_published'] = 'Allocation published';
+$string['log_allocation_published_description'] =  'The user with id \'{$a->userid}\' published the allocation for the ratingallocate with id \'{$a->ratingallocateid}\'.';
 
-$string['distribution_triggered'] = 'Distribution triggered';
-$string['distribution_triggered_description'] =  'The user with id \'{$a->userid}\' triggered the distribution for the ratingallocate with id \'{$a->ratingallocateid}\'. The algorithm needed {$a->time_needed}sec.';
+$string['log_distribution_triggered'] = 'Distribution triggered';
+$string['log_distribution_triggered_description'] =  'The user with id \'{$a->userid}\' triggered the distribution for the ratingallocate with id \'{$a->ratingallocateid}\'. The algorithm needed {$a->time_needed}sec.';
 
-$string['manual_allocation_saved'] = 'Manual allocation saved';
-$string['manual_allocation_saved_description'] =  'The user with id \'{$a->userid}\' saved a manual allocation for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+$string['log_manual_allocation_saved'] = 'Manual allocation saved';
+$string['log_manual_allocation_saved_description'] =  'The user with id \'{$a->userid}\' saved a manual allocation for the ratingallocate with id \'{$a->ratingallocateid}\'.';
 
-$string['ratingallocate_viewed'] = 'Ratingallocate viewed';
-$string['ratingallocate_viewed_description'] =  'The user with id \'{$a->userid}\' viewed the ratingallocate with id \'{$a->ratingallocateid}\'.';
+$string['log_ratingallocate_viewed'] = 'Ratingallocate viewed';
+$string['log_ratingallocate_viewed_description'] =  'The user with id \'{$a->userid}\' viewed the ratingallocate with id \'{$a->ratingallocateid}\'.';
 
-$string['allocation_table_viewed'] = 'Allocation table viewed';
-$string['allocation_table_viewed_description'] =  'The user with id \'{$a->userid}\' viewed the allocation table for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+$string['log_allocation_table_viewed'] = 'Allocation table viewed';
+$string['log_allocation_table_viewed_description'] =  'The user with id \'{$a->userid}\' viewed the allocation table for the ratingallocate with id \'{$a->ratingallocateid}\'.';

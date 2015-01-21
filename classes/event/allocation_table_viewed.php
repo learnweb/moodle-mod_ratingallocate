@@ -43,11 +43,11 @@ class allocation_table_viewed extends \core\event\base {
     }
  
     public static function get_name() {
-        return get_string('allocation_table_viewed', 'mod_ratingallocate');
+        return get_string('log_allocation_table_viewed', 'mod_ratingallocate');
     }
  
     public function get_description() {
-        return get_string('allocation_table_viewed_description', 'mod_ratingallocate', array('userid' => $this->userid, 'ratingallocateid' => $this->objectid));
+        return get_string('log_allocation_table_viewed_description', 'mod_ratingallocate', array('userid' => $this->userid, 'ratingallocateid' => $this->objectid));
     }
  
     public function get_url() {

@@ -43,11 +43,11 @@ class ratingallocate_viewed extends \core\event\base {
     }
  
     public static function get_name() {
-        return get_string('ratingallocate_viewed', 'mod_ratingallocate');
+        return get_string('log_ratingallocate_viewed', 'mod_ratingallocate');
     }
  
     public function get_description() {
-        return get_string('ratingallocate_viewed_description', 'mod_ratingallocate', array('userid' => $this->userid, 'ratingallocateid' => $this->objectid));
+        return get_string('log_ratingallocate_viewed_description', 'mod_ratingallocate', array('userid' => $this->userid, 'ratingallocateid' => $this->objectid));
     }
  
     public function get_url() {
