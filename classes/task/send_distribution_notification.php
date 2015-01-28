@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @package    mod_ratingallocate
+ * @copyright  2014 M Schulze
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace mod_ratingallocate\task;
 
 require_once(dirname(__FILE__).'/../../db/db_structure.php');
