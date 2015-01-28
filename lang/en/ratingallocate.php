@@ -20,7 +20,8 @@
  *
  *
  * @package    mod_ratingallocate
- * @copyright  2014 M Schulze
+ * @copyright  2014 M Schulze, T Reischmann, C Usener
+ * @copyright  based on code by Stefan Koegel copyright (C) 2013 Stefan Koegel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();

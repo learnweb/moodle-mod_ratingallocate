@@ -19,7 +19,7 @@
  *
  *
  * @package    mod_ratingallocate
- * @copyright  2014 Max Schulze
+ * @copyright  2014 Max Schulze, C Usener
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once('../../config.php'); // to include $CFG, for example

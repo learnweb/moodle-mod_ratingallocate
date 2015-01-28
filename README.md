@@ -3,7 +3,7 @@ moodle-mod_ratingallocate
 Module which lets you add an activity to courses, in which users can rate choices. You may then distribute the users fairly to the choices by maximising overall 'hapiness' in terms of ratings.
 This may be an alternative to the choice activity or first-come-first-served.
 
-This plugin is based on the plugin 'groupdistribution' that is written by Stefan Koegel, University of Ulm and maintained by Alexander Bias, University of Ulm.
+This plugin is based on previous work by Stefan Koegel and Alexander Bias, University of Ulm.
 
 Installation
 ============

@@ -19,7 +19,8 @@
  *
  * @package   mod_ratingallocate
  * @category  grade
- * @copyright 2011 Your Name
+ * @copyright 2014 C Usener
+ * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once(__DIR__ . "../../config.php");

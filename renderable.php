@@ -18,7 +18,8 @@
  * This file contains the definition for the renderable classes for the ratingallocate module
  *
  * @package mod_ratingallocate
- * @author usener
+ * @copyright 2014 C Usener, T Reischmann
+ * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *

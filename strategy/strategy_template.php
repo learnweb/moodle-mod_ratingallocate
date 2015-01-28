@@ -22,7 +22,8 @@ use Doctrine\Common\Annotations\Annotation\Required;
  * logic, should go here. Never include this file from your lib.php!
  *
  * @package mod_ratingallocate
- * @copyright 2014 M Schulze
+ * @copyright 2014 T Reischmann, C Usener
+ * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once ($CFG->libdir.'/formslib.php');

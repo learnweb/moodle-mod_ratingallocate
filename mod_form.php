@@ -21,7 +21,8 @@
  * visit: http://docs.moodle.org/en/Development:lib/formslib.php
  *
  * @package mod_ratingallocate
- * @copyright 2014 M Schulze
+ * @copyright  2014 T Reischmann, C Usener
+ * @copyright  based on code by M Schulze copyright (C) 2014 M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
