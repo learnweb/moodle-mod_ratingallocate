@@ -34,6 +34,7 @@ $string['modulename_help'] = 'Stellt Nutzern Wahlmöglichkeiten zur Verfügung, 
 $string['modulenameplural'] = 'Gerechte Zuordnungen';
 $string['pluginadministration'] = 'Administration für gerechte Zuordnung';
 $string['pluginname'] = 'Gerechte Zuordnung';
+$string['ratingallocate:addinstance'] = 'Füge neue Instanz einer Gerechten Zuordnung hinzu.';
 $string['ratingallocate:view'] = 'Ratingallocate Instanz anzeigen.';
 $string['ratingallocate:give_rating'] = 'Eigene Präferenzen erstellen/bearbeiten';
 $string['ratingallocate:start_distribution'] = 'Zuordnung von Nutzern zu Wahlmöglichkeiten starten';
