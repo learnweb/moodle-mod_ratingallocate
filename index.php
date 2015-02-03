@@ -29,6 +29,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/locallib.php');
 
 $id = required_param('id', PARAM_INT);   // course
 
@@ -39,6 +40,7 @@ require_course_login($course);
 add_to_log($course->id, 'ratingallocate', 'view all', 'index.php?id='.$course->id, '');
 
 $coursecontext = context_course::instance($course->id);
+require_capability('mod/ratingallocate:addinstance', $coursecontext);
 
 $PAGE->set_url('/mod/ratingallocate/index.php', array('id' => $id));
 $PAGE->set_title(format_string($course->fullname));
@@ -48,7 +50,7 @@ $PAGE->set_context($coursecontext);
 echo $OUTPUT->header();
 
 if (! $ratingallocates = get_all_instances_in_course('ratingallocate', $course)) {
-    notice(get_string('noratingallocates', 'ratingallocate'), new moodle_url('/course/view.php', array('id' => $course->id)));
+    notice(get_string('noratingallocates', ratingallocate_MOD_NAME), new moodle_url('/course/view.php', array('id' => $course->id)));
 }
 
 $table = new html_table();
@@ -66,12 +68,12 @@ if ($course->format == 'weeks') {
 foreach ($ratingallocates as $ratingallocate) {
     if (!$ratingallocate->visible) {
         $link = html_writer::link(
-            new moodle_url('/mod/ratingallocate.php', array('id' => $ratingallocate->coursemodule)),
+            new moodle_url('/mod/ratingallocate/view.php', array('id' => $ratingallocate->coursemodule)),
             format_string($ratingallocate->name, true),
             array('class' => 'dimmed'));
     } else {
         $link = html_writer::link(
-            new moodle_url('/mod/ratingallocate.php', array('id' => $ratingallocate->coursemodule)),
+            new moodle_url('/mod/ratingallocate/view.php', array('id' => $ratingallocate->coursemodule)),
             format_string($ratingallocate->name, true));
     }
 
@@ -82,6 +84,6 @@ foreach ($ratingallocates as $ratingallocate) {
     }
 }
 
-echo $OUTPUT->heading(get_string('modulenameplural', 'ratingallocate'), 2);
+echo $OUTPUT->heading(get_string('modulenameplural', ratingallocate_MOD_NAME), 2);
 echo html_writer::table($table);
 echo $OUTPUT->footer();

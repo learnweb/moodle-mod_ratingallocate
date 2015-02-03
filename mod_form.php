@@ -39,7 +39,10 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     const ADD_CHOICE_ACTION = 'add_new_choice';
     const DELETE_CHOICE_ACTION = 'delete_choice_';
     const DELETED_CHOICE_IDS = 'deleted_choice_ids';
+    const STRATEGY_OPTIONS = 'strategyopt';
+    const STRATEGY_OPTIONS_PLACEHOLDER = 'placeholder_strategyopt';
     private $new_choice_counter = 0;
+    private $MSG_ERR_REQUIRED;
 
     /**
      * constructor
@@ -49,18 +52,20 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         // pre parse mod data if exists (in case not new)
         if($current && property_exists($current, 'setting')) {
             $strategyoptions = json_decode($current->setting, true);
-            $current->strategyopt = $strategyoptions;
+            foreach ($strategyoptions as $stratkey => $strategy) {
+                foreach ($strategy as $key => $option) {
+                    $current->{$this->get_settingsfield_identifier($stratkey, $key)} = $option;
+                }
+            }
         }
         parent::moodleform_mod($current, $section, $cm, $course);
+        $this->MSG_ERR_REQUIRED = get_string('err_required','form');
     }
 
     /**
      * Defines forms elements
      */
     public function definition() {
-        /* @var $DB moodle_database */
-        global $DB, $COURSE;
-
         $mform = $this->_form;
 
         // -------------------------------------------------------------------------------
@@ -68,7 +73,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field
-        $mform->addElement('text', 'name', get_string('ratingallocatename', 'ratingallocate'), array(
+        $mform->addElement('text', 'name', get_string('ratingallocatename', self::MOD_NAME), array(
             'size' => '64'
         ));
         if (!empty($CFG->formatstringstriptags)) {
@@ -78,7 +83,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('name', 'ratingallocatename', 'ratingallocate');
+        $mform->addHelpButton('name', 'ratingallocatename', self::MOD_NAME);
 
         // Adding the standard "intro" and "introformat" fields
         $this->add_intro_editor();
@@ -113,15 +118,15 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         // saves the choices about to be deleted
         $mform->addElement('hidden', self::DELETED_CHOICE_IDS);
-        $mform->setType(self::DELETED_CHOICE_IDS, PARAM_SEQUENCE);
+        // PARAM_SEQUENCE does not allow negative numbers.
+        // Comma separation and integer values are enforced in definition after data.
+        $mform->setType(self::DELETED_CHOICE_IDS, PARAM_TEXT);
 
         $elementname = self::ADD_CHOICE_ACTION;
         $mform->registerNoSubmitButton($elementname);
         $mform->addElement('submit', $elementname, get_string('newchoice', self::MOD_NAME));
         $mform->closeHeaderBefore($elementname);
-
-        // create strategy fields for each strategy
-        $attributes = array('size' => '20');
+              
         foreach (\strategymanager::get_strategies() as $strategy) {
             // load strategy class
             $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
@@ -129,22 +134,15 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $strategyclass = new $strategyclassp();
 
             $headerid = 'strategy_' . $strategy . '_fieldset';
-            $mform->addElement('header', $headerid, get_string('strategyoptions_for_strategy', self::MOD_NAME, $strategyclass::STRATEGYNAME));
+            $mform->addElement('header', $headerid, get_string('strategyoptions_for_strategy', self::MOD_NAME, $strategyclass->get_strategyname()));
             $mform->disabledIf($headerid, 'strategy', 'neq', $strategy);
 
             // Add options fields
-            foreach($strategyclass::get_settingfields() as $key => $value) {
-                // currently only text supported
-                if ($value[0] == "text") {
-                    $curstratid = 'strategyopt[' . $strategy . '][' . $key . ']';
-                    $mform->addElement('text', $curstratid, $value[1], $attributes);
-                    $mform->setType($curstratid, PARAM_TEXT);
-                    if (isset($strategyoptions) && key_exists($strategy, $strategyoptions)) {
-                        $mform->setDefault($curstratid, $strategyoptions[$strategy][$key]);
-                    }
-                    $mform->disabledIf($curstratid, 'strategy', 'neq', $strategy);
-                }
+            foreach($strategyclass->get_static_settingfields() as $key => $value) {
+                $field_id = $this->get_settingsfield_identifier($strategy,$key);
+                $this->add_settings_field($field_id, $value, $strategy, $mform);
             }
+            $mform->addElement('static', self::STRATEGY_OPTIONS_PLACEHOLDER.'[' . $strategy . ']', '', '');
         }
         // -------------------------------------------------------------------------------
         // add standard elements, common to all modules
@@ -154,6 +152,32 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
+    /**
+     * Add an settings element to the form. It is enabled only if the strategy it belongs to is selected.
+     * @param string $strat_field_id id of the element to be added
+     * @param array $value array with the element type and its caption (usually returned by the strategys get settingsfields methods).
+     * @param string $curr_strategyid id of the strategy it belongs to
+     * @param string $default default value for the element
+     */
+    private function add_settings_field($strat_field_id, array $value, $strategyid, MoodleQuickForm $mform, $default = null) {
+
+        $attributes = array('size' => '20');
+        
+        if ($value[0] == "text") {
+            $mform->addElement('text', $strat_field_id, $value[1], $attributes);
+            $mform->setType($strat_field_id, PARAM_TEXT);
+        } elseif ($value[0] == "int") {
+            $mform->addElement('text', $strat_field_id, $value[1], $attributes);
+            $mform->setType($strat_field_id, PARAM_INT);
+            $mform->addRule($strat_field_id, '', 'numeric'); //TODO: only validate if not disabled
+        }
+        if (isset($value[2])) {
+            $mform->setDefault($strat_field_id, $value[2]);
+        }
+        $mform->disabledIf($strat_field_id, 'strategy', 'neq', $strategyid);
+    }
+
+    
     /**
      * method to add choice options to the form
      *
@@ -175,21 +199,21 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->setType($elementname, PARAM_TEXT);
         $mform->addHelpButton($elementname, 'choice_title', self::MOD_NAME);
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
-        $mform->addRule($elementname, null, 'required', null, 'server');
+        $mform->addRule($elementname, $this->MSG_ERR_REQUIRED , 'required', null, 'server');
 
         $elementname = $elemprefix . '[explanation]';
         $mform->addElement('text', $elementname, get_string('choice_explanation', self::MOD_NAME));
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
         $mform->setDefault($elementname, $choice->explanation);
         $mform->setType($elementname, PARAM_TEXT);
-        $mform->addRule($elementname, null, 'required', null, 'server');
+        $mform->addRule($elementname,  $this->MSG_ERR_REQUIRED , 'required', null, 'server');
 
         $elementname = $elemprefix . '[maxsize]';
         $mform->addElement('text', $elementname, get_string('choice_maxsize', self::MOD_NAME));
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
         $mform->setDefault($elementname, $choice->maxsize);
         $mform->setType($elementname, PARAM_INT);
-        $mform->addRule($elementname, null, 'required', null, 'server');
+        $mform->addRule($elementname, $this->MSG_ERR_REQUIRED , 'required', null, 'server');
 
         $elementname = $elemprefix . '[active]';
         $mform->addElement('checkbox', $elementname, get_string('choice_active', self::MOD_NAME));
@@ -212,7 +236,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $id = -($i);
         return (object) array(
                 'id' => $id,
-                'title' => 'New Choice '.$i,
+                'title' => get_string('newchoicetitle',ratingallocate_MOD_NAME,$i),
                 'explanation' => '',
                 'maxsize' => 20,
                 'active' => true
@@ -269,14 +293,18 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             // if the string is not empty the array of choice ids is exploded from it
             if (!empty($deleted_choice_ids))
                 $delete_choice_array = explode(',', $deleted_choice_ids);
+
+            // Parses all delete choice ids to integers
+            $integer_check = function($elem){return (integer)$elem;};
+            array_map($integer_check,$delete_choice_array);
                 
             // retrieve id of choice to be deleted if delete button was pressed
             $matches = preg_grep('/' . self::DELETE_CHOICE_ACTION . '([-]?[0-9]+)/', 
                     array_keys($mform->getSubmitValues()));
             // only proceed if exaclty one delete button was found in the submitted data
             if (count($matches) == 1) {
-            	// retrieve the id as an Integer from the button name
-            	$elem = array_pop($matches);
+                // retrieve the id as an Integer from the button name
+                $elem = array_pop($matches);
                 $parts = explode('_', $elem);
                 $delete_choice_id = (integer) array_pop($parts);
                 
@@ -301,16 +329,6 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             }
         }
 
-        // update delete_choice_string
-        if (!empty($delete_choice_array)) {
-            $deleted_choice_ids = implode(',', $delete_choice_array);
-            $mform->getElement(self::DELETED_CHOICE_IDS)->setValue($deleted_choice_ids);
-            $myvar=$mform->getElement(self::DELETED_CHOICE_IDS)->getValue();
-        }
-        
-        // update new_choice_counter
-        $mform->getElement(self::NEW_CHOICE_COUNTER)->setValue($this->new_choice_counter);
-
         //make strategy fields for selected strategy required (server-side validation)
         $strategy = $mform->getElementValue('strategy');
         if (!empty($strategy)) { // Make sure the strategy's options are now mandatory
@@ -318,9 +336,54 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
             /* @var $strategyclass \strategytemplate */
             $strategyclass = new $strategyclassp();
-            foreach(array_keys($strategyclass::get_settingfields()) as $key) {
+            foreach(array_keys($strategyclass->get_static_settingfields()) as $key) {
                 $mform->addRule('strategyopt[' . $strategy . '][' . $key . ']', null, 'required', null, 'server');
             }
+        }        
+        if ($this->is_submitted()){
+            $subdata=$this->get_submitted_data();
+            $allstrategyoptions = $subdata->{self::STRATEGY_OPTIONS};
+        }elseif (isset($data->setting)){
+            $allstrategyoptions = json_decode($data->setting, true);
+        }
+        // add dynamic settings fields
+        foreach (\strategymanager::get_strategies() as $strategy) {
+            // load strategy class
+            $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
+            /* @var $strategyclass \strategytemplate */
+            if (isset($allstrategyoptions) && array_key_exists($strategy, $allstrategyoptions)) {
+                $strategyclass = new $strategyclassp($allstrategyoptions[$strategy]);
+            } else {
+                $strategyclass = new $strategyclassp();
+            }
+            $strategy_placeholder = self::STRATEGY_OPTIONS_PLACEHOLDER . '[' . $strategy . ']';
+            // Add options fields
+            $dynamic_settings_fields = $strategyclass->get_dynamic_settingfields();
+            foreach ($dynamic_settings_fields as $key => $value) {
+                $field_id = $this->get_settingsfield_identifier($strategy,$key);
+                $this->add_settings_field($field_id, $value, $strategy, $mform);
+                $mform->insertElementBefore($mform->removeElement($field_id, false), 
+                        $strategy_placeholder);
+            }
+            //if any dynamic field is present, add a no submit button to refresh the page
+            if (sizeof($dynamic_settings_fields)>0){
+            $buttonname = self::STRATEGY_OPTIONS.$strategy.'refresh';
+            $mform->registerNoSubmitButton($buttonname);
+            $mform->addElement('submit',$buttonname,get_string('refresh'));
+            $mform->insertElementBefore($mform->removeElement($buttonname, false),
+                    $strategy_placeholder);
+            }
+            $mform->removeElement($strategy_placeholder);
+        }
+
+        //!!!!UPDATE OF FORM VALUES NEEDS TO BE EXECUTED IN THE END!!!
+        // update new_choice_counter
+        $mform->getElement(self::NEW_CHOICE_COUNTER)->setValue($this->new_choice_counter);
+
+        // update delete_choice_string
+        if (!empty($delete_choice_array)) {
+            $deleted_choice_ids = implode(',', $delete_choice_array);
+            $mform->getElement(self::DELETED_CHOICE_IDS)->setValue($deleted_choice_ids);
         }
     }
 
@@ -341,8 +404,26 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         // User has to select one strategy
         if (empty($data['strategy'])) {
             $errors['strategy'] = get_string('strategy_not_specified', self::MOD_NAME);
+        }else{
+            $strategyclassp = 'ratingallocate\\' . $data['strategy'] . '\\strategy';
+            if (array_key_exists($data['strategy'], $data['strategyopt'])){
+                $strategyclass = new $strategyclassp($data['strategyopt'][$data['strategy']]);
+                $setting_errors = $strategyclass->validate_settings();
+                foreach($setting_errors as $id => $error){
+                    $errors[$this->get_settingsfield_identifier($data['strategy'], $id)] = $error;
+                }
+            }
         }
-
         return $errors;
     }
+    /**
+     * Returns a valid identifier for a settings field
+     * @param $strategy identifier of the strategy
+     * @param $key identifier of the key
+     * @return string
+     */
+    private function get_settingsfield_identifier($strategy, $key){
+        return self::STRATEGY_OPTIONS . '[' . $strategy . '][' . $key . ']';
+    }
+    
 }

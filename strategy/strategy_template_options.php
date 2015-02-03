@@ -24,66 +24,20 @@
  * @copyright 2014 M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-// namespace is mandatory!
-
-namespace ratingallocate\strategy_tickyes;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template.php');
 
-class strategy extends \strategytemplate {
-
-    const STRATEGYID = 'strategy_tickyes';
-    const MINTICKYES = 'mintickyes';
-    const ACCEPT_LABEL = 'accept';
-
-    public function get_strategyid() {
-        return self::STRATEGYID;
-    }
-
-    public function get_static_settingfields() {
-        $output = array(
-            self::MINTICKYES => array('int', 
-                get_string(self::STRATEGYID . '_setting_mintickyes', ratingallocate_MOD_NAME), 
-                $this->get_settings_value(self::MINTICKYES)
-            )
-        );
-        
-        $output[1] = array(
-                        'text',
-                        $this->get_settings_default_value(1),
-                        $this->get_settings_value(1)
-                        
-        );
-        return $output;
-    }
-    
-    public function get_dynamic_settingfields(){
-        return array();
-    }
-    
-    public function get_accept_label(){
-        return $this->get_settings_value(1);
-    }
-
-    public function get_default_settings(){
-        return array(
-                        self::MINTICKYES => 3,
-                        1 => get_string(self::STRATEGYID . '_' . self::ACCEPT_LABEL, ratingallocate_MOD_NAME),
-                        0 => get_string(self::STRATEGYID . '_not_' . self::ACCEPT_LABEL, ratingallocate_MOD_NAME)
-        );
-    }
-    
-    protected function getValidationInfo(){
-        return array(self::MINTICKYES => array(true,1)
-        );
-    }
+abstract class strategytemplate_options extends \strategytemplate {
+   
+    /**
+     * Return the different options for each choice (including titles)
+     * @return array: value_of_option => title_of_option
+     */
+    public abstract function get_choiceoptions();
 }
-
-// register with the strategymanager
-\strategymanager::add_strategy(strategy::STRATEGYID);
 
 /**
  * _Users view_
@@ -91,12 +45,11 @@ class strategy extends \strategytemplate {
  * - shows the groups name and description
  * - shows a drop down menu from which the user can choose a rating
  */
-class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
-
-    protected function construct_strategy($strategyoptions){
-        return new strategy($strategyoptions);
-    }
+abstract class ratingallocate_options_strategyform extends \ratingallocate_strategyform {
     
+    /**
+     * Defines forms elements
+     */
     public function definition() {
         global $USER;
         parent::definition();
@@ -110,56 +63,76 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             $ratingelem = $elemprefix . '[rating]';
             $groupsidelem = $elemprefix . '[choiceid]';
 
-            // choiceid ablegen
+            // save choiceid
             $mform->addElement('hidden', $groupsidelem, $data->choiceid);
             $mform->setType($groupsidelem, PARAM_INT);
 
-            // title anzeigen
+            // show title
             $mform->addElement('header', $headerelem, $data->title);
             $mform->setExpanded($headerelem);
 
-            // Beschreibungstext anzeigen
+            // show explanation
             $mform->addElement('html', '<div>' . $data->explanation . '</div>');
 
-            $mform->addElement('advcheckbox', $ratingelem, $this->get_strategy()->get_accept_label(), '', null, array(0, 1));
-            $mform->setType($ratingelem, PARAM_INT);
+            // options for each choice
+            $choiceoptions = $this->get_choiceoptions();
 
-            if (is_numeric($data->rating) && $data->rating >= 0) {
+            $radioarray = array();
+            foreach ($choiceoptions as $id => $option) {
+                $radioarray [] =& $mform->createElement('radio', $ratingelem, '', $option, $id);
+            }
+            // Adding static elements to support css
+            $radioarray = $this->ratingallocate->prepare_horizontal_radio_choice($radioarray, $mform);
+            
+            // it is important to set a group name, so that later on errors can be displayed at the correct spot.
+            $mform->addGroup($radioarray, 'radioarr_' . $data->choiceid, '', null, false);
+
+            $max_rating = max(array_keys($choiceoptions));
+            // try to restore previous ratings
+            if (is_numeric($data->rating) && $data->rating >= 0 && $data->rating <= $max_rating) {
                 $mform->setDefault($ratingelem, $data->rating);
             } else {
-                $mform->setDefault($ratingelem, 1);
+                $mform->setDefault($ratingelem, $max_rating);
             }
+            // $mform->setType($ratingelem, PARAM_INT);
         }
     }
 
     public function describe_strategy() {
-        return get_string(strategy::STRATEGYID . '_explain_mintickyes', ratingallocate_MOD_NAME, $this->get_strategysetting(strategy::MINTICKYES));
+        return get_string($this->get_max_nos_string_identyfier(), ratingallocate_MOD_NAME, $this->get_max_amount_of_nos());
     }
 
     public function validation($data, $files) {
+        $maxno = $this->get_max_amount_of_nos();
         $errors = parent::validation($data, $files);
-        $mintickyes = $this->get_strategysetting(strategy::MINTICKYES);
 
         if (!array_key_exists('data', $data) or count($data ['data']) < 2) {
             return $errors;
         }
 
-        $checkedaccept = 0;
+        $impossibles = 0;
         $ratings = $data ['data'];
+
         foreach ($ratings as $rating) {
-            if ($rating ['rating'] == 1) {
-                $checkedaccept ++;
+            if (key_exists('rating', $rating) && $rating ['rating'] == 0) {
+                $impossibles ++;
             }
         }
 
-        if ($checkedaccept < $mintickyes) {
+        if ($impossibles > $maxno) {
             foreach ($ratings as $cid => $rating) {
                 if ($rating ['rating'] == 0) {
-                    $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_error_mintickyes', ratingallocate_MOD_NAME, $mintickyes);
+                    $errors ['radioarr_' . $cid] = get_string($this->get_max_nos_string_identyfier(), ratingallocate_MOD_NAME, $maxno);
                 }
             }
         }
         return $errors;
     }
+    
+    public abstract function get_choiceoptions();
+
+    protected abstract function get_max_amount_of_nos();
+    //TODO remove and make identifier strategy_options specific not strategy specific
+    protected abstract function get_max_nos_string_identyfier();
 
 }

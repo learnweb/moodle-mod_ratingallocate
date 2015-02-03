@@ -26,8 +26,8 @@
  */
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/locallib.php');
+
 require_once(dirname(__FILE__).'/solver/ford-fulkerson-koegel.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
@@ -48,7 +48,11 @@ if ($id) {
 
 
 require_login($course, true, $cm);
+$context = context_module::instance($cm->id);
+$PAGE->set_context($context);
+$PAGE->set_url('/mod/ratingallocate/view.php', array('id' => $cm->id));
 
-$ratingallocateobj = new ratingallocate($ratingallocate, $course, $cm);
+require_capability('mod/ratingallocate:view', $context);
 
-$ratingallocateobj->handle_view();
+$ratingallocateobj = new ratingallocate($ratingallocate, $course, $cm, $context);
+echo $ratingallocateobj->handle_view();

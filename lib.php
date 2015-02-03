@@ -33,7 +33,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * example constant
  */
+define('ratingallocate_MOD_NAME', 'ratingallocate');
 // define('NEWMODULE_ULTIMATE_ANSWER', 42);
+
+require_once(dirname(__FILE__).'/db/db_structure.php');
+use ratingallocate\db as this_db;
+
 // //////////////////////////////////////////////////////////////////////////////
 // Moodle core API //
 // //////////////////////////////////////////////////////////////////////////////
@@ -52,7 +57,10 @@ function ratingallocate_supports($feature) {
             return true;
         case FEATURE_SHOW_DESCRIPTION :
             return true;
-
+         case FEATURE_BACKUP_MOODLE2:
+            return true;
+         case FEATURE_COMPLETION_TRACKS_VIEWS:
+             return true;
         default :
             return null;
     }
@@ -78,9 +86,9 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
 
     $transaction = $DB->start_delegated_transaction();
     try {
-        $ratingallocate->setting = json_encode($ratingallocate->strategyopt);
+        $ratingallocate->{this_db\ratingallocate::SETTING} = json_encode($ratingallocate->strategyopt);
         // instanz einfuegen, damit wir die ID fuer die Kinder haben
-        $id = $DB->insert_record('ratingallocate', $ratingallocate);
+        $id = $DB->insert_record(this_db\ratingallocate::TABLE, $ratingallocate);
 
         //TODO fast group insert $optionen = explode("\n", $ratingallocate->wahloptionen); // Felder der zur Wahl stehenden Optionen
 //         foreach ($optionen as $option) {
@@ -100,8 +108,8 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
 //         }
         //create choices
         foreach ($ratingallocate->choices as $choice) {
-            $choice['ratingallocateid'] = $id;
-            $DB->insert_record('ratingallocate_choices', $choice);
+            $choice[this_db\ratingallocate_choices::RATINGALLOCATEID] = $id;
+            $DB->insert_record(this_db\ratingallocate_choices::TABLE, $choice);
         }
 
         $transaction->allow_commit();
@@ -114,7 +122,7 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
 
 /**
  * Updates an instance of the ratingallocate in the database
- *l
+ *
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
@@ -195,18 +203,18 @@ function ratingallocate_delete_instance($id) {
     }
 
     // Delete any dependent records here #
-    $DB->delete_records('ratingallocate_allocation', array(
-        'ratingallocate' => $ratingallocate->id
+    $DB->delete_records('ratingallocate_allocations', array(
+        'ratingallocateid' => $ratingallocate->id
     ));
 
     $deleteids = $DB->get_records('ratingallocate_choices', array(
-        'ratingallocate' => $ratingallocate->id
+        'ratingallocateid' => $ratingallocate->id
             ), '', 'id');
 
-    $DB->delete_records_list('ratingallocate_ratings', 'choice', array_keys($deleteids));
+    $DB->delete_records_list('ratingallocate_ratings', 'choiceid', array_keys($deleteids));
 
     $DB->delete_records('ratingallocate_choices', array(
-        'ratingallocate' => $ratingallocate->id
+        'ratingallocateid' => $ratingallocate->id
     ));
 
     $DB->delete_records('ratingallocate', array(
@@ -268,24 +276,17 @@ function ratingallocate_print_recent_activity($course, $viewfullnames, $timestar
  * custom activity records. These records are then rendered into HTML via
  * {@link ratingallocate_print_recent_mod_activity()}.
  *
- * @param array $activities
- *        	sequentially indexed array of objects with the 'cmid' property
- * @param int $index
- *        	the index in the $activities to use for the next record
- * @param int $timestart
- *        	append activity since this time
- * @param int $courseid
- *        	the id of the course we produce the report for
- * @param int $cmid
- *        	course module id
- * @param int $userid
- *        	check for a particular user's activity only, defaults to 0 (all users)
- * @param int $groupid
- *        	check for a particular group's activity only, defaults to 0 (all groups)
+ * @param array $activities sequentially indexed array of objects with the 'cmid' property
+ * @param int $index the index in the $activities to use for the next record
+ * @param int $timestart append activity since this time
+ * @param int $courseid the id of the course we produce the report for
+ * @param int $cmid course module id
+ * @param int $userid check for a particular user's activity only, defaults to 0 (all users)
+ * @param int $groupid check for a particular group's activity only, defaults to 0 (all groups)
  * @return void adds items into $activities and increases $index
  */
-function ratingallocate_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid = 0, $groupid = 0) {
-
+function ratingallocate_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, 
+        $userid = 0, $groupid = 0) {
 }
 
 /**
@@ -302,11 +303,6 @@ function ratingallocate_print_recent_mod_activity($activity, $courseid, $detail,
  * This function searches for things that need to be done, such
  * as sending out mail, toggling flags etc .
  *
- *
- *
- *
- * ..
- *
  * @return boolean
  * @todo Finish documenting this function
  *
@@ -314,6 +310,7 @@ function ratingallocate_print_recent_mod_activity($activity, $courseid, $detail,
 function ratingallocate_cron() {
     return true;
 }
+
 
 /**
  * Returns all other caps used in the module

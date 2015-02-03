@@ -18,9 +18,6 @@
 /**
  * Defines the version of ratingallocate
  *
- * This code fragment is called by moodle_needs_upgrading() and
- * /admin/index.php
- *
  * @package    mod_ratingallocate
  * @copyright  2014 M Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,10 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014103000;               // If version == 0 then module will not be installed
-// $module->version   = 2010032200;      // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014051200;      // Requires this Moodle version
-$plugin->cron      = 0;               // Period for cron to check this module (secs)
+$plugin->version   = 2015011501;        // The current module version (Date: YYYYMMDDXX)
+$plugin->requires  = 2014051200;        // Requires this Moodle version
+$plugin->cron      = 0;                 // Period for cron to check this module (secs)
 $plugin->maturity  = MATURITY_BETA;
 $plugin->release   = 'v2.7-r2';
-$plugin->component = 'mod_ratingallocate'; // To check on upgrade, that module sits in correct place
+$plugin->component = 'mod_ratingallocate';  // To check on upgrade, that module sits in correct place

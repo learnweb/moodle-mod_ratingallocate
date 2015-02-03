@@ -46,42 +46,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
-    /*     * *************************** remove these comment marks and modify the code as needed
-
-      'mod/ratingallocate:addinstance' => array(
-      'riskbitmask' => RISK_XSS,
-
-      'captype' => 'write',
-      'contextlevel' => CONTEXT_COURSE,
-      'archetypes' => array(
-      'editingteacher' => CAP_ALLOW,
-      'manager' => CAP_ALLOW
-      ),
-      'clonepermissionsfrom' => 'moodle/course:manageactivities'
-      ),
-
-      'mod/ratingallocate:view' => array(
-      'captype' => 'read',
-      'contextlevel' => CONTEXT_MODULE,
-      'legacy' => array(
-      'guest' => CAP_ALLOW,
-      'student' => CAP_ALLOW,
-      'teacher' => CAP_ALLOW,
-      'editingteacher' => CAP_ALLOW,
-      'admin' => CAP_ALLOW
-      )
-      ),
-
-      'mod/ratingallocate:submit' => array(
-      'riskbitmask' => RISK_SPAM,
-      'captype' => 'write',
-      'contextlevel' => CONTEXT_MODULE,
-      'legacy' => array(
-      'student' => CAP_ALLOW
-      )
-      ),
-     * **************************** */
-// );
 
     'mod/ratingallocate:addinstance' => array(
         'riskbitmask' => RISK_XSS | RISK_PERSONAL,
@@ -93,6 +57,17 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ),
+    'mod/ratingallocate:view' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'guest' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
     'mod/ratingallocate:give_rating' => array(
         'contextlevel' => CONTEXT_MODULE,
         'captype' => 'write',
@@ -100,14 +75,19 @@ $capabilities = array(
             'student' => CAP_ALLOW
         )
     ),
-    'mod/ratingallocate:group_teacher' => array(
-        'contextlevel' => CONTEXT_MODULE,
-        'captype' => 'read'
-    ),
     'mod/ratingallocate:start_distribution' => array(
         'contextlevel' => CONTEXT_MODULE,
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+    'mod/ratingallocate:export_ratings' => array(
+        'contextlevel' => CONTEXT_MODULE,
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
