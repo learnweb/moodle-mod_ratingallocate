@@ -35,7 +35,7 @@ Background:
     And I should see "My third choice"
     And I should see "My fourth choice"
     
-      @javascript
+  @javascript
   Scenario: Create a new rating alloation and add an additonal new choice.
     When I add a new choice
     And I set the values of the choice with the id -4 to:
@@ -53,7 +53,7 @@ Background:
     And I should see "My fourth choice"
     And I should see "My fifth choice"
     
-          @javascript
+  @javascript
   Scenario: Create a new rating alloation and add an additonal new choice.
     When I add a new choice
     And I set the values of the choice with the id -4 to:
@@ -73,4 +73,46 @@ Background:
     And I should see "My third choice"
     And I should see "My fourth choice"
     And I should not see "My fifth choice"
+    
+  @javascript
+  Scenario: Create a new rating alloation and add an additonal new choice.
+    When I add a new choice
+    And I set the values of the choice with the id -4 to:
+  	| title       | My fourth choice |
+  	| explanation | Test 4          |
+	| maxsize     |	1337			|
+	| active      | 0 				|
+  	And I delete the choice with the id -1
+  	And I delete the choice with the id -2
+  	And I delete the choice with the id -3
+    And I press "id_submitbutton"
+    And I navigate to "Edit settings" node in "ratingallocate administration"
+    Then I should not see "My first choice"
+    And I should not see "My second choice"
+    And I should not see "My third choice"
+    And I should see "My fourth choice"
+    And the "value" attribute of "id_choices_1_explanation" "field" should contain "Test 4"
+    And the "value" attribute of "id_choices_1_maxsize" "field" should contain "1337"
+    And the choice with id 1 should not be active
+    
+  @javascript
+  Scenario: Create a new rating alloation and add an additonal new choice.
+    When I add a new choice
+    And I set the values of the choice with the id -4 to:
+  	| title       | My only choice |
+  	| explanation | This is my discription          |
+	| maxsize     |	1231243			|
+	| active      | 1 				|
+  	And I delete the choice with the id -1
+  	And I delete the choice with the id -2
+  	And I delete the choice with the id -3
+    And I press "id_submitbutton"
+    And I navigate to "Edit settings" node in "ratingallocate administration"
+    Then I should not see "My first choice"
+    And I should not see "My second choice"
+    And I should not see "My third choice"
+    And I should see "My only choice"
+    And the "value" attribute of "id_choices_1_explanation" "field" should contain "This is my discription"
+    And the "value" attribute of "id_choices_1_maxsize" "field" should contain "1231243"
+    And the choice with id 1 should be active
 
