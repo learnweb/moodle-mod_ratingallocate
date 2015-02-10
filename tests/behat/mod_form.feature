@@ -36,7 +36,7 @@ Background:
     And I should see "My fourth choice"
     
   @javascript
-  Scenario: Create a new rating alloation and add an additonal new choice.
+  Scenario: Create a new rating alloation and add two additonal new choices.
     When I add a new choice
     And I set the values of the choice with the id -4 to:
   	| title       | My fourth choice |
@@ -54,7 +54,7 @@ Background:
     And I should see "My fifth choice"
     
   @javascript
-  Scenario: Create a new rating alloation and add an additonal new choice.
+  Scenario: Create a new rating alloation and add two additonal new choices, but delete two old and one new.
     When I add a new choice
     And I set the values of the choice with the id -4 to:
   	| title       | My fourth choice |
@@ -75,7 +75,7 @@ Background:
     And I should not see "My fifth choice"
     
   @javascript
-  Scenario: Create a new rating alloation and add an additonal new choice.
+  Scenario: Create a new rating alloation and add an additonal new choice, but delete all old.
     When I add a new choice
     And I set the values of the choice with the id -4 to:
   	| title       | My fourth choice |
@@ -96,7 +96,7 @@ Background:
     And the choice with id 1 should not be active
     
   @javascript
-  Scenario: Create a new rating alloation and add an additonal new choice.
+  Scenario: Create a new rating alloation and add an additonal new choice, but delete all old. Assert coorect values.
     When I add a new choice
     And I set the values of the choice with the id -4 to:
   	| title       | My only choice |
