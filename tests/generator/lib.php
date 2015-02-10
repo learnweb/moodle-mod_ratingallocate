@@ -132,6 +132,23 @@ class mod_ratingallocate_generator extends testing_module_generator {
 
         return new ratingallocate($ratingallocate_db, $course, $cm, $context);
     }
+    
+    public static function get_open_ratingallocate_for_teacher(advanced_testcase $tc) {
+        return self::get_ratingallocate_for_teacher_open_in(0, $tc);
+    }
+    
+    public static function get_closed_ratingallocate_for_teacher(advanced_testcase $tc) {
+        return self::get_ratingallocate_for_teacher_open_in(-7, $tc);
+    }
+    
+    private static function get_ratingallocate_for_teacher_open_in($num_days, advanced_testcase $tc) {
+        $record = mod_ratingallocate_generator::get_default_values();
+        $record['accesstimestart'] = time() + ($num_days * 24 * 60 * 60);
+        $record['accesstimestop'] = time() + (($num_days + 6) * 24 * 60 * 60);
+        $record['publishdate'] = time() + (($num_days + 7) * 24 * 60 * 60);
+        $test_module = new mod_ratingallocate_generated_module($tc,$record);
+        return mod_ratingallocate_generator::get_ratingallocate_for_user($tc, $test_module->mod_db, $test_module->teacher);
+    }
 }
 
 class mod_ratingallocate_generated_module {

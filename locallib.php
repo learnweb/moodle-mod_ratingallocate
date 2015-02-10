@@ -376,11 +376,12 @@ class ratingallocate {
             }
             
             // add all participants in the correct group
-            $allocations = $this->get_all_allocations();
-            foreach ($allocations as $userid => $choice) {
-                $choice_id = array_keys($choice)[0];
+            $allocations = $this->get_allocations();
+            foreach ($allocations as $id => $allocation) {
+                $choice_id = $allocation->choiceid;
+                $user_id = $allocation->userid;
                 $choiceidnumber = $group_identifier_from_choice_id($choice_id);
-                groups_add_member($choice_identifiers[$choiceidnumber]['groupid'], $userid);
+                groups_add_member($choice_identifiers[$choiceidnumber]['groupid'], $user_id);
             }
             // Invalidate the grouping cache for the course
             cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($this->course->id));
