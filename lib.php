@@ -110,6 +110,9 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
         //create choices
         foreach ($ratingallocate->choices as $choice) {
             $choice[this_db\ratingallocate_choices::RATINGALLOCATEID] = $id;
+            if (!isset($choice[this_db\ratingallocate_choices::ACTIVE])){
+                $choice[this_db\ratingallocate_choices::ACTIVE] = 0;
+            }
             $DB->insert_record(this_db\ratingallocate_choices::TABLE, $choice);
         }
 
