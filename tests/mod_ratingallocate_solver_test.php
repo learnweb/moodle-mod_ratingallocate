@@ -29,7 +29,6 @@ global $CFG;
 require_once($CFG->dirroot . '/mod/ratingallocate/locallib.php');
 require_once($CFG->dirroot . '/mod/ratingallocate/solver/edmonds-karp.php');
 require_once($CFG->dirroot . '/mod/ratingallocate/solver/ford-fulkerson-koegel.php');
-ini_set('memory_limit', '256M');
 
 class edmonds_karp_test extends basic_testcase {
 
