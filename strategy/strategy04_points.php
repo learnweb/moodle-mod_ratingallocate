@@ -113,7 +113,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             // Beschreibungstext anzeigen
             $mform->addElement('html', '<div>' . $data->explanation . '</div>');
 
-            $mform->addElement('text', $ratingelem, $data->title);
+            $mform->addElement('text', $ratingelem, '' );
             $mform->setType($ratingelem, PARAM_INT);
 
             // try to restore previous ratings
