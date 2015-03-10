@@ -169,8 +169,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $mform->setType($strat_field_id, PARAM_TEXT);
         } elseif ($value[0] == "int") {
             $mform->addElement('text', $strat_field_id, $value[1], $attributes);
-            $mform->setType($strat_field_id, PARAM_INT);
-            $mform->addRule($strat_field_id, '', 'numeric'); //TODO: only validate if not disabled
+            $mform->setType($strat_field_id, PARAM_TEXT);
+            $mform->addRule($strat_field_id, null, 'numeric'); //TODO: only validate if not disabled
         }
         if (isset($value[2])) {
             $mform->setDefault($strat_field_id, $value[2]);
@@ -329,18 +329,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                 $mform->registerNoSubmitButton(self::DELETE_CHOICE_ACTION . $choice->id);
             }
         }
-
-        //make strategy fields for selected strategy required (server-side validation)
-        $strategy = $mform->getElementValue('strategy');
-        if (!empty($strategy)) { // Make sure the strategy's options are now mandatory
-            $strategy = array_shift($strategy);
-            $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
-            /* @var $strategyclass \strategytemplate */
-            $strategyclass = new $strategyclassp();
-            foreach(array_keys($strategyclass->get_static_settingfields()) as $key) {
-                $mform->addRule('strategyopt[' . $strategy . '][' . $key . ']', null, 'required', null, 'server');
-            }
-        }        
+            
         if ($this->is_submitted()){
             $subdata=$this->get_submitted_data();
             $allstrategyoptions = $subdata->{self::STRATEGY_OPTIONS};
