@@ -103,7 +103,14 @@ $string['newchoicetitle'] = 'New Choice {$a}';
 $string['deletechoice'] = 'Delete Choice';
 $string['publishdate'] = 'Publishdate';
 $string['select_strategy'] = 'Rating strategy';
-$string['select_strategy_help'] = 'Choose the rating strategy.';
+$string['select_strategy_help'] = 'Choose the rating strategy:
+
+* **Yes-No** The user can rate each choice with yes or no.
+* **Yes-Maybe-No** The user can rate each choice with yes, maybe or no.
+* **Likert Scale** The user can rate each choice within a scale of integers. The size of the scale can be adjusted (beginning with 0). A high number means a high preference.
+* **Give Points** The user can rate the choices by assigning a number of points. The maximum number of points can be set below. The choice with the most points is preferred. 
+* **Rank Choices** The user has to state and order his n highest preferences. How many choices need to be rated can be set below.
+* **Tick Accept**  The user can state for each choice if it is acceptable for him.';
 $string['show_table'] = 'Show Table';
 $string['strategy_not_specified'] = 'You have to select a strategy';
 $string['strategyoptions_for_strategy'] = 'Options for Strategy "{$a}"';
@@ -130,10 +137,10 @@ $string['strategy_yesmaybeno_rating_maybe'] = 'Maybe';
 $string['strategy_yesmaybeno_setting_maxno'] = 'Maximum amount the user can rate with "no"';
 $string['strategy_yesmaybeno_max_count_no'] = 'You can only choose No for at most {$a} options.';
 
-// Specific to Strategy03, Lickert
-$string['strategy_lickert_name'] = 'Lickert Scale';
-$string['strategy_lickert_setting_maxno'] = 'max Number of choices user can rate with 0';
-$string['strategy_lickert_setting_maxlickert'] = 'Highest number on the lickert-scale (3, 5 or 7 are common values)';
+// Specific to Strategy03, Likert
+$string['strategy_lickert_name'] = 'Likert Scale';
+$string['strategy_lickert_setting_maxno'] = 'Max Number of choices user can rate with 0';
+$string['strategy_lickert_setting_maxlickert'] = 'Highest number on the likert-scale (3, 5 or 7 are common values)';
 $string['strategy_lickert_max_no'] = 'You may give 0 points to at most {$a} choice(s).';
 $string['strategy_lickert_rating_biggestwish'] = 'Highly appreciated';
 $string['strategy_lickert_rating_exclude'] = 'Exclude';
@@ -143,7 +150,7 @@ $string['strategy_points_name'] = 'Give Points';
 $string['strategy_points_explain_distribute_points'] = 'Give points to each choice, you have a total of {$a} Points to distribute . Prioritize the best choice with the highest points';
 $string['strategy_points_explain_max_zero'] = 'You can give 0 points to at most {$a} choices';
 $string['strategy_points_incorrect_totalpoints'] = 'Incorrect number of points. They all have to sum up to {$a}';
-$string['strategy_points_setting_maxzero'] = 'max Number of choices user can give 0 points';
+$string['strategy_points_setting_maxzero'] = 'Max Number of choices user can give 0 points';
 $string['strategy_points_setting_totalpoints'] = 'Total number of points users can assign';
 $string['strategy_points_max_count_zero'] = 'You shall assign more than 0 points to at least {$a} choices';
 
