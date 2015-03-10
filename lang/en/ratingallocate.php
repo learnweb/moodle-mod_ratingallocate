@@ -92,14 +92,14 @@ $string['choice_active_help'] = 'Your choice gets displayed to your users only w
 $string['choice_explanation'] = 'Explanation (additional) Text';
 $string['choice_maxsize'] = 'Max. number of members';
 $string['choice_title'] = 'Title';
-$string['choice_title_help'] = 'Title of the choice. All available choices will be output ordered by title.';
+$string['choice_title_help'] = 'Title of the choice. *Attention* all available choices will be outputted ordered by title.';
 $string['edit_choice'] = 'Edit Choice {$a}';
 $string['rating_endtime'] = 'Rating ends at';
 $string['rating_begintime'] = 'Rating begins at';
 $string['manual_allocation'] = 'Manual allocation';
 $string['manual_allocation_form'] = 'Manual Allocation Form';
 $string['newchoice'] = 'Add new Choice';
-$string['newchoicetitle'] = 'New choice {$a}';
+$string['newchoicetitle'] = 'New Choice {$a}';
 $string['deletechoice'] = 'Delete Choice';
 $string['publishdate'] = 'Publishdate';
 $string['select_strategy'] = 'Rating strategy';
@@ -131,7 +131,7 @@ $string['strategy_yesmaybeno_setting_maxno'] = 'Maximum amount the user can rate
 $string['strategy_yesmaybeno_max_count_no'] = 'You can only choose No for at most {$a} options.';
 
 // Specific to Strategy03, Lickert
-$string['strategy_lickert_name'] = 'lickert-scale';
+$string['strategy_lickert_name'] = 'Lickert Scale';
 $string['strategy_lickert_setting_maxno'] = 'max Number of choices user can rate with 0';
 $string['strategy_lickert_setting_maxlickert'] = 'Highest number on the lickert-scale (3, 5 or 7 are common values)';
 $string['strategy_lickert_max_no'] = 'You may give 0 points to at most {$a} choice(s).';
@@ -156,7 +156,7 @@ $string['strategy_order_setting_countoptions'] = 'Number of fields the user is p
 
 
 // Specific to Strategy06, tickyes
-$string['strategy_tickyes_name'] = 'TickAccept';
+$string['strategy_tickyes_name'] = 'Tick Accept';
 $string['strategy_tickyes_accept'] = 'Accept';
 $string['strategy_tickyes_not_accept'] = '-';
 $string['strategy_tickyes_setting_mintickyes'] = 'Minimum of choices to accept';
