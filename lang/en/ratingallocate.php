@@ -52,6 +52,7 @@ $string['strategyname'] = 'Strategy is "{$a}"';
 $string['too_early_to_rate'] = 'Too early to rate';
 $string['your_allocated_choice'] = 'Your Allocation';
 $string['your_rating'] = 'Your Rating';
+$string['edit_rating'] = 'Edit Rating';
 $string['results_not_yet_published'] = 'Results have not yet been published';
 $string['no_choice_to_rate'] = 'There is not any choice to rate for!';
 $string['at_least_one_rateable_choices_needed'] = 'You need at least one choice to be active.';

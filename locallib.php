@@ -401,7 +401,7 @@ class ratingallocate {
             if ($this->ratingallocate->accesstimestop > $now) {
             $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                             'ratingallocateid' => $this->ratingallocateid,
-                            'action' => ACTION_GIVE_RATING)), 'Edit Rating'); //TODO: Include in choice_status
+                            'action' => ACTION_GIVE_RATING)), get_string('edit_rating', ratingallocate_MOD_NAME)); //TODO: Include in choice_status
             }
         }
         

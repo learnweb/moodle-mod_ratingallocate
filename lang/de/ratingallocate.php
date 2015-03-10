@@ -51,6 +51,7 @@ $string['ratings_saved'] = 'Ihre Präferenzen wurden gespeichert.';
 $string['strategyname'] = 'Die Bewertungsstrategy lautet "{$a}"';
 $string['too_early_to_rate'] = 'Zu früh für die Bewertung.';
 $string['your_allocated_choice'] = 'Ihre Zuordnung';
+$string['edit_rating'] = 'Bewertung bearbeiten';
 $string['your_rating'] = 'Ihre Bewertung';
 $string['results_not_yet_published'] = 'Die Ergebnisse wurden noch nicht veröffentlicht.';
 $string['no_choice_to_rate'] = 'Es gibt keine Wahlmöglichkeit, die bewertet werden könnte.';
