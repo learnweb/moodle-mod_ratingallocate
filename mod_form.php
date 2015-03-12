@@ -221,9 +221,10 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addRule($elementname, $this->MSG_ERR_REQUIRED , 'required', null, 'server');
 
         $elementname = $elemprefix . '[active]';
-        $mform->addElement('checkbox', $elementname, get_string('choice_active', self::MOD_NAME));
+        $checkbox = $mform->addElement('checkbox', $elementname, get_string('choice_active', self::MOD_NAME));
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
         $mform->setDefault($elementname, $choice->active);
+        $checkbox->setChecked($choice->active);
         $mform->addHelpButton($elementname, 'choice_active', self::MOD_NAME);
 
         $elementname = self::DELETE_CHOICE_ACTION. $choice->id;
