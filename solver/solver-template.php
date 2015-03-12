@@ -93,6 +93,9 @@ class distributor {
         $choicerecords = $ratingallocate->get_rateable_choices();
         $ratings = $ratingallocate->get_ratings_for_rateable_choices();
 
+        // Randomize the order of the enrties to prevent advantages for early entry
+        shuffle($ratings);
+
         $usercount = count($ratingallocate->get_raters_in_course());
 
         $distributions = $this->compute_distribution($choicerecords, $ratings, $usercount);
