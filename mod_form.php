@@ -164,6 +164,10 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         $attributes = array('size' => '20');
         
+        if (!isset($value[2])) {
+            $attributes['placeholder'] = ($value[1]);
+        }
+        
         if ($value[0] == "text") {
             $mform->addElement('text', $strat_field_id, $value[1], $attributes);
             $mform->setType($strat_field_id, PARAM_TEXT);
