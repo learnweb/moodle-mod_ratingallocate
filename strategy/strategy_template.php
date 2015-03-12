@@ -133,7 +133,8 @@ abstract class strategytemplate {
         $errors = array();
         foreach ($validation_info as $key => $info){
             if (isset($info[0]) && $info[0]===true){
-                if(array_key_exists($key, $this->_strategy_settings) && $this->_strategy_settings[$key] === ""){
+                if(array_key_exists($key, $this->_strategy_settings) && 
+                        (!isset($this->_strategy_settings[$key]) || $this->_strategy_settings[$key] === "")) {
                     $errors[$key] = get_string('err_required', ratingallocate_MOD_NAME);
                     break;
                 }
