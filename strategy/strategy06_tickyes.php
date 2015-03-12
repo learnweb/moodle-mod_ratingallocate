@@ -55,7 +55,7 @@ class strategy extends \strategytemplate {
         $output[1] = array(
                         'text',
                         $this->get_settings_default_value(1),
-                        $this->get_settings_value(1)
+                        null
                         
         );
         return $output;

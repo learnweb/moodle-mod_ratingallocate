@@ -56,7 +56,7 @@ class strategy extends \strategytemplate_options {
             $output[$id] = array(
                             'text',
                             $this->get_settings_default_value($id),
-                            $option
+                            null
                             
             );
         }
