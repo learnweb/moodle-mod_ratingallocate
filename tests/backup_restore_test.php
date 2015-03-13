@@ -45,7 +45,7 @@ class backup_restore_test extends advanced_testcase {
         $gen_mod = new mod_ratingallocate_generated_module($this);
         $course1 = $gen_mod->course;
         // Create backup file and save it to the backup location.
-        $bc = new backup_controller(backup::TYPE_1ACTIVITY, $gen_mod->mod_db->id, backup::FORMAT_MOODLE,
+        $bc = new backup_controller(backup::TYPE_1ACTIVITY, $gen_mod->mod_db->cmid, backup::FORMAT_MOODLE,
                 backup::INTERACTIVE_NO, backup::MODE_GENERAL, 2);
         $bc->execute_plan();
         $results = $bc->get_results();
