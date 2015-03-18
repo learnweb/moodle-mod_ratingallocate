@@ -114,4 +114,24 @@ Background:
     And the choice with name "My only choice" should have explanation being equal to "This is my discription"
     And the choice with name "My only choice" should have maxsize being equal to 1231243
     And the choice with name "My only choice" should be active
+    
+    @javascript
+  	Scenario: Create a new rating alloation and add an additonal new choice as inactive, but delete all old. Change the the choice to active.
+    When I add a new choice
+    And I set the values of the choice with the id -4 to:
+  	| title       | My only choice |
+  	| explanation | This is my discription          |
+	| maxsize     |	1231243			|
+	| active	  | 0				|
+  	And I delete the choice with the id -1
+  	And I delete the choice with the id -2
+  	And I delete the choice with the id -3
+  	And I set the choice with the id -4 to active
+    And I press "id_submitbutton"
+    And I navigate to "Edit settings" node in "ratingallocate administration"
+    Then I should not see "My first choice"
+    And I should not see "My second choice"
+    And I should not see "My third choice"
+    And I should see "My only choice"
+    And the choice with name "My only choice" should be active
 

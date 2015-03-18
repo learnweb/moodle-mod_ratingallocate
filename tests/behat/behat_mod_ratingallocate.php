@@ -58,6 +58,18 @@ class behat_mod_ratingallocate extends behat_base {
         $checkbox = $this->find_field("id_choices_${choiceid}_active");
         $checkbox->uncheck();
     }
+    
+    /**
+     * I set the choice to active.
+     *
+     * @When /^I set the choice with the id (?P<choice_id>-?\d+) to active$/
+     *
+     * @param integer $choiceid id of the choice
+     */
+    public function i_Set_The_Choice_With_The_Id_To_Active($choiceid) {
+        $checkbox = $this->find_field("id_choices_${choiceid}_active");
+        $checkbox->check();
+    }
 
     /**
      * Adds a new choice for the existing rating allocation.
