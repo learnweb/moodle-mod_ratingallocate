@@ -108,7 +108,7 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
 //             $DB->insert_record('ratingallocate_choices', $choicedata); // Kind abspeichern
 //         }
         //create choices
-        foreach ($ratingallocate->choices as $choice) {
+        foreach (_parseChoiceArray($ratingallocate) as $choice) {
             $choice[this_db\ratingallocate_choices::RATINGALLOCATEID] = $id;
             if (!isset($choice[this_db\ratingallocate_choices::ACTIVE])){
                 $choice[this_db\ratingallocate_choices::ACTIVE] = 0;
@@ -152,7 +152,7 @@ function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallo
         $bool = $DB->update_record('ratingallocate', $ratingallocate);
 
         // iterate over choices
-        foreach ($ratingallocate->choices as $choiceid => $choiceparam) {
+        foreach (_parseChoiceArray($ratingallocate) as $choiceid => $choiceparam) {
 
             // tickboxes don't come through correctly.
             // if you unticked active, set it to false
@@ -184,6 +184,22 @@ function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallo
     } catch (Exception $e) {
         $transaction->rollback($e);
     }
+}
+/**
+ * Parse the structure of the unstructured choices elements within the ratingallocate object
+ * @param unknown $ratingallocate
+ */
+function _parseChoiceArray($ratingallocate){
+    $choices = array();
+    foreach ($ratingallocate as $name => $value){
+        if (substr($name,0,8)==='choices_'){
+            $nameparts = explode('_', $name);
+            $id = $nameparts[1];
+            $field = $nameparts[2];
+            $choices[$id][$field] = $value;
+        }
+    }
+    return $choices;
 }
 
 /**

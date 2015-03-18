@@ -81,8 +81,8 @@ Background:
   	| title       | My fourth choice |
   	| explanation | Test 4          |
 	| maxsize     |	1337			|
-	| active      | 0 				|
-  	And I delete the choice with the id -1
+	And I set the choice with the id -4 to inactive
+	And I delete the choice with the id -1
   	And I delete the choice with the id -2
   	And I delete the choice with the id -3
     And I press "id_submitbutton"
@@ -91,18 +91,17 @@ Background:
     And I should not see "My second choice"
     And I should not see "My third choice"
     And I should see "My fourth choice"
-    And the "value" attribute of "id_choices_1_explanation" "field" should contain "Test 4"
-    And the "value" attribute of "id_choices_1_maxsize" "field" should contain "1337"
-    And the choice with id 1 should not be active
+    And the choice with name "My fourth choice" should have explanation being equal to "Test 4"
+    And the choice with name "My fourth choice" should have maxsize being equal to 1337
+    And the choice with name "My fourth choice" should not be active
     
   @javascript
-  Scenario: Create a new rating alloation and add an additonal new choice, but delete all old. Assert coorect values.
+  Scenario: Create a new rating alloation and add an additonal new choice, but delete all old. Assert correct values.
     When I add a new choice
     And I set the values of the choice with the id -4 to:
   	| title       | My only choice |
   	| explanation | This is my discription          |
 	| maxsize     |	1231243			|
-	| active      | 1 				|
   	And I delete the choice with the id -1
   	And I delete the choice with the id -2
   	And I delete the choice with the id -3
@@ -112,7 +111,7 @@ Background:
     And I should not see "My second choice"
     And I should not see "My third choice"
     And I should see "My only choice"
-    And the "value" attribute of "id_choices_1_explanation" "field" should contain "This is my discription"
-    And the "value" attribute of "id_choices_1_maxsize" "field" should contain "1231243"
-    And the choice with id 1 should be active
+    And the choice with name "My only choice" should have explanation being equal to "This is my discription"
+    And the choice with name "My only choice" should have maxsize being equal to 1231243
+    And the choice with name "My only choice" should be active
 

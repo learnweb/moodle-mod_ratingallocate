@@ -29,10 +29,11 @@ class behat_mod_ratingallocate extends behat_base {
         $result = new TableNode();
         $choicedatahash = $choicedata->getRowsHash();
         // The action depends on the field type.
+        $steps = array();
         foreach ($choicedatahash as $locator => $value) {
-            $result->addRow(array("id_choices_${choiceid}_$locator",$value));
+            array_push($steps, new Given("I set the field \"id_choices_${choiceid}_${locator}\" to \"${value}\""));
         }
-        return new Given("I set the following fields to these values:",$result);
+        return $steps;
     }
     
     /**
@@ -44,6 +45,18 @@ class behat_mod_ratingallocate extends behat_base {
      */
     public function i_Delete_The_Choice_With_The_Id($choiceid) {
         return new When('I press "id_delete_choice_'.$choiceid.'"');
+    }
+    
+    /**
+     * I set the choice to inactive.
+     *
+     * @When /^I set the choice with the id (?P<choice_id>-?\d+) to inactive$/
+     *
+     * @param integer $choiceid id of the choice
+     */
+    public function i_Set_The_Choice_With_The_Id_To_Inactive($choiceid) {
+        $checkbox = $this->find_field("id_choices_${choiceid}_active");
+        $checkbox->uncheck();
     }
 
     /**
@@ -58,17 +71,16 @@ class behat_mod_ratingallocate extends behat_base {
     /**
      * The choice with id should be active.
      *
-     * @Then /^the choice with id (?P<choice_id>-?\d+) should be active$/
+     * @Then /^the choice with name "([^"]*)" should be active$/
      *
      * @throws ExpectationException
-     * @param integer $choiceid id of the choice
+     * @param string $choice_name title of the choice
      */
-    public function the_Choice_should_be_active($choiceid) {
-        $containernode = $this->get_selected_node("field", "id_choices_{$choiceid}_active");
-        $value = $containernode->getAttribute("checked");
-        if ($value == null || ($value != true)) {
-            throw new ExpectationException('The choice with id "' . $choiceid .
-                    '" is not active.',
+    public function the_Choice_should_be_active($choice_name) {
+        $choice = $this->get_choice($choice_name);
+        if (!$choice->active){
+            throw new ExpectationException('The choice "' . $choice_name .
+                    '" should be active.',
                     $this->getSession());
         }
     }
@@ -76,18 +88,60 @@ class behat_mod_ratingallocate extends behat_base {
     /**
      * The choice with id should not be active.
      *
-     * @Then /^the choice with id (?P<choice_id>-?\d+) should not be active$/
+     * @Then /^the choice with name "([^"]*)" should not be active$/
      *
      * @throws ExpectationException
-     * @param integer $choiceid id of the choice
+     * @param string $choice_name title of the choice
      */
-    public function the_Choice_should_not_be_active($choiceid) {
-        $containernode = $this->get_selected_node("field", "id_choices_{$choiceid}_active");
-        $value = $containernode->getAttribute("checked");
-        if ($value != null && $value == true) {
-            throw new ExpectationException('The choice with the id "' . $choiceid. '" is active',
+    public function the_Choice_should_not_be_active($choice_name) {
+        $choice = $this->get_choice($choice_name);
+        if ($choice->active){
+            throw new ExpectationException('The choice "' . $choice_name. '" should not be active',
                     $this->getSession());
         }
+    }
+    
+    /**
+     * 
+     * 
+     * @Then /^the choice with name "([^"]*)" should have explanation being equal to "([^"]*)"$/
+     * 
+     * @throws ExpectationException
+     * @param string $choice_name title of the choice
+     * @param string $value expected value
+     */
+    public function the_choice_should_have_explanation_equal($choice_name, $value){
+        $choice = $this->get_choice($choice_name);
+        if ($choice->explanation !== $value){
+        throw new ExpectationException('The explanation of the choice '.$choice_name.' was expected to be "'.$value.'" but was "'.$choice->explanation.'".',
+                $this->getSession());
+        }
+    }
+    
+    /**
+     *
+     *
+     * @Then /^the choice with name "([^"]*)" should have maxsize being equal to ([\d]*)$/
+     *
+     * @throws ExpectationException
+     * @param string $choice_name title of the choice
+     * @param integer $value expected value
+     */
+    public function the_choice_should_have_maxsize_equal($choice_name, $value){
+        $choice = $this->get_choice($choice_name);
+        if ($choice->maxsize !== $value){
+        throw new ExpectationException('The maxsize of the choice '.$choice_name.' was expected to be "'.$value.'" but was "'.$choice->explanation.'".',
+                $this->getSession());
+        }
+    }
+    
+    private function get_choice($title){
+        global $DB;
+        $choices = $DB->get_records("ratingallocate_choices", array('title' => $title));
+        if (count($choices)!=1){
+            throw new ExpectationException('Excatly one choice with the name "'.$title.'" is expected but '.count($choices). ' found.',$this->getSession());
+        }
+        return  array_shift($choices);
     }
     
 }

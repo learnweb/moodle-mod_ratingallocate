@@ -44,6 +44,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     const STRATEGY_OPTIONS_PLACEHOLDER = 'placeholder_strategyopt';
     private $newchoicecounter = 0;
     private $msgerrorrequired;
+    private $choicecheckboxes = array();
 
     /**
      * constructor
@@ -191,15 +192,15 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      * @param unknown $choice choice (new (negative id) or existing)
      */
     private function add_choice_group(MoodleQuickForm $mform, $choice) {
-        $elemprefix = 'choices[' . $choice->id . ']';
-        $mform->addElement('hidden', $elemprefix . '[id]', $choice->id); // Save the record's id.
-        $mform->setType($elemprefix . '[id]', PARAM_INT);
+        $elemprefix = 'choices_' . $choice->id . '_';
+        $mform->addElement('hidden', $elemprefix . 'id', $choice->id); // Save the record's id.
+        $mform->setType($elemprefix . 'id', PARAM_INT);
 
         $elementname = 'fieldset_edit_choice' . $choice->id;
         $mform->addElement('header', $elementname, get_string('edit_choice', self::MOD_NAME, $choice->title));
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
 
-        $elementname = $elemprefix . '[title]';
+        $elementname = $elemprefix . 'title';
         $mform->addElement('text', $elementname, get_string('choice_title', self::MOD_NAME));
         $mform->setDefault($elementname, $choice->title);
         $mform->setType($elementname, PARAM_TEXT);
@@ -207,25 +208,24 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
         $mform->addRule($elementname, $this->msgerrorrequired , 'required', null, 'server');
 
-        $elementname = $elemprefix . '[explanation]';
+        $elementname = $elemprefix . 'explanation';
         $mform->addElement('text', $elementname, get_string('choice_explanation', self::MOD_NAME));
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
         $mform->setDefault($elementname, $choice->explanation);
         $mform->setType($elementname, PARAM_TEXT);
         $mform->addRule($elementname,  $this->msgerrorrequired , 'required', null, 'server');
 
-        $elementname = $elemprefix . '[maxsize]';
+        $elementname = $elemprefix . 'maxsize';
         $mform->addElement('text', $elementname, get_string('choice_maxsize', self::MOD_NAME));
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
         $mform->setDefault($elementname, $choice->maxsize);
         $mform->setType($elementname, PARAM_INT);
         $mform->addRule($elementname, $this->msgerrorrequired , 'required', null, 'server');
 
-        $elementname = $elemprefix . '[active]';
+        $elementname = $elemprefix . 'active';
         $checkbox = $mform->addElement('checkbox', $elementname, get_string('choice_active', self::MOD_NAME));
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
-        $mform->setDefault($elementname, $choice->active);
-        $checkbox->setChecked($choice->active);
+        $this->choicecheckboxes[$choice->id] = $checkbox;
         $mform->addHelpButton($elementname, 'choice_active', self::MOD_NAME);
 
         $elementname = self::DELETE_CHOICE_ACTION. $choice->id;
@@ -245,8 +245,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                 'id' => $id,
                 'title' => get_string('newchoicetitle', ratingallocate_MOD_NAME, $i),
                 'explanation' => '',
-                'maxsize' => 20,
-                'active' => true
+                'maxsize' => 20
         );
     }
 
@@ -278,6 +277,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             // Increment new choice counter if add_new_choice button was pressed.
             if (property_exists($this->get_submitted_data(), self::ADD_CHOICE_ACTION)) {
                 $this->newchoicecounter++;
+                $addedid = -($this->newchoicecounter);
             }
         }
 
@@ -375,6 +375,10 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                     $strategyplaceholder);
             }
             $mform->removeElement($strategyplaceholder);
+        }
+
+        if (isset($addedid) && key_exists($addedid, $this->choicecheckboxes)) {
+            $this->choicecheckboxes[$addedid]->setChecked(true);
         }
 
         // UPDATE OF FORM VALUES NEEDS TO BE EXECUTED IN THE END!!!
