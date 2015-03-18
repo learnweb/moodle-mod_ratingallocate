@@ -223,9 +223,9 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addRule($elementname, $this->msgerrorrequired , 'required', null, 'server');
 
         $elementname = $elemprefix . 'active';
-        $checkbox = $mform->addElement('checkbox', $elementname, get_string('choice_active', self::MOD_NAME));
+        $checkbox = $mform->addElement('advcheckbox', $elementname, get_string('choice_active', self::MOD_NAME), null, null, array(0, 1));
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
-        $this->choicecheckboxes[$choice->id] = $checkbox;
+        $mform->setDefault($elementname, $choice->active);
         $mform->addHelpButton($elementname, 'choice_active', self::MOD_NAME);
 
         $elementname = self::DELETE_CHOICE_ACTION. $choice->id;
@@ -245,7 +245,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                 'id' => $id,
                 'title' => get_string('newchoicetitle', ratingallocate_MOD_NAME, $i),
                 'explanation' => '',
-                'maxsize' => 20
+                'maxsize' => 20,
+                'active' => 1
         );
     }
 
@@ -277,7 +278,6 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             // Increment new choice counter if add_new_choice button was pressed.
             if (property_exists($this->get_submitted_data(), self::ADD_CHOICE_ACTION)) {
                 $this->newchoicecounter++;
-                $addedid = -($this->newchoicecounter);
             }
         }
 
@@ -375,10 +375,6 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                     $strategyplaceholder);
             }
             $mform->removeElement($strategyplaceholder);
-        }
-
-        if (isset($addedid) && key_exists($addedid, $this->choicecheckboxes)) {
-            $this->choicecheckboxes[$addedid]->setChecked(true);
         }
 
         // UPDATE OF FORM VALUES NEEDS TO BE EXECUTED IN THE END!!!
