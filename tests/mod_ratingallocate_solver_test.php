@@ -19,6 +19,7 @@
  *
  * @package    mod
  * @subpackage mod_groupdistribution
+ * @group mod_ratingallocate
  * @copyright  original Version 2013 Stefan Koegel
  * @copyright  2014 M Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
