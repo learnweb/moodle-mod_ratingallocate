@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+global $CFG;
+require_once(dirname(__FILE__) . '/../locallib.php');
+
 /**
  * mod_ratingallocate generator tests
  *
@@ -116,9 +119,13 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
 
     public function test_mod_ratingallocate_generated_module() {
         $record = mod_ratingallocate_generator::get_default_values();
-        foreach ($record['choices'] as $id => &$choice) {
-            $choice['maxsize'] = 10;
-            $choice['active'] = true;
+        foreach ($record as $name => $value) {
+            if (subStr($name, strlen($name) - 7, 7) === 'maxsize') {
+                $record[$name] = 10;
+            }
+            if (subStr($name, strlen($name) - 6, 6) === 'active') {
+                $record[$name] = true;
+            }
         }
         $record['num_students'] = 22;
         $test_module = new mod_ratingallocate_generated_module($this,$record);

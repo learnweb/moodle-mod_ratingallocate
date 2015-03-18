@@ -49,10 +49,13 @@ class locallib_test extends advanced_testcase {
         //set default data for category
         $data = mod_ratingallocate_generator::get_default_values();
         $data['course'] = $course;
-        foreach ($data['choices'] as $id => $choice) {
-            $choice[this_db\ratingallocate_choices::MAXSIZE] = 2;
-            $choice[this_db\ratingallocate_choices::ACTIVE] = true;
-            $data['choices'][$id] = $choice;
+        foreach ($data as $name => $value) {
+            if (subStr($name, strlen($name) - 7, 7) === 'maxsize') {
+                $data[$name] = 2;
+            }
+            if (subStr($name, strlen($name) - 6, 6) === 'active') {
+                $data[$name] = true;
+            }
         }
         
         // create activity

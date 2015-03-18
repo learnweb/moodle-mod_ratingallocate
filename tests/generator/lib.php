@@ -52,20 +52,14 @@ class mod_ratingallocate_generator extends testing_module_generator {
                 'publishdate' => time() + (7 * 24 * 60 * 60),
                 'strategyopt' => array('strategy_yesno' => array('maxcrossout' => '1')),
                 'strategy' => 'strategy_yesno',
-                'choices' => array(
-                    '-1' => array(
-                        'title' => 'Choice 1',
-                        'explanation' => 'Some explanatory text for choice 1',
-                        'maxsize' => '10',
-                        'active' => true
-                    ),
-                    '-2' => array(
-                        'title' => 'Choice 2',
-                        'explanation' => 'Some explanatory text for choice 2',
-                        'maxsize' => '5',
-                        'active' => false
-                    )
-                )
+                'choices_-1_title' => 'Choice 1',
+                'choices_-1_explanation' => 'Some explanatory text for choice 1',
+                'choices_-1_maxsize' => '10',
+                'choices_-1_active' => true,
+                'choices_-2_title' => 'Choice 2',
+                'choices_-2_explanation' => 'Some explanatory text for choice 2',
+                'choices_-2_maxsize' => '5',
+                'choices_-2_active' => false
             );
         }
         return self::$_default_value;
