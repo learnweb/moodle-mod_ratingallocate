@@ -71,6 +71,7 @@ $string['start_distribution'] = 'Start Distribution';
 $string['start_distribution_explanation'] = ' An algorithm fairly allocates the users according to their given ratings.';
 $string['too_early_to_distribute'] = 'Too early to distribute. Rating is not over.';
 $string['unassigned_users'] = 'Unassigned Users';
+$string['invalid_dates'] = 'Dates are invalid. Starting date must be before ending date.';
 $string['invalid_publishdate'] = 'Publication date is invalid. Publication Date must be after the end of rating.';
 $string['rated'] = 'rated {$a}';
 $string['no_rating_given'] = 'Users Without Rating';
@@ -101,7 +102,7 @@ $string['manual_allocation_form'] = 'Manual Allocation Form';
 $string['newchoice'] = 'Add new choice';
 $string['newchoicetitle'] = 'New choice \'{$a}\'';
 $string['deletechoice'] = 'Delete choice';
-$string['publishdate'] = 'Publidate';
+$string['publishdate'] = 'Publication date';
 $string['select_strategy'] = 'Rating strategy';
 $string['select_strategy_help'] = 'Choose a rating strategy:
 
