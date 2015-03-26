@@ -200,50 +200,21 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $o .= html_writer::table($t);
         $o .= $this->output->box_end();
 
-        $status_summary = array();
-
-        $error = function($text) { return $this->notification($text); };
-        $warning = function($text) { return $this->notification($text); };
-        $info = function($text) { return html_writer::span($text,'info'); };
-
         if (empty($status->available_choices))
              $this->add_notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
         // To early to rate
         if ($status->accesstimestart > $time) {
-             $this->add_notification(get_string('too_early_to_rate', ratingallocate_MOD_NAME));
+             $this->add_notification(get_string('too_early_to_rate', ratingallocate_MOD_NAME), 'notifymessage');
         }
         // to late to rate
         else if ($status->accesstimestop < $time) {
             // if results already published
             if ($status->is_published == true) {
-                $this->add_notification(get_string('rating_is_over', ratingallocate_MOD_NAME));
+                $this->add_notification(get_string('rating_is_over', ratingallocate_MOD_NAME), 'notifymessage');
             } else {
-                $this->add_notification(get_string('results_not_yet_published', ratingallocate_MOD_NAME),'info');
+                $this->add_notification(get_string('results_not_yet_published', ratingallocate_MOD_NAME), 'notifymessage');
             }
         }
-
-     /*   // Links.
-        if ($status->view_type == ratingallocate_choice_status::STUDENT_VIEW) {
-            if ($status->canedit) {
-
-                if (!$status->submission) {
-                    $button_text = get_string('addsubmission', ratingallocate_MOD_NAME);
-                } else {
-                    $button_text = get_string('editsubmission', ratingallocate_MOD_NAME);
-                }
-                $o .= $this->output->box_start('generalbox submissionaction');
-                $urlparams = array(
-                                'id' => $status->coursemoduleid,
-                                'action' => DSBUILDER_ACTION_EDIT_SUBMISSION
-                );
-                $o .= $this->output->single_button(new moodle_url('/mod/dsbuilder/view.php', $urlparams), $button_text, 'get');
-                $o .= $this->output->box_start('boxaligncenter submithelp');
-                $o .= get_string('editsubmission_help', ratingallocate_MOD_NAME);
-                $o .= $this->output->box_end();
-                $o .= $this->output->box_end();
-            }
-        }
-        */
 
         $o .= $this->output->container_end();
         return $o;
@@ -268,31 +239,102 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         array_push($this->notifications, $this->notification($note, $classes));
     }
 
-
     /**
-     * Output the ratingallocate algorithm control section (as long as the rating period is not over)
+     * Output the ratingallocate modfify allocation
      */
-    public function algorithm_control_tooearly() {
-        $output = $this->heading(get_string('distribution_algorithm', ratingallocate_MOD_NAME), 2);
+    public function modify_allocation_group($ratingallocateid, $coursemoduleid, $status) {
+        global $PAGE;
+        $output = '';
+        $output .= $this->heading(get_string('modify_allocation_group', ratingallocate_MOD_NAME), 2);
+        $output .= $this->box_start();
+        $isready = $status===ratingallocate::DISTRIBUTION_STATUS_READY || $status===ratingallocate::DISTRIBUTION_STATUS_READY_ALLOC_STARTED;
 
-        // Rating period is not over, tell the user
-        $note = get_string('too_early_to_distribute', ratingallocate_MOD_NAME);
-        $output .= $this->notification($note);
+        $starturl = new moodle_url($PAGE->url, array('action' => ACTION_START_DISTRIBUTION));
 
+        // Get description dependent on status
+        $descriptionbaseid = 'modify_allocation_group_desc_';
+        $description = get_string($descriptionbaseid.$status, ratingallocate_MOD_NAME);
+
+        $output .= $this->format_text($description);
+
+        $output .= html_writer::empty_tag('br', array());
+
+        $output .= $this->single_button($starturl->out(), get_string('start_distribution', ratingallocate_MOD_NAME), 'get',
+            array('tooltip'=>get_string('start_distribution_explanation', ratingallocate_MOD_NAME),
+                'disabled' => !$isready));
+
+        $output .= $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
+            'ratingallocateid' => $ratingallocateid,
+            'action' => ACTION_MANUAL_ALLOCATION)), get_string('manual_allocation_form', ratingallocate_MOD_NAME), 'get',
+            array('disabled' => !$isready));
+
+        $output .= $this->box_end();
         return $output;
     }
 
     /**
-     * Output the ratingallocate algorithm control section (as soon as the rating period is over)
+     * Output the ratingallocate modfify allocation
      */
-    public function algorithm_control_ready() {
+    public function publish_allocation_group($ratingallocateid, $coursemoduleid, $status) {
         global $PAGE;
+        $output = '';
+        $output .= $this->heading(get_string('publish_allocation_group', ratingallocate_MOD_NAME), 2);
+        $output .= $this->box_start();
+        $isready = $status===ratingallocate::DISTRIBUTION_STATUS_READY || $status===ratingallocate::DISTRIBUTION_STATUS_READY_ALLOC_STARTED;
+        $tooearly = $status===ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY;
 
-        $starturl = new moodle_url($PAGE->url, array('action' => ACTION_START_DISTRIBUTION));
+        // Get description dependent on status
+        $descriptionbaseid = 'publish_allocation_group_desc_';
+        $description = get_string($descriptionbaseid.$status, ratingallocate_MOD_NAME);
 
-        // print button
-        $output = $this->single_button($starturl->out(), get_string('start_distribution', ratingallocate_MOD_NAME), 'get', array('tooltip'=>get_string('start_distribution_explanation', ratingallocate_MOD_NAME)));
+        $output .= $this->format_text($description);
 
+        $output .= html_writer::empty_tag('br', array());
+
+        $output .= $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
+            'ratingallocateid' => $ratingallocateid,
+            'action' => ACTION_PUBLISH_ALLOCATIONS)), get_string('publish_allocation', ratingallocate_MOD_NAME), 'get',
+            array('disabled' => !$isready));
+
+        $output .= $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
+            'ratingallocateid' => $ratingallocateid,
+            'action' => ACTION_ALLOCATION_TO_GROUPING)), get_string('create_moodle_groups', ratingallocate_MOD_NAME), 'get',
+            array('disabled' => $tooearly));
+
+        $output .= $this->box_end();
+        return $output;
+    }
+
+    /**
+     * Output the ratingallocate modfify allocation
+     */
+    public function reports_group($ratingallocateid, $coursemoduleid, $status, $context) {
+        global $PAGE;
+        $output = '';
+        $output .= $this->heading(get_string('reports_group', ratingallocate_MOD_NAME), 2);
+        $output .= $this->box_start();
+
+        $tableurl = new moodle_url($PAGE->url, array('action' => ACTION_SHOW_ALLOC_TABLE));
+
+        // Link to display information about the allocations and ratings
+        $output .= $this->action_link($tableurl->out(), get_string('show_table', ratingallocate_MOD_NAME));
+
+        $output .= html_writer::empty_tag('br', array());
+
+        $tableurl = new moodle_url($PAGE->url, array('action' => ACTION_SHOW_STATISTICS));
+
+        // Link to display statistical information about the allocations
+        $output .= $this->action_link($tableurl->out(), get_string('show_allocation_statistics', ratingallocate_MOD_NAME));
+
+        /* TODO: File not readable
+        $output .= html_writer::empty_tag('br', array());
+
+        if (has_capability('mod/ratingallocate:export_ratings', $context)) {
+            $output .= $this->action_link(new moodle_url('/mod/ratingallocate/solver/export_lp_solve.php', array('id' => $coursemoduleid,
+                'ratingallocateid' => $ratingallocateid)), get_string('download_problem_mps_format', ratingallocate_MOD_NAME));
+        }*/
+
+        $output .= $this->box_end();
         return $output;
     }
 
@@ -348,8 +390,11 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $allocationtable->data = array($allocationrow);
         $allocationtable->head = $allocationhead;
 
-        $output = $this->heading(get_string('distribution_table', ratingallocate_MOD_NAME), 2);
+        $output = $this->heading(get_string('allocation_statistics', ratingallocate_MOD_NAME), 2);
         $output .= $this->box_start();
+        $output .= $this->format_text(get_string('allocation_statistics_description', ratingallocate_MOD_NAME,
+            array('users' => $distributiondata[max(array_keys($distributiondata))], 'total' => count($memberships),
+                'rating' => $titles[max(array_keys($distributiondata))], 'unassigned' => count($usersinchoice) - count($memberships))));
         $output .= html_writer::table($allocationtable);
         $output .= $this->box_end();
 
@@ -471,20 +516,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     private function get_option_title($rating, strategytemplate $strategy){
         $option = $strategy->translate_rating_to_titles($rating);
         return empty($option) ? get_string('no_rating_given', ratingallocate_MOD_NAME): get_string('rating_raw', ratingallocate_MOD_NAME, $option);
-    }
-
-    /**
-     * Renders the button to show the ratings table
-     */
-    public function show_ratings_table_button() {
-        global $PAGE;
-
-        $tableurl = new moodle_url($PAGE->url, array('action' => ACTION_SHOW_ALLOC_TABLE));
-
-        // Button to display information about the distribution and ratings
-        $output = $this->single_button($tableurl->out(), get_string('show_table', ratingallocate_MOD_NAME), 'get');
-
-        return $output;
     }
 
     /**

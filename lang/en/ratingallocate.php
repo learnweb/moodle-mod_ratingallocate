@@ -62,6 +62,7 @@ $string['allocation_manual_explain_only_raters'] = 'Select a choice to be assign
 $string['allocation_manual_explain_all'] = 'Select a choice to be assigned to a user.';
 $string['distribution_algorithm'] = 'Distribution Algorithm';
 $string['distribution_saved'] = 'Distribution saved (in {$a}s).';
+<<<<<<< HEAD
 $string['distribution_table'] = 'Distribution Table';
 $string['download_problem_mps_format'] = 'Download Equation (mps/txt)';
 $string['download_votetest_allocation'] = 'Download Ratings and Allocation (csv)';
@@ -70,6 +71,14 @@ $string['ratings_table'] = 'Rating Table';
 $string['start_distribution'] = 'Start Distribution';
 $string['start_distribution_explanation'] = ' An algorithm fairly allocates the users according to their given ratings.';
 $string['too_early_to_distribute'] = 'Too early to distribute. Rating is not over.';
+=======
+$string['download_problem_mps_format'] = 'Download Equation in mps format (txt)';
+$string['download_votetest_allocation'] = 'Download Votes and Allocation (csv)';
+$string['no_user_to_allocate'] = 'There is no user you could allocate';
+$string['ratings_table'] = 'Ratings and Allocations';
+$string['start_distribution'] = 'Run Algorithm';
+$string['start_distribution_explanation'] = ' An algorithm will automatically try to fairly distribute the users by ratings given';
+>>>>>>> upstram/master
 $string['unassigned_users'] = 'Unassigned Users';
 $string['invalid_dates'] = 'Dates are invalid. Starting date must be before ending date.';
 $string['invalid_publishdate'] = 'Publication date is invalid. Publication Date must be after the end of rating.';
@@ -77,6 +86,7 @@ $string['rated'] = 'rated {$a}';
 $string['no_rating_given'] = 'Users Without Rating';
 $string['export_options'] = 'Export Options';
 $string['manual_allocation_saved'] = 'Your manual allocation has been saved.';
+<<<<<<< HEAD
 $string['publish_allocation'] = 'Publish Allocation';
 $string['distribution_published'] = 'Allocation has been published.';
 $string['create_moodle_groups'] = 'Create Moodle-Groups From Allocation';
@@ -84,6 +94,47 @@ $string['moodlegroups_created'] = 'Corresponding Moodle-Groups and -Groupings ha
 
 $string['manual_allocation_filter_only_raters'] = 'Show only users with ratings';
 $string['manual_allocation_filter_all'] = 'Show all users';
+=======
+$string['publish_allocation'] = 'Publish allocation';
+$string['distribution_published'] = 'Distribution has been published.';
+$string['create_moodle_groups'] = 'Create groups from allocations';
+$string['moodlegroups_created'] = 'The corresponding Moodle-Grouping and Groups have been created.';
+
+$string['modify_allocation_group'] = 'Modify Allocation';
+$string['modify_allocation_group_desc_too_early'] = 'The rating phase is currently running. You can start the allocation process after the rating phase has ended.';
+$string['modify_allocation_group_desc_ready'] = 'The rating phase has endend. You can now run the algorithm for an automatic allocation.';
+$string['modify_allocation_group_desc_ready_alloc_started'] = 'The rating phase has endend. Some allocations have already been created.
+Rerunning the algorithm, will delete all current allocations.
+You can now modify the allocations manually or proceed to pulishing the allocations.';
+$string['modify_allocation_group_desc_published'] = 'The allocations have been published. You can no longer alter them.';
+$string['publish_allocation_group'] = 'Publish Allocation';
+$string['publish_allocation_group_desc_too_early'] = 'There are no allocations yet. Please see the modify allocation section.';
+$string['publish_allocation_group_desc_ready'] = 'There are no allocations yet. Please see the modify allocation section.';
+$string['publish_allocation_group_desc_ready_alloc_started'] = 'The allocations can now be published.
+After publishing the allocations they can no longer be altered.
+Please have a look at the current allocations by following the link in the reports section.
+You can choose to create groups within your course for all allocations.
+If the same groups have already been created by this modul they will be purged before refilling them.
+This can be done before and after publishing the allocations.';
+$string['publish_allocation_group_desc_published'] = 'The allocations are already published.
+You can choose to create groups within your course for all allocations.
+If the same groups have already been created by this modul they will be purged before refilling them.';
+$string['reports_group'] = 'Reports';
+
+$string['manual_allocation'] = 'Manual allocation';
+$string['manual_allocation_form'] = 'Manual Allocation Form';
+$string['manual_allocation_filter_only_raters'] = 'Show only users, with ratings.';
+$string['manual_allocation_filter_all'] = 'Show all users.';
+>>>>>>> upstram/master
+
+$string['show_table'] = 'Show Ratings and Allocations';
+
+$string['allocation_statistics'] = 'Allocation Statistics';
+$string['show_allocation_statistics'] = 'Show Allocation Statistics';
+$string['allocation_statistics_description'] = 'This table gives an impression of the overall satisfaction of the allocation.
+It is counting the allocations according to the rating the user has given to the respective choice.
+In this case {$a->users} out of {$a->total} users got a choice they rated with "{$a->rating}".
+For {$a->unassigned} users no choice has been allocated yet.';
 
 $string['rating_raw'] = '{$a}';
 // </editor-fold>
@@ -97,17 +148,25 @@ $string['choice_title_help'] = 'Title of the choice. *Attention* all active choi
 $string['edit_choice'] = 'Edit choice \'{$a}\'';
 $string['rating_endtime'] = 'Rating ends at';
 $string['rating_begintime'] = 'Rating begins at';
+<<<<<<< HEAD
 $string['manual_allocation'] = 'Manual Allocation';
 $string['manual_allocation_form'] = 'Manual Allocation Form';
 $string['newchoice'] = 'Add new choice';
 $string['newchoicetitle'] = 'New choice \'{$a}\'';
 $string['deletechoice'] = 'Delete choice';
 $string['publishdate'] = 'Publication date';
+=======
+$string['newchoice'] = 'Add new Choice';
+$string['newchoicetitle'] = 'New Choice {$a}';
+$string['deletechoice'] = 'Delete Choice';
+$string['publishdate'] = 'Publishdate';
+>>>>>>> upstram/master
 $string['select_strategy'] = 'Rating strategy';
 $string['select_strategy_help'] = 'Choose a rating strategy:
 
 * **Yes-No** The user can rate each choice with yes or no.
 * **Yes-Maybe-No** The user can rate each choice with yes, maybe or no.
+<<<<<<< HEAD
 * **Likert Scale** The user can rate each choice with a number from a defined range. The range of numbers can be defined individually (beginning with 0). A high number corresponds to a high preference.
 * **Give Points** The user can rate the choices by assigning a number of points. The maximum number of points can be defined individually. A high number corresponds to a high preference.
 * **Rank Choices** The user has to rank the available choices. How many choices need to be rated can be defined individually.
@@ -115,6 +174,14 @@ $string['select_strategy_help'] = 'Choose a rating strategy:
 $string['show_table'] = 'Show ratings';
 $string['strategy_not_specified'] = 'You have to select a strategy.';
 $string['strategyoptions_for_strategy'] = 'Options for Strategy \'{$a}\'';
+=======
+* **Likert Scale** The user can rate each choice within a scale of integers. The size of the scale can be adjusted (beginning with 0). A high number means a high preference.
+* **Give Points** The user can rate the choices by assigning a number of points. The maximum number of points can be set below. The choice with the most points is preferred. 
+* **Rank Choices** The user has to state and order his n highest preferences. How many choices need to be rated can be set below.
+* **Tick Accept**  The user can state for each choice if it is acceptable for him.';
+$string['strategy_not_specified'] = 'You have to select a strategy';
+$string['strategyoptions_for_strategy'] = 'Options for Strategy "{$a}"';
+>>>>>>> upstram/master
 $string['err_required'] = 'You need to provide a value for this field.';
 $string['err_minimum'] = 'The minimum value for this field is {$a}.';
 $string['err_maximum'] = 'The maximum value for this field is {$a}.';
@@ -197,3 +264,6 @@ $string['log_ratingallocate_viewed_description'] =  'The user with id \'{$a->use
 
 $string['log_allocation_table_viewed'] = 'Allocation table viewed';
 $string['log_allocation_table_viewed_description'] =  'The user with id \'{$a->userid}\' viewed the allocation table for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+
+$string['log_allocation_statistics_viewed'] = 'Allocation statistics viewed';
+$string['log_allocation_statistics_viewed_description'] =  'The user with id \'{$a->userid}\' viewed the allocation statistics for the ratingallocate with id \'{$a->ratingallocateid}\'.';

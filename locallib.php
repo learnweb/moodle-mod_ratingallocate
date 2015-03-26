@@ -77,6 +77,7 @@ define('ACTION_MANUAL_ALLOCATION', 'manual_allocation');
 define('ACTION_PUBLISH_ALLOCATIONS', 'publish_allocations'); // make them displayable for the users
 define('ACTION_SOLVE_LP_SOLVE', 'solve_lp_solve'); // instead of only generating the mps-file, let it solve
 define('ACTION_SHOW_ALLOC_TABLE', 'show_alloc_table');
+define('ACTION_SHOW_STATISTICS', 'show_statistics');
 define('ACTION_ALLOCATION_TO_GROUPING', 'allocation_to_gropuping');
 
 /**
@@ -262,12 +263,39 @@ class ratingallocate {
             $renderer = $this->get_renderer();
             $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
                     $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(), $this->get_all_allocations(), $this);
+
+            $output .= html_writer::empty_tag('br', array());
             $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                             'ratingallocateid' => $this->ratingallocateid,
-                            'action' => '')), get_string('cancel'));
+                            'action' => '')), get_string('back'));
+            if (has_capability('mod/ratingallocate:export_ratings', $this->context)) {
+                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/export_ratings_csv.php', array('id' => $this->coursemodule->id,
+                    'ratingallocateid' => $this->ratingallocate->id)), get_string('download_votetest_allocation', ratingallocate_MOD_NAME));
+            }
             //Logging
             $event = \mod_ratingallocate\event\allocation_table_viewed::create_simple(
                     context_course::instance($this->course->id), $this->ratingallocateid);
+            $event->trigger();
+        }
+        return $output;
+    }
+
+    private function process_action_show_statistics(){
+        $output = '';
+        // Print ratings table
+        if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
+            global $OUTPUT;
+            $renderer = $this->get_renderer();
+
+            $output .= $renderer->distribution_table_for_ratingallocate($this);
+
+            $output .= html_writer::empty_tag('br', array());
+            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
+                'ratingallocateid' => $this->ratingallocateid,
+                'action' => '')), get_string('back'));
+            //Logging
+            $event = \mod_ratingallocate\event\allocation_statistics_viewed::create_simple(
+                context_course::instance($this->course->id), $this->ratingallocateid);
             $event->trigger();
         }
         return $output;
@@ -390,7 +418,7 @@ class ratingallocate {
         }
         return $this->process_default();
     }
-    
+
     private function process_default(){
         global $OUTPUT;
         $output = '';
@@ -407,42 +435,10 @@ class ratingallocate {
         
         // Print data and controls for teachers
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
-        
-            // Print group distribution algorithm control
-            if ($this->ratingallocate->accesstimestop < $now) {
-                
-                $output .= $renderer->distribution_table_for_ratingallocate($this);
-                
-                $output .= $renderer->algorithm_control_ready();
-                
-                
-                // if results not published yet, then do now
-                if ($this->ratingallocate->published == false) {
-                    $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
-                                    'ratingallocateid' => $this->ratingallocateid,
-                                    'action' => ACTION_PUBLISH_ALLOCATIONS)), get_string('publish_allocation', ratingallocate_MOD_NAME));
-                }
-                
-                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
-                                'ratingallocateid' => $this->ratingallocateid,
-                                'action' => ACTION_ALLOCATION_TO_GROUPING)), get_string('create_moodle_groups', ratingallocate_MOD_NAME));
-                
-                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
-                                'ratingallocateid' => $this->ratingallocateid,
-                                'action' => ACTION_MANUAL_ALLOCATION)), get_string('manual_allocation_form', ratingallocate_MOD_NAME));
-            } else {
-                $output .= $renderer->algorithm_control_tooearly();
-            }
-        
-            $output .= $renderer->show_ratings_table_button();
-        }
-        
-        if (has_capability('mod/ratingallocate:export_ratings', $this->context)) {
-            $output .= $OUTPUT->heading(get_string('export_options', ratingallocate_MOD_NAME), 2);
-            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/export_ratings_csv.php', array('id' => $this->coursemodule->id,
-                            'ratingallocateid' => $this->ratingallocate->id)), get_string('download_votetest_allocation', ratingallocate_MOD_NAME));
-            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/solver/export_lp_solve.php', array('id' => $this->coursemodule->id,
-                            'ratingallocateid' => $this->ratingallocate->id)), get_string('download_problem_mps_format', ratingallocate_MOD_NAME));
+            $status = $this->get_status();
+            $output .= $renderer->modify_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
+            $output .= $renderer->publish_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
+            $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context);
         }
         
         //Logging
@@ -488,10 +484,15 @@ class ratingallocate {
             case ACTION_MANUAL_ALLOCATION:
                 $output .= $this->process_action_manual_allocation();
                 break;
-            
+
             case ACTION_SHOW_ALLOC_TABLE:
                 $output .= $this->process_action_show_alloc_table();
                 break;
+
+            case ACTION_SHOW_STATISTICS:
+                $output .= $this->process_action_show_statistics();
+                break;
+
             default:
                 $output .= $this->process_default();
         }        
@@ -1066,6 +1067,27 @@ class ratingallocate {
             return new $strategyclassp($allsettings[$this->ratingallocate->strategy]);
         } else {
             return new $strategyclassp();
+        }
+    }
+
+    const DISTRIBUTION_STATUS_TOO_EARLY = 'too_early';
+    const DISTRIBUTION_STATUS_READY = 'ready';
+    const DISTRIBUTION_STATUS_READY_ALLOC_STARTED = 'ready_alloc_started';
+    const DISTRIBUTION_STATUS_PUBLISHED = 'published';
+
+    private function get_status(){
+        $now = time();
+        if ($this->ratingallocate->accesstimestop < $now) {
+            if ($this->ratingallocate->published == false) {
+                if (count($this->get_allocations()) > 0) {
+                    return self::DISTRIBUTION_STATUS_READY_ALLOC_STARTED;
+                }
+                return self::DISTRIBUTION_STATUS_READY;
+            } else {
+                return self::DISTRIBUTION_STATUS_PUBLISHED;
+            }
+        } else {
+            return self::DISTRIBUTION_STATUS_TOO_EARLY;
         }
     }
     
