@@ -67,9 +67,8 @@ $string['download_problem_mps_format'] = 'Download Equation in mps format (txt)'
 $string['download_votetest_allocation'] = 'Download Votes and Allocation (csv)';
 $string['no_user_to_allocate'] = 'There is no user you could allocate';
 $string['ratings_table'] = 'ratings table';
-$string['start_distribution'] = 'Start Distribution';
+$string['start_distribution'] = 'Run Algorithm';
 $string['start_distribution_explanation'] = ' An algorithm will automatically try to fairly distribute the users by ratings given';
-$string['too_early_to_distribute'] = 'Too early to distribute. Rating is still possible.';
 $string['unassigned_users'] = 'Unassigned Users';
 $string['invalid_publishdate'] = 'Publishdate is invalid. Must be after vote close.';
 $string['rated'] = 'rated {$a}';
@@ -78,11 +77,36 @@ $string['export_options'] = 'Export Options';
 $string['manual_allocation_saved'] = 'Your manual allocation has been saved.';
 $string['publish_allocation'] = 'Publish allocation';
 $string['distribution_published'] = 'Distribution has been published.';
-$string['create_moodle_groups'] = 'Create Moodle groups from allocation';
+$string['create_moodle_groups'] = 'Create groups from allocations';
 $string['moodlegroups_created'] = 'The corresponding Moodle-Grouping and Groups have been created.';
 
+$string['modify_allocation_group'] = 'Modify Allocation';
+$string['modify_allocation_group_desc_too_early'] = 'The rating phase is currently running. You can start the allocation process after the rating phase has ended.';
+$string['modify_allocation_group_desc_ready'] = 'The rating phase has endend. You can now run the algorithm for an automatic allocation.';
+$string['modify_allocation_group_desc_ready_alloc_started'] = 'The rating phase has endend. Some allocations have already been created.
+Rerunning the algorithm, will delete all current allocations.
+You can now modify the allocations manually or proceed to pulishing the allocations.';
+$string['modify_allocation_group_desc_published'] = 'The allocations have been published. You can no longer alter them.';
+$string['publish_allocation_group'] = 'Publish Allocation';
+$string['publish_allocation_group_desc_too_early'] = 'There are no allocations yet. Please see the modify allocation section.';
+$string['publish_allocation_group_desc_ready'] = 'There are no allocations yet. Please see the modify allocation section.';
+$string['publish_allocation_group_desc_ready_alloc_started'] = 'The allocations can now be published.
+After publishing the allocations they can no longer be altered.
+Please have a look at the current allocations by following the link in the reports section.
+You can choose to create groups within your course for all allocations.
+If the same groups have already been created by this modul they will be purged before refilling them.
+This can be done before and after publishing the allocations.';
+$string['publish_allocation_group_desc_published'] = 'The allocations are already published.
+You can choose to create groups within your course for all allocations.
+If the same groups have already been created by this modul they will be purged before refilling them.';
+$string['reports_group'] = 'Reports';
+
+$string['manual_allocation'] = 'Manual allocation';
+$string['manual_allocation_form'] = 'Manual Allocation Form';
 $string['manual_allocation_filter_only_raters'] = 'Show only users, with ratings.';
 $string['manual_allocation_filter_all'] = 'Show all users.';
+
+$string['show_table'] = 'Show Ratings and Allocations';
 
 $string['rating_raw'] = '{$a}';
 // </editor-fold>
@@ -96,8 +120,6 @@ $string['choice_title_help'] = 'Title of the choice. *Attention* all available c
 $string['edit_choice'] = 'Edit Choice {$a}';
 $string['rating_endtime'] = 'Rating ends at';
 $string['rating_begintime'] = 'Rating begins at';
-$string['manual_allocation'] = 'Manual allocation';
-$string['manual_allocation_form'] = 'Manual Allocation Form';
 $string['newchoice'] = 'Add new Choice';
 $string['newchoicetitle'] = 'New Choice {$a}';
 $string['deletechoice'] = 'Delete Choice';
@@ -111,7 +133,6 @@ $string['select_strategy_help'] = 'Choose the rating strategy:
 * **Give Points** The user can rate the choices by assigning a number of points. The maximum number of points can be set below. The choice with the most points is preferred. 
 * **Rank Choices** The user has to state and order his n highest preferences. How many choices need to be rated can be set below.
 * **Tick Accept**  The user can state for each choice if it is acceptable for him.';
-$string['show_table'] = 'Show Table';
 $string['strategy_not_specified'] = 'You have to select a strategy';
 $string['strategyoptions_for_strategy'] = 'Options for Strategy "{$a}"';
 $string['err_required'] = 'You need to provide a value for this field.';

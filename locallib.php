@@ -390,7 +390,7 @@ class ratingallocate {
         }
         return $this->process_default();
     }
-    
+
     private function process_default(){
         global $OUTPUT;
         $output = '';
@@ -407,34 +407,11 @@ class ratingallocate {
         
         // Print data and controls for teachers
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
-        
-            // Print group distribution algorithm control
-            if ($this->ratingallocate->accesstimestop < $now) {
-                
-                $output .= $renderer->distribution_table_for_ratingallocate($this);
-                
-                $output .= $renderer->algorithm_control_ready();
-                
-                
-                // if results not published yet, then do now
-                if ($this->ratingallocate->published == false) {
-                    $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
-                                    'ratingallocateid' => $this->ratingallocateid,
-                                    'action' => ACTION_PUBLISH_ALLOCATIONS)), get_string('publish_allocation', ratingallocate_MOD_NAME));
-                }
-                
-                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
-                                'ratingallocateid' => $this->ratingallocateid,
-                                'action' => ACTION_ALLOCATION_TO_GROUPING)), get_string('create_moodle_groups', ratingallocate_MOD_NAME));
-                
-                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
-                                'ratingallocateid' => $this->ratingallocateid,
-                                'action' => ACTION_MANUAL_ALLOCATION)), get_string('manual_allocation_form', ratingallocate_MOD_NAME));
-            } else {
-                $output .= $renderer->algorithm_control_tooearly();
-            }
-        
-            $output .= $renderer->show_ratings_table_button();
+            $status = $this->get_status();
+            $output .= $renderer->modify_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
+            $output .= $renderer->publish_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
+            $output .= $renderer->reports_group($status);
+         /* $output .= $renderer->distribution_table_for_ratingallocate($this);*/
         }
         
         if (has_capability('mod/ratingallocate:export_ratings', $this->context)) {
@@ -1066,6 +1043,27 @@ class ratingallocate {
             return new $strategyclassp($allsettings[$this->ratingallocate->strategy]);
         } else {
             return new $strategyclassp();
+        }
+    }
+
+    const DISTRIBUTION_STATUS_TOO_EARLY = 'too_early';
+    const DISTRIBUTION_STATUS_READY = 'ready';
+    const DISTRIBUTION_STATUS_READY_ALLOC_STARTED = 'ready_alloc_started';
+    const DISTRIBUTION_STATUS_PUBLISHED = 'published';
+
+    private function get_status(){
+        $now = time();
+        if ($this->ratingallocate->accesstimestop < $now) {
+            if ($this->ratingallocate->published == false) {
+                if (count($this->get_allocations()) > 0) {
+                    return self::DISTRIBUTION_STATUS_READY_ALLOC_STARTED;
+                }
+                return self::DISTRIBUTION_STATUS_READY;
+            } else {
+                return self::DISTRIBUTION_STATUS_PUBLISHED;
+            }
+        } else {
+            return self::DISTRIBUTION_STATUS_TOO_EARLY;
         }
     }
     
