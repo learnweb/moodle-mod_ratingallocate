@@ -200,12 +200,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $o .= html_writer::table($t);
         $o .= $this->output->box_end();
 
-        $status_summary = array();
-
-        $error = function($text) { return $this->notification($text); };
-        $warning = function($text) { return $this->notification($text); };
-        $info = function($text) { return html_writer::span($text,'info'); };
-
         if (empty($status->available_choices))
              $this->add_notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
         // To early to rate
@@ -218,32 +212,9 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             if ($status->is_published == true) {
                 $this->add_notification(get_string('rating_is_over', ratingallocate_MOD_NAME), 'notifymessage');
             } else {
-                $this->add_notification(get_string('results_not_yet_published', ratingallocate_MOD_NAME),'notifymessage');
+                $this->add_notification(get_string('results_not_yet_published', ratingallocate_MOD_NAME), 'notifymessage');
             }
         }
-
-     /*   // Links.
-        if ($status->view_type == ratingallocate_choice_status::STUDENT_VIEW) {
-            if ($status->canedit) {
-
-                if (!$status->submission) {
-                    $button_text = get_string('addsubmission', ratingallocate_MOD_NAME);
-                } else {
-                    $button_text = get_string('editsubmission', ratingallocate_MOD_NAME);
-                }
-                $o .= $this->output->box_start('generalbox submissionaction');
-                $urlparams = array(
-                                'id' => $status->coursemoduleid,
-                                'action' => DSBUILDER_ACTION_EDIT_SUBMISSION
-                );
-                $o .= $this->output->single_button(new moodle_url('/mod/dsbuilder/view.php', $urlparams), $button_text, 'get');
-                $o .= $this->output->box_start('boxaligncenter submithelp');
-                $o .= get_string('editsubmission_help', ratingallocate_MOD_NAME);
-                $o .= $this->output->box_end();
-                $o .= $this->output->box_end();
-            }
-        }
-        */
 
         $o .= $this->output->container_end();
         return $o;
