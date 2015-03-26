@@ -316,8 +316,15 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $tableurl = new moodle_url($PAGE->url, array('action' => ACTION_SHOW_ALLOC_TABLE));
 
-        // Button to display information about the distribution and ratings
+        // Link to display information about the allocations and ratings
         $output .= $this->action_link($tableurl->out(), get_string('show_table', ratingallocate_MOD_NAME));
+
+        $output .= html_writer::empty_tag('br', array());
+
+        $tableurl = new moodle_url($PAGE->url, array('action' => ACTION_SHOW_STATISTICS));
+
+        // Link to display statistical information about the allocations
+        $output .= $this->action_link($tableurl->out(), get_string('show_allocation_statistics', ratingallocate_MOD_NAME));
 
         /* TODO: File not readable
         $output .= html_writer::empty_tag('br', array());
@@ -383,8 +390,11 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $allocationtable->data = array($allocationrow);
         $allocationtable->head = $allocationhead;
 
-        $output = $this->heading(get_string('distribution_table', ratingallocate_MOD_NAME), 2);
+        $output = $this->heading(get_string('allocation_statistics', ratingallocate_MOD_NAME), 2);
         $output .= $this->box_start();
+        $output .= $this->format_text(get_string('allocation_statistics_description', ratingallocate_MOD_NAME,
+            array('users' => $distributiondata[max(array_keys($distributiondata))], 'total' => count($memberships),
+                'rating' => $titles[max(array_keys($distributiondata))], 'unassigned' => count($usersinchoice) - count($memberships))));
         $output .= html_writer::table($allocationtable);
         $output .= $this->box_end();
 

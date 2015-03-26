@@ -62,7 +62,6 @@ $string['allocation_manual_explain_only_raters'] = 'Select a choice to be assign
 $string['allocation_manual_explain_all'] = 'Select a choice to be assign to each user.';
 $string['distribution_algorithm'] = 'Distribution Algorithm';
 $string['distribution_saved'] = 'Distribution saved (in {$a}s).';
-$string['distribution_table'] = 'Distribution Table';
 $string['download_problem_mps_format'] = 'Download Equation in mps format (txt)';
 $string['download_votetest_allocation'] = 'Download Votes and Allocation (csv)';
 $string['no_user_to_allocate'] = 'There is no user you could allocate';
@@ -107,6 +106,13 @@ $string['manual_allocation_filter_only_raters'] = 'Show only users, with ratings
 $string['manual_allocation_filter_all'] = 'Show all users.';
 
 $string['show_table'] = 'Show Ratings and Allocations';
+
+$string['allocation_statistics'] = 'Allocation Statistics';
+$string['show_allocation_statistics'] = 'Show Allocation Statistics';
+$string['allocation_statistics_description'] = 'This table gives an impression of the overall satisfaction of the allocation.
+It is counting the allocations according to the rating the user has given to the respective choice.
+In this case {$a->users} out of {$a->total} users got a choice they rated with "{$a->rating}".
+For {$a->unassigned} users no choice has been allocated yet.';
 
 $string['rating_raw'] = '{$a}';
 // </editor-fold>
@@ -217,3 +223,6 @@ $string['log_ratingallocate_viewed_description'] =  'The user with id \'{$a->use
 
 $string['log_allocation_table_viewed'] = 'Allocation table viewed';
 $string['log_allocation_table_viewed_description'] =  'The user with id \'{$a->userid}\' viewed the allocation table for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+
+$string['log_allocation_statistics_viewed'] = 'Allocation statistics viewed';
+$string['log_allocation_statistics_viewed_description'] =  'The user with id \'{$a->userid}\' viewed the allocation statistics for the ratingallocate with id \'{$a->ratingallocateid}\'.';

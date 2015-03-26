@@ -77,6 +77,7 @@ define('ACTION_MANUAL_ALLOCATION', 'manual_allocation');
 define('ACTION_PUBLISH_ALLOCATIONS', 'publish_allocations'); // make them displayable for the users
 define('ACTION_SOLVE_LP_SOLVE', 'solve_lp_solve'); // instead of only generating the mps-file, let it solve
 define('ACTION_SHOW_ALLOC_TABLE', 'show_alloc_table');
+define('ACTION_SHOW_STATISTICS', 'show_statistics');
 define('ACTION_ALLOCATION_TO_GROUPING', 'allocation_to_gropuping');
 
 /**
@@ -278,6 +279,27 @@ class ratingallocate {
         }
         return $output;
     }
+
+    private function process_action_show_statistics(){
+        $output = '';
+        // Print ratings table
+        if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
+            global $OUTPUT;
+            $renderer = $this->get_renderer();
+
+            $output .= $renderer->distribution_table_for_ratingallocate($this);
+
+            $output .= html_writer::empty_tag('br', array());
+            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
+                'ratingallocateid' => $this->ratingallocateid,
+                'action' => '')), get_string('back'));
+            //Logging
+            $event = \mod_ratingallocate\event\allocation_statistics_viewed::create_simple(
+                context_course::instance($this->course->id), $this->ratingallocateid);
+            $event->trigger();
+        }
+        return $output;
+    }
     
     private function process_publish_allocations(){
         $now = time();
@@ -417,7 +439,6 @@ class ratingallocate {
             $output .= $renderer->modify_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
             $output .= $renderer->publish_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
             $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context);
-         /* $output .= $renderer->distribution_table_for_ratingallocate($this);*/
         }
         
         //Logging
@@ -463,10 +484,15 @@ class ratingallocate {
             case ACTION_MANUAL_ALLOCATION:
                 $output .= $this->process_action_manual_allocation();
                 break;
-            
+
             case ACTION_SHOW_ALLOC_TABLE:
                 $output .= $this->process_action_show_alloc_table();
                 break;
+
+            case ACTION_SHOW_STATISTICS:
+                $output .= $this->process_action_show_statistics();
+                break;
+
             default:
                 $output .= $this->process_default();
         }        
