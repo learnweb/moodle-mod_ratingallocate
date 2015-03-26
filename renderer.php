@@ -210,15 +210,15 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
              $this->add_notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
         // To early to rate
         if ($status->accesstimestart > $time) {
-             $this->add_notification(get_string('too_early_to_rate', ratingallocate_MOD_NAME));
+             $this->add_notification(get_string('too_early_to_rate', ratingallocate_MOD_NAME), 'notifymessage');
         }
         // to late to rate
         else if ($status->accesstimestop < $time) {
             // if results already published
             if ($status->is_published == true) {
-                $this->add_notification(get_string('rating_is_over', ratingallocate_MOD_NAME));
+                $this->add_notification(get_string('rating_is_over', ratingallocate_MOD_NAME), 'notifymessage');
             } else {
-                $this->add_notification(get_string('results_not_yet_published', ratingallocate_MOD_NAME),'info');
+                $this->add_notification(get_string('results_not_yet_published', ratingallocate_MOD_NAME),'notifymessage');
             }
         }
 
