@@ -337,13 +337,24 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * Output the ratingallocate modfify allocation
      */
-    public function reports_group($status) {
+    public function reports_group($ratingallocateid, $coursemoduleid, $status, $context) {
         global $PAGE;
         $output = '';
         $output .= $this->heading(get_string('reports_group', ratingallocate_MOD_NAME), 2);
         $output .= $this->box_start();
 
-        $output .= $this->show_ratings_table_button();
+        $tableurl = new moodle_url($PAGE->url, array('action' => ACTION_SHOW_ALLOC_TABLE));
+
+        // Button to display information about the distribution and ratings
+        $output .= $this->action_link($tableurl->out(), get_string('show_table', ratingallocate_MOD_NAME));
+
+        /* TODO: File not readable
+        $output .= html_writer::empty_tag('br', array());
+
+        if (has_capability('mod/ratingallocate:export_ratings', $context)) {
+            $output .= $this->action_link(new moodle_url('/mod/ratingallocate/solver/export_lp_solve.php', array('id' => $coursemoduleid,
+                'ratingallocateid' => $ratingallocateid)), get_string('download_problem_mps_format', ratingallocate_MOD_NAME));
+        }*/
 
         $output .= $this->box_end();
         return $output;
@@ -524,20 +535,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     private function get_option_title($rating, strategytemplate $strategy){
         $option = $strategy->translate_rating_to_titles($rating);
         return empty($option) ? get_string('no_rating_given', ratingallocate_MOD_NAME): get_string('rating_raw', ratingallocate_MOD_NAME, $option);
-    }
-
-    /**
-     * Renders the button to show the ratings table
-     */
-    public function show_ratings_table_button() {
-        global $PAGE;
-
-        $tableurl = new moodle_url($PAGE->url, array('action' => ACTION_SHOW_ALLOC_TABLE));
-
-        // Button to display information about the distribution and ratings
-        $output = $this->action_link($tableurl->out(), get_string('show_table', ratingallocate_MOD_NAME));
-
-        return $output;
     }
 
     /**

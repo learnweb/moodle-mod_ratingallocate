@@ -262,9 +262,15 @@ class ratingallocate {
             $renderer = $this->get_renderer();
             $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
                     $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(), $this->get_all_allocations(), $this);
+
+            $output .= html_writer::empty_tag('br', array());
             $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                             'ratingallocateid' => $this->ratingallocateid,
-                            'action' => '')), get_string('cancel'));
+                            'action' => '')), get_string('back'));
+            if (has_capability('mod/ratingallocate:export_ratings', $this->context)) {
+                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/export_ratings_csv.php', array('id' => $this->coursemodule->id,
+                    'ratingallocateid' => $this->ratingallocate->id)), get_string('download_votetest_allocation', ratingallocate_MOD_NAME));
+            }
             //Logging
             $event = \mod_ratingallocate\event\allocation_table_viewed::create_simple(
                     context_course::instance($this->course->id), $this->ratingallocateid);
@@ -410,16 +416,8 @@ class ratingallocate {
             $status = $this->get_status();
             $output .= $renderer->modify_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
             $output .= $renderer->publish_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
-            $output .= $renderer->reports_group($status);
+            $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context);
          /* $output .= $renderer->distribution_table_for_ratingallocate($this);*/
-        }
-        
-        if (has_capability('mod/ratingallocate:export_ratings', $this->context)) {
-            $output .= $OUTPUT->heading(get_string('export_options', ratingallocate_MOD_NAME), 2);
-            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/export_ratings_csv.php', array('id' => $this->coursemodule->id,
-                            'ratingallocateid' => $this->ratingallocate->id)), get_string('download_votetest_allocation', ratingallocate_MOD_NAME));
-            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/solver/export_lp_solve.php', array('id' => $this->coursemodule->id,
-                            'ratingallocateid' => $this->ratingallocate->id)), get_string('download_problem_mps_format', ratingallocate_MOD_NAME));
         }
         
         //Logging
