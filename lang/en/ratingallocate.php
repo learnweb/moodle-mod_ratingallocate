@@ -68,6 +68,7 @@ $string['no_user_to_allocate'] = 'There is no user you could allocate';
 $string['ratings_table'] = 'Ratings and Allocations';
 $string['start_distribution'] = 'Run Algorithm';
 $string['start_distribution_explanation'] = ' An algorithm will automatically try to fairly distribute the users by ratings given';
+$string['confirm_start_distribution'] = 'Running the algorithm, will delete all existing allocations, if any. Are you sure to continue?';
 $string['unassigned_users'] = 'Unassigned Users';
 $string['invalid_publishdate'] = 'Publishdate is invalid. Must be after vote close.';
 $string['rated'] = 'rated {$a}';

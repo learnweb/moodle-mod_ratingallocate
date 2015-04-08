@@ -259,9 +259,12 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $output .= html_writer::empty_tag('br', array());
 
-        $output .= $this->single_button($starturl->out(), get_string('start_distribution', ratingallocate_MOD_NAME), 'get',
-            array('tooltip'=>get_string('start_distribution_explanation', ratingallocate_MOD_NAME),
-                'disabled' => !$isready));
+        $button = new single_button($starturl, get_string('start_distribution', ratingallocate_MOD_NAME), 'get');
+        $button->disabled = !$isready;
+        $button->tooltip = get_string('start_distribution_explanation', ratingallocate_MOD_NAME);
+        $button->add_action(new confirm_action(get_string('confirm_start_distribution', ratingallocate_MOD_NAME)));
+
+        $output .= $this->render($button);
 
         $output .= $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
             'ratingallocateid' => $ratingallocateid,
