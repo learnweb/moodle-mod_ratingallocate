@@ -806,7 +806,7 @@ class ratingallocate {
      * @return multitype:
      */
     public function get_rating_data_for_user($userid) {
-        $sql = "SELECT c.id as choiceid, c.title, c.explanation, c.ratingallocateid, r.rating, r.id AS ratingid, r.userid
+        $sql = "SELECT c.id as choiceid, c.title, c.explanation, c.ratingallocateid, c.maxsize, r.rating, r.id AS ratingid, r.userid
                 FROM {ratingallocate_choices} c
            LEFT JOIN {ratingallocate_ratings} r
                   ON c.id = r.choiceid and r.userid = :userid
