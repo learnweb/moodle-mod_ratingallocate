@@ -214,7 +214,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->insertElementBefore($mform->removeElement($elementname, false), self::CHOICE_PLACEHOLDER_IDENTIFIER);
         $mform->setDefault($elementname, $choice->explanation);
         $mform->setType($elementname, PARAM_TEXT);
-        $mform->addRule($elementname,  $this->msgerrorrequired , 'required', null, 'server');
+        //$mform->addRule($elementname,  $this->msgerrorrequired , 'required', null, 'server');
 
         $elementname = $elemprefix . 'maxsize';
         $mform->addElement('text', $elementname, get_string('choice_maxsize', self::MOD_NAME));
