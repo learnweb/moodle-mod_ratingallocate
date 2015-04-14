@@ -71,6 +71,7 @@ $string['download_problem_mps_format'] = 'Download Equation (mps/txt)';
 $string['download_votetest_allocation'] = 'Download Ratings and Allocation (csv)';
 $string['too_early_to_distribute'] = 'Too early to distribute. Rating is not over.';
 $string['unassigned_users'] = 'Unassigned Users';
+$string['invalid_dates'] = 'Dates are invalid. Starting date must be before ending date.';
 $string['invalid_publishdate'] = 'Publication date is invalid. Publication Date must be after the end of rating.';
 $string['rated'] = 'rated {$a}';
 $string['no_rating_given'] = 'Users Without Rating';
@@ -131,7 +132,7 @@ $string['rating_begintime'] = 'Rating begins at';
 $string['newchoice'] = 'Add new choice';
 $string['newchoicetitle'] = 'New choice \'{$a}\'';
 $string['deletechoice'] = 'Delete choice';
-$string['publishdate'] = 'Publishdate';
+$string['publishdate'] = 'Publication date';
 
 $string['select_strategy'] = 'Rating strategy';
 $string['select_strategy_help'] = 'Choose a rating strategy:
