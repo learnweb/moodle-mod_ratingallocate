@@ -121,6 +121,7 @@ $string['choice_active'] = 'Choice active';
 $string['choice_active_help'] = 'Your choice gets displayed to your users only while its active. Inactive choices won\'t display';
 $string['choice_explanation'] = 'Explanation (additional) Text';
 $string['choice_maxsize'] = 'Max. number of members';
+$string['choice_maxsize_display'] = 'Maximum number of students';
 $string['choice_title'] = 'Title';
 $string['choice_title_help'] = 'Title of the choice. *Attention* all available choices will be outputted ordered by title.';
 $string['edit_choice'] = 'Edit Choice {$a}';

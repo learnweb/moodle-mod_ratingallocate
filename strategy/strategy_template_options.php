@@ -68,14 +68,14 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             $mform->setType($groupsidelem, PARAM_INT);
 
             // Show title.
-            $title = $data->title;
-            // Append max. no of members.
-            // TODO add setting in order to make this optional, as requested in issue #14.
-            $title .= " (" . get_string('choice_maxsize', ratingallocate_MOD_NAME) .
-                ": " . $data->maxsize . ")";
-
-            $mform->addElement('header', $headerelem, $title);
+            $mform->addElement('header', $headerelem, $data->title);
             $mform->setExpanded($headerelem);
+
+            // Show max. number of allocations.
+            // TODO add setting in order to make this optional, as requested in issue #14.
+            $mform->addElement('html', '<div class="mod-ratingallocate-choice-maxno">' .
+                '<span class="mod-ratingallocate-choice-maxno-desc">' . get_string('choice_maxsize_display', ratingallocate_MOD_NAME) .
+                ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
 
             // Show explanation.
             $mform->addElement('html', '<div>' . $data->explanation . '</div>');
