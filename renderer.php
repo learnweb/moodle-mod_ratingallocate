@@ -484,9 +484,12 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         ksort($choicesum);
         $rowchoicesum = new html_table_row();
-        $rowchoicesum->cells[-1] = get_string('ratings_table_sum_allocations', ratingallocate_MOD_NAME);
+        $rowchoicesum->cells[-1] = new html_table_cell(
+            get_string('ratings_table_sum_allocations', ratingallocate_MOD_NAME));
+        $rowchoicesum->cells[-1]->header = true;
         foreach ($choicesum as $choiceid => $sum) {
-            $rowchoicesum->cells[$choiceid] = $sum;
+            $rowchoicesum->cells[$choiceid] = new html_table_cell("$sum");
+            $rowchoicesum->cells[$choiceid]->header = true;
         }
 
         $ratingscells[-1] =& $rowchoicesum;
