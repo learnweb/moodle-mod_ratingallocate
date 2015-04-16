@@ -74,11 +74,9 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             // Show max. number of allocations.
             // TODO add setting in order to make this optional, as requested in issue #14.
             $mform->addElement('html', '<div class="mod-ratingallocate-choice-maxno">' .
-                '<span class="mod-ratingallocate-choice-maxno-desc">' . get_string('choice_maxsize_display', ratingallocate_MOD_NAME) .
+                '<span class="mod-ratingallocate-choice-maxno-desc">' .
+                get_string('choice_maxsize_display', ratingallocate_MOD_NAME) .
                 ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
-
-            // Show explanation.
-            $mform->addElement('html', '<div>' . $data->explanation . '</div>');
 
             // Options for each choice.
             $choiceoptions = $this->get_choiceoptions();
@@ -91,7 +89,8 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             $radioarray = $this->ratingallocate->prepare_horizontal_radio_choice($radioarray, $mform);
 
             // It is important to set a group name, so that later on errors can be displayed at the correct spot.
-            $mform->addGroup($radioarray, 'radioarr_' . $data->choiceid, '', null, false);
+            // Furthermore, use explanation as title/label of group.
+            $mform->addGroup($radioarray, 'radioarr_' . $data->choiceid, $data->explanation, null, false);
 
             $maxrating = max(array_keys($choiceoptions));
             // Try to restore previous ratings.
