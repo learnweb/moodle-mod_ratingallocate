@@ -415,8 +415,10 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         // $choices = get_rateable_choices_for_ratingallocate($ratingallocateid);
         $choicenames = array();
+        $choicesum = array();
         foreach ($choices as $choice) {
             $choicenames[$choice->id] = $choice->title;
+            $choicesum[$choice->id] = 0;
         }
 
         // get rating titles
@@ -475,9 +477,19 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
                     // Highlight the cell
                     $ratingscells[$userid][$choiceid]->attributes['class'] .= ' ratingallocate_member';
+                    $choicesum[$choiceid] += 1;
                 }
             }
         }
+
+        ksort($choicesum);
+        $rowchoicesum = new html_table_row();
+        $rowchoicesum->cells[-1] = '@Sum of allocations';
+        foreach ($choicesum as $choiceid => $sum) {
+            $rowchoicesum->cells[$choiceid] = $sum;
+        }
+
+        $ratingscells[-1] =& $rowchoicesum;
 
         // The ratings table shows the users' ratings for the choices
         $ratingstable = new html_table();
