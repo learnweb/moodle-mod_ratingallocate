@@ -462,7 +462,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         if ($configshownames) {
             // -1 is smaller than any id
-            $choicenames[-1] = 'User';
+            $choicenames[-1] = get_string('ratings_table_user', ratingallocate_MOD_NAME);
         }
         // Sort group names by groupid
         ksort($choicenames);
@@ -484,7 +484,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         ksort($choicesum);
         $rowchoicesum = new html_table_row();
-        $rowchoicesum->cells[-1] = '@Sum of allocations';
+        $rowchoicesum->cells[-1] = get_string('ratings_table_sum_allocations', ratingallocate_MOD_NAME);
         foreach ($choicesum as $choiceid => $sum) {
             $rowchoicesum->cells[$choiceid] = $sum;
         }
