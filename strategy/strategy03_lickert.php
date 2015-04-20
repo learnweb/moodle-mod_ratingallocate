@@ -92,16 +92,16 @@ class strategy extends \strategytemplate_options {
     }
 
 
-    public function get_default_settings(){      
+    public function get_default_settings() {
         $defaults = array(
                         self::MAXNO => 3,
                         self::COUNTLICKERT => 4,
-                        0 => '0 - '.get_string(strategy::STRATEGYID . '_rating_exclude', ratingallocate_MOD_NAME)
+                        0 => get_string(self::STRATEGYID . '_rating_exclude', ratingallocate_MOD_NAME, "0")
         );
-        
+
         for ($i = 1; $i <= $this->maxlickert; $i++) {
             if ($i == $this->maxlickert) {
-                $defaults[$i] = $i.' - '.get_string(strategy::STRATEGYID . '_rating_biggestwish', ratingallocate_MOD_NAME);
+                $defaults[$i] = get_string(self::STRATEGYID . '_rating_biggestwish', ratingallocate_MOD_NAME, "$i");
             } else {
                 $defaults[$i] = $i;
             }
