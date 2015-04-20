@@ -54,8 +54,9 @@ class strategy extends \strategytemplate {
         
         $output[1] = array(
                         'text',
-                        $this->get_settings_default_value(1),
-                        null
+                        get_string('strategy_settings_label', ratingallocate_MOD_NAME, $this->get_settings_default_value(1)),
+                        null,
+                        $this->get_settings_default_value(1)
                         
         );
         return $output;

@@ -74,7 +74,7 @@ $string['unassigned_users'] = 'Unassigned Users';
 $string['invalid_dates'] = 'Dates are invalid. Starting date must be before ending date.';
 $string['invalid_publishdate'] = 'Publication date is invalid. Publication Date must be after the end of rating.';
 $string['rated'] = 'rated {$a}';
-$string['no_rating_given'] = 'Users Without Rating';
+$string['no_rating_given'] = 'Unrated';
 $string['export_options'] = 'Export Options';
 $string['manual_allocation_saved'] = 'Your manual allocation has been saved.';
 $string['publish_allocation'] = 'Publish Allocation';
@@ -151,31 +151,33 @@ $string['err_minimum'] = 'The minimum value for this field is {$a}.';
 $string['err_maximum'] = 'The maximum value for this field is {$a}.';
 // </editor-fold>
 
+$string['strategy_settings_label'] = 'Designation for \'{$a}\'';
 
 /* Specific to Strategy01, YesNo */
 $string['strategy_yesno_name'] = 'Yes-No';	
 $string['strategy_yesno_setting_crossout'] = 'Maximum number of choices the user can rate with \'No\'';
 $string['strategy_yesno_max_no'] = 'You may only assign \'No\' to {$a} choice(s).';
 $string['strategy_yesno_maximum_crossout'] = 'You may only assign \'No\' to at most {$a} choice(s).';
-$string['strategy_yesno_rating_crossout'] = 'Designation for \'No\'';
-$string['strategy_yesno_rating_choose'] = 'Designation for \'Yes\'';
+$string['strategy_yesno_rating_crossout'] = 'No';
+$string['strategy_yesno_rating_choose'] = 'Yes';
 
 /* Specific to Strategy02, YesMayBeNo */
 $string['strategy_yesmaybeno_name'] = 'Yes-Maybe-No';
 $string['strategy_yesmaybeno_setting_maxno'] = 'Maximum number of choices the user can rate with \'No\'';
 $string['strategy_yesmaybeno_max_no'] = 'You may only assign \'No\' to {$a} choice(s).';
 $string['strategy_yesmaybeno_max_count_no'] = 'You may only assign \'No\' to at most {$a} choice(s).';
-$string['strategy_yesmaybeno_rating_no'] = 'Designation for \'No\'';
-$string['strategy_yesmaybeno_rating_maybe'] = 'Designation for \'Maybe\'';
-$string['strategy_yesmaybeno_rating_yes'] = 'Designation for \'Yes\'';
+$string['strategy_yesmaybeno_rating_no'] = 'No';
+$string['strategy_yesmaybeno_rating_maybe'] = 'Maybe';
+$string['strategy_yesmaybeno_rating_yes'] = 'Yes';
 
 // Specific to Strategy03, Likert
 $string['strategy_lickert_name'] = 'Likert Scale';
 $string['strategy_lickert_setting_maxno'] = 'Maximum number of choices the user can rate with 0';
 $string['strategy_lickert_max_no'] = 'You may only assign 0 points to at most {$a} choice(s).';
 $string['strategy_lickert_setting_maxlickert'] = 'Highest number on the likert scale (3, 5 or 7 are common values)';
-$string['strategy_lickert_rating_biggestwish'] = 'Highly appreciated';
-$string['strategy_lickert_rating_exclude'] = 'Exclude';
+$string['strategy_lickert_rating_biggestwish'] = '{$a} - Highly appreciated';
+$string['strategy_lickert_rating_exclude'] = '{$a} - Exclude';
+
 
 // Specific to Strategy04, Points
 $string['strategy_points_name'] = 'Give Points';

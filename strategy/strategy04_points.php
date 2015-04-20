@@ -50,12 +50,14 @@ class strategy extends \strategytemplate {
             self::MAXZERO => array( // maximale Anzahl 'kannnicht'
                 'int', 
                 get_string(self::STRATEGYID . '_setting_maxzero', ratingallocate_MOD_NAME), 
-                $this->get_settings_value(self::MAXZERO)
+                $this->get_settings_value(self::MAXZERO),
+                null
             ), 
             self::TOTALPOINTS => array( // wie viele Felder es gibt
                 'int', 
                 get_string(self::STRATEGYID . '_setting_totalpoints', ratingallocate_MOD_NAME), 
-                $this->get_settings_value(self::TOTALPOINTS)
+                $this->get_settings_value(self::TOTALPOINTS),
+                null
             )
         );
     }
