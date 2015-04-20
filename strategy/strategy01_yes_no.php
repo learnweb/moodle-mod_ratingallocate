@@ -48,14 +48,16 @@ class strategy extends \strategytemplate_options {
             self::MAXCROSSOUT => array(
                 'int',
                 get_string(self::STRATEGYID . '_setting_crossout', ratingallocate_MOD_NAME),
-                $this->get_settings_value(self::MAXCROSSOUT)
+                $this->get_settings_value(self::MAXCROSSOUT),
+                null
             )
         );
         foreach($this->get_choiceoptions() as $id => $option){
             $output[$id] = array(
                             'text',
-                            $this->get_settings_default_value($id),
-                            null
+                            get_string('strategy_settings_label', ratingallocate_MOD_NAME, $this->get_settings_default_value($id)),
+                            null,
+                            $this->get_settings_default_value($id)
             );
         }
         return $output;

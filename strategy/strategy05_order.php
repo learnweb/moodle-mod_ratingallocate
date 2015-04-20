@@ -48,7 +48,8 @@ class strategy extends \strategytemplate {
             self::COUNTOPTIONS => array(// wie viele Felder es gibt
                 'int',
                 get_string(self::STRATEGYID . '_setting_countoptions', ratingallocate_MOD_NAME), 
-                $this->get_settings_value(self::COUNTOPTIONS)
+                $this->get_settings_value(self::COUNTOPTIONS),
+                null
             )
         );
     }

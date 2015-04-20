@@ -168,8 +168,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         $attributes = array('size' => '20');
 
-        if (!isset($value[2])) {
-            $attributes['placeholder'] = ($value[1]);
+        if (isset($value[3])) {
+            $attributes['placeholder'] = ($value[3]);
         }
 
         if ($value[0] == "text") {

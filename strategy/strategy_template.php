@@ -36,7 +36,7 @@ abstract class strategytemplate {
 
     /** @const STRATEGYID string identifier, for language translation, etc.*/
     const STRATEGYID = '';
-        
+
     private $_strategy_settings;
     
     public function __construct(array $strategy_settings = null){
@@ -77,12 +77,25 @@ abstract class strategytemplate {
     /**
      * Return the dynamic Settingsfields the strategy needes
      * If any dynamic Settingsfields is returned, a refresh button will be included in the view.
-     * @param $mform The required data can be drawn from the moodleform
+     * Return object:
+     * array{
+     * * Value[0]: Type of settingsfield (e.g. 'text', 'int')
+     * * Value[1]: Label of the settingsfield
+     * * Value[2]: Default value (may be null)
+     * * Value[3]: Placeholder text (may be null)
+     * }
      */
     public abstract function get_dynamic_settingfields();
 
     /**
      * Return the static Settingsfields the strategy needes
+     * Return object:
+     * array{
+     * * Value[0]: Type of settingsfield (e.g. 'text', 'int')
+     * * Value[1]: Label of the settingsfield
+     * * Value[2]: Default value (may be null)
+     * * Value[3]: Placeholder text (may be null)
+     * }
      */
     public abstract function get_static_settingfields();
 

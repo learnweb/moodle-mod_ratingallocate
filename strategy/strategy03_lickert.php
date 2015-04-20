@@ -57,12 +57,14 @@ class strategy extends \strategytemplate_options {
             self::MAXNO => array(// maximale Anzahl 'kannnicht'
                 'int',
                 get_string(self::STRATEGYID . '_setting_maxno', ratingallocate_MOD_NAME),
-                $this->get_settings_value(self::MAXNO)
+                $this->get_settings_value(self::MAXNO),
+                null
             ),
             self::COUNTLICKERT => array(// wie viele Felder es gibt
                 'int',
                 get_string(self::STRATEGYID . '_setting_maxlickert', ratingallocate_MOD_NAME),
-                $this->get_settings_value(self::COUNTLICKERT)
+                $this->get_settings_value(self::COUNTLICKERT),
+                null
             )
         );
     }
@@ -72,9 +74,10 @@ class strategy extends \strategytemplate_options {
         $output = array();
         foreach($this->get_choiceoptions() as $id => $option){
             $output[$id] = array(
-                'text', 
-                $this->get_settings_default_value($id), 
-                null
+                'text',
+                get_string('strategy_settings_label', ratingallocate_MOD_NAME, $this->get_settings_default_value($id)),
+                null,
+                $this->get_settings_default_value($id)
             );
         }
         return $output;
@@ -89,16 +92,16 @@ class strategy extends \strategytemplate_options {
     }
 
 
-    public function get_default_settings(){      
+    public function get_default_settings() {
         $defaults = array(
                         self::MAXNO => 3,
                         self::COUNTLICKERT => 4,
-                        0 => '0 - '.get_string(strategy::STRATEGYID . '_rating_exclude', ratingallocate_MOD_NAME)
+                        0 => get_string(self::STRATEGYID . '_rating_exclude', ratingallocate_MOD_NAME, "0")
         );
-        
+
         for ($i = 1; $i <= $this->maxlickert; $i++) {
             if ($i == $this->maxlickert) {
-                $defaults[$i] = $i.' - '.get_string(strategy::STRATEGYID . '_rating_biggestwish', ratingallocate_MOD_NAME);
+                $defaults[$i] = get_string(self::STRATEGYID . '_rating_biggestwish', ratingallocate_MOD_NAME, "$i");
             } else {
                 $defaults[$i] = $i;
             }

@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // <editor-fold defaultstate="collapsed" desc="General Plugin Settings">
 $string['ratingallocate'] = 'ratingallocate';
-$string['ratingallocatename'] = 'Name of this Allocation';
+$string['ratingallocatename'] = 'Name of this allocation';
 $string['ratingallocatename_help'] = 'Please choose a name for this ratingallocate activity.';
 $string['modulename'] = 'Ratingallocate';
 $string['modulename_help'] = 'The ratingallocate module lets you define choices your participants can then rate. The participants can then be distributed automatically to the available choices according to their ratings.';
@@ -69,25 +69,25 @@ $string['start_distribution_explanation'] = ' An algorithm will automatically tr
 $string['distribution_table'] = 'Distribution Table';
 $string['download_problem_mps_format'] = 'Download Equation (mps/txt)';
 $string['download_votetest_allocation'] = 'Download Ratings and Allocation (csv)';
-$string['too_early_to_distribute'] = 'Too early to distribute. Rating is not over.';
+$string['too_early_to_distribute'] = 'Too early to distribute. Rating is not over yet.';
 $string['unassigned_users'] = 'Unassigned Users';
 $string['invalid_dates'] = 'Dates are invalid. Starting date must be before ending date.';
-$string['invalid_publishdate'] = 'Publication date is invalid. Publication Date must be after the end of rating.';
+$string['invalid_publishdate'] = 'Publication date is invalid. Publication date must be after the end of rating.';
 $string['rated'] = 'rated {$a}';
-$string['no_rating_given'] = 'Users Without Rating';
+$string['no_rating_given'] = 'Unrated';
 $string['export_options'] = 'Export Options';
 $string['manual_allocation_saved'] = 'Your manual allocation has been saved.';
 $string['publish_allocation'] = 'Publish Allocation';
 $string['distribution_published'] = 'Allocation has been published.';
 $string['create_moodle_groups'] = 'Create Groups From Allocation';
-$string['moodlegroups_created'] = 'The corresponding Moodle-Groups and -Groupings have been created.';
+$string['moodlegroups_created'] = 'The corresponding Moodle groups and groupings have been created.';
 
 $string['modify_allocation_group'] = 'Modify Allocation';
 $string['modify_allocation_group_desc_too_early'] = 'The rating phase is currently running. You can start the allocation process after the rating phase has ended.';
 $string['modify_allocation_group_desc_ready'] = 'The rating phase has endend. You can now run the algorithm for an automatic allocation.';
-$string['modify_allocation_group_desc_ready_alloc_started'] = 'The rating phase has endend. Some allocations have already been created.
-Rerunning the algorithm, will delete all current allocations.
-You can now modify the allocations manually or proceed to pulishing the allocations.';
+$string['modify_allocation_group_desc_ready_alloc_started'] = 'The rating phase has ended. Some allocations have already been created.
+Rerunning the algorithm will delete all current allocations.
+You can now modify the allocations manually or proceed to publishing the allocations.';
 $string['modify_allocation_group_desc_published'] = 'The allocations have been published. You can no longer alter them.';
 $string['publish_allocation_group'] = 'Publish Allocation';
 $string['publish_allocation_group_desc_too_early'] = 'There are no allocations yet. Please see the modify allocation section.';
@@ -96,11 +96,11 @@ $string['publish_allocation_group_desc_ready_alloc_started'] = 'The allocations 
 After publishing the allocations they can no longer be altered.
 Please have a look at the current allocations by following the link in the reports section.
 You can choose to create groups within your course for all allocations.
-If the same groups have already been created by this modul they will be purged before refilling them.
+If the same groups have already been created by this plugin, they will be purged before refilling them.
 This can be done before and after publishing the allocations.';
 $string['publish_allocation_group_desc_published'] = 'The allocations are already published.
 You can choose to create groups within your course for all allocations.
-If the same groups have already been created by this modul they will be purged before refilling them.';
+If the same groups have already been created by this plugin, they will be purged before refilling them.';
 $string['reports_group'] = 'Reports';
 
 $string['manual_allocation'] = 'Manual Allocation';
@@ -126,11 +126,11 @@ $string['choice_explanation'] = 'Description (optional)';
 $string['choice_maxsize'] = 'Max. number of participants';
 $string['choice_title'] = 'Title';
 $string['choice_title_help'] = 'Title of the choice. *Attention* all active choices will be displayed while ordered by title.';
-$string['edit_choice'] = 'Edit choice \'{$a}\'';
+$string['edit_choice'] = 'Edit choice "{$a}"';
 $string['rating_endtime'] = 'Rating ends at';
 $string['rating_begintime'] = 'Rating begins at';
 $string['newchoice'] = 'Add new choice';
-$string['newchoicetitle'] = 'New choice \'{$a}\'';
+$string['newchoicetitle'] = 'New choice {$a}';
 $string['deletechoice'] = 'Delete choice';
 $string['publishdate'] = 'Publication date';
 
@@ -144,38 +144,40 @@ $string['select_strategy_help'] = 'Choose a rating strategy:
 * **Rank Choices** The user has to rank the available choices. How many choices need to be rated can be defined individually.
 * **Tick Accept**  The user can state for each choice whether it is acceptable for him/her.';
 $string['strategy_not_specified'] = 'You have to select a strategy.';
-$string['strategyoptions_for_strategy'] = 'Options for Strategy \'{$a}\'';
+$string['strategyoptions_for_strategy'] = 'Options for Strategy "{$a}"';
 
 $string['err_required'] = 'You need to provide a value for this field.';
 $string['err_minimum'] = 'The minimum value for this field is {$a}.';
 $string['err_maximum'] = 'The maximum value for this field is {$a}.';
 // </editor-fold>
 
+$string['strategy_settings_label'] = 'Designation for "{$a}"';
 
 /* Specific to Strategy01, YesNo */
 $string['strategy_yesno_name'] = 'Yes-No';	
-$string['strategy_yesno_setting_crossout'] = 'Maximum number of choices the user can rate with \'No\'';
-$string['strategy_yesno_max_no'] = 'You may only assign \'No\' to {$a} choice(s).';
-$string['strategy_yesno_maximum_crossout'] = 'You may only assign \'No\' to at most {$a} choice(s).';
-$string['strategy_yesno_rating_crossout'] = 'Designation for \'No\'';
-$string['strategy_yesno_rating_choose'] = 'Designation for \'Yes\'';
+$string['strategy_yesno_setting_crossout'] = 'Maximum number of choices the user can rate with "No"';
+$string['strategy_yesno_max_no'] = 'You may only assign "No" to {$a} choice(s).';
+$string['strategy_yesno_maximum_crossout'] = 'You may only assign "No" to at most {$a} choice(s).';
+$string['strategy_yesno_rating_crossout'] = 'No';
+$string['strategy_yesno_rating_choose'] = 'Yes';
 
 /* Specific to Strategy02, YesMayBeNo */
 $string['strategy_yesmaybeno_name'] = 'Yes-Maybe-No';
-$string['strategy_yesmaybeno_setting_maxno'] = 'Maximum number of choices the user can rate with \'No\'';
-$string['strategy_yesmaybeno_max_no'] = 'You may only assign \'No\' to {$a} choice(s).';
-$string['strategy_yesmaybeno_max_count_no'] = 'You may only assign \'No\' to at most {$a} choice(s).';
-$string['strategy_yesmaybeno_rating_no'] = 'Designation for \'No\'';
-$string['strategy_yesmaybeno_rating_maybe'] = 'Designation for \'Maybe\'';
-$string['strategy_yesmaybeno_rating_yes'] = 'Designation for \'Yes\'';
+$string['strategy_yesmaybeno_setting_maxno'] = 'Maximum number of choices the user can rate with "No"';
+$string['strategy_yesmaybeno_max_no'] = 'You may only assign "No" to {$a} choice(s).';
+$string['strategy_yesmaybeno_max_count_no'] = 'You may only assign "No" to at most {$a} choice(s).';
+$string['strategy_yesmaybeno_rating_no'] = 'No';
+$string['strategy_yesmaybeno_rating_maybe'] = 'Maybe';
+$string['strategy_yesmaybeno_rating_yes'] = 'Yes';
 
 // Specific to Strategy03, Likert
 $string['strategy_lickert_name'] = 'Likert Scale';
 $string['strategy_lickert_setting_maxno'] = 'Maximum number of choices the user can rate with 0';
 $string['strategy_lickert_max_no'] = 'You may only assign 0 points to at most {$a} choice(s).';
 $string['strategy_lickert_setting_maxlickert'] = 'Highest number on the likert scale (3, 5 or 7 are common values)';
-$string['strategy_lickert_rating_biggestwish'] = 'Highly appreciated';
-$string['strategy_lickert_rating_exclude'] = 'Exclude';
+$string['strategy_lickert_rating_biggestwish'] = '{$a} - Highly appreciated';
+$string['strategy_lickert_rating_exclude'] = '{$a} - Exclude';
+
 
 // Specific to Strategy04, Points
 $string['strategy_points_name'] = 'Give Points';
@@ -209,25 +211,25 @@ $string['allocation_notification_message'] = 'Concerning the "{$a->ratingallocat
 
 // Logging
 $string['log_rating_saved'] = 'User rating saved';
-$string['log_rating_saved_description'] =  'The user with id \'{$a->userid}\' saved his rating for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+$string['log_rating_saved_description'] =  'The user with id "{$a->userid}" saved his rating for the ratingallocate with id "{$a->ratingallocateid}".';
 
 $string['log_rating_viewed'] = 'User rating viewed';
-$string['log_rating_viewed_description'] =  'The user with id \'{$a->userid}\' viewed its rating for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+$string['log_rating_viewed_description'] =  'The user with id "{$a->userid}" viewed his rating for the ratingallocate with id "{$a->ratingallocateid}".';
 
 $string['log_allocation_published'] = 'Allocation published';
-$string['log_allocation_published_description'] =  'The user with id \'{$a->userid}\' published the allocation for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+$string['log_allocation_published_description'] =  'The user with id "{$a->userid}" published the allocation for the ratingallocate with id "{$a->ratingallocateid}".';
 
 $string['log_distribution_triggered'] = 'Distribution triggered';
-$string['log_distribution_triggered_description'] =  'The user with id \'{$a->userid}\' triggered the distribution for the ratingallocate with id \'{$a->ratingallocateid}\'. The algorithm needed {$a->time_needed}sec.';
+$string['log_distribution_triggered_description'] =  'The user with id "{$a->userid}" triggered the distribution for the ratingallocate with id "{$a->ratingallocateid}". The algorithm needed {$a->time_needed}sec.';
 
 $string['log_manual_allocation_saved'] = 'Manual allocation saved';
-$string['log_manual_allocation_saved_description'] =  'The user with id \'{$a->userid}\' saved a manual allocation for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+$string['log_manual_allocation_saved_description'] =  'The user with id "{$a->userid}" saved a manual allocation for the ratingallocate with id "{$a->ratingallocateid}".';
 
 $string['log_ratingallocate_viewed'] = 'Ratingallocate viewed';
-$string['log_ratingallocate_viewed_description'] =  'The user with id \'{$a->userid}\' viewed the ratingallocate with id \'{$a->ratingallocateid}\'.';
+$string['log_ratingallocate_viewed_description'] =  'The user with id "{$a->userid}" viewed the ratingallocate with id "{$a->ratingallocateid}".';
 
 $string['log_allocation_table_viewed'] = 'Allocation table viewed';
-$string['log_allocation_table_viewed_description'] =  'The user with id \'{$a->userid}\' viewed the allocation table for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+$string['log_allocation_table_viewed_description'] =  'The user with id "{$a->userid}" viewed the allocation table for the ratingallocate with id "{$a->ratingallocateid}".';
 
 $string['log_allocation_statistics_viewed'] = 'Allocation statistics viewed';
-$string['log_allocation_statistics_viewed_description'] =  'The user with id \'{$a->userid}\' viewed the allocation statistics for the ratingallocate with id \'{$a->ratingallocateid}\'.';
+$string['log_allocation_statistics_viewed_description'] =  'The user with id "{$a->userid}" viewed the allocation statistics for the ratingallocate with id "{$a->ratingallocateid}".';
