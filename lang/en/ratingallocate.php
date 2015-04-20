@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // <editor-fold defaultstate="collapsed" desc="General Plugin Settings">
 $string['ratingallocate'] = 'ratingallocate';
-$string['ratingallocatename'] = 'Name of this Allocation';
+$string['ratingallocatename'] = 'Name of this allocation';
 $string['ratingallocatename_help'] = 'Please choose a name for this ratingallocate activity.';
 $string['modulename'] = 'Ratingallocate';
 $string['modulename_help'] = 'The ratingallocate module lets you define choices your participants can then rate. The participants can then be distributed automatically to the available choices according to their ratings.';
