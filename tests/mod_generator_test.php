@@ -31,7 +31,7 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
     public function test_create_instance() {
 
         global $DB, $USER;
-        set_time_limit(0);
+        core_php_time_limit::raise();
         $this->resetAfterTest();
         $this->setAdminUser();
 

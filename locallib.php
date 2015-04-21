@@ -174,7 +174,7 @@ class ratingallocate {
             global $PAGE;
             // try to get some more memory, 500 users in 10 groups take about 15mb
             raise_memory_limit(MEMORY_EXTRA);
-            set_time_limit(120);
+            core_php_time_limit::raise();
             //distribute choices
             $time_needed = $this->distrubute_choices();
     

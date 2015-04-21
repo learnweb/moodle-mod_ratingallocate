@@ -87,7 +87,7 @@ class distributor {
      */
     public function distribute_users(\ratingallocate $ratingallocate) {
         // Extend PHP time limit
-//        set_time_limit(0);
+//        core_php_time_limit::raise();
 
         // Load data from database
         $choicerecords = $ratingallocate->get_rateable_choices();
