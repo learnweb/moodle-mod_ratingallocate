@@ -92,6 +92,14 @@ define('ACTION_ALLOCATION_TO_GROUPING', 'allocation_to_gropuping');
  * @property int $accesstimestop
  * @property int $publishdate
  * @property int $published
+ * @property int $notificationsend
+ * @property int $runalgorithmbycron
+ * @property int $algorithmstarttime
+ * @property int $algorithmstatus
+ * -1 failure while running algorithm;
+ * 0 algorithm has not been running;
+ * 1 algorithm running;
+ * 2 algorithm finished;
  * @property string $setting
  */
 class ratingallocate_db_wrapper {
@@ -454,7 +462,8 @@ class ratingallocate {
         // Print data and controls for teachers
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             $status = $this->get_status();
-            $output .= $renderer->modify_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
+            $output .= $renderer->modify_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status,
+                (int) $this->ratingallocate->algorithmstatus, (boolean) $this->ratingallocate->runalgorithmbycron);
             $output .= $renderer->publish_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
             $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context);
         }
@@ -526,6 +535,8 @@ class ratingallocate {
         $choice_status->strategy = $this->get_strategy_class();
         $choice_status->show_distribution_info = has_capability('mod/ratingallocate:start_distribution', $this->context);
         $choice_status->show_user_info = has_capability('mod/ratingallocate:give_rating', $this->context, null, false);
+        $choice_status->algorithmstarttime = $this->ratingallocate->algorithmstarttime;
+        $choice_status->algorithmstatus = $this->get_algorithm_status();
         $choice_status_output = $renderer->render($choice_status);
         
         // Finish the page (Since the header renders the notifications, it needs to be rendered after the actions)
@@ -1126,6 +1137,15 @@ class ratingallocate {
         } else {
             return self::DISTRIBUTION_STATUS_TOO_EARLY;
         }
+    }
+
+    /**
+     * Returns the current algorithm status.
+     * The different values can be found in the class ratingallocate_status.
+     * @return int the current algorithm status
+     */
+    public function get_algorithm_status(){
+        return (int) $this->ratingallocate->algorithmstatus;
     }
     
 }
