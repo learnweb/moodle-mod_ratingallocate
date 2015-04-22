@@ -40,6 +40,9 @@ $string['ratingallocate:view'] = 'View rating allocation instances';
 $string['ratingallocate:give_rating'] = 'Create/edit own choice';
 $string['ratingallocate:start_distribution'] = 'Start allocation of users to choices';
 $string['ratingallocate:export_ratings'] = 'Ability to export user ratings';
+$string['algorithmtimeout'] = 'Algorithm timeout';
+$string['configalgorithmtimeout'] = 'The time in seconds after which the algorithm is assumed to be stuck.
+The current run is terminated and marked as failed.';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Rating Form for Users">
 $string['choicestatusheading'] = 'Status';
