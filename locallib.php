@@ -32,6 +32,7 @@ require_once($CFG->libdir  . '/eventslib.php');
 require_once(dirname(__FILE__) . '/form_manual_allocation.php');
 require_once(dirname(__FILE__) . '/renderable.php');
 require_once($CFG->dirroot.'/group/lib.php');
+require_once(__DIR__.'/classes/algorithm_status.php');
 
 // Takes care of loading all the solvers
 require_once(dirname(__FILE__) . '/solver/ford-fulkerson-koegel.php');
@@ -168,24 +169,41 @@ class ratingallocate {
         $this->context = $context;
     }
 
+    /**
+     * @return string
+     * @throws coding_exception
+     */
     private function process_action_start_distribution(){
+        global $DB;
         // Process form: Start distribution and call default page after finishing
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
-            global $PAGE;
-            // try to get some more memory, 500 users in 10 groups take about 15mb
-            raise_memory_limit(MEMORY_EXTRA);
-            core_php_time_limit::raise();
-            //distribute choices
-            $time_needed = $this->distrubute_choices();
-    
-            //Logging
-            $event = \mod_ratingallocate\event\distribution_triggered::create_simple(
-                    context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations_for_logging(), $time_needed);
-            $event->trigger();
-            
-            /* @var $renderer mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
-            $renderer->add_notification(get_string('distribution_saved', ratingallocate_MOD_NAME, $time_needed), self::NOTIFY_SUCCESS);
+            if ($this->get_algorithm_status() === \ratingallocate\algorithm_status::running) {
+                // Don't run, if an instance is already running
+                $renderer->add_notification(get_string('algorithm_already_running', ratingallocate_MOD_NAME));
+            } else if ($this->ratingallocate->runalgorithmbycron === "1" &&
+                $this->get_algorithm_status() === \ratingallocate\algorithm_status::notstarted
+            ) {
+                // Don't run, if the cron has not started yet, but is set as priority
+                $renderer->add_notification(get_string('algorithm_scheduled_for_cron', ratingallocate_MOD_NAME));
+            } else {
+                $this->origdbrecord->{this_db\ratingallocate::ALGORITHMSTATUS} = \ratingallocate\algorithm_status::running;
+                $DB->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+                // try to get some more memory, 500 users in 10 groups take about 15mb
+                raise_memory_limit(MEMORY_EXTRA);
+                core_php_time_limit::raise();
+                //distribute choices
+                $time_needed = $this->distrubute_choices();
+
+                //Logging
+                $event = \mod_ratingallocate\event\distribution_triggered::create_simple(
+                    context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations_for_logging(), $time_needed);
+                $event->trigger();
+
+                /* @var $renderer mod_ratingallocate_renderer */
+
+                $renderer->add_notification(get_string('distribution_saved', ratingallocate_MOD_NAME, $time_needed), self::NOTIFY_SUCCESS);
+            }
             return $this->process_default();
         }
     }
