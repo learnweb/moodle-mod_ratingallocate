@@ -548,14 +548,33 @@ class ratingallocate {
     public function distrubute_choices() {
         require_capability('mod/ratingallocate:start_distribution', $this->context);
 
+        // Set algorithm status to running
+        $this->origdbrecord->algorithmstatus = \ratingallocate\algorithm_status::running;
+        $this->origdbrecord->algorithmstarttime = time();
+        $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+
         $distributor = new solver_edmonds_karp();
         // $distributor = new solver_ford_fulkerson();
         $timestart = microtime(true);
         $distributor->distribute_users($this);
         $time_needed = (microtime(true) - $timestart);
         // echo memory_get_peak_usage();
+
+        // Set algorithm status to finished
+        $this->origdbrecord->algorithmstatus = \ratingallocate\algorithm_status::finished;
+        $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+
         return $time_needed;
     }
+
+    /**
+     * Call this function when the algorithm failed and the algorithm status has to be set to failed.
+     */
+    public function set_algorithm_failed(){
+        $this->origdbrecord->algorithmstatus = \ratingallocate\algorithm_status::failure;
+        $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+    }
+
     /**
      * Returns all users, that have not been allocated but have given ratings
      *

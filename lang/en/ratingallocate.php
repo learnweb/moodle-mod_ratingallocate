@@ -40,6 +40,7 @@ $string['ratingallocate:view'] = 'View rating allocation instances';
 $string['ratingallocate:give_rating'] = 'Create/edit own choice';
 $string['ratingallocate:start_distribution'] = 'Start allocation of users to choices';
 $string['ratingallocate:export_ratings'] = 'Ability to export user ratings';
+$string['crontask'] = 'Automated allocation for ratingallocate';
 $string['algorithmtimeout'] = 'Algorithm timeout';
 $string['configalgorithmtimeout'] = 'The time in seconds after which the algorithm is assumed to be stuck.
 The current run is terminated and marked as failed.';
