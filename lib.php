@@ -319,20 +319,6 @@ function ratingallocate_print_recent_mod_activity($activity, $courseid, $detail,
 }
 
 /**
- * Function to be run periodically according to the moodle cron
- * This function searches for things that need to be done, such
- * as sending out mail, toggling flags etc .
- *
- * @return boolean
- * @todo Finish documenting this function
- *
- */
-function ratingallocate_cron() {
-    return true;
-}
-
-
-/**
  * Returns all other caps used in the module
  *
  * @example return array('moodle/site:accessallgroups');
