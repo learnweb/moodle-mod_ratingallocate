@@ -350,7 +350,7 @@ class ratingallocate {
             if (!$grouping) {
                 // create grouping
                 $data = new stdClass();
-                $data->name = 'created from ' . $this->ratingallocate->name;
+                $data->name = get_string('groupingname', ratingallocate_MOD_NAME, $this->ratingallocate->name);
                 $data->idnumber = $groupingidname;
                 $data->courseid = $this->course->id;
                 $groupingid = groups_create_grouping($data);
