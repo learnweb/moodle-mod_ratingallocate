@@ -7,7 +7,8 @@ This plugin is based on previous work by Stefan Koegel and Alexander Bias, Unive
 
 Installation
 ============
-this is an activity plugin and should go into mod/ratingallocate
+This is an activity plugin and should go into ``mod/ratingallocate``.
+Obtain this plugin from https://moodle.org/plugins/view/mod_ratingallocate.
 
 Usage
 ============
@@ -18,7 +19,7 @@ After the rating period has finished, you can distribute the users automatically
 
 Moodle version
 ======================
-Tested with moodle 2.7.2+ (20140911).
+Tested with Moodle 2.7.2+ (20140911) and Moodle 2.8.5+ (Build: 20150319).
 
 Algorithm
 =========
