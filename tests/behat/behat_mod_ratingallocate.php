@@ -3,7 +3,7 @@
 /**
  * Steps definitions related to mod_reallocate.
  *
- * @package mod_reallocate
+ * @package mod_ratingallocate
  * @category test
  * @copyright 2014 Tobias Reischmann
  */
@@ -77,7 +77,7 @@ class behat_mod_ratingallocate extends behat_base {
      * @When /^I add a new choice$/
      */
     public function i_Add_A_New_Choice() {
-        return new When('I press "Add new Choice"');
+        return new When('I press "'.get_string('newchoice', 'ratingallocate').'"');
     }
     
     /**
