@@ -57,7 +57,7 @@ class cron_task extends \core\task\scheduled_task {
                 $course = $DB->get_record('course', array('id' => $record->{this_db\ratingallocate::COURSE}), '*', MUST_EXIST);
             }
             // Create ratingallocate instance from record
-            $ratingallocate = new \ratingallocate($record, $course, $cm, \context_module::instance($cm->instance));
+            $ratingallocate = new \ratingallocate($record, $course, $cm, \context_module::instance($cm->id));
             $currenttime = time();
             $timetoterminate = $CFG->ratingallocate_algorithm_timeout + $ratingallocate->ratingallocate->algorithmstarttime;
 
