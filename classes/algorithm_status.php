@@ -1,5 +1,5 @@
 <?php
-namespace ratingallocate
+namespace ratingallocate;
 /**
 * The different status an ratingallocate object can be in according to its algorithm run.
 *
@@ -10,6 +10,6 @@ namespace ratingallocate
 class algorithm_status{
     const failure = -1; // Algorithm did not finish correctly
     const notstarted = 0; // Default status for new instances
-    const running =1; // Algorithm is currently running
+    const running = 1; // Algorithm is currently running
     const finished = 2; // Algorithm finished correctly
 }
