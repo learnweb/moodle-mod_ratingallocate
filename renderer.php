@@ -139,14 +139,16 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $this->add_table_row_tuple($t, get_string('publishdate_estimated', ratingallocate_MOD_NAME), userdate($status->publishdate));
         }
 
-        // Print algorithm status and last run time
-        if ($status->algorithmstarttime) {
-            $this->add_table_row_tuple($t, get_string('last_algorithm_run_date', ratingallocate_MOD_NAME), userdate($status->algorithmstarttime));
-        } else {
-            $this->add_table_row_tuple($t, get_string('last_algorithm_run_date', ratingallocate_MOD_NAME), "-");
+        if ($status->show_distribution_info && $status->accesstimestop < $time) {
+            // Print algorithm status and last run time
+            if ($status->algorithmstarttime) {
+                $this->add_table_row_tuple($t, get_string('last_algorithm_run_date', ratingallocate_MOD_NAME), userdate($status->algorithmstarttime));
+            } else {
+                $this->add_table_row_tuple($t, get_string('last_algorithm_run_date', ratingallocate_MOD_NAME), "-");
+            }
+            $this->add_table_row_tuple($t, get_string('last_algorithm_run_status', ratingallocate_MOD_NAME),
+                get_string('last_algorithm_run_status_' . $status->algorithmstatus, ratingallocate_MOD_NAME));
         }
-        $this->add_table_row_tuple($t, get_string('last_algorithm_run_status', ratingallocate_MOD_NAME),
-            get_string('last_algorithm_run_status_'.$status->algorithmstatus, ratingallocate_MOD_NAME));
 
         //print available choices if no choice form is displayed
         if(!empty($status->available_choices) && ($time < $status->accesstimestart || $status->accesstimestop < $time) && $status->show_distribution_info) {
