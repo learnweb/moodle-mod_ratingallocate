@@ -415,9 +415,11 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         // $choices = get_rateable_choices_for_ratingallocate($ratingallocateid);
         $choicenames = array();
+        $choicemax = array();
         $choicesum = array();
         foreach ($choices as $choice) {
             $choicenames[$choice->id] = $choice->title;
+            $choicemax[$choice->id] = $choice->maxsize;
             $choicesum[$choice->id] = 0;
         }
 
@@ -488,7 +490,9 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             get_string('ratings_table_sum_allocations', ratingallocate_MOD_NAME));
         $rowchoicesum->cells[-1]->header = true;
         foreach ($choicesum as $choiceid => $sum) {
-            $rowchoicesum->cells[$choiceid] = new html_table_cell("$sum");
+            $rowchoicesum->cells[$choiceid] = new html_table_cell(
+                get_string('ratings_table_sum_allocations_value', ratingallocate_MOD_NAME,
+                    array("sum" => "$sum", "max" => $choicemax[$choiceid])));
             $rowchoicesum->cells[$choiceid]->header = true;
         }
 
