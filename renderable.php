@@ -62,4 +62,6 @@ class ratingallocate_choice_status implements renderable {
     public $show_distribution_info;
     /** @var bool show_user_info specifies if the current ratings of the user shoulld be renderer. **/
     public $show_user_info;
+    public $algorithmstarttime;
+    public $algorithmstatus;
 }

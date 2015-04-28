@@ -86,6 +86,14 @@ $string['distribution_published'] = 'Distribution has been published.';
 $string['create_moodle_groups'] = 'Create groups from allocations';
 $string['moodlegroups_created'] = 'The corresponding Moodle-Grouping and Groups have been created.';
 
+$string['last_algorithm_run_date'] = 'Last algorithm run at';
+$string['last_algorithm_run_date_none'] = '-';
+$string['last_algorithm_run_status'] = 'Status of last run';
+$string['last_algorithm_run_status_-1'] = 'Failed';
+$string['last_algorithm_run_status_0'] = 'Not started';
+$string['last_algorithm_run_status_1'] = 'Running';
+$string['last_algorithm_run_status_2'] = 'Successful';
+
 $string['modify_allocation_group'] = 'Modify Allocation';
 $string['modify_allocation_group_desc_too_early'] = 'The rating phase is currently running. You can start the allocation process after the rating phase has ended.';
 $string['modify_allocation_group_desc_ready'] = 'The rating phase has endend. You can now run the algorithm for an automatic allocation.';

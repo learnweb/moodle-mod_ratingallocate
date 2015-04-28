@@ -139,6 +139,15 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $this->add_table_row_tuple($t, get_string('publishdate_estimated', ratingallocate_MOD_NAME), userdate($status->publishdate));
         }
 
+        // Print algorithm status and last run time
+        if ($status->algorithmstarttime) {
+            $this->add_table_row_tuple($t, get_string('last_algorithm_run_date', ratingallocate_MOD_NAME), userdate($status->algorithmstarttime));
+        } else {
+            $this->add_table_row_tuple($t, get_string('last_algorithm_run_date', ratingallocate_MOD_NAME), "-");
+        }
+        $this->add_table_row_tuple($t, get_string('last_algorithm_run_status', ratingallocate_MOD_NAME),
+            get_string('last_algorithm_run_status_'.$status->algorithmstatus, ratingallocate_MOD_NAME));
+
         //print available choices if no choice form is displayed
         if(!empty($status->available_choices) && ($time < $status->accesstimestart || $status->accesstimestop < $time) && $status->show_distribution_info) {
         $row = new html_table_row();
@@ -242,12 +251,16 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * Output the ratingallocate modfify allocation
      */
-    public function modify_allocation_group($ratingallocateid, $coursemoduleid, $status) {
+    public function modify_allocation_group($ratingallocateid, $coursemoduleid, $status, $algorithmstatus, $runalgorithmbycron) {
         global $PAGE;
         $output = '';
         $output .= $this->heading(get_string('modify_allocation_group', ratingallocate_MOD_NAME), 2);
         $output .= $this->box_start();
+        // The instance is called ready if it is in one of the two following status.
         $isready = $status===ratingallocate::DISTRIBUTION_STATUS_READY || $status===ratingallocate::DISTRIBUTION_STATUS_READY_ALLOC_STARTED;
+        //The algorithm may not run manually if the algorithm is currently running or if it is not started and should be started using the cron.
+        $algorithmmayrun = !($algorithmstatus === \ratingallocate\algorithm_status::running ||
+            ($algorithmstatus === \ratingallocate\algorithm_status::notstarted && $runalgorithmbycron));
 
         $starturl = new moodle_url($PAGE->url, array('action' => ACTION_START_DISTRIBUTION));
 
@@ -260,7 +273,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $output .= html_writer::empty_tag('br', array());
 
         $button = new single_button($starturl, get_string('start_distribution', ratingallocate_MOD_NAME), 'get');
-        $button->disabled = !$isready;
+        // Enable only if the instance is ready and the algorithm may run manually
+        $button->disabled = !($isready );//&& $algorithmmayrun);
         $button->tooltip = get_string('start_distribution_explanation', ratingallocate_MOD_NAME);
         $button->add_action(new confirm_action(get_string('confirm_start_distribution', ratingallocate_MOD_NAME)));
 
