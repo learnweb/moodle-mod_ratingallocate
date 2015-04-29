@@ -82,6 +82,27 @@ class cron_test extends advanced_testcase{
         $this->assert_already_finish();
     }
     // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Failure Handling Tests">
+    /**
+     * The cron should not change the status of the algorithm, since it is not timedout.
+     */
+    public function test_undue_failure_handling(){
+        $this->create_ratingallocate(true, ratingallocate\algorithm_status::running, time());
+        $this->run_cron();
+        $this->assert_running();
+    }
+
+    /**
+     * The cron should switch the status of the algorithm to failure, since it has timedout.
+     */
+    public function test_due_failure_handling(){
+        global $CFG;
+        $this->create_ratingallocate(true, ratingallocate\algorithm_status::running, time() - 2);
+        $CFG->ratingallocate_algorithm_timeout = 1;
+        $this->run_cron();
+        $this->assert_failure();
+    }
+    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Helper Methods">
     /**
      * Creates a cron task and executes it.
@@ -156,9 +177,10 @@ class cron_test extends advanced_testcase{
      * Create an ratingallocate module with 4 enroled students and their ratings.
      * @param $ratingperiodended determines if the rating period should have ended.
      * @param int $algorithmstatus the algorithm status of the modul to be created.
+     * @param datetime $algorithmstarttime the start time of the algorithm.
      */
     private function create_ratingallocate($ratingperiodended,
-                                           $algorithmstatus = \ratingallocate\algorithm_status::notstarted){
+                                           $algorithmstatus = \ratingallocate\algorithm_status::notstarted, $algorithmstarttime = null){
         global $DB;
 
         $this->resetAfterTest();
@@ -185,6 +207,7 @@ class cron_test extends advanced_testcase{
             $data['accesstimestop'] += (6 * 24 * 60 * 60);
         }
         $data['algorithmstatus'] = $algorithmstatus;
+        $data['algorithmstarttime'] = $algorithmstarttime;
 
         // create activity
         $this->mod = $this->getDataGenerator()->create_module(ratingallocate_MOD_NAME, $data);
