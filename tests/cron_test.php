@@ -25,9 +25,9 @@ use ratingallocate\db as this_db;
  * Tests the correct behaviour of the cron task according to the rating period,
  * the current time and the current algorithm status.
  *
- * @package    mod_ratingallocate2
+ * @package    mod_ratingallocate
  * @category   test
- * @group mod_ratingallocate2
+ * @group mod_ratingallocate
  * @copyright  T Reischmann 2015
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
