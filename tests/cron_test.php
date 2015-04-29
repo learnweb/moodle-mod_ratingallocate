@@ -36,6 +36,7 @@ class cron_test extends advanced_testcase{
     private $teacher;
     private $mod;
 
+    // <editor-fold defaultstate="collapsed" desc="Algorithm Run Tests">
     /**
      * The cron should run, when the algorithm status is not_started and the rating period ended.
      */
@@ -80,7 +81,8 @@ class cron_test extends advanced_testcase{
         $this->run_cron();
         $this->assert_already_finish();
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Helper Methods">
     /**
      * Creates a cron task and executes it.
      */
@@ -221,5 +223,6 @@ class cron_test extends advanced_testcase{
         $this->assertEquals(0, $DB->count_records(this_db\ratingallocate_allocations ::TABLE,
             array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id)));
     }
+    //  </editor-fold>
 
 }
