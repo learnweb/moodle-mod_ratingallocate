@@ -145,6 +145,8 @@ $string['newchoice'] = 'Add new Choice';
 $string['newchoicetitle'] = 'New Choice {$a}';
 $string['deletechoice'] = 'Delete Choice';
 $string['publishdate'] = 'Publishdate';
+$string['runalgorithmbycron'] = 'Automatic allocation after rating period';
+$string['runalgorithmbycron_help'] = 'Automatically runs the allocation algorithm after the rating period ended. However, the results have to be published manually.';
 $string['select_strategy'] = 'Rating strategy';
 $string['select_strategy_help'] = 'Choose the rating strategy:
 
