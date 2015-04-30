@@ -414,8 +414,12 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         // $choices = get_rateable_choices_for_ratingallocate($ratingallocateid);
         $choicenames = array();
+        $choicemax = array();
+        $choicesum = array();
         foreach ($choices as $choice) {
             $choicenames[$choice->id] = $choice->title;
+            $choicemax[$choice->id] = $choice->maxsize;
+            $choicesum[$choice->id] = 0;
         }
 
         // get rating titles
@@ -459,7 +463,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         if ($configshownames) {
             // -1 is smaller than any id
-            $choicenames[-1] = 'User';
+            $choicenames[-1] = get_string('ratings_table_user', ratingallocate_MOD_NAME);
         }
         // Sort group names by groupid
         ksort($choicenames);
@@ -474,9 +478,24 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
                     // Highlight the cell
                     $ratingscells[$userid][$choiceid]->attributes['class'] .= ' ratingallocate_member';
+                    $choicesum[$choiceid] += 1;
                 }
             }
         }
+
+        ksort($choicesum);
+        $rowchoicesum = new html_table_row();
+        $rowchoicesum->cells[-1] = new html_table_cell(
+            get_string('ratings_table_sum_allocations', ratingallocate_MOD_NAME));
+        $rowchoicesum->cells[-1]->header = true;
+        foreach ($choicesum as $choiceid => $sum) {
+            $rowchoicesum->cells[$choiceid] = new html_table_cell(
+                get_string('ratings_table_sum_allocations_value', ratingallocate_MOD_NAME,
+                    array("sum" => "$sum", "max" => $choicemax[$choiceid])));
+            $rowchoicesum->cells[$choiceid]->header = true;
+        }
+
+        $ratingscells[-1] =& $rowchoicesum;
 
         // The ratings table shows the users' ratings for the choices
         $ratingstable = new html_table();

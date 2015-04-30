@@ -254,25 +254,30 @@ class ratingallocate {
         }
         return $output;
     }
-    
-    private function process_action_show_alloc_table(){
+
+    private function process_action_show_alloc_table() {
         $output = '';
-        // Print ratings table
+        // Print ratings table.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             global $OUTPUT;
             $renderer = $this->get_renderer();
             $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
-                    $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(), $this->get_all_allocations(), $this);
+                    $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(),
+                    $this->get_all_allocations(), $this);
 
             $output .= html_writer::empty_tag('br', array());
-            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
+            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
+                        array('id' => $this->coursemodule->id,
                             'ratingallocateid' => $this->ratingallocateid,
                             'action' => '')), get_string('back'));
             if (has_capability('mod/ratingallocate:export_ratings', $this->context)) {
-                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/export_ratings_csv.php', array('id' => $this->coursemodule->id,
-                    'ratingallocateid' => $this->ratingallocate->id)), get_string('download_votetest_allocation', ratingallocate_MOD_NAME));
+                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/export_ratings_csv.php',
+                    array('id' => $this->coursemodule->id,
+                        'ratingallocateid' => $this->ratingallocate->id)),
+                    get_string('download_votetest_allocation', ratingallocate_MOD_NAME));
             }
-            //Logging
+
+            // Logging.
             $event = \mod_ratingallocate\event\allocation_table_viewed::create_simple(
                     context_course::instance($this->course->id), $this->ratingallocateid);
             $event->trigger();
