@@ -39,6 +39,9 @@ class ratingallocate {
     const PUBLISHDATE = 'publishdate';
     const PUBLISHED = 'published';
     const NOTIFICATIONSEND = 'notificationsend';
+    const ALGORITHMSTARTTIME = 'algorithmstarttime';
+    const RUNALGORITHMBYCRON = 'runalgorithmbycron';
+    const ALGORITHMSTATUS = 'algorithmstatus';
 }
 class ratingallocate_choices {
     const TABLE = 'ratingallocate_choices';

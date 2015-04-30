@@ -31,7 +31,7 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
     public function test_create_instance() {
 
         global $DB, $USER;
-        set_time_limit(0);
+        core_php_time_limit::raise();
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -66,7 +66,10 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
             'strategy' => 'strategy_yesno',
             'publishdate' => reset($records)->{'publishdate'},
             'published' => '0',
-            'notificationsend' => '0'
+            'notificationsend' => '0',
+            'algorithmstarttime' => null,
+            'algorithmstatus' => '0',
+            'runalgorithmbycron' => '1'
         );
 
         $this->assertEquals(json_decode(json_encode($expected_values_db, false)), reset($records));

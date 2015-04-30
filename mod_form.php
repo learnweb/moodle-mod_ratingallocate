@@ -114,6 +114,11 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                 $options = array('optional' => true));
         $mform->setDefault($elementname, time() + 9 * 24 * 60 * 60);
 
+        $elementname = 'runalgorithmbycron';
+        $mform->addElement('advcheckbox', $elementname, get_string($elementname, self::MOD_NAME), null, null, array(0, 1));
+        $mform->addHelpButton($elementname, $elementname, self::MOD_NAME);
+        $mform->setDefault($elementname, 1);
+
         $mform->addElement('static', self::CHOICE_PLACEHOLDER_IDENTIFIER, '', '');
 
         $mform->addElement('hidden', self::NEW_CHOICE_COUNTER, $this->newchoicecounter);

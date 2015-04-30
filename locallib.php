@@ -32,6 +32,7 @@ require_once($CFG->libdir  . '/eventslib.php');
 require_once(dirname(__FILE__) . '/form_manual_allocation.php');
 require_once(dirname(__FILE__) . '/renderable.php');
 require_once($CFG->dirroot.'/group/lib.php');
+require_once(__DIR__.'/classes/algorithm_status.php');
 
 // Takes care of loading all the solvers
 require_once(dirname(__FILE__) . '/solver/ford-fulkerson-koegel.php');
@@ -91,6 +92,14 @@ define('ACTION_ALLOCATION_TO_GROUPING', 'allocation_to_gropuping');
  * @property int $accesstimestop
  * @property int $publishdate
  * @property int $published
+ * @property int $notificationsend
+ * @property int $runalgorithmbycron
+ * @property int $algorithmstarttime
+ * @property int $algorithmstatus
+ * -1 failure while running algorithm;
+ * 0 algorithm has not been running;
+ * 1 algorithm running;
+ * 2 algorithm finished;
  * @property string $setting
  */
 class ratingallocate_db_wrapper {
@@ -168,24 +177,41 @@ class ratingallocate {
         $this->context = $context;
     }
 
+    /**
+     * @return string
+     * @throws coding_exception
+     */
     private function process_action_start_distribution(){
+        global $DB;
         // Process form: Start distribution and call default page after finishing
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
-            global $PAGE;
-            // try to get some more memory, 500 users in 10 groups take about 15mb
-            raise_memory_limit(MEMORY_EXTRA);
-            set_time_limit(120);
-            //distribute choices
-            $time_needed = $this->distrubute_choices();
-    
-            //Logging
-            $event = \mod_ratingallocate\event\distribution_triggered::create_simple(
-                    context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations_for_logging(), $time_needed);
-            $event->trigger();
-            
-            /* @var $renderer mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
-            $renderer->add_notification(get_string('distribution_saved', ratingallocate_MOD_NAME, $time_needed), self::NOTIFY_SUCCESS);
+            if ($this->get_algorithm_status() === \ratingallocate\algorithm_status::running) {
+                // Don't run, if an instance is already running
+                $renderer->add_notification(get_string('algorithm_already_running', ratingallocate_MOD_NAME));
+            } else if ($this->ratingallocate->runalgorithmbycron === "1" &&
+                $this->get_algorithm_status() === \ratingallocate\algorithm_status::notstarted
+            ) {
+                // Don't run, if the cron has not started yet, but is set as priority
+                $renderer->add_notification(get_string('algorithm_scheduled_for_cron', ratingallocate_MOD_NAME));
+            } else {
+                $this->origdbrecord->{this_db\ratingallocate::ALGORITHMSTATUS} = \ratingallocate\algorithm_status::running;
+                $DB->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+                // try to get some more memory, 500 users in 10 groups take about 15mb
+                raise_memory_limit(MEMORY_EXTRA);
+                core_php_time_limit::raise();
+                //distribute choices
+                $time_needed = $this->distrubute_choices();
+
+                //Logging
+                $event = \mod_ratingallocate\event\distribution_triggered::create_simple(
+                    context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations_for_logging(), $time_needed);
+                $event->trigger();
+
+                /* @var $renderer mod_ratingallocate_renderer */
+
+                $renderer->add_notification(get_string('distribution_saved', ratingallocate_MOD_NAME, $time_needed), self::NOTIFY_SUCCESS);
+            }
             return $this->process_default();
         }
     }
@@ -450,7 +476,8 @@ class ratingallocate {
         // Print data and controls for teachers
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             $status = $this->get_status();
-            $output .= $renderer->modify_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
+            $output .= $renderer->modify_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status,
+                (int) $this->ratingallocate->algorithmstatus, (boolean) $this->ratingallocate->runalgorithmbycron);
             $output .= $renderer->publish_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
             $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context);
         }
@@ -522,6 +549,8 @@ class ratingallocate {
         $choice_status->strategy = $this->get_strategy_class();
         $choice_status->show_distribution_info = has_capability('mod/ratingallocate:start_distribution', $this->context);
         $choice_status->show_user_info = has_capability('mod/ratingallocate:give_rating', $this->context, null, false);
+        $choice_status->algorithmstarttime = $this->ratingallocate->algorithmstarttime;
+        $choice_status->algorithmstatus = $this->get_algorithm_status();
         $choice_status_output = $renderer->render($choice_status);
         
         // Finish the page (Since the header renders the notifications, it needs to be rendered after the actions)
@@ -562,14 +591,33 @@ class ratingallocate {
     public function distrubute_choices() {
         require_capability('mod/ratingallocate:start_distribution', $this->context);
 
+        // Set algorithm status to running
+        $this->origdbrecord->algorithmstatus = \ratingallocate\algorithm_status::running;
+        $this->origdbrecord->algorithmstarttime = time();
+        $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+
         $distributor = new solver_edmonds_karp();
         // $distributor = new solver_ford_fulkerson();
         $timestart = microtime(true);
         $distributor->distribute_users($this);
         $time_needed = (microtime(true) - $timestart);
         // echo memory_get_peak_usage();
+
+        // Set algorithm status to finished
+        $this->origdbrecord->algorithmstatus = \ratingallocate\algorithm_status::finished;
+        $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+
         return $time_needed;
     }
+
+    /**
+     * Call this function when the algorithm failed and the algorithm status has to be set to failed.
+     */
+    public function set_algorithm_failed(){
+        $this->origdbrecord->algorithmstatus = \ratingallocate\algorithm_status::failure;
+        $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+    }
+
     /**
      * Returns all users, that have not been allocated but have given ratings
      *
@@ -1103,6 +1151,15 @@ class ratingallocate {
         } else {
             return self::DISTRIBUTION_STATUS_TOO_EARLY;
         }
+    }
+
+    /**
+     * Returns the current algorithm status.
+     * The different values can be found in the class ratingallocate_status.
+     * @return int the current algorithm status
+     */
+    public function get_algorithm_status(){
+        return (int) $this->ratingallocate->algorithmstatus;
     }
     
 }

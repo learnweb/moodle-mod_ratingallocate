@@ -32,7 +32,7 @@ class locallib_test extends advanced_testcase {
 
     public function test_simple() {
         global $DB, $USER;
-        set_time_limit(0);
+        core_php_time_limit::raise();
         $this->resetAfterTest();
         $this->setAdminUser();
         

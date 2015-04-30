@@ -14,21 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Defines the version of ratingallocate
+ * Definition of Ratingallocate scheduled tasks.
  *
- * @package    mod_ratingallocate
- * @copyright 2014 T Reischmann, C Usener
- * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_ratingallocate
+ * @category  task
+ * @copyright 2015 Tobias Reischmann
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015041301;        // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014051200;        // Requires this Moodle version
-$plugin->cron      = 300;                 // Period for cron to check this module (secs)
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release   = 'v2.8-r1';
-$plugin->component = 'mod_ratingallocate';  // To check on upgrade, that module sits in correct place
+$tasks = array(
+    array(
+        'classname' => 'mod_ratingallocate\task\cron_task',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'faildelay' => 1,
+    )
+);

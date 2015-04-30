@@ -135,3 +135,24 @@ Background:
     And I should see "My only choice"
     And the choice with name "My only choice" should be active
 
+  @javascript
+  Scenario: Create a new rating alloation and check the field runalgorithmbycron. It should be saved as true.
+    When I set the field "runalgorithmbycron" to "1"
+    And I press "id_submitbutton"
+    And I navigate to "Edit settings" node in "ratingallocate administration"
+    Then the field "runalgorithmbycron" matches value "1"
+
+  @javascript
+  Scenario: Create a new rating alloation and uncheck the field runalgorithmbycron. It should be saved as false.
+    When I set the field "runalgorithmbycron" to ""
+    And I press "id_submitbutton"
+    And I navigate to "Edit settings" node in "ratingallocate administration"
+    Then the field "runalgorithmbycron" matches value ""
+
+  @javascript
+  Scenario: Create a new rating alloation and assume the default for the field runalgorithmbycron is true.
+    When I press "id_submitbutton"
+    And I navigate to "Edit settings" node in "ratingallocate administration"
+    Then the field "runalgorithmbycron" matches value "1"
+
+

@@ -38,7 +38,7 @@ class backup_restore_test extends advanced_testcase {
     public function test_backup_restore() {
         // TODO this test does not check if userids are correctly mapped
         global $CFG, $DB;
-        set_time_limit(0);
+        core_php_time_limit::raise();
         // Set to admin user.
         $this->setAdminUser();
 

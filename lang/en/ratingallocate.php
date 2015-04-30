@@ -41,6 +41,10 @@ $string['ratingallocate:view'] = 'View instances of ratingallocate';
 $string['ratingallocate:give_rating'] = 'Create or edit choice';
 $string['ratingallocate:start_distribution'] = 'Start allocation of users to choices';
 $string['ratingallocate:export_ratings'] = 'Ability to export the user ratings';
+$string['crontask'] = 'Automated allocation for ratingallocate';
+$string['algorithmtimeout'] = 'Algorithm timeout';
+$string['configalgorithmtimeout'] = 'The time in seconds after which the algorithm is assumed to be stuck.
+The current run is terminated and marked as failed.';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Rating Form for Users">
 $string['choicestatusheading'] = 'Status';
@@ -68,12 +72,15 @@ $string['ratings_table'] = 'Ratings and Allocations';
 $string['ratings_table_sum_allocations'] = 'Number of allocations / Maximum';
 $string['ratings_table_sum_allocations_value'] = '{$a->sum} / {$a->max}';
 $string['ratings_table_user'] = 'User';
-$string['start_distribution'] = 'Run Algorithm';
 $string['start_distribution_explanation'] = ' An algorithm will automatically try to fairly allocate the users according to their given ratings.';
 $string['distribution_table'] = 'Distribution Table';
 $string['download_problem_mps_format'] = 'Download Equation (mps/txt)';
 $string['download_votetest_allocation'] = 'Download Ratings and Allocation (csv)';
 $string['too_early_to_distribute'] = 'Too early to distribute. Rating is not over yet.';
+$string['algorithm_already_running']='Another instance of the allocation algorithm is already running. Please wait a few minutes and refresh the page.';
+$string['algorithm_scheduled_for_cron']='The allocation algorithm run is scheduled for immediate execution by the cron job. Please wait a few minutes and refresh the page.';
+$string['start_distribution'] = 'Run Allocation Algorithm';
+$string['confirm_start_distribution'] = 'Running the algorithm, will delete all existing allocations, if any. Are you sure to continue?';
 $string['unassigned_users'] = 'Unassigned Users';
 $string['invalid_dates'] = 'Dates are invalid. Starting date must be before ending date.';
 $string['invalid_publishdate'] = 'Publication date is invalid. Publication date must be after the end of rating.';
@@ -85,6 +92,14 @@ $string['publish_allocation'] = 'Publish Allocation';
 $string['distribution_published'] = 'Allocation has been published.';
 $string['create_moodle_groups'] = 'Create Groups From Allocation';
 $string['moodlegroups_created'] = 'The corresponding Moodle groups and groupings have been created.';
+
+$string['last_algorithm_run_date'] = 'Last algorithm run at';
+$string['last_algorithm_run_date_none'] = '-';
+$string['last_algorithm_run_status'] = 'Status of last run';
+$string['last_algorithm_run_status_-1'] = 'Failed';
+$string['last_algorithm_run_status_0'] = 'Not started';
+$string['last_algorithm_run_status_1'] = 'Running';
+$string['last_algorithm_run_status_2'] = 'Successful';
 
 $string['modify_allocation_group'] = 'Modify Allocation';
 $string['modify_allocation_group_desc_too_early'] = 'The rating phase is currently running. You can start the allocation process after the rating phase has ended.';
@@ -138,7 +153,8 @@ $string['newchoice'] = 'Add new choice';
 $string['newchoicetitle'] = 'New choice {$a}';
 $string['deletechoice'] = 'Delete choice';
 $string['publishdate'] = 'Publication date';
-
+$string['runalgorithmbycron'] = 'Automatic allocation after rating period';
+$string['runalgorithmbycron_help'] = 'Automatically runs the allocation algorithm after the rating period ended. However, the results have to be published manually.';
 $string['select_strategy'] = 'Rating strategy';
 $string['select_strategy_help'] = 'Choose a rating strategy:
 
