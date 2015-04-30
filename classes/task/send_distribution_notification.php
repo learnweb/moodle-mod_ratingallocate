@@ -42,7 +42,7 @@ class send_distribution_notification extends \core\task\adhoc_task {
         $ratingallocate = $DB->get_record(this_db\ratingallocate::TABLE,array(this_db\ratingallocate::ID=>$ratingallocateid),'*', MUST_EXIST);
         
         $courseid = $ratingallocate->course;
-        $course = $DB->get_record('course', array('id' => $courseid));
+        $course = get_course($courseid);
         $cm = get_coursemodule_from_instance('ratingallocate', $ratingallocate->id, $courseid);
         $context = \context_module::instance($cm->id);
 
