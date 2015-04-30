@@ -35,6 +35,7 @@ $string['modulename_help'] = 'The ratingallocate module lets you define choices 
 $string['modulenameplural'] = 'ratingallocates';
 $string['pluginadministration'] = 'ratingallocate administration';
 $string['pluginname'] = 'ratingallocate';
+$string['groupingname'] = 'Created from Ratingallocate "{$a}"';
 $string['ratingallocate:addinstance'] = 'Add new instance of ratingallocate';
 $string['ratingallocate:view'] = 'View instances of ratingallocate';
 $string['ratingallocate:give_rating'] = 'Create or edit choice';
