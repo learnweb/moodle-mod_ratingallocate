@@ -51,6 +51,7 @@ if ($id) {
 
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
+$PAGE->set_title($cm->name);
 $PAGE->set_context($context);
 $PAGE->set_url('/mod/ratingallocate/view.php', array('id' => $cm->id));
 
