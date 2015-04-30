@@ -251,8 +251,6 @@ abstract class ratingallocate_strategyform extends \moodleform  {
     public function to_html() {
         /* usually $mform->display() is called which echos the form instead of returning it */
         $o = '';
-        $this->add_action_buttons();
-        $this->definition_after_data();
         $o .= $this->_form->getValidationScript();
         $o .= $this->_form->toHtml();
         return $o;

@@ -190,37 +190,43 @@ class ratingallocate {
         }
     }
     
-    private function process_action_give_rating(){
-        // Get current time
+    private function process_action_give_rating() {
+        global $CFG;
+
+        // Get current time.
         $now = time();
-        $output='';
+        $output = '';
         /* @var $renderer mod_ratingallocate_renderer */
         $renderer = $this->get_renderer();
-        // Print data and controls for students, but not for admins
+        // Print data and controls for students, but not for admins.
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
-            global $DB,$PAGE,$USER;
-            // if no choice option exists WARN!
+            global $DB, $PAGE, $USER;
+            // If no choice option exists: WARN!
             if (!$DB->record_exists('ratingallocate_choices', array('ratingallocateid' => $this->ratingallocateid))) {
                 $renderer->add_notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
-            }
-            // rating possible
-            else if ($this->ratingallocate->accesstimestart < $now && $this->ratingallocate->accesstimestop > $now) {
+            } else if ($this->ratingallocate->accesstimestart < $now && $this->ratingallocate->accesstimestop > $now) {
+                // Rating possible.
                 // suche das richtige Formular nach Strategie
                 /* @var $strategyform ratingallocate_viewform */
                 $strategyform = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
                 /* @var $mform ratingallocate_strategyform */
                 $mform = new $strategyform($PAGE->url->out(), $this);
-        
-                // save submitted data and call default page
-                if ($mform->is_submitted() && $mform->is_validated() && !$mform->is_cancelled() && $data = $mform->get_data() ) {
+                $mform->add_action_buttons();
 
-                        $this->save_ratings_to_db($USER->id, $data->data);
-                        $renderer->add_notification(get_string('ratings_saved', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
-                        return $this->process_default();
+                if ( $mform->is_cancelled() ) {
+                    // Return to view.
+                    redirect("$CFG->wwwroot/mod/ratingallocate/view.php?id=".$this->coursemodule->id);
+                    return;
+                } else if ($mform->is_submitted() && $mform->is_validated() && $data = $mform->get_data() ) {
+                    // Save submitted data and call default page.
+                    $this->save_ratings_to_db($USER->id, $data->data);
+                    $renderer->add_notification(get_string('ratings_saved', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
+                    return $this->process_default();
                 }
-        
+
+                $mform->definition_after_data();
                 $output .= $renderer->render_ratingallocate_strategyform($mform);
-                //Logging
+                // Logging.
                 $event = \mod_ratingallocate\event\rating_viewed::create_simple(
                         context_course::instance($this->course->id), $this->ratingallocateid);
                 $event->trigger();
