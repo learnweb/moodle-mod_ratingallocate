@@ -33,9 +33,7 @@ $action = optional_param('action', '', PARAM_ACTION);
 
 if ($id) {
     $cm = get_coursemodule_from_id('ratingallocate', $id, 0, false, MUST_EXIST);
-    $course = $DB->get_record('course', array(
-        'id' => $cm->course
-            ), '*', MUST_EXIST);
+    $course = get_course($cm->course);
     $ratingallocate = $DB->get_record('ratingallocate', array(
         'id' => $cm->instance
             ), '*', MUST_EXIST);
