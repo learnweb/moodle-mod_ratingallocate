@@ -31,7 +31,7 @@ require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template.php');
 
 abstract class strategytemplate_options extends \strategytemplate {
-   
+
     /**
      * Return the different options for each choice (including titles)
      * @return array: value_of_option => title_of_option
@@ -46,7 +46,7 @@ abstract class strategytemplate_options extends \strategytemplate {
  * - shows a drop down menu from which the user can choose a rating
  */
 abstract class ratingallocate_options_strategyform extends \ratingallocate_strategyform {
-    
+
     /**
      * Defines forms elements
      */
@@ -63,36 +63,41 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             $ratingelem = $elemprefix . '[rating]';
             $groupsidelem = $elemprefix . '[choiceid]';
 
-            // save choiceid
+            // Save choiceid.
             $mform->addElement('hidden', $groupsidelem, $data->choiceid);
             $mform->setType($groupsidelem, PARAM_INT);
 
-            // show title
+            // Show title.
             $mform->addElement('header', $headerelem, $data->title);
             $mform->setExpanded($headerelem);
 
-            // show explanation
-            $mform->addElement('html', '<div>' . $data->explanation . '</div>');
+            // Show max. number of allocations.
+            // TODO add setting in order to make this optional, as requested in issue #14.
+            $mform->addElement('html', '<div class="mod-ratingallocate-choice-maxno">' .
+                '<span class="mod-ratingallocate-choice-maxno-desc">' .
+                get_string('choice_maxsize_display', ratingallocate_MOD_NAME) .
+                ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
 
-            // options for each choice
+            // Options for each choice.
             $choiceoptions = $this->get_choiceoptions();
 
             $radioarray = array();
             foreach ($choiceoptions as $id => $option) {
                 $radioarray [] =& $mform->createElement('radio', $ratingelem, '', $option, $id);
             }
-            // Adding static elements to support css
+            // Adding static elements to support css.
             $radioarray = $this->ratingallocate->prepare_horizontal_radio_choice($radioarray, $mform);
-            
-            // it is important to set a group name, so that later on errors can be displayed at the correct spot.
-            $mform->addGroup($radioarray, 'radioarr_' . $data->choiceid, '', null, false);
 
-            $max_rating = max(array_keys($choiceoptions));
-            // try to restore previous ratings
-            if (is_numeric($data->rating) && $data->rating >= 0 && $data->rating <= $max_rating) {
+            // It is important to set a group name, so that later on errors can be displayed at the correct spot.
+            // Furthermore, use explanation as title/label of group.
+            $mform->addGroup($radioarray, 'radioarr_' . $data->choiceid, $data->explanation, null, false);
+
+            $maxrating = max(array_keys($choiceoptions));
+            // Try to restore previous ratings.
+            if (is_numeric($data->rating) && $data->rating >= 0 && $data->rating <= $maxrating) {
                 $mform->setDefault($ratingelem, $data->rating);
             } else {
-                $mform->setDefault($ratingelem, $max_rating);
+                $mform->setDefault($ratingelem, $maxrating);
             }
             // $mform->setType($ratingelem, PARAM_INT);
         }
@@ -122,17 +127,18 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
         if ($impossibles > $maxno) {
             foreach ($ratings as $cid => $rating) {
                 if ($rating ['rating'] == 0) {
-                    $errors ['radioarr_' . $cid] = get_string($this->get_max_nos_string_identyfier(), ratingallocate_MOD_NAME, $maxno);
+                    $errors ['radioarr_' . $cid] = get_string($this->get_max_nos_string_identyfier(),
+                        ratingallocate_MOD_NAME, $maxno);
                 }
             }
         }
         return $errors;
     }
-    
+
     public abstract function get_choiceoptions();
 
     protected abstract function get_max_amount_of_nos();
-    //TODO remove and make identifier strategy_options specific not strategy specific
+    // TODO remove and make identifier strategy_options specific not strategy specific.
     protected abstract function get_max_nos_string_identyfier();
 
 }

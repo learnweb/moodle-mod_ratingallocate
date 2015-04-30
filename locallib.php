@@ -201,11 +201,13 @@ class ratingallocate {
         // Print data and controls for students, but not for admins.
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
             global $DB, $PAGE, $USER;
-            // If no choice option exists: WARN!
+
+            // If no choice option exists WARN!
             if (!$DB->record_exists('ratingallocate_choices', array('ratingallocateid' => $this->ratingallocateid))) {
                 $renderer->add_notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
             } else if ($this->ratingallocate->accesstimestart < $now && $this->ratingallocate->accesstimestop > $now) {
-                // Rating possible.
+                // Rating is possible...
+
                 // suche das richtige Formular nach Strategie
                 /* @var $strategyform ratingallocate_viewform */
                 $strategyform = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
@@ -225,6 +227,7 @@ class ratingallocate {
                 }
 
                 $mform->definition_after_data();
+
                 $output .= $renderer->render_ratingallocate_strategyform($mform);
                 // Logging.
                 $event = \mod_ratingallocate\event\rating_viewed::create_simple(
@@ -817,7 +820,7 @@ class ratingallocate {
      * @return multitype:
      */
     public function get_rating_data_for_user($userid) {
-        $sql = "SELECT c.id as choiceid, c.title, c.explanation, c.ratingallocateid, r.rating, r.id AS ratingid, r.userid
+        $sql = "SELECT c.id as choiceid, c.title, c.explanation, c.ratingallocateid, c.maxsize, r.rating, r.id AS ratingid, r.userid
                 FROM {ratingallocate_choices} c
            LEFT JOIN {ratingallocate_ratings} r
                   ON c.id = r.choiceid and r.userid = :userid
