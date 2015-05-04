@@ -59,7 +59,7 @@ class cron_test extends advanced_testcase{
      * The cron should not run, when the algorithm status is running.
      */
     public function test_running(){
-        $this->create_ratingallocate(true, \ratingallocate\algorithm_status::running);
+        $this->create_ratingallocate(true, \mod_ratingallocate\algorithm_status::running);
         $this->run_cron();
         $this->assert_running();
     }
@@ -68,7 +68,7 @@ class cron_test extends advanced_testcase{
      * The cron should not run, when the algorithm status is failure.
      */
     public function test_failure(){
-        $this->create_ratingallocate(true, \ratingallocate\algorithm_status::failure);
+        $this->create_ratingallocate(true, \mod_ratingallocate\algorithm_status::failure);
         $this->run_cron();
         $this->assert_failure();
     }
@@ -77,7 +77,7 @@ class cron_test extends advanced_testcase{
      * The cron should not run, when the algorithm status is finished.
      */
     public function test_finished(){
-        $this->create_ratingallocate(true, \ratingallocate\algorithm_status::finished);
+        $this->create_ratingallocate(true, \mod_ratingallocate\algorithm_status::finished);
         $this->run_cron();
         $this->assert_already_finish();
     }
@@ -87,7 +87,7 @@ class cron_test extends advanced_testcase{
      * The cron should not change the status of the algorithm, since it is not timedout.
      */
     public function test_undue_failure_handling(){
-        $this->create_ratingallocate(true, ratingallocate\algorithm_status::running, time());
+        $this->create_ratingallocate(true, \mod_ratingallocate\algorithm_status::running, time());
         $this->run_cron();
         $this->assert_running();
     }
@@ -97,7 +97,7 @@ class cron_test extends advanced_testcase{
      */
     public function test_due_failure_handling(){
         global $CFG;
-        $this->create_ratingallocate(true, ratingallocate\algorithm_status::running, time() - 2);
+        $this->create_ratingallocate(true, \mod_ratingallocate\algorithm_status::running, time() - 2);
         $CFG->ratingallocate_algorithm_timeout = 1;
         $this->run_cron();
         $this->assert_failure();
@@ -120,7 +120,7 @@ class cron_test extends advanced_testcase{
         global $DB;
         $record = $DB->get_record(this_db\ratingallocate::TABLE, array());
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
-        $this->assertEquals(\ratingallocate\algorithm_status::notstarted, $ratingallocate->get_algorithm_status());
+        $this->assertEquals(\mod_ratingallocate\algorithm_status::notstarted, $ratingallocate->get_algorithm_status());
         $this->assertEquals(0, $DB->count_records(this_db\ratingallocate_allocations ::TABLE,
             array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id)));
     }
@@ -132,7 +132,7 @@ class cron_test extends advanced_testcase{
         global $DB;
         $record = $DB->get_record(this_db\ratingallocate::TABLE, array());
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
-        $this->assertEquals(\ratingallocate\algorithm_status::running, $ratingallocate->get_algorithm_status());
+        $this->assertEquals(\mod_ratingallocate\algorithm_status::running, $ratingallocate->get_algorithm_status());
         $this->assertEquals(0, $DB->count_records(this_db\ratingallocate_allocations ::TABLE,
             array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id)));
     }
@@ -144,7 +144,7 @@ class cron_test extends advanced_testcase{
         global $DB;
         $record = $DB->get_record(this_db\ratingallocate::TABLE, array());
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
-        $this->assertEquals(\ratingallocate\algorithm_status::failure, $ratingallocate->get_algorithm_status());
+        $this->assertEquals(\mod_ratingallocate\algorithm_status::failure, $ratingallocate->get_algorithm_status());
         $this->assertEquals(0, $DB->count_records(this_db\ratingallocate_allocations ::TABLE,
             array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id)));
     }
@@ -156,7 +156,7 @@ class cron_test extends advanced_testcase{
         global $DB;
         $record = $DB->get_record(this_db\ratingallocate::TABLE, array());
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
-        $this->assertEquals(\ratingallocate\algorithm_status::finished, $ratingallocate->get_algorithm_status());
+        $this->assertEquals(\mod_ratingallocate\algorithm_status::finished, $ratingallocate->get_algorithm_status());
         $this->assertEquals(4, $DB->count_records(this_db\ratingallocate_allocations ::TABLE,
             array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id)));
     }
@@ -168,7 +168,7 @@ class cron_test extends advanced_testcase{
         global $DB;
         $record = $DB->get_record(this_db\ratingallocate::TABLE, array());
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
-        $this->assertEquals(\ratingallocate\algorithm_status::finished, $ratingallocate->get_algorithm_status());
+        $this->assertEquals(\mod_ratingallocate\algorithm_status::finished, $ratingallocate->get_algorithm_status());
         $this->assertEquals(0, $DB->count_records(this_db\ratingallocate_allocations ::TABLE,
             array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id)));
     }
@@ -180,7 +180,7 @@ class cron_test extends advanced_testcase{
      * @param datetime $algorithmstarttime the start time of the algorithm.
      */
     private function create_ratingallocate($ratingperiodended,
-                                           $algorithmstatus = \ratingallocate\algorithm_status::notstarted, $algorithmstarttime = null){
+                                           $algorithmstatus = \mod_ratingallocate\algorithm_status::notstarted, $algorithmstarttime = null){
         global $DB;
 
         $this->resetAfterTest();

@@ -1,5 +1,5 @@
 <?php
-namespace ratingallocate;
+namespace mod_ratingallocate;
 /**
 * The different status an ratingallocate object can be in according to its algorithm run.
 *

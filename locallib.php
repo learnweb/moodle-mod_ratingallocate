@@ -186,16 +186,16 @@ class ratingallocate {
         // Process form: Start distribution and call default page after finishing
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             $renderer = $this->get_renderer();
-            if ($this->get_algorithm_status() === \ratingallocate\algorithm_status::running) {
+            if ($this->get_algorithm_status() === \mod_ratingallocate\algorithm_status::running) {
                 // Don't run, if an instance is already running
                 $renderer->add_notification(get_string('algorithm_already_running', ratingallocate_MOD_NAME));
             } else if ($this->ratingallocate->runalgorithmbycron === "1" &&
-                $this->get_algorithm_status() === \ratingallocate\algorithm_status::notstarted
+                $this->get_algorithm_status() === \mod_ratingallocate\algorithm_status::notstarted
             ) {
                 // Don't run, if the cron has not started yet, but is set as priority
                 $renderer->add_notification(get_string('algorithm_scheduled_for_cron', ratingallocate_MOD_NAME));
             } else {
-                $this->origdbrecord->{this_db\ratingallocate::ALGORITHMSTATUS} = \ratingallocate\algorithm_status::running;
+                $this->origdbrecord->{this_db\ratingallocate::ALGORITHMSTATUS} = \mod_ratingallocate\algorithm_status::running;
                 $DB->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
                 // try to get some more memory, 500 users in 10 groups take about 15mb
                 raise_memory_limit(MEMORY_EXTRA);
@@ -592,7 +592,7 @@ class ratingallocate {
         require_capability('mod/ratingallocate:start_distribution', $this->context);
 
         // Set algorithm status to running
-        $this->origdbrecord->algorithmstatus = \ratingallocate\algorithm_status::running;
+        $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::running;
         $this->origdbrecord->algorithmstarttime = time();
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
 
@@ -604,7 +604,7 @@ class ratingallocate {
         // echo memory_get_peak_usage();
 
         // Set algorithm status to finished
-        $this->origdbrecord->algorithmstatus = \ratingallocate\algorithm_status::finished;
+        $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::finished;
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
 
         return $time_needed;
@@ -614,7 +614,7 @@ class ratingallocate {
      * Call this function when the algorithm failed and the algorithm status has to be set to failed.
      */
     public function set_algorithm_failed(){
-        $this->origdbrecord->algorithmstatus = \ratingallocate\algorithm_status::failure;
+        $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::failure;
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
     }
 

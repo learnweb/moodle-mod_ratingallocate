@@ -260,8 +260,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         // The instance is called ready if it is in one of the two following status.
         $isready = $status===ratingallocate::DISTRIBUTION_STATUS_READY || $status===ratingallocate::DISTRIBUTION_STATUS_READY_ALLOC_STARTED;
         //The algorithm may not run manually if the algorithm is currently running or if it is not started and should be started using the cron.
-        $algorithmmayrun = !($algorithmstatus === \ratingallocate\algorithm_status::running ||
-            ($algorithmstatus === \ratingallocate\algorithm_status::notstarted && $runalgorithmbycron));
+        $algorithmmayrun = !($algorithmstatus === \mod_ratingallocate\algorithm_status::running ||
+            ($algorithmstatus === \mod_ratingallocate\algorithm_status::notstarted && $runalgorithmbycron));
 
         $starturl = new moodle_url($PAGE->url, array('action' => ACTION_START_DISTRIBUTION));
 

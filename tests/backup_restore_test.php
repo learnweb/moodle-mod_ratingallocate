@@ -66,7 +66,6 @@ class backup_restore_test extends advanced_testcase {
 
         $unset_values = function($elem1, $elem2, $varname) { $this->assertNotEquals($elem1->{$varname}, $elem2->{$varname}); $result = array($elem1->{$varname},$elem2->{$varname}); unset($elem1->{$varname}); unset($elem2->{$varname}); return $result; };
 
-        global $DB;
         $ratingallocate1 = $DB->get_record(this_db\ratingallocate::TABLE, array(this_db\ratingallocate::COURSE => $course1->id));
         $ratingallocate2 = $DB->get_record(this_db\ratingallocate::TABLE, array(this_db\ratingallocate::COURSE => $course2->id));
         list($rating_id1, $rating_id2) = $unset_values($ratingallocate1, $ratingallocate2, this_db\ratingallocate::ID);
