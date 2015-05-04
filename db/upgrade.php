@@ -118,7 +118,7 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         foreach ($results as $single_result) {
             $allocations = $DB->get_records('ratingallocate_allocations', array('ratingallocateid' => $single_result->id));
             $single_result->algorithmstatus = (count($allocations) === 0 ?
-                \ratingallocate\algorithm_status::notstarted : \ratingallocate\algorithm_status::finished);
+                \mod_ratingallocate\algorithm_status::notstarted : \mod_ratingallocate\algorithm_status::finished);
             $DB->update_record('ratingallocate', $single_result);
         }
 
