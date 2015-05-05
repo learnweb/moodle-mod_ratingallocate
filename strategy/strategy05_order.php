@@ -135,6 +135,13 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         $data = parent::get_data();
         $data->data = array();
 
+        // Necessary to initialize an empty entry for every choice to enable the deletion of ratings.
+        $choices = $this->ratingallocate->get_rateable_choices();
+        foreach ($choices as $id => $choice) {
+            $data->data[$id]['rating'] = null;
+            $data->data[$id]['choiceid'] = $id;
+        }
+
         if (isset($data->choice)) {
             // we do assign the highest rating to choice no.1
             $maxrating = count($data->choice);
