@@ -7,6 +7,7 @@ Background:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1        | 0        | 1         |
     And I log in as "admin"
+    And I follow "Courses"
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Ratingallocate" to section "0"
