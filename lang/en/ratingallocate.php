@@ -80,7 +80,7 @@ $string['too_early_to_distribute'] = 'Too early to distribute. Rating is not ove
 $string['algorithm_already_running']='Another instance of the allocation algorithm is already running. Please wait a few minutes and refresh the page.';
 $string['algorithm_scheduled_for_cron']='The allocation algorithm run is scheduled for immediate execution by the cron job. Please wait a few minutes and refresh the page.';
 $string['start_distribution'] = 'Run Allocation Algorithm';
-$string['confirm_start_distribution'] = 'Running the algorithm, will delete all existing allocations, if any. Are you sure to continue?';
+$string['confirm_start_distribution'] = 'Running the algorithm will delete all existing allocations, if any. Are you sure to continue?';
 $string['unassigned_users'] = 'Unassigned Users';
 $string['invalid_dates'] = 'Dates are invalid. Starting date must be before ending date.';
 $string['invalid_publishdate'] = 'Publication date is invalid. Publication date must be after the end of rating.';
@@ -175,7 +175,7 @@ $string['err_maximum'] = 'The maximum value for this field is {$a}.';
 $string['strategy_settings_label'] = 'Designation for "{$a}"';
 
 /* Specific to Strategy01, YesNo */
-$string['strategy_yesno_name'] = 'Yes-No';	
+$string['strategy_yesno_name'] = 'Yes-No';
 $string['strategy_yesno_setting_crossout'] = 'Maximum number of choices the user can rate with "No"';
 $string['strategy_yesno_max_no'] = 'You may only assign "No" to {$a} choice(s).';
 $string['strategy_yesno_maximum_crossout'] = 'You may only assign "No" to at most {$a} choice(s).';
