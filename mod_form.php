@@ -88,7 +88,12 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addHelpButton('name', 'ratingallocatename', self::MOD_NAME);
 
         // Adding the standard "intro" and "introformat" fields.
-        $this->add_intro_editor();
+        //TODO: Ensure backward-compatibility after deprecated method in Moodle 2.9 caused by MDL-49101
+        if (method_exists($this, 'standard_intro_elements')){
+            $this->standard_intro_elements();
+        } else {
+            $this->add_intro_editor();
+        }
 
         // -------------------------------------------------------------------------------
         $elementname = 'strategy';
