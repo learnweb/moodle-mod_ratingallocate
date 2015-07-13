@@ -50,7 +50,12 @@ class backup_restore_test extends advanced_testcase {
         $bc->execute_plan();
         $results = $bc->get_results();
         $file = $results['backup_destination'];
-        $fp = get_file_packer('application/x-gzip');
+        //TODO: Necessary to ensure backward compatibility
+        if (tgz_packer::is_tgz_file($file)) {
+            $fp = get_file_packer('application/x-gzip');
+        } else {
+            $fp = get_file_packer();
+        }
         $filepath = $CFG->dataroot . '/temp/backup/test-restore-course';
         $file->extract_to_pathname($fp, $filepath);
         $bc->destroy();
