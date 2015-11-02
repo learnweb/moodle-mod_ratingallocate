@@ -298,7 +298,7 @@ class ratingallocate {
             $renderer = $this->get_renderer();
             $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
                     $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(),
-                    $this->get_all_allocations(), $this);
+                    $this->get_allocations(), $this);
 
             $output .= html_writer::empty_tag('br', array());
             $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
@@ -695,38 +695,6 @@ class ratingallocate {
                         'ratingallocateid' => $this->ratingallocateid
         ));
         return $records;
-    }
-
-    /**
-     * Returns all group memberships from users who can give ratings,
-     * for rateable groups in the course with id $courseid.
-     * Also contains the rating the user gave for that group or null if he gave none.
-     * *Known Limitation* Does only return 1 Allocation only
-     * @deprecated
-     * @return array of the form array($userid => array($groupid => $rating, ...), ...)
-     *         i.e. for every user who is a member of at least one rateable group,
-     *         the array contains a set of ids representing the groups the user is a member of
-     *         and possibly the respective rating.
-     */
-    public function get_all_allocations() {
-        debugging('get_all_allocations() has been deprecated, please rewrite your code to use get_allocations', DEBUG_DEVELOPER); //TODO
-        $records = $this->get_allocations();
-        $memberships = array();
-
-        $raters = $this->get_raters_in_course();
-        foreach ($records as $r) {
-
-            // Ignore all members who can't give ratings
-            if (!array_key_exists($r->userid, $raters)) {
-                continue;
-            }
-            if (!array_key_exists($r->userid, $memberships)) {
-                $memberships [$r->userid] = array();
-            }
-            $memberships [$r->userid] [$r->choiceid] = $r->rating;
-        }
-
-        return $memberships;
     }
 
     /**
