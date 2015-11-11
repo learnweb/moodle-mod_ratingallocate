@@ -215,6 +215,7 @@ $string['strategy_order_no_choice'] = '{$a}. Choice';
 $string['strategy_order_use_only_once'] = 'Choices cannot be selected twice and must be unique.';
 $string['strategy_order_explain_choices'] = 'Select one choice in each select-box. The first choice receives the highest priority, and so on.';
 $string['strategy_order_setting_countoptions'] = 'Number of fields the user is presented to vote on (smaller than number of choices!)';
+$string['strategy_order_header_description'] = 'Available Choices';
 
 
 // Specific to Strategy06, tickyes
