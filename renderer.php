@@ -150,7 +150,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         }
 
         //print available choices if no choice form is displayed
-        if(!empty($status->available_choices) && ($time < $status->accesstimestart || $status->accesstimestop < $time) && $status->show_distribution_info) {
+        if(!empty($status->available_choices)) {
         $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('rateable_choices', ratingallocate_MOD_NAME));
 
