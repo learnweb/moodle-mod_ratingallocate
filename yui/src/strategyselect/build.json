@@ -1,0 +1,10 @@
+{
+  "name": "moodle-mod_ratingallocate-strategyselect",
+  "builds": {
+    "moodle-mod_ratingallocate-strategyselect": {
+      "jsfiles": [
+        "strategyselect.js"
+      ]
+    }
+  }
+}
