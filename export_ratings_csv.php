@@ -28,15 +28,13 @@ require_once('./locallib.php');
 
 $id = required_param('id', PARAM_INT); // course_module ID, or
 
-if ($id) {
-    $cm = get_coursemodule_from_id('ratingallocate', $id, 0, false, MUST_EXIST);
-    $course = get_course($cm->course);
-    $ratingallocate = $DB->get_record('ratingallocate', array(
-        'id' => $cm->instance
-            ), '*', MUST_EXIST);
-} else {
-    error('You must specify a course_module ID');
-}
+
+$cm = get_coursemodule_from_id('ratingallocate', $id, 0, false, MUST_EXIST);
+$course = get_course($cm->course);
+$ratingallocate = $DB->get_record('ratingallocate', array(
+    'id' => $cm->instance
+        ), '*', MUST_EXIST);
+
 
 require_login($course, true, $cm);
 
@@ -48,78 +46,13 @@ $ratingallocateobj = new ratingallocate($ratingallocate, $course, $cm, $context)
 global $DB;
 // print all the exported data here
 
+
 $downloadfilename = clean_filename('export_ratings_' . $ratingallocateobj->ratingallocate->name);
 $csvexport = new csv_export_writer('semicolon');
 $csvexport->set_filename($downloadfilename);
-// id firstname lastname
 
-$exporttitle [0] = 'userid';
-$exporttitle [1] = 'username';
-$exporttitle [2] = 'firstname';
-$exporttitle [3] = 'lastname';
-
-$offsetchoices = count($exporttitle);
-
-$choices = $ratingallocateobj->get_rateable_choices();
-
-foreach ($choices as $choice) {
-    $columnid [$choice->id] = ($choice->id + $offsetchoices);
-    $exporttitle [($choice->id + $offsetchoices)] = $choice->id . '|' . $choice->title;
-}
-
-$exporttitle [] = "allocation";
-$columnid ["allocation"] = key(array_slice($exporttitle, - 1, 1, true));
-
-// add the header to the data
-$csvexport->add_data($exporttitle);
-
-$userslines = array();
-
-$ratings = $ratingallocateobj->get_ratings_for_rateable_choices();
-$ratingscells = array();
-foreach ($ratings as $rating) {
-    if (!array_key_exists($rating->userid, $ratingscells)) {
-        $ratingscells [$rating->userid] = array();
-    }
-    $ratingscells [$rating->userid] [$columnid [$rating->choiceid]] = $rating->rating;
-}
-
-// If there is no rating from a user for a group,
-// put a 'no_rating_given' cell into the table.
-$usersincourse = $ratingallocateobj->get_raters_in_course();
-
-foreach ($usersincourse as $user) {
-    if (!array_key_exists($user->id, $ratingscells)) {
-        $ratingscells [$user->id] = array();
-    }
-    foreach ($columnid as $choice) {
-        if (!array_key_exists($choice, $ratingscells [$user->id])) {
-            $ratingscells [$user->id] [$choice] = '-';
-        }
-    }
-
-    $ratingscells [$user->id] [0] = $user->id;
-    $ratingscells[$user->id][1] = $user->username;
-
-    $ratingscells[$user->id][2] = fullname($user);
-    $ratingscells[$user->id][3] = $user->lastname;
-    // Sort ratings by choiceid to align them with the group names in the table
-    ksort($ratingscells [$user->id]);
-}
-
-$memberships = $ratingallocateobj->get_all_allocations();
-
-foreach ($memberships as $userid => $groups) {
-    foreach ($groups as $groupsid => $rating) {
-        if (array_key_exists($userid, $ratingscells)) {
-            $ratingscells [$userid] [$columnid ["allocation"]] = $groupsid;
-        }
-    }
-}
-
-foreach ($ratingscells as $userline) {
-    $csvexport->add_data($userline);
-}
+$renderer = $PAGE->get_renderer('mod_ratingallocate');
+$renderer->ratings_csv_for_ratingallocate($ratingallocateobj, $csvexport);
 
 $csvexport->download_file();
 
