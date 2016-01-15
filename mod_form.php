@@ -68,7 +68,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG;
+        global $CFG, $PAGE;
         $mform = $this->_form;
 
         // Adding the "general" fieldset, where all the common settings are showed.
@@ -105,6 +105,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addElement('select', $elementname, get_string('select_strategy', self::MOD_NAME), $selectoptions);
         $mform->addHelpButton($elementname, 'select_strategy', self::MOD_NAME);
         $mform->addRule('strategy', null, 'required', null, 'client');
+
+        $mform->addElement('html', '<div id="selected_strategy_options"></div>');
 
         // Start/end time.
         $elementname = 'accesstimestart';
@@ -158,6 +160,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             }
             $mform->addElement('static', self::STRATEGY_OPTIONS_PLACEHOLDER.'[' . $strategy . ']', '', '');
         }
+
+        $PAGE->requires->yui_module('moodle-mod_ratingallocate-strategyselect', 'M.mod_ratingallocate.strategyselect.init');
 
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();

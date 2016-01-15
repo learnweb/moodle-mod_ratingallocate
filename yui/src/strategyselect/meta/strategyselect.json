@@ -1,0 +1,8 @@
+{
+  "moodle-mod_ratingallocate-strategyselect": {
+    "requires": [
+      "node",
+      "event-valuechange"
+    ]
+  }
+}
