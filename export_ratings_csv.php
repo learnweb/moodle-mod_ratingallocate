@@ -67,6 +67,9 @@ foreach ($choices as $choice) {
     $exporttitle [($choice->id + $offsetchoices)] = $choice->id . '|' . $choice->title;
 }
 
+// Sort headings by (choice-)id to align them with exported data (created below).
+ksort($exporttitle);
+
 $exporttitle [] = "allocation";
 $columnid ["allocation"] = key(array_slice($exporttitle, - 1, 1, true));
 
