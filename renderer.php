@@ -490,15 +490,13 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         // Highlight ratings according to which users have been distributed
         // and count the number of such distributions
         // $memberships = memberships_per_ratingallocate($ratingallocateid);
-        foreach ($memberships as $userid => $choices) {
-            foreach ($choices as $choiceid => $rating) {
-                if (array_key_exists($userid, $ratingscells)
-                        && array_key_exists($choiceid, $ratingscells[$userid])) {
+        foreach ($memberships as $membership) {
+            if (array_key_exists($membership->userid, $ratingscells)
+                    && array_key_exists($membership->choiceid, $ratingscells[$membership->userid])) {
 
-                    // Highlight the cell
-                    $ratingscells[$userid][$choiceid]->attributes['class'] .= ' ratingallocate_member';
-                    $choicesum[$choiceid] += 1;
-                }
+                // Highlight the cell
+                $ratingscells[$membership->userid][$membership->choiceid]->attributes['class'] .= ' ratingallocate_member';
+                $choicesum[$membership->choiceid] += 1;
             }
         }
 

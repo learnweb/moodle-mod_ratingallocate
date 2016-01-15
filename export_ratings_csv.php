@@ -107,14 +107,12 @@ foreach ($usersincourse as $user) {
     ksort($ratingscells [$user->id]);
 }
 
-$memberships = $ratingallocateobj->get_all_allocations();
+$memberships = $ratingallocateobj->get_allocations();
 
-foreach ($memberships as $userid => $groups) {
-    foreach ($groups as $groupsid => $rating) {
-        if (array_key_exists($userid, $ratingscells)) {
-            $ratingscells [$userid] [$columnid ["allocation"]] = $groupsid;
+foreach ($memberships as $membership) {
+        if (array_key_exists($membership->userid, $ratingscells)) {
+            $ratingscells [$membership->userid] [$columnid ["allocation"]] = $membership->choiceid;
         }
-    }
 }
 
 foreach ($ratingscells as $userline) {
