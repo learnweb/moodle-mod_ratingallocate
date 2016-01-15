@@ -112,10 +112,15 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             $mform->addElement('header', $headerelem, $data->title);
             $mform->setExpanded($headerelem);
 
-            // Beschreibungstext anzeigen
-            $mform->addElement('html', '<div>' . $data->explanation . '</div>');
+            // Show max. number of allocations.
+            // TODO add setting in order to make this optional, as requested in issue #14.
+            $mform->addElement('html', '<div class="mod-ratingallocate-choice-maxno">' .
+                '<span class="mod-ratingallocate-choice-maxno-desc">' .
+                get_string('choice_maxsize_display', ratingallocate_MOD_NAME) .
+                ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
 
-            $mform->addElement('text', $ratingelem, '' );
+            // Use explanation as title/label of group to align with other strategies.
+            $mform->addElement('text', $ratingelem, $data->explanation );
             $mform->setType($ratingelem, PARAM_INT);
 
             // try to restore previous ratings

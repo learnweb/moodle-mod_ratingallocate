@@ -120,10 +120,16 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             $mform->addElement('header', $headerelem, $data->title);
             $mform->setExpanded($headerelem);
 
-            // Beschreibungstext anzeigen
-            $mform->addElement('html', '<div>' . $data->explanation . '</div>');
+            // Show max. number of allocations.
+            // TODO add setting in order to make this optional, as requested in issue #14.
+            $mform->addElement('html', '<div class="mod-ratingallocate-choice-maxno">' .
+                '<span class="mod-ratingallocate-choice-maxno-desc">' .
+                get_string('choice_maxsize_display', ratingallocate_MOD_NAME) .
+                ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
 
-            $mform->addElement('advcheckbox', $ratingelem, $this->get_strategy()->get_accept_label(), '', null, array(0, 1));
+
+            // Use explanation as title/label of checkbox to align with other strategies.
+            $mform->addElement('advcheckbox', $ratingelem, $data->explanation, $this->get_strategy()->get_accept_label(), null, array(0, 1));
             $mform->setType($ratingelem, PARAM_INT);
 
             if (is_numeric($data->rating) && $data->rating >= 0) {

@@ -121,6 +121,17 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
                 $mform->getElement('choice[' . ($choicecounter - ($data->rating - 1)) . ']')->setSelected($data->choiceid);
             }
         }
+        $mform->addElement('header', 'choice_descriptions', get_string(strategy::STRATEGYID . '_header_description', ratingallocate_MOD_NAME));
+
+        foreach ($ratingdata as $data) {
+            // Show max. number of allocations.
+            // TODO add setting in order to make this optional, as requested in issue #14.
+            $mform->addElement('html', '<div class="mod-ratingallocate-choice-maxno">' .
+                '<span class="mod-ratingallocate-choice-maxno-desc">' .
+                get_string('choice_maxsize_display', ratingallocate_MOD_NAME) .
+                ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
+            $mform->addElement('static', 'description_'.$data->choiceid, $data->title, $data->explanation);
+        }
     }
 
     public function describe_strategy() {
