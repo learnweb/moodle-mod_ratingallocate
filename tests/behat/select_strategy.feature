@@ -22,7 +22,10 @@ Feature: When a teacher selects a strategy the appropriate options are displayed
     And I should see "Designation for \"No\""
 
   Scenario: Selecting "Likert Scale" strategy should show the correct options.
-    When I set the field "Rating strategy" to "Likert Scale"
+    When I click on "strategy" "select"
+    And I wait "1" seconds
+    And I click on "strategy_lickert" "option"
+    And I click on "strategy" "select"
     And I wait "1" seconds
     Then I should see "Maximum number of choices the user can rate with 0"
     And I should see "Highest number on the likert scale"
@@ -31,11 +34,17 @@ Feature: When a teacher selects a strategy the appropriate options are displayed
     And I should not see "Designation for \"No\""
 
   Scenario: Selecting "Give Points" then "Yes-No" shows only the correct options.
-    When I set the field "Rating strategy" to "Give Points"
+    When I click on "strategy" "select"
+    And I wait "1" seconds
+    And I click on "strategy_points" "option"
+    And I click on "strategy" "select"
     And I wait "1" seconds
     And I should see "Maximum number of choices to which the user can give 0 points"
     And I should see "Total number of points the user can assign"
-    And I set the field "Rating strategy" to "Yes-No"
+    And I click on "strategy" "select"
+    And I wait "1" seconds
+    And I click on "strategy_yesno" "option"
+    And I click on "strategy" "select"
     And I wait "1" seconds
     Then I should see "Maximum number of choices the user can rate with \"No\""
     And I should see "Designation for \"No\""
