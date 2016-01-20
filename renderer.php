@@ -541,18 +541,20 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $exporttitle [3] = 'lastname';
 
         $offsetchoices = count($exporttitle);
-        $columnid = $offsetchoices;
         $columnids = array();
 
         $rateable_choices = $ratingallocate->get_rateable_choices();
         foreach ($rateable_choices as $choice) {
-            $columnids[$choice->id] = $columnid;
-            $exporttitle[$columnid] = $choice->id . '|' . $choice->title;
-            $columnid++;
+            $columnids[$choice->id] = $choice->id + $offsetchoices;
+            $exporttitle[$choice->id + $offsetchoices] = $choice->id . '|' . $choice->title;
         }
 
-        $exporttitle[$columnid] = "allocation";
-        $columnids["allocation"] = key(array_slice($exporttitle, - 1, 1, true));
+        // Sort headings by (choice-)id to align them with exported data (created below).
+        ksort($exporttitle);
+
+        $maxcolumnid = key(array_slice($exporttitle, - 1, 1, true));
+        $exporttitle[$maxcolumnid + 1] = "allocation";
+        $columnids["allocation"] = $maxcolumnid + 1;
 
         // add the header to the data
         $csvexport->add_data($exporttitle);
@@ -572,6 +574,9 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             foreach ($columnids as $choice => $choicecolumn) {
                 $ratingscells[$user->id][$choicecolumn] = '';
             }
+
+            // Sort ratings by choiceid to align them with the group names in the table
+            ksort($ratingscells [$user->id]);
         }
 
         $ratings = $ratingallocate->get_ratings_for_rateable_choices();
