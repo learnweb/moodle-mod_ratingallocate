@@ -527,7 +527,75 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         
         return $output;
     }
-    
+
+    /**
+     * Shows table containing information about the users' ratings
+     * and their distribution over the choices (allocations).
+     *
+     * @return HTML code
+     */
+    public function ratings_csv_for_ratingallocate(ratingallocate $ratingallocate, csv_export_writer $csvexport) {
+        $exporttitle [0] = 'userid';
+        $exporttitle [1] = 'username';
+        $exporttitle [2] = 'firstname';
+        $exporttitle [3] = 'lastname';
+
+        $offsetchoices = count($exporttitle);
+        $columnid = $offsetchoices;
+        $columnids = array();
+
+        $rateable_choices = $ratingallocate->get_rateable_choices();
+        foreach ($rateable_choices as $choice) {
+            $columnids[$choice->id] = $columnid;
+            $exporttitle[$columnid] = $choice->id . '|' . $choice->title;
+            $columnid++;
+        }
+
+        $exporttitle[$columnid] = "allocation";
+        $columnids["allocation"] = key(array_slice($exporttitle, - 1, 1, true));
+
+        // add the header to the data
+        $csvexport->add_data($exporttitle);
+
+        $ratingscells = array();
+
+        foreach ($ratingallocate->get_raters_in_course() as $user) {
+            if (!array_key_exists($user->id, $ratingscells)) {
+                $ratingscells[$user->id] = array();
+            }
+
+            $ratingscells[$user->id][0] = $user->id;
+            $ratingscells[$user->id][1] = $user->username;
+            $ratingscells[$user->id][2] = fullname($user);
+            $ratingscells[$user->id][3] = $user->lastname;
+
+            foreach ($columnids as $choice => $choicecolumn) {
+                $ratingscells[$user->id][$choicecolumn] = '';
+            }
+        }
+
+        $ratings = $ratingallocate->get_ratings_for_rateable_choices();
+        // get rating titles
+        $titles = $this->get_options_titles(array_map(function($rating) {return $rating->rating;},$ratings), $ratingallocate);
+
+        foreach ($ratings as $rating) {
+            $choicecolumnindex = $columnids[$rating->choiceid];
+            $ratingscells[$rating->userid][$choicecolumnindex] = $titles[$rating->rating];
+        }
+
+        $memberships = $ratingallocate->get_allocations();
+        $allocationcolumnindex = $columnids["allocation"];
+
+        foreach ($memberships as $membership) {
+            $choice = $rateable_choices[$membership->choiceid];
+            $ratingscells[$membership->userid][$allocationcolumnindex] = $choice->id . '|' . $choice->title;;
+        }
+
+        foreach ($ratingscells as $userline) {
+            $csvexport->add_data($userline);
+        }
+    }
+
     /**
      * Formats the ratings
      * @param unknown $ratings
