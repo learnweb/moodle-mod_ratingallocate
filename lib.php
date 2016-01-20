@@ -245,40 +245,6 @@ function ratingallocate_delete_instance($id) {
 }
 
 /**
- * Returns a small object with summary information about what a
- * user has done with a given particular instance of this module
- * Used for user activity reports.
- * $return->time = the time they did it
- * $return->info = a short text description
- *
- * @return stdClass|null
- */
-function ratingallocate_user_outline($course, $user, $mod, $ratingallocate) {
-    $return = new stdClass ();
-    $return->time = 0;
-    $return->info = '';
-    return $return;
-}
-
-/**
- * Prints a detailed representation of what a user has done with
- * a given particular instance of this module, for user activity reports.
- *
- * @param stdClass $course
- *        	the current course record
- * @param stdClass $user
- *        	the record of the user we are generating report for
- * @param cm_info $mod
- *        	course module info
- * @param stdClass $ratingallocate
- *        	the module instance record
- * @return void, is supposed to echp directly
- */
-function ratingallocate_user_complete($course, $user, $mod, $ratingallocate) {
-
-}
-
-/**
  * Given a course and a time, this module should find recent activity
  * that has occurred in ratingallocate activities and print it out.
  * Return true if there was output, or false is there was none.
