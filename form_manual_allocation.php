@@ -146,8 +146,10 @@ class manual_alloc_form extends moodleform {
             if (!array_key_exists($rating->userid, $userdata)) {
                 $userdata[$rating->userid] = $empty_preferences;
             }
-            $userdata[$rating->userid][$rating->choiceid] = $rating->rating;
-            $different_ratings[$rating->rating] = $rating->rating;
+            if ($rating->rating) {
+                $userdata[$rating->userid][$rating->choiceid] = $rating->rating;
+                $different_ratings[$rating->rating] = $rating->rating;
+            }
         }
                
         $usersincourse = $this->ratingallocate->get_raters_in_course();
@@ -166,6 +168,7 @@ class manual_alloc_form extends moodleform {
                         ($choicesWithAllocations [$choiceid]->usercount > 0 ? $choicesWithAllocations [$choiceid]->usercount : "0") . "/" . $choicesWithAllocations [$choiceid]->maxsize . ")";
                 $radioarray [] = & $mform->createElement('radio', $ratingelem, '', $optionname, $choiceid, '');
             }
+
             
             // Adding static elements to support css
             $radioarray = $this->ratingallocate->prepare_horizontal_radio_choice($radioarray, $mform);
