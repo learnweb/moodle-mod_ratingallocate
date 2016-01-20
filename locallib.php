@@ -786,7 +786,7 @@ class ratingallocate {
         $notiftext .= format_string($this->ratingallocate->name,true);
 
         $notiftext .= "\n---------------------------------------------------------------------\n";
-        $notiftext .= get_string('allocation_notification_message', 'ratingallocate', array('ratingallocate'=>$this->ratingallocate->name, 'choice' => $choice->title));
+        $notiftext .= get_string('allocation_notification_message', 'ratingallocate', array('ratingallocate'=>$this->ratingallocate->name, 'choice' => $choice->title, 'explanation' => $choice->explanation));
         $notiftext .= "\n\n";
 
         return $notiftext;
@@ -812,7 +812,7 @@ class ratingallocate {
         // format the post body
         $options = new stdClass();
         $options->para = true;
-        $notifhtml .= format_text(get_string('allocation_notification_message', 'ratingallocate', array('ratingallocate'=>$this->ratingallocate->name, 'choice' => $choice->title)),FORMAT_HTML,$options,$this->course->id);
+        $notifhtml .= format_text(get_string('allocation_notification_message', 'ratingallocate', array('ratingallocate'=>$this->ratingallocate->name, 'choice' => $choice->title, 'explanation' => $choice->explanation)),FORMAT_HTML,$options,$this->course->id);
 
         $notifhtml .= '<hr />';
         $notifhtml .= '</body>';
