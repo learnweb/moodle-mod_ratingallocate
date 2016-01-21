@@ -32,8 +32,8 @@ defined('MOODLE_INTERNAL') || die();
  **/
 class ratingallocate_viewed extends \core\event\base {
     
-    public static function create_simple($context, $objectid){
-        return self::create(array('context'=>$context,'objectid'=>$objectid));
+    public static function create_simple($coursecontext, $ratingallocateid){
+        return self::create(array('context'=>$coursecontext,'objectid'=>$ratingallocateid));
     }
     
     protected function init() {
@@ -52,5 +52,13 @@ class ratingallocate_viewed extends \core\event\base {
  
     public function get_url() {
         return new \moodle_url('/mod/ratingallocate/view.php', array('ratingallocate' => $this->objectid));
+    }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'ratingallocate', 'restore' => 'ratingallocate');
+    }
+
+    public static function get_other_mapping() {
+        return false;
     }
 }

@@ -38,11 +38,11 @@ defined('MOODLE_INTERNAL') || die();
  **/
 class allocation_published extends \core\event\base {
     
-    public static function create_simple($context, $objectid, $allocations){
+    public static function create_simple($coursecontext, $ratingallocateid, $allocations){
         // the values of other need to be encoded since the base checks for equality of a decoded encoded other instance with the original.
         // this is not given for nested arrays
         $allocations_json_valide = json_decode(json_encode($allocations), true);
-        return self::create(array('context'=>$context,'objectid'=>$objectid, 
+        return self::create(array('context'=>$coursecontext,'objectid'=>$ratingallocateid,
                         'other' => array('allocations'=> $allocations_json_valide)));
     }
     
@@ -62,5 +62,13 @@ class allocation_published extends \core\event\base {
  
     public function get_url() {
         return new \moodle_url('/mod/ratingallocate/view.php', array('ratingallocate' => $this->objectid));
+    }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'ratingallocate', 'restore' => 'ratingallocate');
+    }
+
+    public static function get_other_mapping() {
+        return false;
     }
 }
