@@ -38,12 +38,8 @@ defined('MOODLE_INTERNAL') || die();
  **/
 class allocation_published extends \core\event\base {
     
-    public static function create_simple($coursecontext, $ratingallocateid, $allocations){
-        // the values of other need to be encoded since the base checks for equality of a decoded encoded other instance with the original.
-        // this is not given for nested arrays
-        $allocations_json_valide = json_decode(json_encode($allocations), true);
-        return self::create(array('context'=>$coursecontext,'objectid'=>$ratingallocateid,
-                        'other' => array('allocations'=> $allocations_json_valide)));
+    public static function create_simple($coursecontext, $ratingallocateid){
+        return self::create(array('context'=>$coursecontext,'objectid'=>$ratingallocateid));
     }
     
     protected function init() {
