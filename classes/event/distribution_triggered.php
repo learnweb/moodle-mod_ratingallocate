@@ -39,13 +39,10 @@ defined('MOODLE_INTERNAL') || die();
  **/
 class distribution_triggered extends \core\event\base {
     
-    public static function create_simple($context, $objectid, $allocations, $time_needed){
-        // the values of other need to be encoded since the base checks for equality of a decoded encoded other instance with the original.
-        // this is not given for doubles or nested arrays
-        $allocations_json_valid = json_decode(json_encode($allocations),true);
+    public static function create_simple($coursecontext, $ratingallocateid, $time_needed){
         $time_needed_json_valid = json_decode(json_encode($time_needed),true);
-        return self::create(array('context' => $context, 'objectid' => $objectid, 
-                        'other' => array('allocations'=> $allocations_json_valid,'time_needed'=>$time_needed_json_valid)));        
+        return self::create(array('context' => $coursecontext, 'objectid' => $ratingallocateid,
+                        'other' => array('time_needed'=>$time_needed_json_valid)));
     }
     protected function init() {
         $this->data['crud'] = 'u';
@@ -66,5 +63,13 @@ class distribution_triggered extends \core\event\base {
  
     public function get_url() {
         return new \moodle_url('/mod/ratingallocate/view.php', array('ratingallocate' => $this->objectid));
+    }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'ratingallocate', 'restore' => 'ratingallocate');
+    }
+
+    public static function get_other_mapping() {
+        return false;
     }
 }

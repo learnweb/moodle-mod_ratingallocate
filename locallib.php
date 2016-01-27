@@ -205,7 +205,7 @@ class ratingallocate {
 
                 //Logging
                 $event = \mod_ratingallocate\event\distribution_triggered::create_simple(
-                    context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations_for_logging(), $time_needed);
+                    context_course::instance($this->course->id), $this->ratingallocateid, $time_needed);
                 $event->trigger();
 
                 /* @var $renderer mod_ratingallocate_renderer */
@@ -368,7 +368,7 @@ class ratingallocate {
             
             //Logging
             $event = \mod_ratingallocate\event\allocation_published::create_simple(
-                    context_course::instance($this->course->id), $this->ratingallocateid, $this->get_allocations_for_logging());
+                    context_course::instance($this->course->id), $this->ratingallocateid);
             $event->trigger();
             
             /* @var $renderer mod_ratingallocate_renderer */
@@ -682,20 +682,6 @@ class ratingallocate {
         ));
         return $records;
     }
-    
-    /**
-     * @return attributes needed for logging of all allocation objects that belong this ratingallocate
-     */
-    private function get_allocations_for_logging() {
-        $query = 'SELECT al.userid, al.choiceid
-                FROM {ratingallocate_allocations} al
-                LEFT JOIN {ratingallocate_choices} c ON al.choiceid = c.id
-               WHERE al.ratingallocateid = :ratingallocateid AND c.active = 1';
-        $records = $this->db->get_records_sql($query, array(
-                        'ratingallocateid' => $this->ratingallocateid
-        ));
-        return $records;
-    }
 
     /**
      * Removes all allocations for choices in $ratingallocateid
@@ -970,7 +956,7 @@ class ratingallocate {
             }
             //Logging
             $event = \mod_ratingallocate\event\manual_allocation_saved::create_simple(
-                    context_course::instance($this->course->id), $this->ratingallocateid, $loggingdata);
+                    context_course::instance($this->course->id), $this->ratingallocateid);
             $event->trigger();
             
             $transaction->allow_commit();
