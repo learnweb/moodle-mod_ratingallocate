@@ -27,7 +27,7 @@ env:
   - DB=mysqli MOODLE_BRANCH=MOODLE_29_STABLE
   - DB=mysqli MOODLE_BRANCH=MOODLE_30_STABLE
 
-before_install:a
+before_install:
   - phpenv config-rm xdebug.ini
   - cd ../..
   - composer selfupdate
