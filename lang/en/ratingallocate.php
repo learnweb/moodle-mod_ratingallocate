@@ -149,7 +149,6 @@ $string['choice_title_help'] = 'Title of the choice. *Attention* all active choi
 $string['edit_choice'] = 'Edit choice "{$a}"';
 $string['rating_endtime'] = 'Rating ends at';
 $string['rating_begintime'] = 'Rating begins at';
-$string['newchoice'] = 'Add new choice';
 $string['newchoicetitle'] = 'New choice {$a}';
 $string['deletechoice'] = 'Delete choice';
 $string['publishdate'] = 'Publication date';
@@ -170,6 +169,15 @@ $string['strategyoptions_for_strategy'] = 'Options for Strategy "{$a}"';
 $string['err_required'] = 'You need to provide a value for this field.';
 $string['err_minimum'] = 'The minimum value for this field is {$a}.';
 $string['err_maximum'] = 'The maximum value for this field is {$a}.';
+// </editor-fold>
+// <editor-fold defaultstate="collapsed" desc="Form to edit choices">
+$string['show_choices_header'] = 'List of all choices';
+$string['newchoice'] = 'Add new choice';
+$string['choice_table_title'] = 'Title';
+$string['choice_table_explanation'] = 'Description';
+$string['choice_table_maxsize'] = 'Max. Size';
+$string['choice_table_active'] = 'Activ';
+$string['choice_table_tools'] = 'Edit';
 // </editor-fold>
 
 $string['strategy_settings_label'] = 'Designation for "{$a}"';

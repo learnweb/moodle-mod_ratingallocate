@@ -70,17 +70,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         return $o;
     }
 
-    /**
-     * Page is done - render the footer.
-     *
-     * @return void
-     */
-    public function render_footer() {
-        $o = '';
-        $o .= $this->output->footer();
-        return $o;
-    }
-
     public function render_ratingallocate_strategyform($mform) {
         /* @var $mform ratingallocate_strategyform */
         $o = '';
@@ -250,6 +239,34 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Output the ratingallocate modfify choices links
+     */
+    public function modify_choices_group($ratingallocateid, $coursemoduleid, $status) {
+        global $PAGE;
+        $output = '';
+        $output .= $this->heading(get_string('modify_choices_group', ratingallocate_MOD_NAME), 2);
+        $output .= $this->box_start();
+
+        $starturl = new moodle_url($PAGE->url, array('action' => ACTION_SHOW_CHOICES));
+
+        // Get description dependent on status
+        $descriptionbaseid = 'modify_choices_group_desc_';
+        $description = get_string($descriptionbaseid.$status, ratingallocate_MOD_NAME);
+
+        $output .= $this->format_text($description);
+
+        $output .= html_writer::empty_tag('br', array());
+
+        $button = new single_button($starturl, get_string('modify_choices', ratingallocate_MOD_NAME), 'get');
+        $button->tooltip = get_string('modify_choices_explanation', ratingallocate_MOD_NAME);
+
+        $output .= $this->render($button);
+
+        $output .= $this->box_end();
+        return $output;
+    }
+
+    /**
      * Output the ratingallocate modfify allocation
      */
     public function modify_allocation_group($ratingallocateid, $coursemoduleid, $status, $algorithmstatus, $runalgorithmbycron) {
@@ -356,6 +373,84 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Shows table containing information about the result of the distribution algorithm.
+     *
+     * @return HTML code
+     */
+    public function ratingallocate_show_choices_table(ratingallocate $ratingallocate, $choicesmodifiably){
+        global $OUTPUT, $CFG, $PAGE;
+        require_once($CFG->libdir . '/tablelib.php');
+
+        $starturl = new moodle_url($PAGE->url, array('action' => ACTION_EDIT_CHOICE));
+        // Set up the table.
+        echo $OUTPUT->single_button($starturl, get_string('newchoice', 'mod_ratingallocate'));
+        $table = new \flexible_table('show_ratingallocate_options');
+        $table->define_baseurl($PAGE->url);
+        if ($choicesmodifiably) {
+            $table->define_columns(array('title', 'explanation', 'maxsize', 'active', 'tools'));
+            $table->define_headers(array(get_string('choice_table_title', 'mod_ratingallocate'),
+                get_string('choice_table_explanation', 'mod_ratingallocate'),
+                get_string('choice_table_maxsize', 'mod_ratingallocate'),
+                get_string('choice_table_active', 'mod_ratingallocate'),
+                get_string('choice_table_tools', 'mod_ratingallocate')));
+        } else {
+            $table->define_columns(array('title', 'explanation', 'maxsize', 'active'));
+            $table->define_headers(array(get_string('choice_table_title', 'mod_ratingallocate'),
+                get_string('choice_table_explanation', 'mod_ratingallocate'),
+                get_string('choice_table_maxsize', 'mod_ratingallocate'),
+                get_string('choice_table_tools', 'mod_ratingallocate')));
+        }
+        $table->set_attribute('id', 'mod_ratingallocateshowoptions');
+        $table->set_attribute('class', 'admintable generaltable');
+        $table->setup();
+
+        $choices = $ratingallocate->get_choices();
+
+        foreach ($choices as $idx => $choice) {
+            $row = array();
+            $class = '';
+            $row[] = $choice->{this_db\ratingallocate_choices::TITLE};
+            $row[] = $choice->{this_db\ratingallocate_choices::EXPLANATION};
+            $row[] = $choice->{this_db\ratingallocate_choices::MAXSIZE};
+            if ($choice->{this_db\ratingallocate_choices::ACTIVE}) {
+                $row[] = get_string('yes');
+            } else {
+                $row[] = get_string('no');
+            }
+            if ($choicesmodifiably) {
+            $row[] = "";//$this->render_tools($idx, $choice->{this_db\ratingallocate_choices::ACTIVE});
+            }
+            if ($choice->{this_db\ratingallocate_choices::ACTIVE}) {
+                $class = 'dimmed_text';
+            }
+
+            $table->add_data($row, $class);
+        }
+
+        $table->finish_output();
+    }
+    /**
+     * Finish the page (Since the header renders the notifications, it needs to be rendered after the actions)
+     *
+     * @return None
+     */
+    public function render_header($ratingallocate, $context, $coursemodid) {
+        $header_info = new ratingallocate_header($ratingallocate, $context, true,
+            $coursemodid);
+        return $this->render($header_info);
+    }
+
+    /**
+     * Write the page footer
+     *
+     * @return None
+     */
+    public function render_footer() {
+        global $OUTPUT;
+        return $OUTPUT->footer();
+    }
+    
     /**
      * Shows table containing information about the result of the distribution algorithm.
      *
