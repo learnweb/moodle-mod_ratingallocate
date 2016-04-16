@@ -62,7 +62,7 @@ class distribution_triggered extends \core\event\base {
     }
  
     public function get_url() {
-        return new \moodle_url('/mod/ratingallocate/view.php', array('ratingallocate' => $this->objectid));
+        return new \moodle_url('/mod/ratingallocate/view.php', array('m' => $this->objectid));
     }
 
     public static function get_objectid_mapping() {
