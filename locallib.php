@@ -1034,7 +1034,7 @@ class ratingallocate {
     /**
      * Lazy load the page renderer and expose the renderer to plugin.
      *
-     * @return mod_rlatingallocate_renderer
+     * @return mod_ratingallocate_renderer
      */
     public function get_renderer() {
         global $PAGE;
