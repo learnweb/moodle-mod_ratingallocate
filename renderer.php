@@ -537,7 +537,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     public function ratings_csv_for_ratingallocate(ratingallocate $ratingallocate, csv_export_writer $csvexport) {
         $exporttitle [0] = 'userid';
         $exporttitle [1] = 'username';
-        $exporttitle [2] = 'firstname';
+        $exporttitle [2] = 'fullname';
         $exporttitle [3] = 'lastname';
 
         $offsetchoices = count($exporttitle);
