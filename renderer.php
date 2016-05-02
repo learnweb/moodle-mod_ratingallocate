@@ -568,7 +568,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
             $ratingscells[$user->id][0] = $user->id;
             $ratingscells[$user->id][1] = $user->username;
-            $ratingscells[$user->id][2] = fullname($user);
+            $ratingscells[$user->id][2] = $user->firstname;
             $ratingscells[$user->id][3] = $user->lastname;
 
             foreach ($columnids as $choice => $choicecolumn) {
