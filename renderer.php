@@ -540,7 +540,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $exporttitle [1] = 'username';
         $exporttitle [2] = 'firstname';
         $exporttitle [3] = 'lastname';
-        $exporttitle [3] = 'lastname';
         if (has_capability('moodle/course:useremail', $context)) {
             $exporttitle [4] = 'email';
         }
