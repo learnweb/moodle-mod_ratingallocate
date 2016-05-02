@@ -52,7 +52,7 @@ $csvexport = new csv_export_writer('semicolon');
 $csvexport->set_filename($downloadfilename);
 
 $renderer = $PAGE->get_renderer('mod_ratingallocate');
-$renderer->ratings_csv_for_ratingallocate($ratingallocateobj, $csvexport);
+$renderer->ratings_csv_for_ratingallocate($ratingallocateobj, $csvexport, $context);
 
 $csvexport->download_file();
 

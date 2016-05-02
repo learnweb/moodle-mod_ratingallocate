@@ -534,11 +534,15 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      *
      * @return HTML code
      */
-    public function ratings_csv_for_ratingallocate(ratingallocate $ratingallocate, csv_export_writer $csvexport) {
+    public function ratings_csv_for_ratingallocate(ratingallocate $ratingallocate, csv_export_writer $csvexport,
+                                                   context_module $context) {
         $exporttitle [0] = 'userid';
         $exporttitle [1] = 'username';
         $exporttitle [2] = 'firstname';
         $exporttitle [3] = 'lastname';
+        if (has_capability('moodle/course:useremail', $context)) {
+            $exporttitle [4] = 'email';
+        }
 
         $offsetchoices = count($exporttitle);
         $columnids = array();
@@ -570,6 +574,9 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $ratingscells[$user->id][1] = $user->username;
             $ratingscells[$user->id][2] = fullname($user);
             $ratingscells[$user->id][3] = $user->lastname;
+            if (has_capability('moodle/course:useremail', $context)) {
+                $ratingscells[$user->id][4] = $user->email;
+            }
 
             foreach ($columnids as $choice => $choicecolumn) {
                 $ratingscells[$user->id][$choicecolumn] = '';
