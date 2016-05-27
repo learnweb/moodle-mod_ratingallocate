@@ -38,6 +38,9 @@ class modify_choice_form extends moodleform {
     /** @var $choice ratingallocate_choice */
     private $choice;
 
+    const FORM_ACTION = 'action';
+    private $msgerrorrequired;
+
     /**
      * Constructor
      * @param string $url
@@ -52,23 +55,20 @@ class modify_choice_form extends moodleform {
         if ($choice) {
             $this->choice = $choice;
         }
+        $this->msgerrorrequired = get_string('err_required', 'form');
     }
 
     /**
      * Defines forms elements
      */
     public function definition() {
-        global $COURSE, $PAGE, $DB, $USER;
-
         $mform = $this->_form;
-        $mform->addElement('hidden', 'id'); // Save the record's id.
-        $mform->setType('id', PARAM_INT);
 
         $elementname = 'title';
         $mform->addElement('text', $elementname, get_string('choice_title', ratingallocate_MOD_NAME));
         $mform->setType($elementname, PARAM_TEXT);
         $mform->addHelpButton($elementname, 'choice_title', ratingallocate_MOD_NAME);
-//        $mform->addRule($elementname, $this->msgerrorrequired , 'required', null, 'server');
+        $mform->addRule($elementname, $this->msgerrorrequired , 'required', null, 'server');
 
         $elementname = 'explanation';
         $mform->addElement('text', $elementname, get_string('choice_explanation', ratingallocate_MOD_NAME));
@@ -77,16 +77,12 @@ class modify_choice_form extends moodleform {
         $elementname = 'maxsize';
         $mform->addElement('text', $elementname, get_string('choice_maxsize', ratingallocate_MOD_NAME));
         $mform->setType($elementname, PARAM_INT);
-//        $mform->addRule($elementname, $this->msgerrorrequired , 'required', null, 'server');
+        $mform->addRule($elementname, $this->msgerrorrequired , 'required', null, 'server');
 
         $elementname = 'active';
         $mform->addElement('advcheckbox', $elementname, get_string('choice_active', ratingallocate_MOD_NAME),
             null, null, array(0, 1));
         $mform->addHelpButton($elementname, 'choice_active', ratingallocate_MOD_NAME);
-
-//        $elementname = self::DELETE_CHOICE_ACTION. $this->choice->id;
-//        $mform->registerNoSubmitButton($elementname);
-//        $mform->addElement('submit', $elementname  , get_string('deletechoice', self::MOD_NAME));
     }
 
     public function definition_after_data() {
@@ -100,7 +96,7 @@ class modify_choice_form extends moodleform {
             $mform->setDefault('id', $this->choice->id);
         }
 
-
+        $this->add_action_buttons();
     }
 
     /**

@@ -247,7 +247,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $output .= $this->heading(get_string('modify_choices_group', ratingallocate_MOD_NAME), 2);
         $output .= $this->box_start();
 
-        $starturl = new moodle_url($PAGE->url, array('action' => ACTION_SHOW_CHOICES));
+        $starturl = new moodle_url($PAGE->url->out(), array('action' => ACTION_SHOW_CHOICES));
 
         // Get description dependent on status
         $descriptionbaseid = 'modify_choices_group_desc_';
@@ -378,13 +378,13 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      *
      * @return HTML code
      */
-    public function ratingallocate_show_choices_table(ratingallocate $ratingallocate, $choicesmodifiably){
+    public function ratingallocate_show_choices_table(ratingallocate $ratingallocate, $choicesmodifiably) {
         global $OUTPUT, $CFG, $PAGE;
         require_once($CFG->libdir . '/tablelib.php');
 
-        $starturl = new moodle_url($PAGE->url, array('action' => ACTION_EDIT_CHOICE));
+        $starturl = new moodle_url($PAGE->url->out(), array('action' => ACTION_EDIT_CHOICE));
         // Set up the table.
-        echo $OUTPUT->single_button($starturl, get_string('newchoice', 'mod_ratingallocate'));
+        echo $OUTPUT->single_button($starturl->out(), get_string('newchoice', 'mod_ratingallocate'), 'get');
         $table = new \flexible_table('show_ratingallocate_options');
         $table->define_baseurl($PAGE->url);
         if ($choicesmodifiably) {

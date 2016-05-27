@@ -297,14 +297,18 @@ class ratingallocate {
             } else {
                 $choice = null;
             }
-            $mform = new modify_choice_form($PAGE->url->out(), $this, $choice);
+            $mform = new modify_choice_form(new moodle_url('/mod/ratingallocate/view.php',
+                array('id' => $this->coursemodule->id,
+                    'ratingallocateid' => $this->ratingallocateid,
+                    'action' => ACTION_EDIT_CHOICE)),
+                $this, $choice);
 
             if (!$mform->no_submit_button_pressed() && $data = $mform->get_submitted_data()) {
                 if (!$mform->is_cancelled() ) {
-                    $this->save_manual_allocation_form($data);
+                    $this->save_modify_choice_form($data);
                 }
                 // If form was submitted using save or cancel, show the default page.
-                return $this->process_default();
+                return $this->process_action_show_choices();
             } else {
                 $output .= $OUTPUT->heading(get_string('edit_choice', ratingallocate_MOD_NAME), 2);
 
@@ -321,7 +325,7 @@ class ratingallocate {
             global $OUTPUT,$PAGE;
 
             $mform = new manual_alloc_form($PAGE->url->out(), $this);
-        
+
             if (!$mform->no_submit_button_pressed() && $data = $mform->get_submitted_data()) {
                 if (!$mform->is_cancelled() ) {
                     $this->save_manual_allocation_form($data);
@@ -1040,6 +1044,42 @@ class ratingallocate {
         } catch (Exception $e) {
             $transaction->rollback($e);
         }
+    }
+
+    public function save_modify_choice_form($data){
+        global $DB;
+        try {
+            $transaction = $this->db->start_delegated_transaction();
+            $loggingdata = array();
+
+            $allusers = $this->get_raters_in_course();
+            $allchoices = $this->get_rateable_choices();
+
+            $choice = new stdClass();
+            $choice->{this_db\ratingallocate_choices::RATINGALLOCATEID} = $this->ratingallocateid;
+            $choice->{this_db\ratingallocate_choices::TITLE} = $data->title;
+            $choice->{this_db\ratingallocate_choices::EXPLANATION} = $data->explanation;
+            $choice->{this_db\ratingallocate_choices::MAXSIZE} = $data->maxsize;
+            $choice->{this_db\ratingallocate_choices::ACTIVE} = $data->active;
+
+            if (isset($data->id)) {
+                $choice->{this_db\ratingallocate_choices::RATINGALLOCATEID} = $data->id;
+                $DB->update_record(this_db\ratingallocate_choices::TABLE, $choice);
+            } else {
+                $DB->insert_record(this_db\ratingallocate_choices::TABLE, $choice);
+            }
+
+
+            //Logging
+//            $event = \mod_ratingallocate\event\choice_saved::create_simple(
+//                context_course::instance($this->course->id), $this->ratingallocateid, );
+//            $event->trigger();
+
+            $transaction->allow_commit();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
+        }
+
     }
 
     /**
