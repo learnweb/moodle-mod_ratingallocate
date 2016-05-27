@@ -51,11 +51,11 @@ class modify_choice_form extends moodleform {
                                 ratingallocate_choice $choice = null) {
         $this->ratingallocate = $ratingallocate;
         parent::__construct($url);
-        $this->definition_after_data();
         if ($choice) {
             $this->choice = $choice;
         }
         $this->msgerrorrequired = get_string('err_required', 'form');
+        $this->definition_after_data();
     }
 
     /**
@@ -63,6 +63,9 @@ class modify_choice_form extends moodleform {
      */
     public function definition() {
         $mform = $this->_form;
+
+        $mform->addElement('hidden', 'choiceid'); // Save the record's id.
+        $mform->setType('choiceid', PARAM_INT);
 
         $elementname = 'title';
         $mform->addElement('text', $elementname, get_string('choice_title', ratingallocate_MOD_NAME));
@@ -88,12 +91,13 @@ class modify_choice_form extends moodleform {
     public function definition_after_data() {
         parent::definition_after_data();
         $mform = & $this->_form;
+
         if ($this->choice) {
             $mform->setDefault('title', $this->choice->title);
             $mform->setDefault('explanation', $this->choice->explanation);
             $mform->setDefault('maxsize', $this->choice->maxsize);
             $mform->setDefault('active', $this->choice->active);
-            $mform->setDefault('id', $this->choice->id);
+            $mform->setDefault('choiceid', $this->choice->id);
         }
 
         $this->add_action_buttons();

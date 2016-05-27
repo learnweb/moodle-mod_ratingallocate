@@ -292,7 +292,7 @@ class ratingallocate {
             $choiceid = optional_param('choiceid', 0, PARAM_INT);
 
             if ($choiceid) {
-                $record = $DB->get_record(this_db\ratingallocate::TABLE, array('id' => $choiceid));
+                $record = $DB->get_record(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
                 $choice = new ratingallocate_choice($record);
             } else {
                 $choice = null;
@@ -311,14 +311,13 @@ class ratingallocate {
                 return $this->process_action_show_choices();
             } else {
                 $output .= $OUTPUT->heading(get_string('edit_choice', ratingallocate_MOD_NAME), 2);
-
                 $output .= $mform->to_html();
             }
         }
         return $output;
     }
-    
-    private function process_action_manual_allocation(){
+
+    private function process_action_manual_allocation() {
         // Manual allocation
         $output = '';
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
@@ -1055,18 +1054,14 @@ class ratingallocate {
             $allusers = $this->get_raters_in_course();
             $allchoices = $this->get_rateable_choices();
 
-            $choice = new stdClass();
+            $choice = new ratingallocate_choice($data);
             $choice->{this_db\ratingallocate_choices::RATINGALLOCATEID} = $this->ratingallocateid;
-            $choice->{this_db\ratingallocate_choices::TITLE} = $data->title;
-            $choice->{this_db\ratingallocate_choices::EXPLANATION} = $data->explanation;
-            $choice->{this_db\ratingallocate_choices::MAXSIZE} = $data->maxsize;
-            $choice->{this_db\ratingallocate_choices::ACTIVE} = $data->active;
 
-            if (isset($data->id)) {
-                $choice->{this_db\ratingallocate_choices::RATINGALLOCATEID} = $data->id;
-                $DB->update_record(this_db\ratingallocate_choices::TABLE, $choice);
+            if (isset($data->choiceid)) {
+                $choice->id = $data->choiceid;
+                $DB->update_record(this_db\ratingallocate_choices::TABLE, $choice->dbrecord);
             } else {
-                $DB->insert_record(this_db\ratingallocate_choices::TABLE, $choice);
+                $DB->insert_record(this_db\ratingallocate_choices::TABLE, $choice->dbrecord);
             }
 
 
@@ -1256,6 +1251,15 @@ class ratingallocate_choice {
      */
     public function __get($name) {
         return $this->dbrecord->{$name};
+    }
+
+    /** Emulates the functionality as if there were explicit records by passing them to the original db record
+     *
+     * @param string $name
+     * @return type
+     */
+    public function __set($name, $value) {
+        $this->dbrecord->{$name} = $value;
     }
 
     public function __construct($record) {

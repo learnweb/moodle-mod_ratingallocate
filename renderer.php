@@ -419,7 +419,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $row[] = get_string('no');
             }
             if ($choicesmodifiably) {
-            $row[] = "";//$this->render_tools($idx, $choice->{this_db\ratingallocate_choices::ACTIVE});
+                $row[] = $this->render_tools($idx, $choice->{this_db\ratingallocate_choices::ACTIVE});
             }
             if ($choice->{this_db\ratingallocate_choices::ACTIVE}) {
                 $class = 'dimmed_text';
@@ -430,27 +430,65 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $table->finish_output();
     }
+
+    /**
+     * Renders tools for a certain choice entry
+     *
+     * @return string
+     */
+    private function render_tools($id, $active) {
+        $tools = $this->format_icon_link(ACTION_EDIT_CHOICE, $id, 't/edit', get_string('edit_choice', ratingallocate_MOD_NAME));
+        if ($active) {
+            $tools .= $this->format_icon_link('hide', $id, 't/hide', get_string('disable'));
+        } else {
+            $tools .= $this->format_icon_link('show', $id, 't/show', get_string('enable'));
+        }
+        $tools .= $this->format_icon_link('delete', $id, 't/delete', get_string('delete_choice', ratingallocate_MOD_NAME),
+            new \confirm_action(get_string('deleteconfirm', ratingallocate_MOD_NAME)));
+
+        return $tools;
+    }
+    /**
+     * Util function for writing an action icon link
+     *
+     * @param string $action URL parameter to include in the link
+     * @param string $choice URL parameter to include in the link
+     * @param string $icon The key to the icon to use (e.g. 't/up')
+     * @param string $alt The string description of the link used as the title and alt text
+     * @return string The icon/link
+     */
+    private function format_icon_link($action, $choice, $icon, $alt, $confirm = null) {
+        global $OUTPUT, $PAGE;
+
+        $url = $PAGE->url;
+
+        return $OUTPUT->action_icon(new \moodle_url($url,
+            array('action' => $action, 'choiceid' => $choice, 'sesskey' => sesskey())),
+            new \pix_icon($icon, $alt, 'moodle', array('title' => $alt)),
+            $confirm , array('title' => $alt)) . ' ';
+    }
+
     /**
      * Finish the page (Since the header renders the notifications, it needs to be rendered after the actions)
      *
-     * @return None
+     * @return string
      */
     public function render_header($ratingallocate, $context, $coursemodid) {
-        $header_info = new ratingallocate_header($ratingallocate, $context, true,
+        $headerinfo = new ratingallocate_header($ratingallocate, $context, true,
             $coursemodid);
-        return $this->render($header_info);
+        return $this->render($headerinfo);
     }
 
     /**
      * Write the page footer
      *
-     * @return None
+     * @return string
      */
     public function render_footer() {
         global $OUTPUT;
         return $OUTPUT->footer();
     }
-    
+
     /**
      * Shows table containing information about the result of the distribution algorithm.
      *
