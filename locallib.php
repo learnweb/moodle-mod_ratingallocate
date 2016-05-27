@@ -268,9 +268,7 @@ class ratingallocate {
     }
 
     private function process_action_show_choices() {
-        global $CFG;
 
-        $output = '';
         if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
             global $OUTPUT;
             /* @var $renderer mod_ratingallocate_renderer */
@@ -307,8 +305,9 @@ class ratingallocate {
                 if (!$mform->is_cancelled() ) {
                     $this->save_modify_choice_form($data);
                 }
-                // If form was submitted using save or cancel, show the default page.
-                return $this->process_action_show_choices();
+                // If form was submitted using save or cancel, show the choices table.
+                $this->process_action_show_choices();
+                return false;
             } else {
                 $output .= $OUTPUT->heading(get_string('edit_choice', ratingallocate_MOD_NAME), 2);
                 $output .= $mform->to_html();
@@ -575,11 +574,15 @@ class ratingallocate {
                 break;
 
             case ACTION_SHOW_CHOICES:
-                $output .= $this->process_action_show_choices();
+                $this->process_action_show_choices();
                 return;
 
             case ACTION_EDIT_CHOICE:
-                $output .= $this->process_action_edit_choice();
+                $result = $this->process_action_edit_choice();
+                if (!$result) {
+                    return;
+                }
+                $output .= $result;
                 $showinfo = false;
                 break;
             
