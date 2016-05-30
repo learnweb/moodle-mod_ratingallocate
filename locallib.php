@@ -301,7 +301,8 @@ class ratingallocate {
                     'action' => ACTION_EDIT_CHOICE)),
                 $this, $choice);
 
-            if (!$mform->no_submit_button_pressed() && $data = $mform->get_submitted_data()) {
+            if (!$mform->no_submit_button_pressed() && $mform->is_validated() &&
+                $data = $mform->get_submitted_data()) {
                 if (!$mform->is_cancelled() ) {
                     $this->save_modify_choice_form($data);
                 }
@@ -1060,7 +1061,7 @@ class ratingallocate {
             $choice = new ratingallocate_choice($data);
             $choice->{this_db\ratingallocate_choices::RATINGALLOCATEID} = $this->ratingallocateid;
 
-            if (isset($data->choiceid)) {
+            if (!empty($data->choiceid)) {
                 $choice->id = $data->choiceid;
                 $DB->update_record(this_db\ratingallocate_choices::TABLE, $choice->dbrecord);
             } else {

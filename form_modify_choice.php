@@ -55,7 +55,6 @@ class modify_choice_form extends moodleform {
             $this->choice = $choice;
         }
         $this->msgerrorrequired = get_string('err_required', 'form');
-        $this->definition_after_data();
     }
 
     /**
@@ -65,13 +64,13 @@ class modify_choice_form extends moodleform {
         $mform = $this->_form;
 
         $mform->addElement('hidden', 'choiceid'); // Save the record's id.
-        $mform->setType('choiceid', PARAM_INT);
+        $mform->setType('choiceid', PARAM_TEXT);
 
         $elementname = 'title';
         $mform->addElement('text', $elementname, get_string('choice_title', ratingallocate_MOD_NAME));
         $mform->setType($elementname, PARAM_TEXT);
         $mform->addHelpButton($elementname, 'choice_title', ratingallocate_MOD_NAME);
-        $mform->addRule($elementname, $this->msgerrorrequired , 'required', null, 'server');
+        $mform->addRule($elementname, get_string('err_required', 'form') , 'required', null, 'server');
 
         $elementname = 'explanation';
         $mform->addElement('text', $elementname, get_string('choice_explanation', ratingallocate_MOD_NAME));
@@ -79,8 +78,10 @@ class modify_choice_form extends moodleform {
 
         $elementname = 'maxsize';
         $mform->addElement('text', $elementname, get_string('choice_maxsize', ratingallocate_MOD_NAME));
-        $mform->setType($elementname, PARAM_INT);
-        $mform->addRule($elementname, $this->msgerrorrequired , 'required', null, 'server');
+        $mform->setType($elementname, PARAM_TEXT);
+        $mform->addRule($elementname, get_string('err_required', 'form') , 'required', null, 'server');
+        $mform->addRule($elementname, get_string('err_numeric', 'form') , 'numeric', null, 'server');
+        $mform->addRule($elementname, get_string('err_positivnumber', 'ratingallocate') , 'regex', '/^[1-9][0-9]*|0/', 'server');
 
         $elementname = 'active';
         $mform->addElement('advcheckbox', $elementname, get_string('choice_active', ratingallocate_MOD_NAME),
@@ -112,6 +113,14 @@ class modify_choice_form extends moodleform {
         $o .= $this->_form->getValidationScript();
         $o .= $this->_form->toHtml();
         return $o;
+    }
+
+    /**
+     * Checks that accesstimestart is before accesstimestop
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        return $errors;
     }
 
 }
