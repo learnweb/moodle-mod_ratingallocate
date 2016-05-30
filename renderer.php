@@ -419,7 +419,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $row[] = get_string('no');
             }
             if ($choicesmodifiably) {
-                $row[] = $this->render_tools($idx, $choice->{this_db\ratingallocate_choices::ACTIVE});
+                $row[] = $this->render_tools($idx, $choice->{this_db\ratingallocate_choices::ACTIVE},
+                    $choice->{this_db\ratingallocate_choices::TITLE});
             }
             if ($choice->{this_db\ratingallocate_choices::ACTIVE}) {
                 $class = 'dimmed_text';
@@ -433,10 +434,12 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
     /**
      * Renders tools for a certain choice entry
-     *
-     * @return string
+     * @param integer $id id of the choice
+     * @param boolean $active states if the choice is active
+     * @param string $title title of the choice
+     * @return string html of the tools for a specific choice
      */
-    private function render_tools($id, $active) {
+    private function render_tools($id, $active, $title) {
         $tools = $this->format_icon_link(ACTION_EDIT_CHOICE, $id, 't/edit', get_string('edit_choice', ratingallocate_MOD_NAME));
         if ($active) {
             $tools .= $this->format_icon_link('hide', $id, 't/hide', get_string('disable'));
@@ -444,7 +447,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $tools .= $this->format_icon_link('show', $id, 't/show', get_string('enable'));
         }
         $tools .= $this->format_icon_link('delete', $id, 't/delete', get_string('delete_choice', ratingallocate_MOD_NAME),
-            new \confirm_action(get_string('deleteconfirm', ratingallocate_MOD_NAME)));
+            new \confirm_action(get_string('deleteconfirm', ratingallocate_MOD_NAME, $title)));
 
         return $tools;
     }

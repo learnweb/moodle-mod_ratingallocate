@@ -138,6 +138,20 @@ For {$a->unassigned} users no choice has been allocated yet.';
 
 $string['rating_raw'] = '{$a}';
 // </editor-fold>
+// <editor-fold defaultstate="collapsed" desc="Form to edit choices (administrator)">
+$string['delete_choice'] = 'Delete choice';
+$string['deleteconfirm'] = 'Do you really want to delete the choice "{$a}"?';
+$string['modify_choices_group'] = 'Modify Choices';
+$string['modify_choices'] = 'List Choices';
+$string['modify_choices_explanation'] = 'Shows the list of all choices. Here, the choices can be hidden, altered and deleted.';
+$string['modify_choices_explanation'] = 'Shows the list of all choices. Here, the choices can be hidden, altered and deleted.';
+$string['modify_choices_group_desc_too_early'] = 'TODO';
+$string['modify_choices_group_desc_ready'] = 'TODO';
+$string['modify_choices_group_desc_ready_alloc_started'] = 'TODO';
+$string['modify_choices_group_desc_published'] = 'TODO';
+
+// </editor-fold>
+
 // <editor-fold defaultstate="collapsed" desc="Form to edit the instance(administrator)">
 $string['choice_active'] = 'Choice is active';
 $string['choice_active_help'] = 'Only active choices are displayed to the user. Inactive choices are not displayed.';
@@ -146,7 +160,7 @@ $string['choice_maxsize'] = 'Max. number of participants';
 $string['choice_maxsize_display'] = 'Maximum number of students';
 $string['choice_title'] = 'Title';
 $string['choice_title_help'] = 'Title of the choice. *Attention* all active choices will be displayed while ordered by title.';
-$string['edit_choice'] = 'Edit choice "{$a}"';
+$string['edit_choice'] = 'Edit choice';
 $string['rating_endtime'] = 'Rating ends at';
 $string['rating_begintime'] = 'Rating begins at';
 $string['newchoicetitle'] = 'New choice {$a}';
