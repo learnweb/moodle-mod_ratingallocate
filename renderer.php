@@ -422,7 +422,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $row[] = $this->render_tools($idx, $choice->{this_db\ratingallocate_choices::ACTIVE},
                     $choice->{this_db\ratingallocate_choices::TITLE});
             }
-            if ($choice->{this_db\ratingallocate_choices::ACTIVE}) {
+            if (!$choice->{this_db\ratingallocate_choices::ACTIVE}) {
                 $class = 'dimmed_text';
             }
 
