@@ -325,29 +325,33 @@ class ratingallocate {
      * @param bool $active states if the choice should be set active or inavtive
      */
     private function process_action_enable_choice($active) {
-        global $DB;
-        $choiceid = optional_param('choiceid', 0, PARAM_INT);
+        if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
+            global $DB;
+            $choiceid = optional_param('choiceid', 0, PARAM_INT);
 
-        if ($choiceid) {
-            $DB->set_field(this_db\ratingallocate_choices::TABLE,
-                this_db\ratingallocate_choices::ACTIVE,
-                $active,
-                array('id' => $choiceid));
+            if ($choiceid) {
+                $DB->set_field(this_db\ratingallocate_choices::TABLE,
+                    this_db\ratingallocate_choices::ACTIVE,
+                    $active,
+                    array('id' => $choiceid));
+            }
+            $this->process_action_show_choices();
         }
-        $this->process_action_show_choices();
     }
 
     /**
      * Deletes a choice and displays the choices list.
      */
     private function process_action_delete_choice() {
-        global $DB;
-        $choiceid = optional_param('choiceid', 0, PARAM_INT);
+        if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
+            global $DB;
+            $choiceid = optional_param('choiceid', 0, PARAM_INT);
 
-        if ($choiceid) {
-            $DB->delete_records(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
+            if ($choiceid) {
+                $DB->delete_records(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
+            }
+            $this->process_action_show_choices();
         }
-        $this->process_action_show_choices();
     }
 
     private function process_action_manual_allocation() {
