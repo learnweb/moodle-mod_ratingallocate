@@ -442,11 +442,11 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     private function render_tools($id, $active, $title) {
         $tools = $this->format_icon_link(ACTION_EDIT_CHOICE, $id, 't/edit', get_string('edit_choice', ratingallocate_MOD_NAME));
         if ($active) {
-            $tools .= $this->format_icon_link('hide', $id, 't/hide', get_string('disable'));
+            $tools .= $this->format_icon_link(ACTION_DISABLE_CHOICE, $id, 't/hide', get_string('disable'));
         } else {
-            $tools .= $this->format_icon_link('show', $id, 't/show', get_string('enable'));
+            $tools .= $this->format_icon_link(ACTION_ENABLE_CHOICE, $id, 't/show', get_string('enable'));
         }
-        $tools .= $this->format_icon_link('delete', $id, 't/delete', get_string('delete_choice', ratingallocate_MOD_NAME),
+        $tools .= $this->format_icon_link(ACTION_DELETE_CHOICE, $id, 't/delete', get_string('delete_choice', ratingallocate_MOD_NAME),
             new \confirm_action(get_string('deleteconfirm', ratingallocate_MOD_NAME, $title)));
 
         return $tools;

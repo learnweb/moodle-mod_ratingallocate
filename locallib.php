@@ -76,6 +76,9 @@ class strategymanager {
 define('ACTION_GIVE_RATING', 'give_rating');
 define('ACTION_SHOW_CHOICES', 'show_choices');
 define('ACTION_EDIT_CHOICE', 'edit_choice');
+define('ACTION_ENABLE_CHOICE', 'enable_choice');
+define('ACTION_DISABLE_CHOICE', 'disable_choice');
+define('ACTION_DELETE_CHOICE', 'delete_choice');
 define('ACTION_START_DISTRIBUTION', 'start_distribution');
 define('ACTION_MANUAL_ALLOCATION', 'manual_allocation');
 define('ACTION_PUBLISH_ALLOCATIONS', 'publish_allocations'); // make them displayable for the users
@@ -315,6 +318,36 @@ class ratingallocate {
             }
         }
         return $output;
+    }
+
+    /**
+     * Enables or disables a choice and displays the choices list.
+     * @param bool $active states if the choice should be set active or inavtive
+     */
+    private function process_action_enable_choice($active) {
+        global $DB;
+        $choiceid = optional_param('choiceid', 0, PARAM_INT);
+
+        if ($choiceid) {
+            $DB->set_field(this_db\ratingallocate_choices::TABLE,
+                this_db\ratingallocate_choices::ACTIVE,
+                $active,
+                array('id' => $choiceid));
+        }
+        $this->process_action_show_choices();
+    }
+
+    /**
+     * Deletes a choice and displays the choices list.
+     */
+    private function process_action_delete_choice() {
+        global $DB;
+        $choiceid = optional_param('choiceid', 0, PARAM_INT);
+
+        if ($choiceid) {
+            $DB->delete_records(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
+        }
+        $this->process_action_show_choices();
     }
 
     private function process_action_manual_allocation() {
@@ -585,6 +618,18 @@ class ratingallocate {
                 }
                 $output .= $result;
                 $showinfo = false;
+                break;
+
+            case ACTION_ENABLE_CHOICE:
+                $this->process_action_enable_choice(true);
+                break;
+
+            case ACTION_DISABLE_CHOICE:
+                $this->process_action_enable_choice(false);
+                break;
+
+            case ACTION_DELETE_CHOICE:
+                $this->process_action_delete_choice();
                 break;
             
             case ACTION_PUBLISH_ALLOCATIONS:
