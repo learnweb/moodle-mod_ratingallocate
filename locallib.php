@@ -626,14 +626,17 @@ class ratingallocate {
 
             case ACTION_ENABLE_CHOICE:
                 $this->process_action_enable_choice(true);
+                $showinfo = false;
                 break;
 
             case ACTION_DISABLE_CHOICE:
                 $this->process_action_enable_choice(false);
+                $showinfo = false;
                 break;
 
             case ACTION_DELETE_CHOICE:
                 $this->process_action_delete_choice();
+                $showinfo = false;
                 break;
             
             case ACTION_PUBLISH_ALLOCATIONS:
