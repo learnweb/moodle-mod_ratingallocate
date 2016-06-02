@@ -193,7 +193,7 @@ $string['newchoice'] = 'Add new choice';
 $string['choice_table_title'] = 'Title';
 $string['choice_table_explanation'] = 'Description';
 $string['choice_table_maxsize'] = 'Max. Size';
-$string['choice_table_active'] = 'Activ';
+$string['choice_table_active'] = 'Active';
 $string['choice_table_tools'] = 'Edit';
 // </editor-fold>
 
