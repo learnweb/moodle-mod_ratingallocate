@@ -299,19 +299,32 @@ class ratingallocate {
                 $choice = null;
             }
             $mform = new modify_choice_form(new moodle_url('/mod/ratingallocate/view.php',
-                array('id' => $this->coursemodule->id,
-                    'ratingallocateid' => $this->ratingallocateid,
-                    'action' => ACTION_EDIT_CHOICE)),
-                $this, $choice);
+            array('id' => $this->coursemodule->id,
+                'ratingallocateid' => $this->ratingallocateid,
+                'action' => ACTION_EDIT_CHOICE)),
+            $this, $choice);
 
-            if (!$mform->no_submit_button_pressed() && $mform->is_validated() &&
-                $data = $mform->get_submitted_data()) {
-                if (!$mform->is_cancelled() ) {
-                    $this->save_modify_choice_form($data);
+            if ($mform->is_submitted() && $data = $mform->get_submitted_data()) {
+                if (!$mform->is_cancelled()) {
+                    if ($mform->is_validated()) {
+                        $this->save_modify_choice_form($data);
+                    } else {
+                        $output .= $OUTPUT->heading(get_string('edit_choice', ratingallocate_MOD_NAME), 2);
+                        $output .= $mform->to_html();
+                        return $output;
+                    }
                 }
-                // If form was submitted using save or cancel, show the choices table.
-                $this->process_action_show_choices();
-                return false;
+                if (object_property_exists($data, 'submitbutton2')) {
+                    // If form was submitted using submit2, redirect to the empty edit choice form.
+                    redirect(new moodle_url('/mod/ratingallocate/view.php',
+                        array('id' => $this->coursemodule->id,
+                            'ratingallocateid' => $this->ratingallocateid,
+                            'action' => ACTION_EDIT_CHOICE)));
+                } else {
+                    // If form was submitted using save or cancel, show the choices table.
+                    $this->process_action_show_choices();
+                    return false;
+                }
             } else {
                 $output .= $OUTPUT->heading(get_string('edit_choice', ratingallocate_MOD_NAME), 2);
                 $output .= $mform->to_html();

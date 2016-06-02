@@ -150,6 +150,8 @@ $string['modify_choices_group_desc_ready'] = 'TODO';
 $string['modify_choices_group_desc_ready_alloc_started'] = 'TODO';
 $string['modify_choices_group_desc_published'] = 'TODO';
 $string['err_positivnumber'] = 'You must supply a positive number here.';
+$string['saveandnext'] = 'Save and add next';
+
 
 // </editor-fold>
 

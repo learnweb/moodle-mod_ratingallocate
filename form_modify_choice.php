@@ -40,6 +40,7 @@ class modify_choice_form extends moodleform {
 
     const FORM_ACTION = 'action';
     private $msgerrorrequired;
+    private $addnew = false;
 
     /**
      * Constructor
@@ -50,11 +51,12 @@ class modify_choice_form extends moodleform {
     public function __construct($url, ratingallocate $ratingallocate,
                                 ratingallocate_choice $choice = null) {
         $this->ratingallocate = $ratingallocate;
-        parent::__construct($url);
         if ($choice) {
             $this->choice = $choice;
+        } else {
+            $this->addnew = true;
         }
-        $this->msgerrorrequired = get_string('err_required', 'form');
+        parent::__construct($url);
     }
 
     /**
@@ -87,11 +89,6 @@ class modify_choice_form extends moodleform {
         $mform->addElement('advcheckbox', $elementname, get_string('choice_active', ratingallocate_MOD_NAME),
             null, null, array(0, 1));
         $mform->addHelpButton($elementname, 'choice_active', ratingallocate_MOD_NAME);
-    }
-
-    public function definition_after_data() {
-        parent::definition_after_data();
-        $mform = & $this->_form;
 
         if ($this->choice) {
             $mform->setDefault('title', $this->choice->title);
@@ -99,9 +96,25 @@ class modify_choice_form extends moodleform {
             $mform->setDefault('maxsize', $this->choice->maxsize);
             $mform->setDefault('active', $this->choice->active);
             $mform->setDefault('choiceid', $this->choice->id);
+        } else {
+            $mform->setDefault('active', true);
         }
 
-        $this->add_action_buttons();
+        $this->add_buttons();
+    }
+
+    public function add_buttons() {
+        $mform =& $this->_form;
+
+        $buttonarray = array();
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+        if ($this->addnew) {
+            $buttonarray[] = &$mform->createElement('submit', 'submitbutton2',
+                get_string('saveandnext', ratingallocate_MOD_NAME));
+        }
+        $buttonarray[] = &$mform->createElement('cancel');
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->closeHeaderBefore('buttonar');
     }
 
     /**
