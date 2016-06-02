@@ -307,10 +307,15 @@ class ratingallocate {
                 'action' => ACTION_EDIT_CHOICE)),
             $this, $choice);
 
+            /* @var $renderer mod_ratingallocate_renderer */
+            $renderer = $this->get_renderer();
+
             if ($mform->is_submitted() && $data = $mform->get_submitted_data()) {
                 if (!$mform->is_cancelled()) {
                     if ($mform->is_validated()) {
                         $this->save_modify_choice_form($data);
+                        $renderer->add_notification(get_string("choice_added_notification", ratingallocate_MOD_NAME),
+                            self::NOTIFY_SUCCESS);
                     } else {
                         $output .= $OUTPUT->heading(get_string('edit_choice', ratingallocate_MOD_NAME), 2);
                         $output .= $mform->to_html();
@@ -322,13 +327,18 @@ class ratingallocate {
                     redirect(new moodle_url('/mod/ratingallocate/view.php',
                         array('id' => $this->coursemodule->id,
                             'ratingallocateid' => $this->ratingallocateid,
-                            'action' => ACTION_EDIT_CHOICE)));
+                            'action' => ACTION_EDIT_CHOICE, 'next' => true)));
                 } else {
                     // If form was submitted using save or cancel, show the choices table.
                     $this->process_action_show_choices();
                     return false;
                 }
             } else {
+                $isnext = optional_param('next', false, PARAM_BOOL);
+                if ($isnext) {
+                    $renderer->add_notification(get_string("choice_added_notification", ratingallocate_MOD_NAME),
+                        self::NOTIFY_SUCCESS);
+                }
                 $output .= $OUTPUT->heading(get_string('edit_choice', ratingallocate_MOD_NAME), 2);
                 $output .= $mform->to_html();
             }
