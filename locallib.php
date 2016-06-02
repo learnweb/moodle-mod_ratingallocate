@@ -363,8 +363,13 @@ class ratingallocate {
             global $DB;
             $choiceid = optional_param('choiceid', 0, PARAM_INT);
 
+            /* @var $renderer mod_ratingallocate_renderer*/
+            $renderer = $this->get_renderer();
+
             if ($choiceid) {
                 $DB->delete_records(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
+                $renderer->add_notification(get_string('choice_deleted_notification', ratingallocate_MOD_NAME),
+                    self::NOTIFY_SUCCESS);
             }
             $this->process_action_show_choices();
         }
