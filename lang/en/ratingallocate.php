@@ -144,7 +144,8 @@ $string['rating_raw'] = '{$a}';
 // <editor-fold defaultstate="collapsed" desc="Form to edit choices (administrator)">
 $string['delete_choice'] = 'Delete choice';
 $string['deleteconfirm'] = 'Do you really want to delete the choice "{$a}"?';
-$string['choice_deleted_notification'] = 'Choice was deleted.';
+$string['choice_deleted_notification'] = 'Choice "{$a}" was deleted.';
+$string['choice_deleted_notification_error'] = 'Choice requested for deletion could not be found.';
 $string['modify_choices_group'] = 'Modify Choices';
 $string['modify_choices'] = 'Show/Edit Choices';
 $string['modify_choices_explanation'] = 'Shows the list of all choices. Here, the choices can be hidden, altered and deleted.';

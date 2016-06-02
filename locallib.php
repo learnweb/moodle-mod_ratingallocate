@@ -367,9 +367,19 @@ class ratingallocate {
             $renderer = $this->get_renderer();
 
             if ($choiceid) {
-                $DB->delete_records(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
-                $renderer->add_notification(get_string('choice_deleted_notification', ratingallocate_MOD_NAME),
-                    self::NOTIFY_SUCCESS);
+                $choice = $DB->get_record(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
+                if ($choice) {
+                    $DB->delete_records(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
+                    $renderer->add_notification(get_string('choice_deleted_notification', ratingallocate_MOD_NAME,
+                    $choice->{this_db\ratingallocate_choices::TITLE}),
+                        self::NOTIFY_SUCCESS);
+                } else {
+                    $renderer->add_notification(
+                        get_string('choice_deleted_notification_error', ratingallocate_MOD_NAME)
+                    );
+
+                }
+
             }
             $this->process_action_show_choices();
         }
