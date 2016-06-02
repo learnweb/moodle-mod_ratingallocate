@@ -228,13 +228,14 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         return $output;
     }
-    
+
     /**
-     * Add a notification with the given $note to the renderer. 
+     * Add a notification with the given $note to the renderer.
      * This notification will be rendered in the header of the site.
-     * @param $note Text to be viewed in the notification
+     * @param $note string to be viewed in the notification
+     * @param $classes string class for the formatting of the notification
      */
-    public function add_notification($note, $classes = 'notifyproblem'){
+    public function add_notification($note, $classes = 'notifyproblem') {
         array_push($this->notifications, $this->notification($note, $classes));
     }
 
