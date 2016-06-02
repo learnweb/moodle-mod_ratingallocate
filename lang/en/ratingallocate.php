@@ -135,6 +135,9 @@ $string['allocation_statistics_description'] = 'This table gives an impression o
 It is counting the allocations according to the rating the user has given to the respective choice.
 In this case {$a->users} out of {$a->total} users got a choice they rated with "{$a->rating}".
 For {$a->unassigned} users no choice has been allocated yet.';
+$string['allocation_statistics_description_no_alloc'] = 'This statistic gives an impression of the overall satisfaction of the allocation.
+It is counting the allocations according to the rating the user has given to the respective choice.
+There are no allocations yet. Currently {$a->unassigned} users have given their rating.';
 
 $string['rating_raw'] = '{$a}';
 // </editor-fold>
