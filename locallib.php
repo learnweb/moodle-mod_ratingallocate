@@ -279,6 +279,9 @@ class ratingallocate {
             echo $renderer->render_header($this->ratingallocate, $this->context, $this->coursemodule->id);
             echo $OUTPUT->heading(get_string('show_choices_header', ratingallocate_MOD_NAME));
             $renderer->ratingallocate_show_choices_table($this, true);
+            echo $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
+                'ratingallocateid' => $this->ratingallocateid,
+                'action' => '')), get_string('back'));
             echo $renderer->render_footer();
         }
 
