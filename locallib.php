@@ -398,7 +398,7 @@ class ratingallocate {
         // Manual allocation
         $output = '';
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
-            global $OUTPUT,$PAGE;
+            global $OUTPUT, $PAGE;
 
             $mform = new manual_alloc_form($PAGE->url->out(), $this);
 
@@ -407,13 +407,14 @@ class ratingallocate {
                     $this->save_manual_allocation_form($data);
                     /* @var $renderer mod_ratingallocate_renderer */
                     $renderer = $this->get_renderer();
-                    $renderer->add_notification(get_string('manual_allocation_saved', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
+                    $renderer->add_notification(get_string('manual_allocation_saved', ratingallocate_MOD_NAME),
+                        self::NOTIFY_SUCCESS);
                 }
                 // If form was submitted using save or cancel, show the default page.
                 return $this->process_default();
             } else {
                 $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
-        
+
                 $output .= $mform->to_html();
             }
         }
