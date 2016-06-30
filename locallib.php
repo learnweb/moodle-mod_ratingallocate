@@ -1302,13 +1302,13 @@ class ratingallocate {
 
     private function get_status(){
         $now = time();
-        if ($this->ratingallocate->accesstimestart < $now) {
+        if ($this->ratingallocate->accesstimestart > $now) {
             return self::DISTRIBUTION_STATUS_TOO_EARLY;
         }
-        if ($this->ratingallocate->accesstimestop < $now) {
+        if ($this->ratingallocate->accesstimestop > $now) {
             return self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS;
         }
-        if ($this->ratingallocate->published === true) {
+        if ($this->ratingallocate->published == true) {
             return self::DISTRIBUTION_STATUS_PUBLISHED;
         }
         if (count($this->get_allocations()) == 0) {
