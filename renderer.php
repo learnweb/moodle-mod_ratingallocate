@@ -275,10 +275,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $output .= $this->heading(get_string('modify_allocation_group', ratingallocate_MOD_NAME), 2);
         $output .= $this->box_start();
         // The instance is called ready if it is in one of the two following status.
-        $isready = $status===ratingallocate::DISTRIBUTION_STATUS_READY || $status===ratingallocate::DISTRIBUTION_STATUS_READY_ALLOC_STARTED;
-        //The algorithm may not run manually if the algorithm is currently running or if it is not started and should be started using the cron.
-        $algorithmmayrun = !($algorithmstatus === \mod_ratingallocate\algorithm_status::running ||
-            ($algorithmstatus === \mod_ratingallocate\algorithm_status::notstarted && $runalgorithmbycron));
+        $ratingover = $status !== ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY &&
+            $status !== ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS;
 
         $starturl = new moodle_url($PAGE->url, array('action' => ACTION_START_DISTRIBUTION));
 
@@ -292,7 +290,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $button = new single_button($starturl, get_string('start_distribution', ratingallocate_MOD_NAME), 'get');
         // Enable only if the instance is ready and the algorithm may run manually
-        $button->disabled = !($isready );//&& $algorithmmayrun);
+        $button->disabled = !($ratingover);
         $button->tooltip = get_string('start_distribution_explanation', ratingallocate_MOD_NAME);
         $button->add_action(new confirm_action(get_string('confirm_start_distribution', ratingallocate_MOD_NAME)));
 
@@ -301,7 +299,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $output .= $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
             'ratingallocateid' => $ratingallocateid,
             'action' => ACTION_MANUAL_ALLOCATION)), get_string('manual_allocation_form', ratingallocate_MOD_NAME), 'get',
-            array('disabled' => !$isready));
+            array('disabled' => !$ratingover));
 
         $output .= $this->box_end();
         return $output;
@@ -311,12 +309,10 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      * Output the ratingallocate modfify allocation
      */
     public function publish_allocation_group($ratingallocateid, $coursemoduleid, $status) {
-        global $PAGE;
         $output = '';
         $output .= $this->heading(get_string('publish_allocation_group', ratingallocate_MOD_NAME), 2);
         $output .= $this->box_start();
-        $isready = $status===ratingallocate::DISTRIBUTION_STATUS_READY || $status===ratingallocate::DISTRIBUTION_STATUS_READY_ALLOC_STARTED;
-        $tooearly = $status===ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY;
+        $isready = $status === ratingallocate::DISTRIBUTION_STATUS_READY_ALLOC_STARTED;
 
         // Get description dependent on status
         $descriptionbaseid = 'publish_allocation_group_desc_';
@@ -333,8 +329,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $output .= $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
             'ratingallocateid' => $ratingallocateid,
-            'action' => ACTION_ALLOCATION_TO_GROUPING)), get_string('create_moodle_groups', ratingallocate_MOD_NAME), 'get',
-            array('disabled' => $tooearly));
+            'action' => ACTION_ALLOCATION_TO_GROUPING)), get_string('create_moodle_groups', ratingallocate_MOD_NAME), 'get');
 
         $output .= $this->box_end();
         return $output;
