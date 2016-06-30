@@ -402,6 +402,10 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $choices = $ratingallocate->get_choices();
 
+        // When there are no choices, don't print the table.
+        if (count($choices) === 0) {
+            return;
+        }
         foreach ($choices as $idx => $choice) {
             $row = array();
             $class = '';
