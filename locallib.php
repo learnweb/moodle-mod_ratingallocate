@@ -470,18 +470,18 @@ class ratingallocate {
         }
         return $output;
     }
-    
-    private function process_publish_allocations(){
-        $now = time();
-        if ($this->ratingallocate->accesstimestop < $now){
-            global $USER,$OUTPUT;
-    
+
+    private function process_publish_allocations() {
+        $status = $this->get_status();
+        if ($status === self::DISTRIBUTION_STATUS_READY_ALLOC_STARTED) {
+            global $USER;
+
             $this->origdbrecord->{this_db\ratingallocate::PUBLISHED}   = true;
             $this->origdbrecord->{this_db\ratingallocate::PUBLISHDATE} = time();
             $this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} = -1;
             $this->ratingallocate = new ratingallocate_db_wrapper($this->origdbrecord);
             $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
-            
+
             // create the instance
             $domination = new mod_ratingallocate\task\send_distribution_notification();
             // set blocking if required (it probably isn't)
@@ -492,20 +492,20 @@ class ratingallocate {
                             'userid' => $USER->id, // will be the sending user
                             'ratingallocateid' => $this->ratingallocateid
             ));
-            
+
             // queue it
             \core\task\manager::queue_adhoc_task($domination);
-            
-            //Logging
+
+            // Logging
             $event = \mod_ratingallocate\event\allocation_published::create_simple(
                     context_course::instance($this->course->id), $this->ratingallocateid);
             $event->trigger();
-            
+
             /* @var $renderer mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
             $renderer->add_notification( get_string('distribution_published', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
-            return $this->process_default();
         }
+        return $this->process_default();
     }
     
     private function process_action_allocation_to_grouping(){
