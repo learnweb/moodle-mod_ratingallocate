@@ -508,85 +508,82 @@ class ratingallocate {
         }
         return $this->process_default();
     }
-    
-    private function process_action_allocation_to_grouping(){
-        $now = time();
-        if ($this->ratingallocate->accesstimestop < $now){
-            global $OUTPUT;
-            $allgroupings = groups_get_all_groupings($this->course->id);
-            $groupingidname = ratingallocate_MOD_NAME . '_instid_' . $this->ratingallocateid;
-            // search if there is already a grouping from us
-            $grouping = groups_get_grouping_by_idnumber($this->course->id, $groupingidname);
-            $groupingid = null;
-            if (!$grouping) {
-                // create grouping
-                $data = new stdClass();
-                $data->name = get_string('groupingname', ratingallocate_MOD_NAME, $this->ratingallocate->name);
-                $data->idnumber = $groupingidname;
-                $data->courseid = $this->course->id;
-                $groupingid = groups_create_grouping($data);
-            } else {
-                $groupingid = $grouping->id;
-            }
-            
-            $group_identifier_from_choice_id = function ($choiceid) {
-                return ratingallocate_MOD_NAME . '_c_' . $choiceid;
-            };
-            
-            $choices = $this->get_choices_with_allocationcount();
-            
-            // make a new array containing only the identifiers of the choices
-            $choice_identifiers = array();
-            foreach ($choices as $id => $choice) {
-                $choice_identifiers[$group_identifier_from_choice_id($choice->id)] = array('key' => $id
-                );
-            }
-            
-            // find all associated groups in this grouping
-            $groups = groups_get_all_groups($this->course->id, 0, $groupingid);
-            
-            // loop through the groups in the grouping: if the choice does not exist anymore -> delete
-            // otherwise mark it
-            foreach ($groups as $group) {
-                if (array_key_exists($group->idnumber, $choice_identifiers)) {
-                    // group exists, mark
-                    $choice_identifiers[$group->idnumber]['exists'] = true;
-                    $choice_identifiers[$group->idnumber]['groupid'] = $group->id;
-                } else {
-                    // delete group $group->id
-                    groups_delete_group($group->id);
-                }
-            }
-            
-            // create groups groups for new identifiers or empty group if it exists
-            foreach ($choice_identifiers as $group_idnumber => $choice) {
-                if (key_exists('exists', $choice)) {
-                    // remove all members
-                    groups_delete_group_members_by_group($choice['groupid']);
-                } else {
-                    $data = new stdClass();
-                    $data->courseid = $this->course->id;
-                    $data->name = $choices[$choice['key']]->title;
-                    $data->idnumber = $group_idnumber;
-                    $createdid = groups_create_group($data);
-                    groups_assign_grouping($groupingid, $createdid);
-                    $choice_identifiers[$group_idnumber]['groupid'] = $createdid;
-                }
-            }
-            
-            // add all participants in the correct group
-            $allocations = $this->get_allocations();
-            foreach ($allocations as $id => $allocation) {
-                $choice_id = $allocation->choiceid;
-                $user_id = $allocation->userid;
-                $choiceidnumber = $group_identifier_from_choice_id($choice_id);
-                groups_add_member($choice_identifiers[$choiceidnumber]['groupid'], $user_id);
-            }
-            // Invalidate the grouping cache for the course
-            cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($this->course->id));
-            $renderer = $this->get_renderer();
-            $renderer->add_notification( get_string('moodlegroups_created', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
+
+    private function process_action_allocation_to_grouping() {
+        global $OUTPUT;
+        $groupingidname = ratingallocate_MOD_NAME . '_instid_' . $this->ratingallocateid;
+        // search if there is already a grouping from us
+        $grouping = groups_get_grouping_by_idnumber($this->course->id, $groupingidname);
+        $groupingid = null;
+        if (!$grouping) {
+            // create grouping
+            $data = new stdClass();
+            $data->name = get_string('groupingname', ratingallocate_MOD_NAME, $this->ratingallocate->name);
+            $data->idnumber = $groupingidname;
+            $data->courseid = $this->course->id;
+            $groupingid = groups_create_grouping($data);
+        } else {
+            $groupingid = $grouping->id;
         }
+
+        $group_identifier_from_choice_id = function ($choiceid) {
+            return ratingallocate_MOD_NAME . '_c_' . $choiceid;
+        };
+
+        $choices = $this->get_choices_with_allocationcount();
+
+        // make a new array containing only the identifiers of the choices
+        $choice_identifiers = array();
+        foreach ($choices as $id => $choice) {
+            $choice_identifiers[$group_identifier_from_choice_id($choice->id)] = array('key' => $id
+            );
+        }
+
+        // find all associated groups in this grouping
+        $groups = groups_get_all_groups($this->course->id, 0, $groupingid);
+
+        // loop through the groups in the grouping: if the choice does not exist anymore -> delete
+        // otherwise mark it
+        foreach ($groups as $group) {
+            if (array_key_exists($group->idnumber, $choice_identifiers)) {
+                // group exists, mark
+                $choice_identifiers[$group->idnumber]['exists'] = true;
+                $choice_identifiers[$group->idnumber]['groupid'] = $group->id;
+            } else {
+                // delete group $group->id
+                groups_delete_group($group->id);
+            }
+        }
+
+        // create groups groups for new identifiers or empty group if it exists
+        foreach ($choice_identifiers as $group_idnumber => $choice) {
+            if (key_exists('exists', $choice)) {
+                // remove all members
+                groups_delete_group_members_by_group($choice['groupid']);
+            } else {
+                $data = new stdClass();
+                $data->courseid = $this->course->id;
+                $data->name = $choices[$choice['key']]->title;
+                $data->idnumber = $group_idnumber;
+                $createdid = groups_create_group($data);
+                groups_assign_grouping($groupingid, $createdid);
+                $choice_identifiers[$group_idnumber]['groupid'] = $createdid;
+            }
+        }
+
+        // add all participants in the correct group
+        $allocations = $this->get_allocations();
+        foreach ($allocations as $id => $allocation) {
+            $choice_id = $allocation->choiceid;
+            $user_id = $allocation->userid;
+            $choiceidnumber = $group_identifier_from_choice_id($choice_id);
+            groups_add_member($choice_identifiers[$choiceidnumber]['groupid'], $user_id);
+        }
+        // Invalidate the grouping cache for the course
+        cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($this->course->id));
+        $renderer = $this->get_renderer();
+        $renderer->add_notification( get_string('moodlegroups_created', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
+
         return $this->process_default();
     }
 
