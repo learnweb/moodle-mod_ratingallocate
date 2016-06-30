@@ -102,14 +102,16 @@ $string['last_algorithm_run_status_1'] = 'Running';
 $string['last_algorithm_run_status_2'] = 'Successful';
 
 $string['modify_allocation_group'] = 'Modify Allocation';
-$string['modify_allocation_group_desc_too_early'] = 'The rating phase is currently running. You can start the allocation process after the rating phase has ended.';
-$string['modify_allocation_group_desc_ready'] = 'The rating phase has endend. You can now run the algorithm for an automatic allocation.';
+$string['modify_allocation_group_desc_too_early'] = 'The rating phase has not yet started. You can start the allocation process after the rating phase has ended.';
+$string['modify_allocation_group_desc_rating_in_progress'] = 'The rating phase is currently running. You can start the allocation process after the rating phase has ended.';
+$string['modify_allocation_group_desc_ready'] = 'The rating phase has ended. You can now run the algorithm for an automatic allocation.';
 $string['modify_allocation_group_desc_ready_alloc_started'] = 'The rating phase has ended. Some allocations have already been created.
 Rerunning the algorithm will delete all current allocations.
 You can now modify the allocations manually or proceed to publishing the allocations.';
 $string['modify_allocation_group_desc_published'] = 'The allocations have been published. You can no longer alter them.';
 $string['publish_allocation_group'] = 'Publish Allocation';
-$string['publish_allocation_group_desc_too_early'] = 'There are no allocations yet. Please see the modify allocation section.';
+$string['publish_allocation_group_desc_too_early'] = 'The rating phase has not started yet. Please wait till the rating phase has ended and then start to create allocations, first.';
+$string['publish_allocation_group_desc_rating_in_progress'] = 'The rating phase is in progress. Please wait till the rating phase has ended and then start to create allocations, first.';
 $string['publish_allocation_group_desc_ready'] = 'There are no allocations yet. Please see the modify allocation section.';
 $string['publish_allocation_group_desc_ready_alloc_started'] = 'The allocations can now be published.
 After publishing the allocations they can no longer be altered.
@@ -146,14 +148,14 @@ $string['delete_choice'] = 'Delete choice';
 $string['deleteconfirm'] = 'Do you really want to delete the choice "{$a}"?';
 $string['choice_deleted_notification'] = 'Choice "{$a}" was deleted.';
 $string['choice_deleted_notification_error'] = 'Choice requested for deletion could not be found.';
-$string['modify_choices_group'] = 'Modify Choices';
-$string['modify_choices'] = 'Show/Edit Choices';
+$string['modify_choices_group'] = 'Choices';
+$string['modify_choices'] = 'Edit Choices';
 $string['modify_choices_explanation'] = 'Shows the list of all choices. Here, the choices can be hidden, altered and deleted.';
-$string['modify_choices_explanation'] = 'Shows the list of all choices. Here, the choices can be hidden, altered and deleted.';
-$string['modify_choices_group_desc_too_early'] = 'TODO';
-$string['modify_choices_group_desc_ready'] = 'TODO';
-$string['modify_choices_group_desc_ready_alloc_started'] = 'TODO';
-$string['modify_choices_group_desc_published'] = 'TODO';
+$string['modify_choices_group_desc_too_early'] = 'Here, the choices can be specified, which should be available for the students to vote for.';
+$string['modify_choices_group_desc_rating_in_progress'] = 'The rating is in progress, you should not change the set of available choices in this step.';
+$string['modify_choices_group_desc_ready'] = 'The rating phase is over, you can now modify the amount of students of each choice or deactivate some choices to variate the outcome of the distribution.';
+$string['modify_choices_group_desc_ready_alloc_started'] = 'The rating phase is over, you can now modify the amount of students of each choice or deactivate some choices to variate the outcome of the distribution.';
+$string['modify_choices_group_desc_published'] = 'The allocations have been published, it is no longer recommended to alter the choices.';
 $string['err_positivnumber'] = 'You must supply a positive number here.';
 $string['saveandnext'] = 'Save and add next';
 $string['choice_added_notification'] = 'Choice saved.';

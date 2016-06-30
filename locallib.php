@@ -833,7 +833,7 @@ class ratingallocate {
     }
 
     /**
-     * @return all allocation objects that belong this ratingallocate
+     * @return array all allocation objects that belong this ratingallocate
      */
     public function get_allocations() {
         $query = 'SELECT al.*, r.rating
@@ -1292,24 +1292,32 @@ class ratingallocate {
         }
     }
 
+    /** Rating phase has not started yet. */
     const DISTRIBUTION_STATUS_TOO_EARLY = 'too_early';
+    /** Rating phase in progress. */
+    const DISTRIBUTION_STATUS_RATING_IN_PROGRESS = 'rating_in_progress';
+    /** Rating phase ended, but no allocations exist. */
     const DISTRIBUTION_STATUS_READY = 'ready';
+    /** Rating phase ended and there are already some allocations. */
     const DISTRIBUTION_STATUS_READY_ALLOC_STARTED = 'ready_alloc_started';
+    /** Rating phase ended and allocations have been published. */
     const DISTRIBUTION_STATUS_PUBLISHED = 'published';
 
     private function get_status(){
         $now = time();
-        if ($this->ratingallocate->accesstimestop < $now) {
-            if ($this->ratingallocate->published == false) {
-                if (count($this->get_allocations()) > 0) {
-                    return self::DISTRIBUTION_STATUS_READY_ALLOC_STARTED;
-                }
-                return self::DISTRIBUTION_STATUS_READY;
-            } else {
-                return self::DISTRIBUTION_STATUS_PUBLISHED;
-            }
-        } else {
+        if ($this->ratingallocate->accesstimestart < $now) {
             return self::DISTRIBUTION_STATUS_TOO_EARLY;
+        }
+        if ($this->ratingallocate->accesstimestop < $now) {
+            return self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS;
+        }
+        if ($this->ratingallocate->published === true) {
+            return self::DISTRIBUTION_STATUS_PUBLISHED;
+        }
+        if (count($this->get_allocations()) == 0) {
+            return self::DISTRIBUTION_STATUS_READY;
+        } else {
+            return self::DISTRIBUTION_STATUS_READY_ALLOC_STARTED;
         }
     }
 
