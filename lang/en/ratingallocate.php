@@ -108,7 +108,9 @@ $string['modify_allocation_group_desc_ready'] = 'The rating phase has ended. You
 $string['modify_allocation_group_desc_ready_alloc_started'] = 'The rating phase has ended. Some allocations have already been created.
 Rerunning the algorithm will delete all current allocations.
 You can now modify the allocations manually or proceed to publishing the allocations.';
-$string['modify_allocation_group_desc_published'] = 'The allocations have been published. You can no longer alter them.';
+$string['modify_allocation_group_desc_published'] = 'The allocations have been published.
+You should only alter them with care.
+If you do so, please inform the students about the changes manually!';
 $string['publish_allocation_group'] = 'Publish Allocation';
 $string['publish_allocation_group_desc_too_early'] = 'The rating phase has not started yet. Please wait till the rating phase has ended and then start to create allocations, first.';
 $string['publish_allocation_group_desc_rating_in_progress'] = 'The rating phase is in progress. Please wait till the rating phase has ended and then start to create allocations, first.';
@@ -151,7 +153,7 @@ $string['choice_deleted_notification_error'] = 'Choice requested for deletion co
 $string['modify_choices_group'] = 'Choices';
 $string['modify_choices'] = 'Edit Choices';
 $string['modify_choices_explanation'] = 'Shows the list of all choices. Here, the choices can be hidden, altered and deleted.';
-$string['modify_choices_group_desc_too_early'] = 'Here, the choices can be specified, which should be available for the students to vote for.';
+$string['modify_choices_group_desc_too_early'] = 'Here, the choices can be specified, which should be available to the students.';
 $string['modify_choices_group_desc_rating_in_progress'] = 'The rating is in progress, you should not change the set of available choices in this step.';
 $string['modify_choices_group_desc_ready'] = 'The rating phase is over, you can now modify the amount of students of each choice or deactivate some choices to variate the outcome of the distribution.';
 $string['modify_choices_group_desc_ready_alloc_started'] = 'The rating phase is over, you can now modify the amount of students of each choice or deactivate some choices to variate the outcome of the distribution.';
