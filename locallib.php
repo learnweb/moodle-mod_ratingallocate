@@ -587,20 +587,20 @@ class ratingallocate {
         return $this->process_default();
     }
 
-    private function process_default(){
+    private function process_default() {
         global $OUTPUT;
         $output = '';
-        $now = time();
         /* @var $renderer mod_ratingallocate_renderer */
         $renderer = $this->get_renderer();
+        $status = $this->get_status();
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
-            if ($this->ratingallocate->accesstimestop > $now) {
-            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
+            if ($status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
+                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
+                            array('id' => $this->coursemodule->id,
                             'ratingallocateid' => $this->ratingallocateid,
                             'action' => ACTION_GIVE_RATING)), get_string('edit_rating', ratingallocate_MOD_NAME)); //TODO: Include in choice_status
             }
         }
-        $status = $this->get_status();
         // Print data and controls to edit the choices
         if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
             $output .= $renderer->modify_choices_group($this->ratingallocateid, $this->coursemodule->id, $status);
