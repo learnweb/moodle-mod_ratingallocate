@@ -28,9 +28,9 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(__FILE__) . '/locallib.php');
 
 class mod_ratingallocate_renderer extends plugin_renderer_base {
-    
+
     /**
-     * @var string rendered notifications to output for handle_view()
+     * @var array rendered notifications to output for handle_view()
      */
     private $notifications = array();
 
@@ -51,16 +51,15 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $o .= $this->output->heading($heading);
 
         if ($header->showintro) {
-            $intro_text = format_module_intro('ratingallocate', $header->ratingallocate, 
+            $introtext = format_module_intro('ratingallocate', $header->ratingallocate,
                     $header->coursemoduleid);
-            if ($intro_text) {
+            if ($introtext) {
                 $o .= $this->output->box_start('generalbox boxaligncenter', 'intro');
-                $o .= $intro_text;
+                $o .= $introtext;
                 $o .= $this->output->box_end();
             }
         }
-        //$o .= $this->notifications;
-        if(!empty($this->notifications)) {
+        if (!empty($this->notifications)) {
             $o .= $this->output->box_start('box generalbox boxaligncenter');
             foreach ($this->notifications as $elem) {
                 $o .= html_writer::div(format_text($elem));
