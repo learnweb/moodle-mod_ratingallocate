@@ -225,8 +225,6 @@ class ratingallocate {
     private function process_action_give_rating() {
         global $CFG;
 
-        // Get current time.
-        $now = time();
         $output = '';
         /* @var $renderer mod_ratingallocate_renderer */
         $renderer = $this->get_renderer();
@@ -234,10 +232,11 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
             global $DB, $PAGE, $USER;
 
+            $status = $this->get_status();
             // If no choice option exists WARN!
             if (!$DB->record_exists('ratingallocate_choices', array('ratingallocateid' => $this->ratingallocateid))) {
                 $renderer->add_notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
-            } else if ($this->ratingallocate->accesstimestart < $now && $this->ratingallocate->accesstimestop > $now) {
+            } else if ($status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
                 // Rating is possible...
 
                 // suche das richtige Formular nach Strategie
