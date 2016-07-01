@@ -155,6 +155,25 @@ class mod_ratingallocate_generated_module {
     public $choices;
     public $allocations;
 
+
+    public static function get_default_choice_data() {
+        if (empty(self::$defaultchoicedata)) {
+            self::$defaultchoicedata = array(
+                array('title' => 'Choice 1',
+                    'explanation' => 'Some explanatory text for choice 1',
+                    'maxsize' => '10',
+                    'active' => true),
+                array('title' => 'Choice 2',
+                    'explanation' => 'Some explanatory text for choice 2',
+                    'maxsize' => '5',
+                    'active' => false
+                )
+            );
+        }
+        return self::$defaultchoicedata;
+    }
+    private static $defaultchoicedata;
+
     /**
      * Generates a fully set up mod_ratingallocate module
      * @param advanced_testcase $tc
@@ -186,20 +205,32 @@ class mod_ratingallocate_generated_module {
                             )), 'There should not be any module for that course first');
         }
 
-        // create activity
+        // Create activity.
         $this->moddb = $tc->getDataGenerator()->create_module(ratingallocate_MOD_NAME, $record);
-        $tc->assertEquals(2, $DB->count_records(this_db\ratingallocate_choices::TABLE),
-            array(this_db\ratingallocate_choices::ID => $this->moddb->id));
-        // create students
+
+        // Create students.
         $numstudents = array_key_exists('num_students', $record) ? $record['num_students'] : 20;
         for ($i = 0; $i < $numstudents; $i++) {
             $this->students[$i] = mod_ratingallocate_generator::create_user_and_enrol($tc,
                     $this->course);
         }
 
-        // load choices
+        // Load Ratingallocate Object.
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($tc,
-                $this->moddb, $this->teacher);
+            $this->moddb, $this->teacher);
+
+        // Create Choices.
+        for ($i = 0; $i < 2; $i++) {
+            $record = self::get_default_choice_data()[$i];
+            $record[this_db\ratingallocate_choices::RATINGALLOCATEID] = $this->moddb->id;
+            $ratingallocate->save_modify_choice_form((object) $record);
+        }
+        $numberofrecords = $DB->count_records(this_db\ratingallocate_choices::TABLE,
+            array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->moddb->id));
+        $tc->assertEquals(2, $numberofrecords);
+
+        // Load choices.
+
         $this->choices = $choices = $ratingallocate->get_rateable_choices();
         $choicesnummerated = array_values($choices);
         $numchoices = count($choicesnummerated);
