@@ -205,24 +205,26 @@ class mod_ratingallocate_generated_module {
     /**
      * Generates a fully set up mod_ratingallocate module
      * @param advanced_testcase $tc
-     * @param array $record
+     * @param array $moduledata
+     * @param array $choicedata
      * @param boolean $assertintermediateresult
      */
-    public function __construct(advanced_testcase $tc, $record = null,
+    public function __construct(advanced_testcase $tc, $moduledata = null, $choicedata = null,
                                 $assertintermediateresult = true) {
         global $DB;
         $tc->resetAfterTest();
         $tc->setAdminUser();
 
-        if (is_null($record)) {
-            $record = array();
-        } else if (!is_array($record)) {
-            $tc->fail('$record must be null or an array');
+        if (is_null($moduledata)) {
+            $moduledata = array();
+        } else if (!is_array($moduledata)) {
+            $tc->fail('$moduledata must be null or an array');
         }
-        if (!array_key_exists('course', $record)) {
-            $record['course'] = $tc->getDataGenerator()->create_course();
+
+        if (!array_key_exists('course', $moduledata)) {
+            $moduledata['course'] = $tc->getDataGenerator()->create_course();
         }
-        $this->course = $record['course'];
+        $this->course = $moduledata['course'];
 
         $this->teacher = mod_ratingallocate_generator::create_user_and_enrol($tc, $this->course, true);
         $tc->setUser($this->teacher);
@@ -234,10 +236,10 @@ class mod_ratingallocate_generated_module {
         }
 
         // Create activity.
-        $this->moddb = mod_ratingallocate_generator::create_instance_with_choices($tc, $record);
+        $this->moddb = mod_ratingallocate_generator::create_instance_with_choices($tc, $moduledata, $choicedata);
 
         // Create students.
-        $numstudents = array_key_exists('num_students', $record) ? $record['num_students'] : 20;
+        $numstudents = array_key_exists('num_students', $moduledata) ? $moduledata['num_students'] : 20;
         for ($i = 0; $i < $numstudents; $i++) {
             $this->students[$i] = mod_ratingallocate_generator::create_user_and_enrol($tc,
                     $this->course);
@@ -259,15 +261,15 @@ class mod_ratingallocate_generated_module {
 
         // create students' preferences as array
         //    array ('Choice 1' => 1 )
-        if (!array_key_exists('ratings', $record)) {
-            $record['ratings'] = array();
+        if (!array_key_exists('ratings', $moduledata)) {
+            $moduledata['ratings'] = array();
             for ($i = 0; $i < $numstudents; $i++) {
-                $record['ratings'][$i] = array(
+                $moduledata['ratings'][$i] = array(
                     $choicesnummerated[$i % $numchoices]->{this_db\ratingallocate_choices::TITLE} => 1
                 );
             }
         }
-        $this->ratings = $record['ratings'];
+        $this->ratings = $moduledata['ratings'];
 
         // Create preferences
         $prefersnon = array();
