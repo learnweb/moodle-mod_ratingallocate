@@ -17,7 +17,7 @@
 require_once(dirname(__FILE__) . '/../../locallib.php');
 
 /**
- * mod_dsbuilder generator tests
+ * mod_ratinallocate generator tests
 *
 * @package    mod_ratingallocate
 * @category   test
@@ -43,6 +43,28 @@ class mod_ratingallocate_generator extends testing_module_generator {
         return parent::create_instance($record, (array) $options);
     }
 
+    /**
+     * Creates an instance of the module and adds two default choices.
+     *
+     * @param advanced_testcase $tc Test case
+     * @param array|stdClass $record data for ratingallocate
+     * @param null|array $options general options for ratingallocate
+     * @return stdClass record from ratingallocate
+     */
+    public static function create_instance_with_choices(advanced_testcase $tc, $record = null, array $options = null) {
+        $instance = $tc->getDataGenerator()->create_module(ratingallocate_MOD_NAME, $record, $options);
+        // Load Ratingallocate Object.
+        $ratingallocate = self::get_ratingallocate($instance);
+
+        // Create Choices.
+        for ($i = 0; $i < 2; $i++) {
+            $record = self::get_default_choice_data()[$i];
+            $record[this_db\ratingallocate_choices::RATINGALLOCATEID] = $instance->id;
+            $ratingallocate->save_modify_choice_form((object) $record);
+        }
+        return $instance;
+    }
+
     public static function get_default_values() {
         if (empty(self::$defaultvalue)) {
             self::$defaultvalue = array(
@@ -52,19 +74,29 @@ class mod_ratingallocate_generator extends testing_module_generator {
                 'publishdate' => time() + (7 * 24 * 60 * 60),
                 'strategyopt' => array('strategy_yesno' => array('maxcrossout' => '1')),
                 'strategy' => 'strategy_yesno',
-                'choices_-1_title' => 'Choice 1',
-                'choices_-1_explanation' => 'Some explanatory text for choice 1',
-                'choices_-1_maxsize' => '10',
-                'choices_-1_active' => true,
-                'choices_-2_title' => 'Choice 2',
-                'choices_-2_explanation' => 'Some explanatory text for choice 2',
-                'choices_-2_maxsize' => '5',
-                'choices_-2_active' => false
             );
         }
         return self::$defaultvalue;
     }
     private static $defaultvalue;
+
+    public static function get_default_choice_data() {
+        if (empty(self::$defaultchoicedata)) {
+            self::$defaultchoicedata = array(
+                array('title' => 'Choice 1',
+                    'explanation' => 'Some explanatory text for choice 1',
+                    'maxsize' => '10',
+                    'active' => true),
+                array('title' => 'Choice 2',
+                    'explanation' => 'Some explanatory text for choice 2',
+                    'maxsize' => '5',
+                    'active' => false
+                )
+            );
+        }
+        return self::$defaultchoicedata;
+    }
+    private static $defaultchoicedata;
 
     /**
      * creates a user and enroles him into the given course as teacher or student
@@ -112,15 +144,25 @@ class mod_ratingallocate_generator extends testing_module_generator {
      * login the given user and return ratingallocate object for him.
      *
      * @param advanced_testcase $tc
-     * @param unknown $ratingallocatedb db object representing ratingallocate object
-     * @param unknown $user
+     * @param stdClass $ratingallocatedb db object representing ratingallocate object
+     * @param stdClass $user
      * @return ratingallocate
      */
     public static function get_ratingallocate_for_user(advanced_testcase $tc, $ratingallocatedb,
                                                        $user) {
         $tc->setUser($user);
+        return self::get_ratingallocate($ratingallocatedb);
+    }
+
+    /**
+     * Returns an ratingallocate instance.
+     * @param stdClass $ratingallocatedb dbrecord of the ratingallocate object.
+     * @return ratingallocate ratingallocate object
+     * @throws coding_exception
+     */
+    private static function get_ratingallocate($ratingallocatedb) {
         $cm = get_coursemodule_from_instance(ratingallocate_MOD_NAME,
-                $ratingallocatedb->{this_db\ratingallocate::ID});
+            $ratingallocatedb->{this_db\ratingallocate::ID});
         $course = get_course($cm->course);
         $context = context_module::instance($cm->id);
 
@@ -155,25 +197,6 @@ class mod_ratingallocate_generated_module {
     public $choices;
     public $allocations;
 
-
-    public static function get_default_choice_data() {
-        if (empty(self::$defaultchoicedata)) {
-            self::$defaultchoicedata = array(
-                array('title' => 'Choice 1',
-                    'explanation' => 'Some explanatory text for choice 1',
-                    'maxsize' => '10',
-                    'active' => true),
-                array('title' => 'Choice 2',
-                    'explanation' => 'Some explanatory text for choice 2',
-                    'maxsize' => '5',
-                    'active' => false
-                )
-            );
-        }
-        return self::$defaultchoicedata;
-    }
-    private static $defaultchoicedata;
-
     /**
      * Generates a fully set up mod_ratingallocate module
      * @param advanced_testcase $tc
@@ -206,7 +229,7 @@ class mod_ratingallocate_generated_module {
         }
 
         // Create activity.
-        $this->moddb = $tc->getDataGenerator()->create_module(ratingallocate_MOD_NAME, $record);
+        $this->moddb = mod_ratingallocate_generator::create_instance_with_choices($tc, $record);
 
         // Create students.
         $numstudents = array_key_exists('num_students', $record) ? $record['num_students'] : 20;
@@ -215,22 +238,16 @@ class mod_ratingallocate_generated_module {
                     $this->course);
         }
 
-        // Load Ratingallocate Object.
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($tc,
-            $this->moddb, $this->teacher);
-
-        // Create Choices.
-        for ($i = 0; $i < 2; $i++) {
-            $record = self::get_default_choice_data()[$i];
-            $record[this_db\ratingallocate_choices::RATINGALLOCATEID] = $this->moddb->id;
-            $ratingallocate->save_modify_choice_form((object) $record);
-        }
+        // Assert number of choices is correct.
         $numberofrecords = $DB->count_records(this_db\ratingallocate_choices::TABLE,
             array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->moddb->id));
         $tc->assertEquals(2, $numberofrecords);
 
-        // Load choices.
+        // Load Ratingallocate object.
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($tc,
+            $this->moddb, $this->teacher);
 
+        // Load choices.
         $this->choices = $choices = $ratingallocate->get_rateable_choices();
         $choicesnummerated = array_values($choices);
         $numchoices = count($choicesnummerated);
