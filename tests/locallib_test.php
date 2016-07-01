@@ -53,9 +53,10 @@ class locallib_test extends advanced_testcase {
         $moduledata['course'] = $course;
 
         $choicedata = mod_ratingallocate_generator::get_default_choice_data();
-        foreach ($choicedata as $choice) {
+        foreach ($choicedata as $id => $choice) {
             $choice['maxsize'] = 2;
             $choice['active'] = true;
+            $choicedata[$id] = $choice;
         }
 
         // Create activity.
