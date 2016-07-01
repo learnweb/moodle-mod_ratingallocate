@@ -31,7 +31,7 @@ use ratingallocate\db as this_db;
 class locallib_test extends advanced_testcase {
 
     public function test_simple() {
-        global $DB, $USER;
+        global $DB;
         core_php_time_limit::raise();
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -41,164 +41,175 @@ class locallib_test extends advanced_testcase {
         $teacher = mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
         $this->setUser($teacher);
 
-        // There should not be any module for that course first
+        // There should not be any module for that course first.
         $this->assertFalse(
-                $DB->record_exists(this_db\ratingallocate::TABLE, array(this_db\ratingallocate::COURSE => $course->id
-                )));
+                $DB->record_exists(this_db\ratingallocate::TABLE,
+                    array(this_db\ratingallocate::COURSE => $course->id)
+                )
+        );
 
-        //set default data for category
+        // Set default data for category.
         $data = mod_ratingallocate_generator::get_default_values();
         $data['course'] = $course;
         foreach ($data as $name => $value) {
-            if (subStr($name, strlen($name) - 7, 7) === 'maxsize') {
+            if (substr($name, strlen($name) - 7, 7) === 'maxsize') {
                 $data[$name] = 2;
             }
-            if (subStr($name, strlen($name) - 6, 6) === 'active') {
+            if (substr($name, strlen($name) - 6, 6) === 'active') {
                 $data[$name] = true;
             }
         }
 
-        // create activity
+        // Create activity.
         $mod = mod_ratingallocate_generator::create_instance_with_choices($this, $data);
-        $this->assertEquals(2, $DB->count_records(this_db\ratingallocate_choices::TABLE), array(this_db\ratingallocate_choices::ID => $mod->id));
-        
-        $student_1 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
-        $student_2 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
-        $student_3 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
-        $student_4 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
-        
+        $this->assertEquals(2, $DB->count_records(this_db\ratingallocate_choices::TABLE),
+            array(this_db\ratingallocate_choices::ID => $mod->id));
+
+        $student1 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $student2 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $student3 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $student4 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $teacher);
         $choices = $ratingallocate->get_rateable_choices();
 
         $choice1 = reset($choices);
         $choice2 = end($choices);
 
-        //Create preferences
-        $prefers_non = array();
+        // Create preferences.
+        $prefersnon = array();
         foreach ($choices as $choice) {
-            $prefers_non[$choice->{this_db\ratingallocate_choices::ID}] = array(
+            $prefersnon[$choice->{this_db\ratingallocate_choices::ID}] = array(
                             this_db\ratingallocate_ratings::CHOICEID => $choice->{this_db\ratingallocate_choices::ID},
                             this_db\ratingallocate_ratings::RATING => 0);
         }
-        $prefers_first = json_decode(json_encode($prefers_non),true);
-        $prefers_first[$choice1->{this_db\ratingallocate_choices::ID}][this_db\ratingallocate_ratings::RATING] = true;
-        $prefers_second =  json_decode(json_encode($prefers_non),true);
-        $prefers_second[$choice2->{this_db\ratingallocate_choices::ID}][this_db\ratingallocate_ratings::RATING] = true;
+        $prefersfirst = json_decode(json_encode($prefersnon), true);
+        $prefersfirst[$choice1->{this_db\ratingallocate_choices::ID}][this_db\ratingallocate_ratings::RATING] = true;
+        $preferssecond = json_decode(json_encode($prefersnon), true);
+        $preferssecond[$choice2->{this_db\ratingallocate_choices::ID}][this_db\ratingallocate_ratings::RATING] = true;
 
-        //assign preferences
-        mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student_1, $prefers_first);
-        mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student_2, $prefers_first);
-        mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student_3, $prefers_second);
-        mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student_4, $prefers_second);
+        // Assign preferences.
+        mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student1, $prefersfirst);
+        mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student2, $prefersfirst);
+        mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student3, $preferssecond);
+        mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student4, $preferssecond);
 
-        // allocate choices
+        // Allocate choices.
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $teacher);
-        $time_needed = $ratingallocate->distrubute_choices();
-        $this->assertGreaterThan(0, $time_needed);
-        $this->assertLessThan(0.1, $time_needed, 'Allocation is very slow');
+        $timeneeded = $ratingallocate->distrubute_choices();
+        $this->assertGreaterThan(0, $timeneeded);
+        $this->assertLessThan(0.1, $timeneeded, 'Allocation is very slow');
 
-        $allocation_count = $ratingallocate->get_choices_with_allocationcount();
-        $this->assertCount(2, $allocation_count);
+        $allocationcount = $ratingallocate->get_choices_with_allocationcount();
+        $this->assertCount(2, $allocationcount);
 
-        //Test allocations
-        $num_allocations = $DB->count_records(this_db\ratingallocate_allocations::TABLE);
+        // Test allocations.
+        $numallocations = $DB->count_records(this_db\ratingallocate_allocations::TABLE);
 
-        $this->assertEquals(4, $num_allocations, 'There should be only 4 allocations, since there are only 4 choices.');
-        $allocations = $DB->get_records(this_db\ratingallocate_allocations::TABLE, 
-                 array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $mod->{this_db\ratingallocate::ID}), 
-                '');// '' /*sort*/, /*fields*/ this_db\ratingallocate_allocations::USERID . ',' . this_db\ratingallocate_allocations::CHOICEID );
-        
-        $map_user_id = function ($elem) {return $elem->{this_db\ratingallocate_allocations::USERID};};
-        
-        $alloc1 = self::filter_allocations_by_choice($allocations,$choice1->{this_db\ratingallocate_choices::ID});
-        $alloc2 = self::filter_allocations_by_choice($allocations,$choice2->{this_db\ratingallocate_choices::ID});
-        
-        //Assert, that student 1 was allocated to choice 1
-        $this->assertContains($student_1->id, array_map($map_user_id, $alloc1));
-        //Assert, that student 2 was allocated to choice 1
-        $this->assertContains($student_2->id, array_map($map_user_id, $alloc1));
-        //Assert, that student 3 was allocated to choice 2
-        $this->assertContains($student_3->id, array_map($map_user_id, $alloc2));
-        //Assert, that student 4 was allocated to choice 2
-        $this->assertContains($student_4->id, array_map($map_user_id, $alloc2));
+        $this->assertEquals(4, $numallocations, 'There should be only 4 allocations, since there are only 4 choices.');
+        $allocations = $DB->get_records(this_db\ratingallocate_allocations::TABLE,
+                 array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $mod->{this_db\ratingallocate::ID}),
+                '');
+
+        $mapuserid = function ($elem) {
+            return $elem->{this_db\ratingallocate_allocations::USERID};
+        };
+
+        $alloc1 = self::filter_allocations_by_choice($allocations, $choice1->{this_db\ratingallocate_choices::ID});
+        $alloc2 = self::filter_allocations_by_choice($allocations, $choice2->{this_db\ratingallocate_choices::ID});
+
+        // Assert, that student 1 was allocated to choice 1.
+        $this->assertContains($student1->id, array_map($mapuserid, $alloc1));
+        // Assert, that student 2 was allocated to choice 1.
+        $this->assertContains($student2->id, array_map($mapuserid, $alloc1));
+        // Assert, that student 3 was allocated to choice 2.
+        $this->assertContains($student3->id, array_map($mapuserid, $alloc2));
+        // Assert, that student 4 was allocated to choice 2.
+        $this->assertContains($student4->id, array_map($mapuserid, $alloc2));
     }
     private static function filter_allocations_by_choice($allocations, $choiceid) {
-        $filter_choice_id = function($elem) use ($choiceid) { return $elem->{this_db\ratingallocate_allocations::CHOICEID} == $choiceid; };
-        return array_filter($allocations, $filter_choice_id);
+        $filterchoiceid = function($elem) use ($choiceid) {
+            return $elem->{this_db\ratingallocate_allocations::CHOICEID} == $choiceid;
+        };
+        return array_filter($allocations, $filterchoiceid);
     }
     /**
      * Default data has two choices but only one is active.
      * Test if count of rateable choices is 1.
      */
-    public function test_get_ratable_choices(){
+    public function test_get_ratable_choices() {
         $record = mod_ratingallocate_generator::get_default_values();
-        $test_module = new mod_ratingallocate_generated_module($this,$record);
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->moddb, $test_module->teacher);
-        $this->assertCount(1,$ratingallocate->get_rateable_choices());
-    } 
-    
+        $testmodule = new mod_ratingallocate_generated_module($this, $record);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $testmodule->moddb, $testmodule->teacher);
+        $this->assertCount(1, $ratingallocate->get_rateable_choices());
+    }
+
     /**
      * Test if option titles are returned according to the default values
      */
-    public function test_get_option_titles_default(){       
-        $expected_result = array(1 => 'Yes',0 => 'No'); //Depends on language file
-        $ratings = array(0,1,1,1,0);
-        
+    public function test_get_option_titles_default() {
+        $expectedresult = array(1 => 'Yes', 0 => 'No'); // Depends on language file.
+        $ratings = array(0, 1, 1, 1, 0);
+
         $record = mod_ratingallocate_generator::get_default_values();
-        $test_module = new mod_ratingallocate_generated_module($this,$record);
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->moddb, $test_module->teacher);
+        $testmodule = new mod_ratingallocate_generated_module($this, $record);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user(
+            $this, $testmodule->moddb, $testmodule->teacher);
 
         $result = $ratingallocate->get_options_titles($ratings);
-        $this->assertEquals($expected_result,$result);
+        $this->assertEquals($expectedresult, $result);
     }
-    
+
     /**
      * Test if option titles are returned according to defined custom values
      */
-    public function test_get_option_titles_custom(){
-        $expected_result = array(1 => 'Ja1234', 0 => 'Nein1234'); //Test data
-        $ratings = array(1,1,1,0,1,1);
-    
+    public function test_get_option_titles_custom() {
+        $expectedresult = array(1 => 'Ja1234', 0 => 'Nein1234'); // Test data.
+        $ratings = array(1, 1, 1, 0, 1, 1);
+
         $record = mod_ratingallocate_generator::get_default_values();
-        $record['strategyopt']['strategy_yesno'] = $expected_result;
-        $test_module = new mod_ratingallocate_generated_module($this,$record);
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->moddb, $test_module->teacher);
-    
+        $record['strategyopt']['strategy_yesno'] = $expectedresult;
+        $testmodule = new mod_ratingallocate_generated_module($this, $record);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user(
+            $this, $testmodule->moddb, $testmodule->teacher);
+
         $result = $ratingallocate->get_options_titles($ratings);
-        $this->assertEquals($expected_result,$result);
+        $this->assertEquals($expectedresult, $result);
     }
-    
+
     /**
      * Test if option titles are returned according to defined custom values, if ratings consist of just one rating
      */
-    public function test_get_option_titles_custom1(){
-        $expected_result = array(1 => 'Ja1234'); //Test data
-        $ratings = array(1,1,1,1,1);
-        
+    public function test_get_option_titles_custom1() {
+        $expectedresult = array(1 => 'Ja1234'); // Test data.
+        $ratings = array(1, 1, 1, 1, 1);
+
         $record = mod_ratingallocate_generator::get_default_values();
-        $record['strategyopt']['strategy_yesno'] = $expected_result;
-        $test_module = new mod_ratingallocate_generated_module($this,$record);
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->moddb, $test_module->teacher);
-    
+        $record['strategyopt']['strategy_yesno'] = $expectedresult;
+        $testmodule = new mod_ratingallocate_generated_module($this, $record);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user(
+            $this, $testmodule->moddb, $testmodule->teacher);
+
         $result = $ratingallocate->get_options_titles($ratings);
-        $this->assertEquals($expected_result,$result);
+        $this->assertEquals($expectedresult, $result);
     }
-    
+
     /**
      * Test if option titles are returned according to a mixture of defined and custom values,
      */
-    public function test_get_option_titles_mixed(){
-        $settings = array(1 => 'Ja1234'); //Test data
-        $ratings = array(0,1,1,1,1);
-        $expected_result = $settings;
-        $expected_result [0] = 'No'; //Depends on language file
-    
+    public function test_get_option_titles_mixed() {
+        $settings = array(1 => 'Ja1234'); // Test data.
+        $ratings = array(0, 1, 1, 1, 1);
+        $expectedresult = $settings;
+        $expectedresult [0] = 'No'; // Depends on language file.
+
         $record = mod_ratingallocate_generator::get_default_values();
         $record['strategyopt']['strategy_yesno'] = $settings;
-        $test_module = new mod_ratingallocate_generated_module($this,$record);
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->moddb, $test_module->teacher);
-    
+        $testmodule = new mod_ratingallocate_generated_module($this, $record);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user(
+            $this, $testmodule->moddb, $testmodule->teacher);
+
         $result = $ratingallocate->get_options_titles($ratings);
-        $this->assertEquals($expected_result,$result);
+        $this->assertEquals($expectedresult, $result);
     }
 }
