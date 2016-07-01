@@ -47,18 +47,23 @@ class mod_ratingallocate_generator extends testing_module_generator {
      * Creates an instance of the module and adds two default choices.
      *
      * @param advanced_testcase $tc Test case
-     * @param array|stdClass $record data for ratingallocate
+     * @param array|stdClass $moduledata data for ratingallocate module
+     * @param array|stdClass $choicedata data for the choices of the ratingallocate module
      * @param null|array $options general options for ratingallocate
      * @return stdClass record from ratingallocate
      */
-    public static function create_instance_with_choices(advanced_testcase $tc, $record = null, array $options = null) {
-        $instance = $tc->getDataGenerator()->create_module(ratingallocate_MOD_NAME, $record, $options);
+    public static function create_instance_with_choices(advanced_testcase $tc, $moduledata = null,
+                                                        $choicedata = null, array $options = null) {
+        if ($choicedata === null) {
+            $choicedata = self::get_default_choice_data();
+        }
+        $instance = $tc->getDataGenerator()->create_module(ratingallocate_MOD_NAME, $moduledata, $options);
         // Load Ratingallocate Object.
         $ratingallocate = self::get_ratingallocate($instance);
 
         // Create Choices.
         for ($i = 0; $i < 2; $i++) {
-            $record = self::get_default_choice_data()[$i];
+            $record = $choicedata[$i];
             $record[this_db\ratingallocate_choices::RATINGALLOCATEID] = $instance->id;
             $ratingallocate->save_modify_choice_form((object) $record);
         }

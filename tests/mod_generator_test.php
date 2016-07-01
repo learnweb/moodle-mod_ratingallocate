@@ -45,9 +45,8 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
         $this->assertEquals(0, count($records));
 
         // create activity
-        $mod = $this->getDataGenerator()->create_module('ratingallocate',
-                array('course' => $course
-                ));
+        $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
+                array('course' => $course));
         $records = $DB->get_records('ratingallocate', array('course' => $course->id
         ), 'id');
         $this->assertEquals(1, count($records));
@@ -102,7 +101,7 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
         // Create an other mod_ratingallocate within the course
         $params = array('course' => $course->id, 'name' => 'Another mod_ratingallocate'
         );
-        $mod = $this->getDataGenerator()->create_module('ratingallocate', $params);
+        $mod =  mod_ratingallocate_generator::create_instance_with_choices($this, $params);
         $records = $DB->get_records('ratingallocate', array('course' => $course->id
         ), 'id');
         // are there 2 modules within the course
