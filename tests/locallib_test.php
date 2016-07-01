@@ -133,7 +133,7 @@ class locallib_test extends advanced_testcase {
     public function test_get_ratable_choices(){
         $record = mod_ratingallocate_generator::get_default_values();
         $test_module = new mod_ratingallocate_generated_module($this,$record);
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->moddb, $test_module->teacher);
         $this->assertCount(1,$ratingallocate->get_rateable_choices());
     } 
     
@@ -146,7 +146,7 @@ class locallib_test extends advanced_testcase {
         
         $record = mod_ratingallocate_generator::get_default_values();
         $test_module = new mod_ratingallocate_generated_module($this,$record);
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->moddb, $test_module->teacher);
 
         $result = $ratingallocate->get_options_titles($ratings);
         $this->assertEquals($expected_result,$result);
@@ -162,7 +162,7 @@ class locallib_test extends advanced_testcase {
         $record = mod_ratingallocate_generator::get_default_values();
         $record['strategyopt']['strategy_yesno'] = $expected_result;
         $test_module = new mod_ratingallocate_generated_module($this,$record);
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->moddb, $test_module->teacher);
     
         $result = $ratingallocate->get_options_titles($ratings);
         $this->assertEquals($expected_result,$result);
@@ -178,7 +178,7 @@ class locallib_test extends advanced_testcase {
         $record = mod_ratingallocate_generator::get_default_values();
         $record['strategyopt']['strategy_yesno'] = $expected_result;
         $test_module = new mod_ratingallocate_generated_module($this,$record);
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->moddb, $test_module->teacher);
     
         $result = $ratingallocate->get_options_titles($ratings);
         $this->assertEquals($expected_result,$result);
@@ -196,7 +196,7 @@ class locallib_test extends advanced_testcase {
         $record = mod_ratingallocate_generator::get_default_values();
         $record['strategyopt']['strategy_yesno'] = $settings;
         $test_module = new mod_ratingallocate_generated_module($this,$record);
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->moddb, $test_module->teacher);
     
         $result = $ratingallocate->get_options_titles($ratings);
         $this->assertEquals($expected_result,$result);

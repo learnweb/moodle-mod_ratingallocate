@@ -135,7 +135,7 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
         $this->assertCount($record['num_students'], $test_module->students);
         $this->assertCount(20, $test_module->allocations);
 
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->mod_db, $test_module->teacher);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $test_module->moddb, $test_module->teacher);
         foreach ($ratingallocate->get_choices_with_allocationcount() as $choice) {
             $this->assertEquals(10, $choice->{'usercount'});
         }
