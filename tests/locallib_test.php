@@ -35,9 +35,9 @@ class locallib_test extends advanced_testcase {
         core_php_time_limit::raise();
         $this->resetAfterTest();
         $this->setAdminUser();
-        
+
         $course = $this->getDataGenerator()->create_course();
-        
+
         $teacher = mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
         $this->setUser($teacher);
 
@@ -57,9 +57,9 @@ class locallib_test extends advanced_testcase {
                 $data[$name] = true;
             }
         }
-        
+
         // create activity
-        $mod = $this->getDataGenerator()->create_module(ratingallocate_MOD_NAME, $data);
+        $mod = mod_ratingallocate_generator::create_instance_with_choices($this, $data);
         $this->assertEquals(2, $DB->count_records(this_db\ratingallocate_choices::TABLE), array(this_db\ratingallocate_choices::ID => $mod->id));
         
         $student_1 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
