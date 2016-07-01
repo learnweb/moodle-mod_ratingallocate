@@ -1300,7 +1300,7 @@ class ratingallocate {
     /** Rating phase ended and allocations have been published. */
     const DISTRIBUTION_STATUS_PUBLISHED = 'published';
 
-    private function get_status(){
+    public function get_status(){
         $now = time();
         if ($this->ratingallocate->accesstimestart > $now) {
             return self::DISTRIBUTION_STATUS_TOO_EARLY;

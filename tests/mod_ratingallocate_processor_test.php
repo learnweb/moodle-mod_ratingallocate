@@ -77,7 +77,7 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
      * Enables for calling the private processing functions of the ratingallocate
      * @param ratingallocate $ratingallocate
      * @param string $methodname name of private or protected method
-     * @param array $args arguments the method should be called with
+     * @param unknown $args arguments the method should be called with
      */
     private function call_private_ratingallocate_method(ratingallocate $ratingallocate, $methodname, $args=[]) {
         $class = new ReflectionClass('ratingallocate');

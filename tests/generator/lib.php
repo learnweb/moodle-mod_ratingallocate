@@ -165,7 +165,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
      * @return ratingallocate ratingallocate object
      * @throws coding_exception
      */
-    private static function get_ratingallocate($ratingallocatedb) {
+    public static function get_ratingallocate($ratingallocatedb) {
         $cm = get_coursemodule_from_instance(ratingallocate_MOD_NAME,
             $ratingallocatedb->{this_db\ratingallocate::ID});
         $course = get_course($cm->course);
