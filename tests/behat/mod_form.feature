@@ -12,42 +12,38 @@ Background:
     And I turn editing mode on
     And I add a "Ratingallocate" to section "0"
     And I set the field "id_name" to "My Ratingallocate"
-    And I add a new choice
-    And I set the values of the choice with the id -1 to:
+    And I press "id_submitbutton"
+    And I press "Edit Choices"
+    And I add a new choice with the values:
       | title       | My first choice |
       | explanation | Test 1          |
-    And I set the values of the choice with the id -2 to:
+      | maxsize     |	2	    	  |
+    And I add a new choice with the values:
       | title       | My second choice |
       | explanation | Test 2           |
-    And I set the values of the choice with the id -3 to:
+      | maxsize     |	2	    	   |
+    And I add a new choice with the values:
       | title       | My third choice |
       | explanation | Test 3  		  |
+      | maxsize     |	2	    	  |
 
   @javascript
   Scenario: Create a new rating alloation and add an additonal new choice.
-    When I add a new choice
-    And I set the values of the choice with the id -4 to:
+    Given I add a new choice with the values:
   	| title       | My fourth choice |
-  	| explanation | Test 4          |
-    And I press "id_submitbutton"
-    And I navigate to "Edit settings" node in "ratingallocate administration"
+  	| explanation | Test 4           |
+    | maxsize     |	2	    	     |
     Then I should see "My first choice"
     And I should see "My second choice"
     And I should see "My third choice"
     And I should see "My fourth choice"
     
-  @javascript
+  @javascript @wip
   Scenario: Create a new rating alloation and add two additonal new choices.
-    When I add a new choice
-    And I set the values of the choice with the id -4 to:
-  	| title       | My fourth choice |
-  	| explanation | Test 4          |
-  	And I add a new choice
-    And I set the values of the choice with the id -5 to:
-  	| title       | My fifth choice |
-  	| explanation | Test 5          |
-    And I press "id_submitbutton"
-    And I navigate to "Edit settings" node in "ratingallocate administration"
+    Given I add a new choices with the values:
+  	| title            | explanation     | maxsize |
+    | My fourth choice | Test 4          | 2       |
+    | My fifth choice  | Test 5          | 2       |
     Then I should see "My first choice"
     And I should see "My second choice"
     And I should see "My third choice"
@@ -56,14 +52,10 @@ Background:
     
   @javascript
   Scenario: Create a new rating alloation and add two additonal new choices, but delete two old and one new.
-    When I add a new choice
-    And I set the values of the choice with the id -4 to:
-  	| title       | My fourth choice |
-  	| explanation | Test 4          |
-  	And I add a new choice
-    And I set the values of the choice with the id -5 to:
-  	| title       | My fifth choice |
-  	| explanation | Test 5          |
+    Given I add a new choices with the values:
+      | title            | explanation     | maxsize |
+      | My fourth choice | Test 4          | 2       |
+      | My fifth choice  | Test 5          | 2       |
   	And I delete the choice with the id -2
   	And I delete the choice with the id -1
   	And I delete the choice with the id -5

@@ -7,10 +7,10 @@
  * @category test
  * @copyright 2014 Tobias Reischmann
  */
-require_once (__DIR__ . '/../../../../lib/behat/behat_base.php');
+require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given as Given, 
-Behat\Gherkin\Node\TableNode as TableNode, 
+use Behat\Behat\Context\Step\Given as Given,
+Behat\Gherkin\Node\TableNode as TableNode,
 Behat\Behat\Context\Step\When as When,
 Behat\Mink\Exception\ExpectationException as ExpectationException;
 
@@ -20,22 +20,65 @@ class behat_mod_ratingallocate extends behat_base {
     /**
      * Fills the respective fields of a choice.
      *
-     * @Given /^I set the values of the choice with the id (?P<choice_id>-?\d+) to:$/
-     * 
-     * @param integer $choiceid id of the choice
+     * @Given /^I set the values of the choice to:$/
+     *
      * @param TableNode $choicedata with data for filling the choice
+     * @return array step definition
      */
-    public function i_Set_The_Values_Of_The_Choice_With_The_Id_To($choiceid,TableNode $choicedata) {
-        $result = new TableNode();
+    public function i_set_the_values_of_the_choice_to(TableNode $choicedata) {
         $choicedatahash = $choicedata->getRowsHash();
         // The action depends on the field type.
         $steps = array();
         foreach ($choicedatahash as $locator => $value) {
-            array_push($steps, new Given("I set the field \"id_choices_${choiceid}_${locator}\" to \"${value}\""));
+            array_push($steps, new Given("I set the field \"id_${locator}\" to \"${value}\""));
         }
         return $steps;
     }
-    
+
+    /**
+     * Adds a new choice by first clicking on the add new choice button, filling the form and finally
+     * submitting it.
+     *
+     * @Given /^I add a new choice with the values:$/
+     * @param TableNode $choicedata
+     * @return array
+     */
+    public function i_add_a_new_choice_with_the_values(TableNode $choicedata) {
+        $steps = array();
+        array_push($steps, $this->i_add_a_new_choice());
+        foreach ($this->i_set_the_values_of_the_choice_to($choicedata) as $step) {
+            array_push($steps, $step);
+        }
+        array_push($steps, new Given("I press \"id_submitbutton\""));
+        return $steps;
+    }
+
+    /**
+     * Adds new choices by first clicking on the add new choice button, filling the form and then continually
+     * adding new choices using the add next button. Finally, the last view is canceled.
+     * 
+     * @Given /^I add a new choices with the values:$/
+     * @param TableNode $choicedata
+     * @return array
+     */
+    public function i_add_a_new_choices_with_the_values(TableNode $choicedata) {
+        $steps = array();
+        array_push($steps, $this->i_add_a_new_choice());
+        $choicedatahash = $choicedata->getHash();
+        foreach ($choicedatahash as $entry) {
+            $table = new TableNode();
+            foreach ($entry as $key => $val) {
+                $table->addRow(array($key, $val));
+            }
+            foreach ($this->i_set_the_values_of_the_choice_to($table) as $step) {
+                array_push($steps, $step);
+            }
+            array_push($steps, $this->i_add_a_next_choice());
+        }
+        array_push($steps, new Given("I press \"id_cancel\""));
+        return $steps;
+    }
+
     /**
      * Delete the choice with the respective id.
      *
@@ -74,12 +117,21 @@ class behat_mod_ratingallocate extends behat_base {
     /**
      * Adds a new choice for the existing rating allocation.
      *
-     * @When /^I add a new choice$/
+     * @Given /^I add a new choice$/
      */
-    public function i_Add_A_New_Choice() {
-        return new When('I press "'.get_string('newchoice', 'ratingallocate').'"');
+    public function i_add_a_new_choice() {
+        return new Given('I press "'.get_string('newchoice', 'ratingallocate').'"');
     }
-    
+
+    /**
+     * Adds a new choice for the existing rating allocation.
+     *
+     * @Given /^I add a next choice$/
+     */
+    public function i_add_a_next_choice() {
+        return new Given('I press "id_submitbutton2"');
+    }
+
     /**
      * The choice with id should be active.
      *
