@@ -38,29 +38,29 @@ class mod_ratingallocate_status_testcase extends advanced_testcase {
      */
     public function ratingallocate_provider() {
         return [
-            'rating_phase_not_started' => [
+            'Rating phase is not started.' => [
                 3, 6, false, false, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
-            'rating_phase_not_started_but_allocations' => [
+            'Rating phase is not started, but some allocations exist.' => [
                 3, 6, false, true, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
-            'rating_phase_not_started_but_published' => [
+            'Rating phase is not started, but allocation is published.' => [
                 3, 6, true, false, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
-            'rating_phase_not_started_but_allocations_and_published' => [
+            'Rating phase is not started, but allocations exist and are published.' => [
                 3, 6, true, true, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
-            'rating_phase_running' => [
+            'The rating phase is running' => [
                 -1, 6, false, false, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
-            'rating_phase_running_but_allocations' => [
+            'The rating phase is running, but allocations exist.' => [
                 -1, 6, false, true, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
-            'rating_phase_running_but_published' => [
+            'The rating phase is running, but allocation is published.' => [
                 -1, 6, true, false, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
-            'rating_phase_running_but_allocations_and_published' => [
-                -1, -6, true, true, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
-            'rating_phase_ended' => [
+            'The rating phase is running, but allocations exist and are published.' => [
+                -1, 6, true, true, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
+            'The rating phase is running.' => [
                 -7, -6, false, false, ratingallocate::DISTRIBUTION_STATUS_READY],
-            'rating_phase_ended_but_allocations' => [
+            'The rating phase is running and some allocations exist.' => [
                 -7, -6, false, true, ratingallocate::DISTRIBUTION_STATUS_READY_ALLOC_STARTED],
-            'rating_phase_ended_but_published' => [
+            'The rating phase is running and allocation is published.' => [
                 -7, -6, true, false, ratingallocate::DISTRIBUTION_STATUS_PUBLISHED],
-            'rating_phase_ended_but_allocations_and_published' => [
+            'The rating phase is running and allocations exist and are published.' => [
                 -7, -6, true, true, ratingallocate::DISTRIBUTION_STATUS_PUBLISHED]
         ];
     }
