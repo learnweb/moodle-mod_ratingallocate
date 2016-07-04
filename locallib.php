@@ -404,11 +404,18 @@ class ratingallocate {
 
             if (!$mform->no_submit_button_pressed() && $data = $mform->get_submitted_data()) {
                 if (!$mform->is_cancelled() ) {
-                    $this->save_manual_allocation_form($data);
                     /* @var $renderer mod_ratingallocate_renderer */
                     $renderer = $this->get_renderer();
-                    $renderer->add_notification(get_string('manual_allocation_saved', ratingallocate_MOD_NAME),
-                        self::NOTIFY_SUCCESS);
+                    $status = $this->get_status();
+                    if ($status === self::DISTRIBUTION_STATUS_TOO_EARLY ||
+                        $status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
+                        $renderer->add_notification(
+                            get_string('modify_allocation_group_desc_'.$status, ratingallocate_MOD_NAME));
+                    } else {
+                        $this->save_manual_allocation_form($data);
+                        $renderer->add_notification(get_string('manual_allocation_saved', ratingallocate_MOD_NAME),
+                            self::NOTIFY_SUCCESS);
+                    }
                 }
                 // If form was submitted using save or cancel, show the default page.
                 return $this->process_default();

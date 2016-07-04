@@ -174,20 +174,20 @@ class mod_ratingallocate_generator extends testing_module_generator {
         return new ratingallocate($ratingallocatedb, $course, $cm, $context);
     }
 
-    public static function get_open_ratingallocate_for_teacher(advanced_testcase $tc) {
-        return self::get_ratingallocate_for_teacher_open_in(0, $tc);
+    public static function get_open_ratingallocate_for_teacher(advanced_testcase $tc, $choices = null) {
+        return self::get_ratingallocate_for_teacher_open_in(0, $tc, $choices);
     }
 
-    public static function get_closed_ratingallocate_for_teacher(advanced_testcase $tc) {
-        return self::get_ratingallocate_for_teacher_open_in(-7, $tc);
+    public static function get_closed_ratingallocate_for_teacher(advanced_testcase $tc, $choices = null) {
+        return self::get_ratingallocate_for_teacher_open_in(-7, $tc, $choices);
     }
 
-    private static function get_ratingallocate_for_teacher_open_in($numdays, advanced_testcase $tc) {
+    private static function get_ratingallocate_for_teacher_open_in($numdays, advanced_testcase $tc, $choices = null) {
         $record = self::get_default_values();
         $record['accesstimestart'] = time() + ($numdays * 24 * 60 * 60);
         $record['accesstimestop'] = time() + (($numdays + 6) * 24 * 60 * 60);
         $record['publishdate'] = time() + (($numdays + 7) * 24 * 60 * 60);
-        $testmodule = new mod_ratingallocate_generated_module($tc, $record);
+        $testmodule = new mod_ratingallocate_generated_module($tc, $record, $choices);
         return self::get_ratingallocate_for_user($tc,
             $testmodule->moddb, $testmodule->teacher);
     }

@@ -19,7 +19,7 @@
  *
  * @package    mod_ratingallocate
  * @category   test
- * @group mod_ratingallocate
+ * @group mod_ratingallocate2
  * @copyright  reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -59,7 +59,7 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
         $ratingallocate = mod_ratingallocate_generator::get_open_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $DB->count_records('groupings'));
         $this->call_private_ratingallocate_method($ratingallocate, 'process_action_allocation_to_grouping');
-        $this->assertEquals(0, $DB->count_records('groupings'));
+        $this->assertEquals(1, $DB->count_records('groupings'));
     }
     /**
      * Tests if process_action_allocation_to_grouping is working after time runs out
@@ -71,6 +71,78 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('groupings'));
         $this->call_private_ratingallocate_method($ratingallocate, 'process_action_allocation_to_grouping');
         $this->assertEquals(1, $DB->count_records('groupings'));
+    }
+
+    /**
+     * Before the rating phase is over a modification of the allocations should not be possible.
+     * After the rating phase has ended the allocations may be modified.
+     * @return array datasets for the test_modify_allocation method.
+     */
+    public function modify_allocation_provider() {
+        return [
+            'Rating phase is over.' => [
+                'get_closed_ratingallocate_for_teacher',
+                20],
+            'Rating phase is not over, yet.' => [
+                'get_open_ratingallocate_for_teacher',
+                10]
+        ];
+    }
+
+    /**
+     * Tests if process_action_modify_allocation is working after and before time runs out
+     * Assert, that the number of allocations changes as expected
+     * @dataProvider modify_allocation_provider
+     */
+    public function test_modify_allocation($ratingallocatecreationmethod, $expected) {
+        global $DB;
+        $ratingallocate = forward_static_call(array('mod_ratingallocate_generator', $ratingallocatecreationmethod),
+            $this, $this->get_choice_data());
+        $choices = $DB->get_records('ratingallocate_choices');
+        $choiceid = array_keys($choices)[0];
+        $this->assertEquals(10, $DB->count_records('ratingallocate_allocations',
+            array('choiceid' => $choiceid)));
+        $this->prepare_manual_alloc_form($ratingallocate, $choiceid);
+        $this->call_private_ratingallocate_method($ratingallocate, 'process_action_manual_allocation');
+        $this->assertEquals($expected, $DB->count_records('ratingallocate_allocations',
+            array('choiceid' => $choiceid)));
+    }
+
+    /**
+     * Returns an array with 2 choices with size of 10.
+     */
+    private function get_choice_data() {
+        return array(
+            array('title' => 'Choice 1',
+                'explanation' => 'Some explanatory text for choice 1',
+                'maxsize' => '10',
+                'active' => true),
+            array('title' => 'Choice 2',
+                'explanation' => 'Some explanatory text for choice 2',
+                'maxsize' => '10',
+                'active' => true
+            )
+        );
+    }
+
+    /**
+     * Mocks the manual_alloc_form to return submitted data.
+     */
+    private function prepare_manual_alloc_form(ratingallocate $ratingallocate, $choiceid) {
+        global $DB;
+        require_once(__DIR__ .'/../form_manual_allocation.php');
+        $allocations = $DB->get_records('ratingallocate_allocations');
+        $allocdata = array();
+        foreach ($allocations as $id => $allocation) {
+            $allocdata[$allocation->userid]['assign'] = "$choiceid";
+        }
+
+        $data = array();
+        $data['action'] = 'manual_allocation';
+        $data['data'] = $allocdata;
+        $data['submitbutton'] = 'Save changes';
+        $data['filter_state'] = manual_alloc_form::FILTER_ALL;
+        manual_alloc_form::mock_submit($data);
     }
 
     /**
