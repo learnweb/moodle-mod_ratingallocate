@@ -255,3 +255,5 @@ $string['log_allocation_table_viewed_description'] =  'The user with id "{$a->us
 
 $string['log_allocation_statistics_viewed'] = 'Allocation statistics viewed';
 $string['log_allocation_statistics_viewed_description'] =  'The user with id "{$a->userid}" viewed the allocation statistics for the ratingallocate with id "{$a->ratingallocateid}".';
+
+$string['no_id_or_m_error'] = 'You must specify a course_module ID or an instance ID';
