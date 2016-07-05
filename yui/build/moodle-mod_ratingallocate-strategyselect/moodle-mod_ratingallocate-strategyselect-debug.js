@@ -6,7 +6,6 @@ var SELECTORS = {
     SELOPTIONS: '#selected_strategy_options',
     FORMELEMENTS: 'div.fcontainer'
 };
-var CSS = {};
 
 M.mod_ratingallocate = M.mod_ratingallocate || {};
 M.mod_ratingallocate.strategyselect = {

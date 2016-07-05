@@ -30,6 +30,7 @@ use ratingallocate\db as this_db;
 require_once(dirname(__FILE__) . '/lib.php');
 require_once($CFG->libdir  . '/eventslib.php');
 require_once(dirname(__FILE__) . '/form_manual_allocation.php');
+require_once(dirname(__FILE__) . '/form_modify_choice.php');
 require_once(dirname(__FILE__) . '/renderable.php');
 require_once($CFG->dirroot.'/group/lib.php');
 require_once(__DIR__.'/classes/algorithm_status.php');
@@ -73,6 +74,11 @@ class strategymanager {
 }
 
 define('ACTION_GIVE_RATING', 'give_rating');
+define('ACTION_SHOW_CHOICES', 'show_choices');
+define('ACTION_EDIT_CHOICE', 'edit_choice');
+define('ACTION_ENABLE_CHOICE', 'enable_choice');
+define('ACTION_DISABLE_CHOICE', 'disable_choice');
+define('ACTION_DELETE_CHOICE', 'delete_choice');
 define('ACTION_START_DISTRIBUTION', 'start_distribution');
 define('ACTION_MANUAL_ALLOCATION', 'manual_allocation');
 define('ACTION_PUBLISH_ALLOCATIONS', 'publish_allocations'); // make them displayable for the users
@@ -154,7 +160,7 @@ class ratingallocate {
      * @var mod_ratingallocate_renderer the custom renderer for this module
      */
     protected $renderer;
-    
+
     const NOTIFY_SUCCESS = 'notifysuccess';
 
     /**
@@ -215,12 +221,10 @@ class ratingallocate {
             return $this->process_default();
         }
     }
-    
+
     private function process_action_give_rating() {
         global $CFG;
 
-        // Get current time.
-        $now = time();
         $output = '';
         /* @var $renderer mod_ratingallocate_renderer */
         $renderer = $this->get_renderer();
@@ -228,10 +232,11 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
             global $DB, $PAGE, $USER;
 
+            $status = $this->get_status();
             // If no choice option exists WARN!
             if (!$DB->record_exists('ratingallocate_choices', array('ratingallocateid' => $this->ratingallocateid))) {
                 $renderer->add_notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
-            } else if ($this->ratingallocate->accesstimestart < $now && $this->ratingallocate->accesstimestop > $now) {
+            } else if ($status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
                 // Rating is possible...
 
                 // suche das richtige Formular nach Strategie
@@ -257,33 +262,166 @@ class ratingallocate {
                 $output .= $renderer->render_ratingallocate_strategyform($mform);
                 // Logging.
                 $event = \mod_ratingallocate\event\rating_viewed::create_simple(
-                        context_course::instance($this->course->id), $this->ratingallocateid);
+                    context_course::instance($this->course->id), $this->ratingallocateid);
                 $event->trigger();
             }
         }
         return $output;
     }
-    
-    private function process_action_manual_allocation(){
+
+    private function process_action_show_choices() {
+
+        if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
+            global $OUTPUT;
+            /* @var $renderer mod_ratingallocate_renderer */
+            $renderer = $this->get_renderer();
+            echo $renderer->render_header($this->ratingallocate, $this->context, $this->coursemodule->id);
+            echo $OUTPUT->heading(get_string('show_choices_header', ratingallocate_MOD_NAME));
+            $renderer->ratingallocate_show_choices_table($this, true);
+            echo $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
+                'ratingallocateid' => $this->ratingallocateid,
+                'action' => '')), get_string('back'));
+            echo $renderer->render_footer();
+        }
+
+    }
+
+    private function process_action_edit_choice() {
+        global $DB;
+
+        $output = '';
+        if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
+            global $OUTPUT, $PAGE;
+            $choiceid = optional_param('choiceid', 0, PARAM_INT);
+
+            if ($choiceid) {
+                $record = $DB->get_record(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
+                $choice = new ratingallocate_choice($record);
+            } else {
+                $choice = null;
+            }
+            $mform = new modify_choice_form(new moodle_url('/mod/ratingallocate/view.php',
+            array('id' => $this->coursemodule->id,
+                'ratingallocateid' => $this->ratingallocateid,
+                'action' => ACTION_EDIT_CHOICE)),
+            $this, $choice);
+
+            /* @var $renderer mod_ratingallocate_renderer */
+            $renderer = $this->get_renderer();
+
+            if ($mform->is_submitted() && $data = $mform->get_submitted_data()) {
+                if (!$mform->is_cancelled()) {
+                    if ($mform->is_validated()) {
+                        $this->save_modify_choice_form($data);
+                        $renderer->add_notification(get_string("choice_added_notification", ratingallocate_MOD_NAME),
+                            self::NOTIFY_SUCCESS);
+                    } else {
+                        $output .= $OUTPUT->heading(get_string('edit_choice', ratingallocate_MOD_NAME), 2);
+                        $output .= $mform->to_html();
+                        return $output;
+                    }
+                }
+                if (object_property_exists($data, 'submitbutton2')) {
+                    // If form was submitted using submit2, redirect to the empty edit choice form.
+                    redirect(new moodle_url('/mod/ratingallocate/view.php',
+                        array('id' => $this->coursemodule->id,
+                            'ratingallocateid' => $this->ratingallocateid,
+                            'action' => ACTION_EDIT_CHOICE, 'next' => true)));
+                } else {
+                    // If form was submitted using save or cancel, show the choices table.
+                    $this->process_action_show_choices();
+                    return false;
+                }
+            } else {
+                $isnext = optional_param('next', false, PARAM_BOOL);
+                if ($isnext) {
+                    $renderer->add_notification(get_string("choice_added_notification", ratingallocate_MOD_NAME),
+                        self::NOTIFY_SUCCESS);
+                }
+                $output .= $OUTPUT->heading(get_string('edit_choice', ratingallocate_MOD_NAME), 2);
+                $output .= $mform->to_html();
+            }
+        }
+        return $output;
+    }
+
+    /**
+     * Enables or disables a choice and displays the choices list.
+     * @param bool $active states if the choice should be set active or inavtive
+     */
+    private function process_action_enable_choice($active) {
+        if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
+            global $DB;
+            $choiceid = optional_param('choiceid', 0, PARAM_INT);
+
+            if ($choiceid) {
+                $DB->set_field(this_db\ratingallocate_choices::TABLE,
+                    this_db\ratingallocate_choices::ACTIVE,
+                    $active,
+                    array('id' => $choiceid));
+            }
+            $this->process_action_show_choices();
+        }
+    }
+
+    /**
+     * Deletes a choice and displays the choices list.
+     */
+    private function process_action_delete_choice() {
+        if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
+            global $DB;
+            $choiceid = optional_param('choiceid', 0, PARAM_INT);
+
+            /* @var $renderer mod_ratingallocate_renderer*/
+            $renderer = $this->get_renderer();
+
+            if ($choiceid) {
+                $choice = $DB->get_record(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
+                if ($choice) {
+                    $DB->delete_records(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
+                    $renderer->add_notification(get_string('choice_deleted_notification', ratingallocate_MOD_NAME,
+                    $choice->{this_db\ratingallocate_choices::TITLE}),
+                        self::NOTIFY_SUCCESS);
+                } else {
+                    $renderer->add_notification(
+                        get_string('choice_deleted_notification_error', ratingallocate_MOD_NAME)
+                    );
+
+                }
+
+            }
+            $this->process_action_show_choices();
+        }
+    }
+
+    private function process_action_manual_allocation() {
         // Manual allocation
         $output = '';
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
-            global $OUTPUT,$PAGE;
+            global $OUTPUT, $PAGE;
 
             $mform = new manual_alloc_form($PAGE->url->out(), $this);
-        
+
             if (!$mform->no_submit_button_pressed() && $data = $mform->get_submitted_data()) {
                 if (!$mform->is_cancelled() ) {
-                    $this->save_manual_allocation_form($data);
                     /* @var $renderer mod_ratingallocate_renderer */
                     $renderer = $this->get_renderer();
-                    $renderer->add_notification(get_string('manual_allocation_saved', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
+                    $status = $this->get_status();
+                    if ($status === self::DISTRIBUTION_STATUS_TOO_EARLY ||
+                        $status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
+                        $renderer->add_notification(
+                            get_string('modify_allocation_group_desc_'.$status, ratingallocate_MOD_NAME));
+                    } else {
+                        $this->save_manual_allocation_form($data);
+                        $renderer->add_notification(get_string('manual_allocation_saved', ratingallocate_MOD_NAME),
+                            self::NOTIFY_SUCCESS);
+                    }
                 }
                 // If form was submitted using save or cancel, show the default page.
                 return $this->process_default();
             } else {
                 $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
-        
+
                 $output .= $mform->to_html();
             }
         }
@@ -340,18 +478,18 @@ class ratingallocate {
         }
         return $output;
     }
-    
-    private function process_publish_allocations(){
-        $now = time();
-        if ($this->ratingallocate->accesstimestop < $now){
-            global $USER,$OUTPUT;
-    
+
+    private function process_publish_allocations() {
+        $status = $this->get_status();
+        if ($status === self::DISTRIBUTION_STATUS_READY_ALLOC_STARTED) {
+            global $USER;
+
             $this->origdbrecord->{this_db\ratingallocate::PUBLISHED}   = true;
             $this->origdbrecord->{this_db\ratingallocate::PUBLISHDATE} = time();
             $this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} = -1;
             $this->ratingallocate = new ratingallocate_db_wrapper($this->origdbrecord);
             $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
-            
+
             // create the instance
             $domination = new mod_ratingallocate\task\send_distribution_notification();
             // set blocking if required (it probably isn't)
@@ -362,120 +500,121 @@ class ratingallocate {
                             'userid' => $USER->id, // will be the sending user
                             'ratingallocateid' => $this->ratingallocateid
             ));
-            
+
             // queue it
             \core\task\manager::queue_adhoc_task($domination);
-            
-            //Logging
+
+            // Logging
             $event = \mod_ratingallocate\event\allocation_published::create_simple(
                     context_course::instance($this->course->id), $this->ratingallocateid);
             $event->trigger();
-            
+
             /* @var $renderer mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
             $renderer->add_notification( get_string('distribution_published', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
-            return $this->process_default();
-        }
-    }
-    
-    private function process_action_allocation_to_grouping(){
-        $now = time();
-        if ($this->ratingallocate->accesstimestop < $now){
-            global $OUTPUT;
-            $allgroupings = groups_get_all_groupings($this->course->id);
-            $groupingidname = ratingallocate_MOD_NAME . '_instid_' . $this->ratingallocateid;
-            // search if there is already a grouping from us
-            $grouping = groups_get_grouping_by_idnumber($this->course->id, $groupingidname);
-            $groupingid = null;
-            if (!$grouping) {
-                // create grouping
-                $data = new stdClass();
-                $data->name = get_string('groupingname', ratingallocate_MOD_NAME, $this->ratingallocate->name);
-                $data->idnumber = $groupingidname;
-                $data->courseid = $this->course->id;
-                $groupingid = groups_create_grouping($data);
-            } else {
-                $groupingid = $grouping->id;
-            }
-            
-            $group_identifier_from_choice_id = function ($choiceid) {
-                return ratingallocate_MOD_NAME . '_c_' . $choiceid;
-            };
-            
-            $choices = $this->get_choices_with_allocationcount();
-            
-            // make a new array containing only the identifiers of the choices
-            $choice_identifiers = array();
-            foreach ($choices as $id => $choice) {
-                $choice_identifiers[$group_identifier_from_choice_id($choice->id)] = array('key' => $id
-                );
-            }
-            
-            // find all associated groups in this grouping
-            $groups = groups_get_all_groups($this->course->id, 0, $groupingid);
-            
-            // loop through the groups in the grouping: if the choice does not exist anymore -> delete
-            // otherwise mark it
-            foreach ($groups as $group) {
-                if (array_key_exists($group->idnumber, $choice_identifiers)) {
-                    // group exists, mark
-                    $choice_identifiers[$group->idnumber]['exists'] = true;
-                    $choice_identifiers[$group->idnumber]['groupid'] = $group->id;
-                } else {
-                    // delete group $group->id
-                    groups_delete_group($group->id);
-                }
-            }
-            
-            // create groups groups for new identifiers or empty group if it exists
-            foreach ($choice_identifiers as $group_idnumber => $choice) {
-                if (key_exists('exists', $choice)) {
-                    // remove all members
-                    groups_delete_group_members_by_group($choice['groupid']);
-                } else {
-                    $data = new stdClass();
-                    $data->courseid = $this->course->id;
-                    $data->name = $choices[$choice['key']]->title;
-                    $data->idnumber = $group_idnumber;
-                    $createdid = groups_create_group($data);
-                    groups_assign_grouping($groupingid, $createdid);
-                    $choice_identifiers[$group_idnumber]['groupid'] = $createdid;
-                }
-            }
-            
-            // add all participants in the correct group
-            $allocations = $this->get_allocations();
-            foreach ($allocations as $id => $allocation) {
-                $choice_id = $allocation->choiceid;
-                $user_id = $allocation->userid;
-                $choiceidnumber = $group_identifier_from_choice_id($choice_id);
-                groups_add_member($choice_identifiers[$choiceidnumber]['groupid'], $user_id);
-            }
-            // Invalidate the grouping cache for the course
-            cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($this->course->id));
-            $renderer = $this->get_renderer();
-            $renderer->add_notification( get_string('moodlegroups_created', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
         }
         return $this->process_default();
     }
 
-    private function process_default(){
+    private function process_action_allocation_to_grouping() {
+        global $OUTPUT;
+        $groupingidname = ratingallocate_MOD_NAME . '_instid_' . $this->ratingallocateid;
+        // search if there is already a grouping from us
+        $grouping = groups_get_grouping_by_idnumber($this->course->id, $groupingidname);
+        $groupingid = null;
+        if (!$grouping) {
+            // create grouping
+            $data = new stdClass();
+            $data->name = get_string('groupingname', ratingallocate_MOD_NAME, $this->ratingallocate->name);
+            $data->idnumber = $groupingidname;
+            $data->courseid = $this->course->id;
+            $groupingid = groups_create_grouping($data);
+        } else {
+            $groupingid = $grouping->id;
+        }
+
+        $group_identifier_from_choice_id = function ($choiceid) {
+            return ratingallocate_MOD_NAME . '_c_' . $choiceid;
+        };
+
+        $choices = $this->get_choices_with_allocationcount();
+
+        // make a new array containing only the identifiers of the choices
+        $choice_identifiers = array();
+        foreach ($choices as $id => $choice) {
+            $choice_identifiers[$group_identifier_from_choice_id($choice->id)] = array('key' => $id
+            );
+        }
+
+        // find all associated groups in this grouping
+        $groups = groups_get_all_groups($this->course->id, 0, $groupingid);
+
+        // loop through the groups in the grouping: if the choice does not exist anymore -> delete
+        // otherwise mark it
+        foreach ($groups as $group) {
+            if (array_key_exists($group->idnumber, $choice_identifiers)) {
+                // group exists, mark
+                $choice_identifiers[$group->idnumber]['exists'] = true;
+                $choice_identifiers[$group->idnumber]['groupid'] = $group->id;
+            } else {
+                // delete group $group->id
+                groups_delete_group($group->id);
+            }
+        }
+
+        // create groups groups for new identifiers or empty group if it exists
+        foreach ($choice_identifiers as $group_idnumber => $choice) {
+            if (key_exists('exists', $choice)) {
+                // remove all members
+                groups_delete_group_members_by_group($choice['groupid']);
+            } else {
+                $data = new stdClass();
+                $data->courseid = $this->course->id;
+                $data->name = $choices[$choice['key']]->title;
+                $data->idnumber = $group_idnumber;
+                $createdid = groups_create_group($data);
+                groups_assign_grouping($groupingid, $createdid);
+                $choice_identifiers[$group_idnumber]['groupid'] = $createdid;
+            }
+        }
+
+        // add all participants in the correct group
+        $allocations = $this->get_allocations();
+        foreach ($allocations as $id => $allocation) {
+            $choice_id = $allocation->choiceid;
+            $user_id = $allocation->userid;
+            $choiceidnumber = $group_identifier_from_choice_id($choice_id);
+            groups_add_member($choice_identifiers[$choiceidnumber]['groupid'], $user_id);
+        }
+        // Invalidate the grouping cache for the course
+        cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($this->course->id));
+        $renderer = $this->get_renderer();
+        $renderer->add_notification( get_string('moodlegroups_created', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
+
+        return $this->process_default();
+    }
+
+    private function process_default() {
         global $OUTPUT;
         $output = '';
-        $now = time();
         /* @var $renderer mod_ratingallocate_renderer */
         $renderer = $this->get_renderer();
+        $status = $this->get_status();
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
-            if ($this->ratingallocate->accesstimestop > $now) {
-            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
+            if ($status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
+                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
+                            array('id' => $this->coursemodule->id,
                             'ratingallocateid' => $this->ratingallocateid,
                             'action' => ACTION_GIVE_RATING)), get_string('edit_rating', ratingallocate_MOD_NAME)); //TODO: Include in choice_status
             }
         }
+        // Print data and controls to edit the choices
+        if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
+            $output .= $renderer->modify_choices_group($this->ratingallocateid, $this->coursemodule->id, $status);
+        }
         
         // Print data and controls for teachers
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
-            $status = $this->get_status();
             $output .= $renderer->modify_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status,
                 (int) $this->ratingallocate->algorithmstatus, (boolean) $this->ratingallocate->runalgorithmbycron);
             $output .= $renderer->publish_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
@@ -504,15 +643,43 @@ class ratingallocate {
 
         /* @var $renderer mod_ratingallocate_renderer */
         $renderer = $this->get_renderer();
-        
+
+        // States if the ratingallocate info schould be displayed.
+        $showinfo = true;
+
         switch ($action) {
             case ACTION_START_DISTRIBUTION:
                 $output .= $this->process_action_start_distribution();
                 break;
-            
+
             case ACTION_GIVE_RATING:
                 $output .= $this->process_action_give_rating();
                 break;
+
+            case ACTION_SHOW_CHOICES:
+                $this->process_action_show_choices();
+                return;
+
+            case ACTION_EDIT_CHOICE:
+                $result = $this->process_action_edit_choice();
+                if (!$result) {
+                    return;
+                }
+                $output .= $result;
+                $showinfo = false;
+                break;
+
+            case ACTION_ENABLE_CHOICE:
+                $this->process_action_enable_choice(true);
+                return;
+
+            case ACTION_DISABLE_CHOICE:
+                $this->process_action_enable_choice(false);
+                return;
+
+            case ACTION_DELETE_CHOICE:
+                $this->process_action_delete_choice();
+                return;
             
             case ACTION_PUBLISH_ALLOCATIONS:
                 $output .= $this->process_publish_allocations();
@@ -537,27 +704,28 @@ class ratingallocate {
             default:
                 $output .= $this->process_default();
         }        
+
+        if ($showinfo) {
+            $choice_status = new ratingallocate_choice_status();
+            $choice_status->accesstimestart = $this->ratingallocate->accesstimestart;
+            $choice_status->accesstimestop = $this->ratingallocate->accesstimestop;
+            $choice_status->publishdate = $this->ratingallocate->publishdate;
+            $choice_status->is_published = $this->ratingallocate->published;
+            $choice_status->available_choices = $this->get_rateable_choices();
+            $choice_status->own_choices = $this->get_rating_data_for_user($USER->id);
+            $choice_status->allocations = $this->get_allocations_for_user($USER->id);
+            $choice_status->strategy = $this->get_strategy_class();
+            $choice_status->show_distribution_info = has_capability('mod/ratingallocate:start_distribution', $this->context);
+            $choice_status->show_user_info = has_capability('mod/ratingallocate:give_rating', $this->context, null, false);
+            $choice_status->algorithmstarttime = $this->ratingallocate->algorithmstarttime;
+            $choice_status->algorithmstatus = $this->get_algorithm_status();
+            $choice_status_output = $renderer->render($choice_status);
+        } else {
+            $choice_status_output = "";
+        }
         
-        $choice_status = new ratingallocate_choice_status();
-        $choice_status->accesstimestart = $this->ratingallocate->accesstimestart;
-        $choice_status->accesstimestop = $this->ratingallocate->accesstimestop;
-        $choice_status->publishdate = $this->ratingallocate->publishdate;
-        $choice_status->is_published = $this->ratingallocate->published;
-        $choice_status->available_choices = $this->get_rateable_choices();
-        $choice_status->own_choices = $this->get_rating_data_for_user($USER->id);
-        $choice_status->allocations = $this->get_allocations_for_user($USER->id);
-        $choice_status->strategy = $this->get_strategy_class();
-        $choice_status->show_distribution_info = has_capability('mod/ratingallocate:start_distribution', $this->context);
-        $choice_status->show_user_info = has_capability('mod/ratingallocate:give_rating', $this->context, null, false);
-        $choice_status->algorithmstarttime = $this->ratingallocate->algorithmstarttime;
-        $choice_status->algorithmstatus = $this->get_algorithm_status();
-        $choice_status_output = $renderer->render($choice_status);
-        
-        // Finish the page (Since the header renders the notifications, it needs to be rendered after the actions)
-        $header_info = new ratingallocate_header($this->ratingallocate, $this->context, true,
-                $this->coursemodule->id);
-        $header = $this->get_renderer()->render($header_info);
-        $footer = $this->get_renderer()->render_footer();        
+        $header = $renderer->render_header($this->ratingallocate, $this->context, $this->coursemodule->id);
+        $footer = $renderer->render_footer();
         return $header . $choice_status_output . $output . $footer;
     }
 
@@ -669,7 +837,7 @@ class ratingallocate {
     }
 
     /**
-     * @return all allocation objects that belong this ratingallocate
+     * @return array all allocation objects that belong this ratingallocate
      */
     public function get_allocations() {
         $query = 'SELECT al.*, r.rating
@@ -890,13 +1058,23 @@ class ratingallocate {
     }
 
     /**
-     * Returns all choices in the instance with $ratingallocateid
+     * Returns all active choices in the instance with $ratingallocateid
      */
     public function get_rateable_choices() {
         global $DB;
         return $DB->get_records(this_db\ratingallocate_choices::TABLE,
             array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->ratingallocateid,
-                  this_db\ratingallocate_choices::ACTIVE => true,
+                this_db\ratingallocate_choices::ACTIVE => true,
+            ),this_db\ratingallocate_choices::TITLE);
+    }
+
+    /**
+     * Returns all choices in the instance with $ratingallocateid
+     */
+    public function get_choices() {
+        global $DB;
+        return $DB->get_records(this_db\ratingallocate_choices::TABLE,
+            array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->ratingallocateid,
             ),this_db\ratingallocate_choices::TITLE);
     }
 
@@ -963,6 +1141,38 @@ class ratingallocate {
         } catch (Exception $e) {
             $transaction->rollback($e);
         }
+    }
+
+    public function save_modify_choice_form($data){
+        global $DB;
+        try {
+            $transaction = $this->db->start_delegated_transaction();
+            $loggingdata = array();
+
+            $allusers = $this->get_raters_in_course();
+            $allchoices = $this->get_rateable_choices();
+
+            $choice = new ratingallocate_choice($data);
+            $choice->{this_db\ratingallocate_choices::RATINGALLOCATEID} = $this->ratingallocateid;
+
+            if (!empty($data->choiceid)) {
+                $choice->id = $data->choiceid;
+                $DB->update_record(this_db\ratingallocate_choices::TABLE, $choice->dbrecord);
+            } else {
+                $DB->insert_record(this_db\ratingallocate_choices::TABLE, $choice->dbrecord);
+            }
+
+
+            //Logging
+//            $event = \mod_ratingallocate\event\choice_saved::create_simple(
+//                context_course::instance($this->course->id), $this->ratingallocateid, );
+//            $event->trigger();
+
+            $transaction->allow_commit();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
+        }
+
     }
 
     /**
@@ -1086,24 +1296,32 @@ class ratingallocate {
         }
     }
 
+    /** Rating phase has not started yet. */
     const DISTRIBUTION_STATUS_TOO_EARLY = 'too_early';
+    /** Rating phase in progress. */
+    const DISTRIBUTION_STATUS_RATING_IN_PROGRESS = 'rating_in_progress';
+    /** Rating phase ended, but no allocations exist. */
     const DISTRIBUTION_STATUS_READY = 'ready';
+    /** Rating phase ended and there are already some allocations. */
     const DISTRIBUTION_STATUS_READY_ALLOC_STARTED = 'ready_alloc_started';
+    /** Rating phase ended and allocations have been published. */
     const DISTRIBUTION_STATUS_PUBLISHED = 'published';
 
-    private function get_status(){
+    public function get_status(){
         $now = time();
-        if ($this->ratingallocate->accesstimestop < $now) {
-            if ($this->ratingallocate->published == false) {
-                if (count($this->get_allocations()) > 0) {
-                    return self::DISTRIBUTION_STATUS_READY_ALLOC_STARTED;
-                }
-                return self::DISTRIBUTION_STATUS_READY;
-            } else {
-                return self::DISTRIBUTION_STATUS_PUBLISHED;
-            }
-        } else {
+        if ($this->ratingallocate->accesstimestart > $now) {
             return self::DISTRIBUTION_STATUS_TOO_EARLY;
+        }
+        if ($this->ratingallocate->accesstimestop > $now) {
+            return self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS;
+        }
+        if ($this->ratingallocate->published == true) {
+            return self::DISTRIBUTION_STATUS_PUBLISHED;
+        }
+        if (count($this->get_allocations()) == 0) {
+            return self::DISTRIBUTION_STATUS_READY;
+        } else {
+            return self::DISTRIBUTION_STATUS_READY_ALLOC_STARTED;
         }
     }
 
@@ -1116,6 +1334,44 @@ class ratingallocate {
         return (int) $this->ratingallocate->algorithmstatus;
     }
     
+}
+
+/**
+ * Kapselt eine Instanz von ratingallocate_choice
+ *
+ * @property int $id
+ * @property int $ratingallocateid
+ * @property string $title
+ * @property string explanation
+ * @property int $maxsize
+ * @property bool $active
+ */
+class ratingallocate_choice {
+    /** @var dbrecord original db record */
+    public $dbrecord;
+
+    /** Emulates the functionality as if there were explicit records by passing them to the original db record
+     *
+     * @param string $name
+     * @return type
+     */
+    public function __get($name) {
+        return $this->dbrecord->{$name};
+    }
+
+    /** Emulates the functionality as if there were explicit records by passing them to the original db record
+     *
+     * @param string $name
+     * @return type
+     */
+    public function __set($name, $value) {
+        $this->dbrecord->{$name} = $value;
+    }
+
+    public function __construct($record) {
+        $this->dbrecord = $record;
+    }
+
 }
 
 /**

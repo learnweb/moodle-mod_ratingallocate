@@ -210,7 +210,7 @@ class cron_test extends advanced_testcase{
         $data['algorithmstarttime'] = $algorithmstarttime;
 
         // create activity
-        $this->mod = $this->getDataGenerator()->create_module(ratingallocate_MOD_NAME, $data);
+        $this->mod = mod_ratingallocate_generator::create_instance_with_choices($this, $data);
         $this->assertEquals(2, $DB->count_records(this_db\ratingallocate_choices::TABLE,
             array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->mod->id)));
 

@@ -84,6 +84,14 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
+    'mod/ratingallocate:modify_choices' => array(
+        'contextlevel' => CONTEXT_MODULE,
+        'captype' => 'write',
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
     'mod/ratingallocate:export_ratings' => array(
         'contextlevel' => CONTEXT_MODULE,
         'riskbitmask' => RISK_PERSONAL,

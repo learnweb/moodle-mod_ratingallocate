@@ -42,10 +42,10 @@ class backup_restore_test extends advanced_testcase {
         // Set to admin user.
         $this->setAdminUser();
 
-        $gen_mod = new mod_ratingallocate_generated_module($this);
-        $course1 = $gen_mod->course;
+        $genmod = new mod_ratingallocate_generated_module($this);
+        $course1 = $genmod->course;
         // Create backup file and save it to the backup location.
-        $bc = new backup_controller(backup::TYPE_1ACTIVITY, $gen_mod->mod_db->cmid, backup::FORMAT_MOODLE,
+        $bc = new backup_controller(backup::TYPE_1ACTIVITY, $genmod->moddb->cmid, backup::FORMAT_MOODLE,
                 backup::INTERACTIVE_NO, backup::MODE_GENERAL, 2);
         $bc->execute_plan();
         $results = $bc->get_results();
@@ -69,59 +69,81 @@ class backup_restore_test extends advanced_testcase {
         $rc->execute_precheck();
         $rc->execute_plan();
 
-        $unset_values = function($elem1, $elem2, $varname) { $this->assertNotEquals($elem1->{$varname}, $elem2->{$varname}); $result = array($elem1->{$varname},$elem2->{$varname}); unset($elem1->{$varname}); unset($elem2->{$varname}); return $result; };
+        $unsetvalues = function($elem1, $elem2, $varname) {
+            $this->assertNotEquals($elem1->{$varname}, $elem2->{$varname});
+            $result = array($elem1->{$varname}, $elem2->{$varname});
+            unset($elem1->{$varname});
+            unset($elem2->{$varname});
+            return $result;
+        };
 
-        $ratingallocate1 = $DB->get_record(this_db\ratingallocate::TABLE, array(this_db\ratingallocate::COURSE => $course1->id));
-        $ratingallocate2 = $DB->get_record(this_db\ratingallocate::TABLE, array(this_db\ratingallocate::COURSE => $course2->id));
-        list($rating_id1, $rating_id2) = $unset_values($ratingallocate1, $ratingallocate2, this_db\ratingallocate::ID);
-        $unset_values($ratingallocate1, $ratingallocate2, this_db\ratingallocate::COURSE);
+        $ratingallocate1 = $DB->get_record(this_db\ratingallocate::TABLE,
+            array(this_db\ratingallocate::COURSE => $course1->id));
+        $ratingallocate2 = $DB->get_record(this_db\ratingallocate::TABLE,
+            array(this_db\ratingallocate::COURSE => $course2->id));
+        list($ratingid1, $ratingid2) = $unsetvalues($ratingallocate1, $ratingallocate2, this_db\ratingallocate::ID);
+        $unsetvalues($ratingallocate1, $ratingallocate2, this_db\ratingallocate::COURSE);
         $this->assertEquals($ratingallocate1, $ratingallocate2);
 
-        $choices1 = $DB->get_records(this_db\ratingallocate_choices::TABLE,array(this_db\ratingallocate_choices::RATINGALLOCATEID => $rating_id1), this_db\ratingallocate_choices::TITLE);
-        $choices2 = $DB->get_records(this_db\ratingallocate_choices::TABLE,array(this_db\ratingallocate_choices::RATINGALLOCATEID => $rating_id2), this_db\ratingallocate_choices::TITLE);
+        $choices1 = $DB->get_records(this_db\ratingallocate_choices::TABLE,
+            array(this_db\ratingallocate_choices::RATINGALLOCATEID => $ratingid1),
+            this_db\ratingallocate_choices::TITLE);
+        $choices2 = $DB->get_records(this_db\ratingallocate_choices::TABLE,
+            array(this_db\ratingallocate_choices::RATINGALLOCATEID => $ratingid2),
+            this_db\ratingallocate_choices::TITLE);
         $this->assertCount(2, $choices1);
         $this->assertCount(2, array_values($choices2));
-        $choice2_copy = $choices2;
+        $choice2copy = $choices2;
         foreach ($choices1 as $choice1) {
             //work with copies
-            $choice2 = json_decode(json_encode(array_shift($choice2_copy)));
+            $choice2 = json_decode(json_encode(array_shift($choice2copy)));
             $choice1 = json_decode(json_encode($choice1));
-            list($choiceid1,$choiceid2) = $unset_values($choice1, $choice2, this_db\ratingallocate_choices::ID);
-            $unset_values($choice1, $choice2, this_db\ratingallocate_choices::RATINGALLOCATEID);
+            list($choiceid1, $choiceid2) = $unsetvalues($choice1, $choice2, this_db\ratingallocate_choices::ID);
+            $unsetvalues($choice1, $choice2, this_db\ratingallocate_choices::RATINGALLOCATEID);
             $this->assertEquals($choice1, $choice2);
             // compare ratings for this choice
-            $ratings1 = array_values($DB->get_records(this_db\ratingallocate_ratings::TABLE, array(this_db\ratingallocate_ratings::CHOICEID => $choiceid1), this_db\ratingallocate_ratings::USERID));
-            $ratings2 = array_values($DB->get_records(this_db\ratingallocate_ratings::TABLE, array(this_db\ratingallocate_ratings::CHOICEID => $choiceid2), this_db\ratingallocate_ratings::USERID));
+            $ratings1 = array_values($DB->get_records(this_db\ratingallocate_ratings::TABLE,
+                array(this_db\ratingallocate_ratings::CHOICEID => $choiceid1),
+                this_db\ratingallocate_ratings::USERID));
+            $ratings2 = array_values($DB->get_records(this_db\ratingallocate_ratings::TABLE,
+                array(this_db\ratingallocate_ratings::CHOICEID => $choiceid2),
+                this_db\ratingallocate_ratings::USERID));
             $this->assertEquals(count($ratings1), count($ratings2));
-            $ratings2_copy = $ratings2;
+            $ratings2copy = $ratings2;
             foreach ($ratings1 as $rating1) {
-                $rating2 = json_decode(json_encode(array_shift($ratings2_copy)));
+                $rating2 = json_decode(json_encode(array_shift($ratings2copy)));
                 $rating1 = json_decode(json_encode($rating1));
-                $unset_values($rating1, $rating2, this_db\ratingallocate_ratings::CHOICEID);
-                $unset_values($rating1, $rating2, this_db\ratingallocate_ratings::ID);
+                $unsetvalues($rating1, $rating2, this_db\ratingallocate_ratings::CHOICEID);
+                $unsetvalues($rating1, $rating2, this_db\ratingallocate_ratings::ID);
                 $this->assertEquals($rating1, $rating2);
             }
         }
 
 
         // compare allocations
-        $allocations1 = $DB->get_records(this_db\ratingallocate_allocations::TABLE,array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $rating_id1), this_db\ratingallocate_allocations::USERID);
-        $allocations2 = $DB->get_records(this_db\ratingallocate_allocations::TABLE,array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $rating_id2), this_db\ratingallocate_allocations::USERID);
+        $allocations1 = $DB->get_records(this_db\ratingallocate_allocations::TABLE,
+            array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $ratingid1),
+            this_db\ratingallocate_allocations::USERID);
+        $allocations2 = $DB->get_records(this_db\ratingallocate_allocations::TABLE,
+            array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $ratingid2),
+            this_db\ratingallocate_allocations::USERID);
         // number of allocations is equal
         //$this->assertCount(count($allocations1), $allocations2);
-        $this->assertCount(count($gen_mod->allocations) , $allocations2);
-        // create function that can be used to replace  
-        $map_allocation_to_choice_title = function(&$alloc, $choices) {
-                $alloc->{'choice_title'} = $choices[$alloc->{this_db\ratingallocate_allocations::CHOICEID}]->{this_db\ratingallocate_choices::TITLE};
+        $this->assertCount(count($genmod->allocations) , $allocations2);
+        // create function that can be used to replace
+        $mapallocationtochoicetitle = function(&$alloc, $choices) {
+                $alloc->{'choice_title'} = $choices[
+                        $alloc->{this_db\ratingallocate_allocations::CHOICEID}
+                    ]->{this_db\ratingallocate_choices::TITLE};
         };
         // compare allocations in detail!
         $alloc2 = reset($allocations2);
         foreach ($allocations1 as &$alloc1) {
-            $map_allocation_to_choice_title($alloc1, $choices1);
-            $map_allocation_to_choice_title($alloc2, $choices2);
-            $unset_values($alloc1,$alloc2,this_db\ratingallocate_allocations::RATINGALLOCATEID);
-            $unset_values($alloc1,$alloc2,this_db\ratingallocate_allocations::CHOICEID);
-            $unset_values($alloc1,$alloc2,this_db\ratingallocate_allocations::ID);
+            $mapallocationtochoicetitle($alloc1, $choices1);
+            $mapallocationtochoicetitle($alloc2, $choices2);
+            $unsetvalues($alloc1, $alloc2, this_db\ratingallocate_allocations::RATINGALLOCATEID);
+            $unsetvalues($alloc1, $alloc2, this_db\ratingallocate_allocations::CHOICEID);
+            $unsetvalues($alloc1, $alloc2, this_db\ratingallocate_allocations::ID);
             $alloc2 = next($allocations2);
         }
         $this->assertEquals(array_values($allocations1), array_values($allocations2));

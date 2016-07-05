@@ -91,31 +91,6 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
         // instanz einfuegen, damit wir die ID fuer die Kinder haben
         $id = $DB->insert_record(this_db\ratingallocate::TABLE, $ratingallocate);
 
-        //TODO fast group insert $optionen = explode("\n", $ratingallocate->wahloptionen); // Felder der zur Wahl stehenden Optionen
-//         foreach ($optionen as $option) {
-//             $optionendetails = explode("|", $option); // Trenne Titel von möglichen Details
-
-//             $choicedata = new stdClass ();
-//             $choicedata->ratingallocateid = $id;
-//             $choicedata->title = $optionendetails [0];
-//             if (isset($optionendetails [1])) {
-//                 $choicedata->explanation = $optionendetails [1];
-//             } else {
-//                 $choicedata->explanation = '';
-//             }
-//             $choicedata->maxsize = 10;
-//             $choicedata->active = 1;
-//             $DB->insert_record('ratingallocate_choices', $choicedata); // Kind abspeichern
-//         }
-        //create choices
-        foreach (_parseChoiceArray($ratingallocate) as $choice) {
-            $choice[this_db\ratingallocate_choices::RATINGALLOCATEID] = $id;
-            if (!isset($choice[this_db\ratingallocate_choices::ACTIVE])){
-                $choice[this_db\ratingallocate_choices::ACTIVE] = 0;
-            }
-            $DB->insert_record(this_db\ratingallocate_choices::TABLE, $choice);
-        }
-
         $transaction->allow_commit();
 
         return $id;
@@ -151,55 +126,11 @@ function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallo
 
         $bool = $DB->update_record('ratingallocate', $ratingallocate);
 
-        // iterate over choices
-        foreach (_parseChoiceArray($ratingallocate) as $choiceid => $choiceparam) {
-
-            // tickboxes don't come through correctly.
-            // if you unticked active, set it to false
-            if (!key_exists('active', $choiceparam)) {
-                $choiceparam['active'] = false;
-            }
-            if($choiceid <= 0) {
-                //choice is new -> create it
-                $choiceparam['ratingallocateid'] = $ratingallocate->id;
-                $DB->insert_record('ratingallocate_choices', $choiceparam);
-            }  else {
-                // update this record
-                $DB->update_record('ratingallocate_choices', $choiceparam);
-            }
-        }
-        $array_of_deleted_choices = explode(',', $ratingallocate->deleted_choice_ids);
-            // iterate over deleted choices
-        foreach ($array_of_deleted_choices as $choiceid) {
-            if ($choiceid > 0) {
-                // delete choice
-                $DB->delete_records('ratingallocate_choices', 
-                        array('id' => $choiceid, 'ratingallocateid' => $ratingallocate->id
-                        ));
-            }
-        }
-        
         $transaction->allow_commit();
         return $bool;
     } catch (Exception $e) {
         $transaction->rollback($e);
     }
-}
-/**
- * Parse the structure of the unstructured choices elements within the ratingallocate object
- * @param unknown $ratingallocate
- */
-function _parseChoiceArray($ratingallocate){
-    $choices = array();
-    foreach ($ratingallocate as $name => $value){
-        if (substr($name,0,8)==='choices_'){
-            $nameparts = explode('_', $name);
-            $id = $nameparts[1];
-            $field = $nameparts[2];
-            $choices[$id][$field] = $value;
-        }
-    }
-    return $choices;
 }
 
 /**
