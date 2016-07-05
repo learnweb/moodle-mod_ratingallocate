@@ -44,7 +44,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $o = '';
 
         $this->page->set_heading($this->page->course->fullname);
-        $this->page->requires->css('/mod/ratingallocate/styles.css');
 
         $o .= $this->output->header();
         $heading = format_string($header->ratingallocate->name, false, array('context' => $header->context));

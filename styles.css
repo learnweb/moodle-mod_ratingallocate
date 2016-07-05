@@ -6,9 +6,9 @@
     font-weight: bold;
 }
 
-.ratingallocate_ratings_table td.ratingallocate_member {
-    border: solid black 5px;
-    background-image: repeating-linear-gradient(45deg, white 0px, white 15px, transparent 15px, transparent 30px, white 30px); }
+.ratingallocate_ratings_table span.ratingallocate_member::before {
+    content: url('[[pix:i/checked]]');
+}
 .ratingallocate_ratings_box { overflow: auto; } /* Scrolling tables */
 .path-mod-ratingallocate .mod-ratingallocate-choice-maxno {
     text-align: right;
