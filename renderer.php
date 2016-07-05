@@ -569,104 +569,24 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      */
     public function ratings_table_for_ratingallocate($choices, $ratings, $users, $memberships, $ratingallocate) {
 
-        // MAXDO maybe a setting in the future?
-        // $config_show_names = get_config('mod_ratingallocate', 'show_names');
-        $configshownames = true;
-
-        // $choices = get_rateable_choices_for_ratingallocate($ratingallocateid);
-        $choicenames = array();
-        $choicemax = array();
-        $choicesum = array();
-        foreach ($choices as $choice) {
-            $choicenames[$choice->id] = $choice->title;
-            $choicemax[$choice->id] = $choice->maxsize;
-            $choicesum[$choice->id] = 0;
-        }
-
         // get rating titles
         $titles = $this->get_options_titles(array_map(function($rating) {return $rating->rating;},$ratings), $ratingallocate);
-        
-        // $ratings = all_ratings_for_rateable_choices_from_raters($ratingallocateid);
-        $ratingscells = array();
-        foreach ($ratings as $rating) {
 
-            // Create a cell in the table for each rating
-            if (!array_key_exists($rating->userid, $ratingscells)) {
-                $ratingscells[$rating->userid] = array();
-            }
-            $cell = new html_table_cell();
-            $cell->text = $titles[$rating->rating];
-            $ratingscells[$rating->userid][$rating->choiceid] = $cell;
-        }
+        // Create and set up the flextable for ratings and allocations.
+        $table = new mod_ratingallocate\ratings_and_allocations_table($this, $titles);
+        $table->setup_choices($choices);
 
-        // If there is no rating from a user for a group,
-        // put a 'no_rating_given' cell into the table.
-        // $usersincourse = every_rater_in_course_by_ratingallocate($ratingallocateid);
-        $usersincourse = $users;
-        foreach ($usersincourse as $user) {
-            if (!array_key_exists($user->id, $ratingscells)) {
-                $ratingscells[$user->id] = array();
-            }
-            foreach ($choicenames as $ratingallocateid2 => $name) {
-                if (!array_key_exists($ratingallocateid2, $ratingscells[$user->id])) {
-                    $cell = new html_table_cell();
-                    $cell->text = get_string('no_rating_given', ratingallocate_MOD_NAME);
-                    $ratingscells[$user->id][$ratingallocateid2] = $cell;
-                }
-            }
-            if ($configshownames) {
-                // -1 is smaller than any id
-                $ratingscells[$user->id][-1] = self::format_user_data($user);
-            }
-            // Sort ratings by choiceid to align them with the group names in the table
-            ksort($ratingscells[$user->id]);
-        }
-
-        if ($configshownames) {
-            // -1 is smaller than any id
-            $choicenames[-1] = get_string('ratings_table_user', ratingallocate_MOD_NAME);
-        }
-        // Sort group names by groupid
-        ksort($choicenames);
-
-        // Highlight ratings according to which users have been distributed
-        // and count the number of such distributions
-        // $memberships = memberships_per_ratingallocate($ratingallocateid);
-        foreach ($memberships as $membership) {
-            if (array_key_exists($membership->userid, $ratingscells)
-                    && array_key_exists($membership->choiceid, $ratingscells[$membership->userid])) {
-
-                // Highlight the cell
-                $ratingscells[$membership->userid][$membership->choiceid]->attributes['class'] .= ' ratingallocate_member';
-                $choicesum[$membership->choiceid] += 1;
-            }
-        }
-
-        ksort($choicesum);
-        $rowchoicesum = new html_table_row();
-        $rowchoicesum->cells[-1] = new html_table_cell(
-            get_string('ratings_table_sum_allocations', ratingallocate_MOD_NAME));
-        $rowchoicesum->cells[-1]->header = true;
-        foreach ($choicesum as $choiceid => $sum) {
-            $rowchoicesum->cells[$choiceid] = new html_table_cell(
-                get_string('ratings_table_sum_allocations_value', ratingallocate_MOD_NAME,
-                    array("sum" => "$sum", "max" => $choicemax[$choiceid])));
-            $rowchoicesum->cells[$choiceid]->header = true;
-        }
-
-        $ratingscells[-1] =& $rowchoicesum;
-
-        // The ratings table shows the users' ratings for the choices
-        $ratingstable = new html_table();
-        $ratingstable->data = $ratingscells;
-        $ratingstable->head = $choicenames;
-        $ratingstable->attributes['class'] = 'ratingallocate_ratings_table';
+        // The rest must be done through output buffering due to the way flextable works.
+        ob_start();
+        $table->build_table($users, $ratings, $memberships);
+        $tableoutput = ob_get_contents();
+        ob_end_clean();
 
         $output = $this->heading(get_string('ratings_table', ratingallocate_MOD_NAME), 2);
         $output .= $this->box_start();
-        $output .= $this->box(html_writer::table($ratingstable), 'ratingallocate_ratings_box');
+        $output .= $this->box($tableoutput);
         $output .= $this->box_end();
-        
+
         return $output;
     }
 
