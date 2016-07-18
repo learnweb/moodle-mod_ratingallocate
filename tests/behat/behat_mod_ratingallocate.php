@@ -74,10 +74,11 @@ class behat_mod_ratingallocate extends behat_base {
         array_push($steps, $this->i_add_a_new_choice());
         $choicedatahash = $choicedata->getHash();
         foreach ($choicedatahash as $entry) {
-            $table = new TableNode();
+            $newrows = array();
             foreach ($entry as $key => $val) {
-                $table->addRow(array($key, $val));
+                array_push($newrows, array($key, $val));
             }
+            $table = new TableNode($newrows);
             foreach ($this->i_set_the_values_of_the_choice_to($table) as $step) {
                 array_push($steps, $step);
             }
