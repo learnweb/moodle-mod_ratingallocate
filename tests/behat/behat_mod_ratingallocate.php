@@ -70,6 +70,7 @@ class behat_mod_ratingallocate extends behat_base {
      * @return array
      */
     public function i_add_new_choices_with_the_values(TableNode $choicedata) {
+        global $CFG;
         $steps = array();
         array_push($steps, $this->i_add_a_new_choice());
         $choicedatahash = $choicedata->getHash();
@@ -77,6 +78,10 @@ class behat_mod_ratingallocate extends behat_base {
             $newrows = array();
             foreach ($entry as $key => $val) {
                 array_push($newrows, array($key, $val));
+            }
+            //TODO: Ensure backward-compatibility after changed TableNode constructor in Moodle 3.1
+            if ($CFG->version < 2016052300) {
+                $newrows = implode("\n", $newrows);
             }
             $table = new TableNode($newrows);
             foreach ($this->i_set_the_values_of_the_choice_to($table) as $step) {
