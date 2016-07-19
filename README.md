@@ -1,5 +1,7 @@
 moodle-mod_ratingallocate
 ============================
+[![Build Status](https://travis-ci.org/learnweb/moodle-mod_ratingallocate.svg?branch=master)]
+(https://travis-ci.org/learnweb/moodle-mod_ratingallocate)</br>
 Module which lets you add an activity to courses, in which users can rate choices. You may then distribute the users fairly to the choices by maximising overall 'hapiness' in terms of ratings.
 This may be an alternative to the choice activity or first-come-first-served.
 
