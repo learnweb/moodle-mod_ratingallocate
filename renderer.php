@@ -493,7 +493,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * Shows table containing information about the result of the distribution algorithm.
      *
-     * @return HTML code
+     * @return string html code representing the distribution table
      */
     public function distribution_table_for_ratingallocate(ratingallocate $ratingallocate) {
         // Count the number of allocations with a specific rating
@@ -564,7 +564,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      * Shows table containing information about the users' ratings
      * and their distribution over the choices (allocations).
      *
-     * @return HTML code
+     * @return string html code representing ratings table
      */
     public function ratings_table_for_ratingallocate($choices, $ratings, $users, $memberships, $ratingallocate) {
 

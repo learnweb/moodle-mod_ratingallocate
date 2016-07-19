@@ -48,7 +48,7 @@ class manual_alloc_form extends moodleform {
 
     /**
      * Constructor
-     * @param type $url
+     * @param mixed $url
      * @param ratingallocate $ratingallocate
      */
     public function __construct($url, ratingallocate $ratingallocate) {
