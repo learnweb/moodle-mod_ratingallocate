@@ -27,7 +27,6 @@ Background:
       | explanation | Test 3  		  |
       | maxsize     |	2	    	  |
 
-  @javascript
   Scenario: Create a new rating alloation and add an additonal new choice.
     Given I add a new choice with the values:
   	| title       | My fourth choice |
@@ -38,7 +37,6 @@ Background:
     And I should see the choice with the title "My third choice"
     And I should see the choice with the title "My fourth choice"
     
-  @javascript
   Scenario: Create a new rating alloation and add two additonal new choices using the add next button.
     Given I add new choices with the values:
   	| title            | explanation     | maxsize |
@@ -49,7 +47,7 @@ Background:
     And I should see the choice with the title "My third choice"
     And I should see the choice with the title "My fourth choice"
     And I should see the choice with the title "My fifth choice"
-    
+
   @javascript
   Scenario: Create a new rating alloation and add two additonal new choices, but delete two old and one new.
     When I add new choices with the values:
@@ -66,7 +64,6 @@ Background:
     And I should see the choice with the title "My fourth choice"
     And I should not see the choice with the title "My fifth choice"
 
-  @javascript
   Scenario: Create a new rating alloation and add an additonal new active choice.
     When I add a new choice with the values:
       | title       | My fourth choice |
@@ -101,7 +98,6 @@ Background:
     And I should see "My fourth choice"
     And the choice with name "My fourth choice" should be active
 
-  @javascript
   Scenario: Create a new rating alloation and add an additonal new active choice. Change the the choice to inactive.
     When I add a new choice with the values:
       | title       | My fourth choice |
