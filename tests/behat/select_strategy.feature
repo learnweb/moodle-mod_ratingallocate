@@ -22,33 +22,21 @@ Feature: When a teacher selects a strategy the appropriate options are displayed
     And I should see "Maximum number of choices the user can rate with \"No\""
     And I should see "Designation for \"No\""
 
-  @javascript
+  @javascript @wip
   Scenario: Selecting "Likert Scale" strategy should show the correct options.
-    When I click on "strategy" "select"
-    And I wait "1" seconds
-    And I click on "strategy_lickert" "option"
-    And I click on "strategy" "select"
-    And I wait "1" seconds
+    When I select "strategy_lickert" from the "strategy" singleselect
     Then I should see "Maximum number of choices the user can rate with 0"
     And I should see "Highest number on the likert scale"
     And I should see "Designation for \"0 - Exclude\""
     And I should not see "Maximum number of choices the user can rate with \"No\""
     And I should not see "Designation for \"No\""
 
-  @javascript
+  @javascript @wip
   Scenario: Selecting "Give Points" then "Yes-No" shows only the correct options.
-    When I click on "strategy" "select"
-    And I wait "1" seconds
-    And I click on "strategy_points" "option"
-    And I click on "strategy" "select"
-    And I wait "1" seconds
+    When I select "strategy_points" from the "strategy" singleselect
     And I should see "Maximum number of choices to which the user can give 0 points"
     And I should see "Total number of points the user can assign"
-    And I click on "strategy" "select"
-    And I wait "1" seconds
-    And I click on "strategy_yesno" "option"
-    And I click on "strategy" "select"
-    And I wait "1" seconds
+    And I select "strategy_yesno" from the "strategy" singleselect
     Then I should see "Maximum number of choices the user can rate with \"No\""
     And I should see "Designation for \"No\""
     And I should not see "Maximum number of choices to which the user can give 0 points"
