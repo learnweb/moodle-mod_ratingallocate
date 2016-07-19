@@ -13,11 +13,29 @@ php:
  - 7.0
 
 matrix:
- allow_failures:
-  - php: 7.0
+ exclude:
+    - env: DB=pgsql MOODLE_BRANCH=MOODLE_27_STABLE
+      php: 7.0
+    - env: DB=pgsql MOODLE_BRANCH=MOODLE_28_STABLE
+      php: 7.0
+    - env: DB=pgsql MOODLE_BRANCH=MOODLE_29_STABLE
+      php: 7.0
+    - env: DB=mysqli MOODLE_BRANCH=MOODLE_27_STABLE
+      php: 7.0
+    - env: DB=mysqli MOODLE_BRANCH=MOODLE_28_STABLE
+      php: 7.0
+    - env: DB=mysqli MOODLE_BRANCH=MOODLE_29_STABLE
+      php: 7.0
+    - env: DB=pgsql MOODLE_BRANCH=MOODLE_27_STABLE TASK=BEHAT
+    - env: DB=pgsql MOODLE_BRANCH=MOODLE_28_STABLE TASK=BEHAT
+    - env: DB=pgsql MOODLE_BRANCH=MOODLE_29_STABLE TASK=BEHAT
+    - env: DB=pgsql MOODLE_BRANCH=MOODLE_30_STABLE TASK=BEHAT
+    - env: DB=mysqli MOODLE_BRANCH=MOODLE_27_STABLE TASK=BEHAT
+    - env: DB=mysqli MOODLE_BRANCH=MOODLE_28_STABLE TASK=BEHAT
+    - env: DB=mysqli MOODLE_BRANCH=MOODLE_29_STABLE TASK=BEHAT
+    - env: DB=mysqli MOODLE_BRANCH=MOODLE_30_STABLE TASK=BEHAT
 
 env:
- matrix:
   - DB=pgsql MOODLE_BRANCH=MOODLE_27_STABLE
   - DB=pgsql MOODLE_BRANCH=MOODLE_28_STABLE
   - DB=pgsql MOODLE_BRANCH=MOODLE_29_STABLE
@@ -28,6 +46,7 @@ env:
   - DB=mysqli MOODLE_BRANCH=MOODLE_29_STABLE
   - DB=mysqli MOODLE_BRANCH=MOODLE_30_STABLE
   - DB=mysqli MOODLE_BRANCH=MOODLE_31_STABLE
+
 
 before_install:
   - phpenv config-rm xdebug.ini
