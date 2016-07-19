@@ -22,7 +22,7 @@ Feature: When a teacher selects a strategy the appropriate options are displayed
     And I should see "Maximum number of choices the user can rate with \"No\""
     And I should see "Designation for \"No\""
 
-  @javascript @wip
+  @javascript
   Scenario: Selecting "Likert Scale" strategy should show the correct options.
     When I select "strategy_lickert" from the "strategy" singleselect
     Then I should see "Maximum number of choices the user can rate with 0"
@@ -31,7 +31,7 @@ Feature: When a teacher selects a strategy the appropriate options are displayed
     And I should not see "Maximum number of choices the user can rate with \"No\""
     And I should not see "Designation for \"No\""
 
-  @javascript @wip
+  @javascript
   Scenario: Selecting "Give Points" then "Yes-No" shows only the correct options.
     When I select "strategy_points" from the "strategy" singleselect
     And I should see "Maximum number of choices to which the user can give 0 points"
