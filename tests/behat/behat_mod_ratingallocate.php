@@ -9,9 +9,7 @@
  */
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given as Given,
-Behat\Gherkin\Node\TableNode as TableNode,
-Behat\Behat\Context\Step\When as When,
+use Behat\Gherkin\Node\TableNode as TableNode,
 Behat\Mink\Exception\ExpectationException as ExpectationException,
 Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
@@ -23,24 +21,21 @@ class behat_mod_ratingallocate extends behat_base {
      * @Given /^I set the values of the choice to:$/
      *
      * @param TableNode $choicedata with data for filling the choice
-     * @return array step definition
      */
     public function i_set_the_values_of_the_choice_to(TableNode $choicedata) {
         $choicedatahash = $choicedata->getRowsHash();
         // The action depends on the field type.
-        $steps = array();
         foreach ($choicedatahash as $locator => $value) {
             if ($locator === 'active') {
                 if ($value === 'true') {
-                    array_push($steps, new Given("I check the active checkbox"));
+                    $this->execute('behat_mod_ratingallocate::i_check_the_active_checkbox');
                 } else {
-                    array_push($steps, new Given("I uncheck the active checkbox"));
+                    $this->execute('behat_mod_ratingallocate::i_uncheck_the_active_checkbox');
                 }
             } else {
-                array_push($steps, new Given("I set the field \"id_${locator}\" to \"${value}\""));
+                $this->execute('behat_forms::i_set_the_field_to', array($locator, $value));
             }
         }
-        return $steps;
     }
 
     /**
@@ -49,16 +44,11 @@ class behat_mod_ratingallocate extends behat_base {
      *
      * @Given /^I add a new choice with the values:$/
      * @param TableNode $choicedata
-     * @return array
      */
     public function i_add_a_new_choice_with_the_values(TableNode $choicedata) {
-        $steps = array();
-        array_push($steps, $this->i_add_a_new_choice());
-        foreach ($this->i_set_the_values_of_the_choice_to($choicedata) as $step) {
-            array_push($steps, $step);
-        }
-        array_push($steps, new Given("I press \"id_submitbutton\""));
-        return $steps;
+        $this->i_add_a_new_choice();
+        $this->i_set_the_values_of_the_choice_to($choicedata);
+        $this->execute('behat_forms::press_button', array("id_submitbutton"));
     }
 
     /**
@@ -67,12 +57,10 @@ class behat_mod_ratingallocate extends behat_base {
      *
      * @Given /^I add new choices with the values:$/
      * @param TableNode $choicedata
-     * @return array
      */
     public function i_add_new_choices_with_the_values(TableNode $choicedata) {
         global $CFG;
-        $steps = array();
-        array_push($steps, $this->i_add_a_new_choice());
+        $this->i_add_a_new_choice();
         $choicedatahash = $choicedata->getHash();
         foreach ($choicedatahash as $entry) {
             $newrows = array();
@@ -84,13 +72,11 @@ class behat_mod_ratingallocate extends behat_base {
                 $newrows = implode("\n", $newrows);
             }
             $table = new TableNode($newrows);
-            foreach ($this->i_set_the_values_of_the_choice_to($table) as $step) {
-                array_push($steps, $step);
-            }
-            array_push($steps, $this->i_add_a_next_choice());
+            $this->i_set_the_values_of_the_choice_to($table);
+            $this->i_add_a_next_choice();
         }
-        array_push($steps, new Given("I press \"id_cancel\""));
-        return $steps;
+
+        $this->execute('behat_forms::press_button', array("id_cancel"));
     }
 
     /**
@@ -99,15 +85,13 @@ class behat_mod_ratingallocate extends behat_base {
      * @When /^I delete the choice with the title "([^"]*)"$/
      *
      * @param string $choicetitle tilte of the choice
-     *
-     * @return When step.
      */
     public function i_delete_the_choice_with_the_title($choicetitle) {
         $fieldxpath = "//table[@id='mod_ratingallocateshowoptions']//td[text()='$choicetitle']".
             "//following-sibling::td/a[@title='Delete choice']";
         $link = $this->find('xpath', $fieldxpath);
         $link->click();
-        return new When("I click on \"Yes\" \"button\"");
+        $this->execute('behat_general::i_click_on', array("Yes", "button"));
     }
 
     /**
@@ -174,7 +158,7 @@ class behat_mod_ratingallocate extends behat_base {
      * @Given /^I add a new choice$/
      */
     public function i_add_a_new_choice() {
-        return new Given('I press "'.get_string('newchoice', 'ratingallocate').'"');
+        $this->execute("behat_forms::press_button", array(get_string('newchoice', "ratingallocate")));
     }
 
     /**
@@ -183,7 +167,7 @@ class behat_mod_ratingallocate extends behat_base {
      * @Given /^I add a next choice$/
      */
     public function i_add_a_next_choice() {
-        return new Given('I press "id_submitbutton2"');
+        $this->execute("behat_forms::press_button", array("id_submitbutton2"));
     }
 
     /**
