@@ -19,7 +19,7 @@ Add an activity instance. Set mandatory parameters. These are timespan, in which
 which form will be presented to the users to rate.
 Next you can add choices, which the users will have to rate later on.
 After the rating period has finished, you can allocate the users automatically or manually. Upon publishing the results, users will be able to see which choice they have been allocated to.
-For more information please visit the [[moodle wiki|https://docs.moodle.org/31/en/Ratingallocate]].
+For more information please visit the [moodle wiki](https://docs.moodle.org/31/en/Ratingallocate).
 
 Moodle version
 ======================
