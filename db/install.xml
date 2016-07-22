@@ -67,7 +67,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="ratingallocateid" TYPE="foreign" FIELDS="ratingallocateid" REFTABLE="ratingallocate" REFFIELDS="id"/>
-        <KEY NAME="choiceid" TYPE="foreign" FIELDS="choiceid" REFTABLE="choices" REFFIELDS="id"/>
+        <KEY NAME="choiceid" TYPE="foreign" FIELDS="choiceid" REFTABLE="ratingallocate_choices" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>

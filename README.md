@@ -3,7 +3,7 @@ moodle-mod_ratingallocate
 [![Build Status](https://travis-ci.org/learnweb/moodle-mod_ratingallocate.svg?branch=master)]
 (https://travis-ci.org/learnweb/moodle-mod_ratingallocate)</br>
 Module which lets you add an activity to courses, in which users can rate choices. You may then distribute the users fairly to the choices by maximising overall 'hapiness' in terms of ratings.
-This may be an alternative to the choice activity or first-come-first-served.
+This may be an alternative to the choice activity or other first-come-first-served plugins.
 
 This plugin is based on previous work by Stefan Koegel and Alexander Bias, University of Ulm.
 
@@ -15,13 +15,18 @@ Obtain this plugin from https://moodle.org/plugins/view/mod_ratingallocate.
 Usage
 ============
 
-Add an activity instance. Set mandatory parameters are timespan, in which users can give ratings, choices, which the users will have to rate and the strategy,
+Add an activity instance. Set mandatory parameters. These are timespan, in which users can give ratings, and the strategy,
 which form will be presented to the users to rate.
-After the rating period has finished, you can distribute the users automatically or manually. Upon publishing the results, users will be able to see which choice they have been associated with
+Next you can add choices, which the users will have to rate later on.
+After the rating period has finished, you can allocate the users automatically or manually. Upon publishing the results, users will be able to see which choice they have been allocated to.
+For more information please visit the [[moodle wiki|https://docs.moodle.org/31/en/Ratingallocate]].
 
 Moodle version
 ======================
-Tested with Moodle 2.7.2+ (20140911) and Moodle 2.8.5+ (Build: 20150319).
+The plugin is continously tested with all moodle versions since 2.7.x.
+Therefore, Travis uses the most current release to build a test instance and run the behat and unit tests on them.
+In addition to all stable branches the version is also tested against the master branch to support early adopters.
+Due to conflicts with the new behat 3, versions below 3.1.x can no longer be tested against the behat tests!
 
 Algorithm
 =========
