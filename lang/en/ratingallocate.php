@@ -63,7 +63,8 @@ $string['no_choice_to_rate'] = 'There are no choices to rate!';
 $string['at_least_one_rateable_choices_needed'] = 'You need at least one rateable choice.';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Administrator View">
-$string['allocation_manual_explain_only_raters'] = 'Select a choice to be assigned to a user. Only users who rated at least one choice are listed.';
+$string['allocation_manual_explain_only_raters'] = 'Select a choice to be assigned to a user. 
+Only users who rated at least one choice and who are not allocated yet are listed.';
 $string['allocation_manual_explain_all'] = 'Select a choice to be assigned to a user.';
 $string['distribution_algorithm'] = 'Distribution Algorithm';
 $string['distribution_saved'] = 'Distribution saved (in {$a}s).';
