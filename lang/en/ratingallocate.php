@@ -27,21 +27,21 @@
 defined('MOODLE_INTERNAL') || die();
 
 // <editor-fold defaultstate="collapsed" desc="General Plugin Settings">
-$string['ratingallocate'] = 'ratingallocate';
-$string['ratingallocatename'] = 'Name of this allocation';
-$string['ratingallocatename_help'] = 'Please choose a name for this ratingallocate activity.';
-$string['modulename'] = 'Ratingallocate';
-$string['modulename_help'] = 'The ratingallocate module lets you define choices your participants can then rate. The participants can then be distributed automatically to the available choices according to their ratings.';
-$string['modulenameplural'] = 'ratingallocates';
-$string['pluginadministration'] = 'ratingallocate administration';
-$string['pluginname'] = 'ratingallocate';
-$string['groupingname'] = 'Created from Ratingallocate "{$a}"';
-$string['ratingallocate:addinstance'] = 'Add new instance of ratingallocate';
-$string['ratingallocate:view'] = 'View instances of ratingallocate';
+$string['ratingallocate'] = 'Fair Allocation';
+$string['ratingallocatename'] = 'Name of this Fair Allocation';
+$string['ratingallocatename_help'] = 'Please choose a name for this Fair Allocation activity.';
+$string['modulename'] = 'Fair Allocation';
+$string['modulename_help'] = 'The Fair Allocation module lets you define choices your participants can then rate. The participants can then be distributed automatically to the available choices according to their ratings.';
+$string['modulenameplural'] = 'Fair Allocations';
+$string['pluginadministration'] = 'Fair Allocation administration';
+$string['pluginname'] = 'Fair Allocation';
+$string['groupingname'] = 'Created from Fair Allocation "{$a}"';
+$string['ratingallocate:addinstance'] = 'Add new instance of Fair Allocation';
+$string['ratingallocate:view'] = 'View instances of Fair Allocation';
 $string['ratingallocate:give_rating'] = 'Create or edit choice';
 $string['ratingallocate:start_distribution'] = 'Start allocation of users to choices';
 $string['ratingallocate:export_ratings'] = 'Ability to export the user ratings';
-$string['crontask'] = 'Automated allocation for ratingallocate';
+$string['crontask'] = 'Automated allocation for Fair Allocation';
 $string['algorithmtimeout'] = 'Algorithm timeout';
 $string['configalgorithmtimeout'] = 'The time in seconds after which the algorithm is assumed to be stuck.
 The current run is terminated and marked as failed.';
@@ -268,27 +268,27 @@ $string['allocation_notification_message'] = 'Concerning the "{$a->ratingallocat
 
 // Logging
 $string['log_rating_saved'] = 'User rating saved';
-$string['log_rating_saved_description'] =  'The user with id "{$a->userid}" saved his rating for the ratingallocate with id "{$a->ratingallocateid}".';
+$string['log_rating_saved_description'] =  'The user with id "{$a->userid}" saved his rating for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_rating_viewed'] = 'User rating viewed';
-$string['log_rating_viewed_description'] =  'The user with id "{$a->userid}" viewed his rating for the ratingallocate with id "{$a->ratingallocateid}".';
+$string['log_rating_viewed_description'] =  'The user with id "{$a->userid}" viewed his rating for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_allocation_published'] = 'Allocation published';
-$string['log_allocation_published_description'] =  'The user with id "{$a->userid}" published the allocation for the ratingallocate with id "{$a->ratingallocateid}".';
+$string['log_allocation_published_description'] =  'The user with id "{$a->userid}" published the allocation for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_distribution_triggered'] = 'Distribution triggered';
-$string['log_distribution_triggered_description'] =  'The user with id "{$a->userid}" triggered the distribution for the ratingallocate with id "{$a->ratingallocateid}". The algorithm needed {$a->time_needed}sec.';
+$string['log_distribution_triggered_description'] =  'The user with id "{$a->userid}" triggered the distribution for the Fair Allocation with id "{$a->ratingallocateid}". The algorithm needed {$a->time_needed}sec.';
 
 $string['log_manual_allocation_saved'] = 'Manual allocation saved';
-$string['log_manual_allocation_saved_description'] =  'The user with id "{$a->userid}" saved a manual allocation for the ratingallocate with id "{$a->ratingallocateid}".';
+$string['log_manual_allocation_saved_description'] =  'The user with id "{$a->userid}" saved a manual allocation for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_ratingallocate_viewed'] = 'Ratingallocate viewed';
-$string['log_ratingallocate_viewed_description'] =  'The user with id "{$a->userid}" viewed the ratingallocate with id "{$a->ratingallocateid}".';
+$string['log_ratingallocate_viewed_description'] =  'The user with id "{$a->userid}" viewed the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_allocation_table_viewed'] = 'Allocation table viewed';
-$string['log_allocation_table_viewed_description'] =  'The user with id "{$a->userid}" viewed the allocation table for the ratingallocate with id "{$a->ratingallocateid}".';
+$string['log_allocation_table_viewed_description'] =  'The user with id "{$a->userid}" viewed the allocation table for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_allocation_statistics_viewed'] = 'Allocation statistics viewed';
-$string['log_allocation_statistics_viewed_description'] =  'The user with id "{$a->userid}" viewed the allocation statistics for the ratingallocate with id "{$a->ratingallocateid}".';
+$string['log_allocation_statistics_viewed_description'] =  'The user with id "{$a->userid}" viewed the allocation statistics for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['no_id_or_m_error'] = 'You must specify a course_module ID or an instance ID';
