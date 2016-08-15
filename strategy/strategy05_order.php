@@ -111,8 +111,12 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         }
 
         for ($i = 1; $i <= $choicecounter; $i++) {
-            $mform->addElement('select', 'choice[' . $i . ']', get_string(strategy::STRATEGYID . '_no_choice', ratingallocate_MOD_NAME, $i), $choices);
+            $select = $mform->createElement('select');
+            $this->fill_select($select, $i, $choices);
+            $mform->addElement($select);
+            $mform->addRule( $select->getName(), 'You must select a state.', 'required' );
         }
+
         foreach ($ratingdata as $data) {
             // If there is a valid value in the databse, choose the according rating
             // from the dropdown.
@@ -134,13 +138,32 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         }
     }
 
+    /**
+     * Creates a select element including disabled choices for no selection.
+     * @param \HTML_QuickForm_select $select select element to be filled with choices.
+     * @param $i number of select element
+     * @param array $choices choices which should be available in the select element.
+     * @return \HTML_QuickForm_select select element;
+     */
+    private function fill_select($select, $i, array $choices) {
+        $select->setName('choice[' . $i . ']');
+        $select->setLabel(get_string(strategy::STRATEGYID . '_no_choice', ratingallocate_MOD_NAME, $i));
+        $select->addOption(get_string(strategy::STRATEGYID . '_choice_none', ratingallocate_MOD_NAME, $i),
+            '', array('disabled' => 'disabled'));
+        foreach ( $choices as $id => $name ) {
+            $select->addOption( $name, $id );
+        }
+        $select->setSelected('');
+        return $select;
+    }
+
     public function describe_strategy() {
         return get_string(strategy::STRATEGYID . '_explain_choices', ratingallocate_MOD_NAME);
     }
 
     /**
      * Override to fill with correct data format
-     * @return type
+     * @return array
      */
     public function get_data() {
         $data = parent::get_data();
@@ -174,7 +197,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         }
 
         foreach ($data['choice'] as $choiceid => $choice) {
-            if (array_key_exists($choice, $usedchoices)) {
+            if (array_key_exists($choice, $usedchoices) && is_numeric($choice)) {
                 $errors['choice[' . $choiceid . ']'] = get_string(strategy::STRATEGYID . '_use_only_once', ratingallocate_MOD_NAME);
             }
             $usedchoices[$choice] = true;
