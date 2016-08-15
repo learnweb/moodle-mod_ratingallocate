@@ -110,23 +110,23 @@ Background:
 
   @javascript
   Scenario: Create a new rating alloation and check the field runalgorithmbycron. It should be saved as true.
-    When I navigate to "Edit settings" node in "ratingallocate administration"
+    When I navigate to "Edit settings" node in "Fair Allocation administration"
     And I set the field "runalgorithmbycron" to "1"
     And I press "id_submitbutton"
-    And I navigate to "Edit settings" node in "ratingallocate administration"
+    And I navigate to "Edit settings" node in "Fair Allocation administration"
     Then the field "runalgorithmbycron" matches value "1"
 
   @javascript
   Scenario: Create a new rating alloation and uncheck the field runalgorithmbycron. It should be saved as false.
-    When I navigate to "Edit settings" node in "ratingallocate administration"
+    When I navigate to "Edit settings" node in "Fair Allocation administration"
     And I set the field "runalgorithmbycron" to ""
     And I press "id_submitbutton"
-    And I navigate to "Edit settings" node in "ratingallocate administration"
+    And I navigate to "Edit settings" node in "Fair Allocation administration"
     Then the field "runalgorithmbycron" matches value ""
 
   @javascript
   Scenario: Create a new rating alloation and assume the default for the field runalgorithmbycron is true.
-    When I navigate to "Edit settings" node in "ratingallocate administration"
+    When I navigate to "Edit settings" node in "Fair Allocation administration"
     Then the field "runalgorithmbycron" matches value "1"
 
 
