@@ -10,8 +10,8 @@ Background:
     And I follow "Courses"
     And I follow "Course 1"
     And I turn editing mode on
-    And I add a "Ratingallocate" to section "0"
-    And I set the field "id_name" to "My Ratingallocate"
+    And I add a "Fair Allocation" to section "0"
+    And I set the field "id_name" to "My Fair Allocation"
     And I press "id_submitbutton"
     And I press "Edit Choices"
     And I add a new choice with the values:

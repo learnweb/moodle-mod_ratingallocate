@@ -295,5 +295,5 @@ class behat_mod_ratingallocate extends behat_base {
 
 class bht_ratingallocate {
 
-    const modulename = "Ratingallocate";
+    const modulename = "Fair Allocation";
 }
