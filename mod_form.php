@@ -106,7 +106,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         // Start/end time.
         $elementname = 'accesstimestart';
         $mform->addElement('date_time_selector', $elementname, get_string('rating_begintime', self::MOD_NAME));
-        $mform->setDefault($elementname, time());
+        $mform->setDefault($elementname, time() + 24 * 60 * 60);
         $elementname = 'accesstimestop';
         $mform->addElement('date_time_selector', $elementname, get_string('rating_endtime', self::MOD_NAME));
         $mform->setDefault($elementname, time() + 7 * 24 * 60 * 60); // Default: now + one week.
