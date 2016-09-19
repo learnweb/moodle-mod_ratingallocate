@@ -41,6 +41,7 @@ $string['ratingallocate:view'] = 'View instances of Fair Allocation';
 $string['ratingallocate:give_rating'] = 'Create or edit choice';
 $string['ratingallocate:start_distribution'] = 'Start allocation of users to choices';
 $string['ratingallocate:export_ratings'] = 'Ability to export the user ratings';
+$string['ratingallocate:modify_choices'] = 'Ability to modify, edit or delete the set of choices of a Fair Allocation';
 $string['crontask'] = 'Automated allocation for Fair Allocation';
 $string['algorithmtimeout'] = 'Algorithm timeout';
 $string['configalgorithmtimeout'] = 'The time in seconds after which the algorithm is assumed to be stuck.
