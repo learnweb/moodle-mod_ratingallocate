@@ -26,9 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016081600;        // The current module version (Date: YYYYMMDDXX)
+$plugin->version   = 2016112900;        // The current module version (Date: YYYYMMDDXX)
 $plugin->requires  = 2014051200;        // Requires this Moodle version
 $plugin->cron      = 300;                 // Period for cron to check this module (secs)
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v3.1-r1';
+$plugin->release   = 'v3.2-r1';
 $plugin->component = 'mod_ratingallocate';  // To check on upgrade, that module sits in correct place
