@@ -8,8 +8,8 @@ Background:
       | Course 1 | C1        | 0        | 1         |
     And I log in as "admin"
     And I follow "Course 1"
-    And I navigate to "Edit settings" in current page administration
-    And I add a "Fair Allocation" to section "0" and fill the form with:
+    And I turn editing mode on
+    And I add a "Fair Allocation" to section "0" and I fill the form with:
       | id_name | "My Fair Allocation" |
     And I press "Edit Choices"
     And I add a new choice with the values:

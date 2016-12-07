@@ -14,7 +14,7 @@ Feature: When a teacher selects a strategy the appropriate options are displayed
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
-    And I add a "Fair Allocation" to section "1" and fill the form with:
+    And I add a "Fair Allocation" to section "1" and I fill the form with:
       | id_name | "My Fair Allocation" |
 
   @javascript
