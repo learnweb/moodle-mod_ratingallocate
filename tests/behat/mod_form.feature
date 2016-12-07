@@ -7,7 +7,7 @@ Background:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1        | 0        | 1         |
     And I log in as "admin"
-    And I navigate to course "Course 1"
+    And I follow "Course 1"
     And I navigate to "Edit settings" in current page administration
     And I add a "Fair Allocation" to section "0" and fill the form with:
       | id_name | "My Fair Allocation" |
