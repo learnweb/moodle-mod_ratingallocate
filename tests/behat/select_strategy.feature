@@ -3,14 +3,14 @@ Feature: When a teacher selects a strategy the appropriate options are displayed
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname |
-      | Course 1 | C1        |
+      | fullname | shortname | category | groupmode |
+      | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
-      | username |
-      | teacher1 |
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "course enrolments" exist:
-      | course | user     | role           |
-      | C1     | teacher1 | editingteacher |
+      | user | course | role |
+      | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
