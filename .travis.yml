@@ -1,6 +1,6 @@
 language: php
 
-sudo: required
+sudo: false
 
 cache:
   directories:
@@ -73,3 +73,7 @@ script:
       then
           moodle-plugin-ci behat
       fi
+
+after_script:
+    # See: https://github.com/moodlerooms/moodle-plugin-ci/issues/32
+    - killall -9 java
