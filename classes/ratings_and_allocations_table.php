@@ -151,17 +151,24 @@ class ratings_and_allocations_table extends \flexible_table {
 
         foreach ($userratings as $choiceid => $userrating) {
             $row[self::CHOICE_COL . $choiceid] = array(
-                'rating' => $userrating
+                'rating' => $userrating,
+                'hasallocation' => false // May be overridden later.
             );
         }
 
         // Process allocations separately, since assignment can exist for choices that have not been rated.
         // $userallocations *currently* has 0..1 elements, so this loop is rather fast.
         foreach ($userallocations as $choiceid => $userallocation) {
+            if (!$userallocation) {
+                // Presumably, $userallocation is always true. But maybe that assumption is wrong someday?
+                continue;
+            }
+
             $rowkey = self::CHOICE_COL . $choiceid;
             if (!isset($row[$rowkey])) {
                 // User has not rated this choice, but it was assigned to him/her.
                 $row[$rowkey] = array(
+                    'rating' => null,
                     'hasallocation' => true
                 );
             } else {
