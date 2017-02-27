@@ -6,13 +6,20 @@ Background:
 	Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1        | 0        | 1         |
-    And I log in as "admin"
-    And I follow "Courses"
+    And the following "users" exist:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | teacher1 | C1 | editingteacher |
+      | student1 | C1 | student |
+    And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
-    And I add a "Fair Allocation" to section "0"
-    And I set the field "id_name" to "My Fair Allocation"
-    And I press "id_submitbutton"
+    And I add a "Fair Allocation" to section "0" and I fill the form with:
+      | id_name | "My Fair Allocation" |
+    And I follow "My Fair Allocation"
     And I press "Edit Choices"
     And I add a new choice with the values:
       | title       | My first choice |
