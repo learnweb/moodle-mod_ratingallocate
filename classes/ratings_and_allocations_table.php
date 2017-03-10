@@ -236,10 +236,14 @@ class ratings_and_allocations_table extends \flexible_table {
         if (strpos($column, self::CHOICE_COL) !== 0) {
             return null;
         }
-        
+
         if (isset($row->$column)) {
             $celldata       = $row->$column;
-            $ratingtext     = $this->titles[$celldata['rating']];
+            if ($celldata['rating']) {
+                $ratingtext = $this->titles[$celldata['rating']];
+            } else {
+                $ratingtext = get_string('no_rating_given', ratingallocate_MOD_NAME);
+            }
             $ratingclass    = $celldata['hasallocation'] ? 'ratingallocate_member' : '';
             return \html_writer::span($ratingtext, $ratingclass);
         } else {
