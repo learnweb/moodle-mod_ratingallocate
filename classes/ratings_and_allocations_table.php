@@ -38,18 +38,26 @@ class ratings_and_allocations_table extends \flexible_table {
     private $titles;
     
     private $shownames;
-    
+
+    /**
+     * @var \ratingallocate
+     */
+    private $ratingallocate;
+
     /**
      * @var \mod_ratingallocate_renderer
      */
     private $renderer;
     
-    public function __construct(\mod_ratingallocate_renderer $renderer, $titles) {
+    public function __construct(\mod_ratingallocate_renderer $renderer, $titles, $ratingallocate) {
         parent::__construct('mod_ratingallocate_table');
-        
+        global $PAGE;
+        $PAGE->set_url(new \moodle_url($PAGE->url->get_path(),
+            array_merge($PAGE->url->params(),array("action" => "show_alloc_table"))));
         $this->renderer = $renderer;
         $this->titles   = $titles;
-        
+        $this->ratingallocate = $ratingallocate;
+
         // MAXDO maybe a setting in the future?
         // $this->shownames = get_config('mod_ratingallocate', 'show_names');
         $this->shownames = true;
@@ -64,9 +72,9 @@ class ratings_and_allocations_table extends \flexible_table {
         
         if (empty($this->baseurl)) {
             global $PAGE;
-            $this->baseurl = $PAGE->url->out(false);
+            $this->baseurl = $PAGE->url;
         }
-        
+
         // Store choice data, and sort by choice id.
         foreach ($choices as $choice) {
             $this->choicenames[$choice->id] = $choice->title;
@@ -95,7 +103,7 @@ class ratings_and_allocations_table extends \flexible_table {
         $this->define_headers($headers);
 
         // Set additional table settings.
-        $this->sortable(false);
+        $this->sortable(true);
         $this->set_attribute('class', 'ratingallocate_ratings_table');
         
         // Perform the rest of the flextable setup.
@@ -110,7 +118,12 @@ class ratings_and_allocations_table extends \flexible_table {
      * @param array $allocations an array of allocations
      */
     public function build_table($users, $ratings, $allocations) {
-        
+
+
+        $this->pagesize(10,count($this->ratingallocate->get_participating_users("u.id")));
+
+        $users = $this->get_query_sorted_users();
+
         // Group all ratings per user to match table structure.
         $ratingsbyuser = array();
         foreach ($ratings as $rating) {
@@ -137,7 +150,7 @@ class ratings_and_allocations_table extends \flexible_table {
         }
         
         $this->add_summary_row();
-        
+
         $this->finish_output();
     }
     
@@ -232,5 +245,38 @@ class ratings_and_allocations_table extends \flexible_table {
         } else {
             return get_string('no_rating_given', ratingallocate_MOD_NAME);
         }
+    }
+
+    public function get_query_sorted_users(){
+        global $DB;
+        $userids = array_map(function($c){return $c->id;},
+            $this->ratingallocate->get_participating_users());
+        $sortfields = $this->get_sort_columns();
+        $sql = "SELECT u.*
+                FROM {user} u ";
+        $orderby = [];
+        for ($i=0; $i<count($sortfields); $i++){
+            $key = array_keys($sortfields)[$i];
+            if (substr($key, 0, 6) == "choice"){
+                $id = substr($key, 7);
+                $sql .= "LEFT JOIN {ratingallocate_ratings} as r$i ON u.id=r$i.userid AND r$i.choiceid=$id ";
+                $orderkey = "r$i.rating";
+                if ($sortfields[$key] == SORT_DESC) {
+                    $orderkey .= " DESC";
+                }
+                $orderby []= $orderkey;
+            } else if ($key == "user"){
+                $orderkey = "u.firstname";
+                if ($sortfields[$key] == SORT_DESC) {
+                    $orderkey .= " DESC";
+                }
+                $orderby []= $orderkey;
+            }
+        }
+        $sql .= "WHERE u.id in (".implode(",",$userids).")";
+        if (count($orderby)>0){
+            $sql .= " ORDER BY ".implode(",",$orderby);
+        }
+        return $DB->get_records_sql($sql,null,$this->get_page_start(),$this->get_page_size());
     }
 }

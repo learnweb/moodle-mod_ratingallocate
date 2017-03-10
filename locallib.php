@@ -1361,6 +1361,14 @@ class ratingallocate {
         return (int) $this->ratingallocate->algorithmstatus;
     }
 
+    /**
+     * Returns an array of all users, who are allowed to rate.
+     * @param string $fields sql fields, the returned users should contain.
+     * @return array of users, which are alloewed to rate.
+     */
+    public function get_participating_users($fields = "u.*"){
+        return get_enrolled_users($this->context, "mod/ratingallocate:give_rating", 0, $fields);
+    }
 }
 
 /**
