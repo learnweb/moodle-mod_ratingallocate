@@ -134,7 +134,7 @@ class ratings_and_allocations_table extends \flexible_table {
 
         $this->writeable = $writeable;
         $this->initialbars(true);
-        $this->pagesize(10,count($this->ratingallocate->get_raters_in_course()));
+        $this->pagesize(10,$this->get_count_filtered_users());
 
         $users = $this->get_query_sorted_users();
 
@@ -307,5 +307,22 @@ class ratings_and_allocations_table extends \flexible_table {
             $sql .= " ORDER BY ".implode(",",$orderby);
         }
         return $DB->get_records_sql($sql,null,$this->get_page_start(),$this->get_page_size());
+    }
+
+    public function get_count_filtered_users(){
+        global $DB;
+        $userids = array_map(function($c){return $c->id;},
+            $this->ratingallocate->get_raters_in_course());
+        $sql = "SELECT count(*)
+                FROM {user} u ";
+
+        $sql .= "WHERE u.id in (".implode(",",$userids).")";
+        if ($this->get_initial_first()){
+            $sql .= " AND u.firstname like '".$this->get_initial_first()."%'";
+        }
+        if ($this->get_initial_last()){
+            $sql .= " AND u.lastname like '".$this->get_initial_last()."%'";
+        }
+        return $DB->get_record_sql($sql)->count;
     }
 }
