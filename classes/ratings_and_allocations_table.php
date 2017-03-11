@@ -261,9 +261,9 @@ class ratings_and_allocations_table extends \flexible_table {
         if ($this->writeable) {
             return \html_writer::span(
                 '<input type="radio" name="data[' . $userid . '][assign]"'
-                . 'name="user_' . $userid . '_alloc_' . $choiceid .
+                . 'id="user_' . $userid . '_alloc_' . $choiceid .
                 '" value="' . $choiceid . '" ' . $checked . '/>' .
-                $text);
+                '<label for="user_' . $userid . '_alloc_' . $choiceid.'"">'.$text.'</label>');
         } else {
             return \html_writer::span($text, $class);
         }
