@@ -432,6 +432,7 @@ class ratingallocate {
             $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
 
             $output .= $mform->to_html();
+            $this->showinfo = false;
         }
         return $output;
     }
@@ -638,6 +639,9 @@ class ratingallocate {
         return $output;
     }
 
+    // States if the ratingallocate info schould be displayed.
+    private $showinfo = true;
+
     /**
      * This is what the view.php calls to make the output
      */
@@ -652,9 +656,6 @@ class ratingallocate {
 
         /* @var mod_ratingallocate_renderer */
         $renderer = $this->get_renderer();
-
-        // States if the ratingallocate info schould be displayed.
-        $showinfo = true;
 
         switch ($action) {
             case ACTION_START_DISTRIBUTION:
@@ -675,7 +676,7 @@ class ratingallocate {
                     return "";
                 }
                 $output .= $result;
-                $showinfo = false;
+                $this->showinfo = false;
                 break;
 
             case ACTION_ENABLE_CHOICE:
@@ -714,7 +715,7 @@ class ratingallocate {
                 $output .= $this->process_default();
         }
 
-        if ($showinfo) {
+        if ($this->showinfo) {
             $choicestatus = new ratingallocate_choice_status();
             $choicestatus->accesstimestart = $this->ratingallocate->accesstimestart;
             $choicestatus->accesstimestop = $this->ratingallocate->accesstimestop;
