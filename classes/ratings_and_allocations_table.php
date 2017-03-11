@@ -40,6 +40,11 @@ class ratings_and_allocations_table extends \flexible_table {
     private $shownames;
 
     /**
+     * @var bool if true the cells are rendered as radio buttons
+     */
+    private $writeable;
+
+    /**
      * @var \ratingallocate
      */
     private $ratingallocate;
@@ -49,11 +54,12 @@ class ratings_and_allocations_table extends \flexible_table {
      */
     private $renderer;
     
-    public function __construct(\mod_ratingallocate_renderer $renderer, $titles, $ratingallocate) {
+    public function __construct(\mod_ratingallocate_renderer $renderer, $titles, $ratingallocate,
+                                $action = 'show_alloc_table') {
         parent::__construct('mod_ratingallocate_table');
         global $PAGE;
         $PAGE->set_url(new \moodle_url($PAGE->url->get_path(),
-            array_merge($PAGE->url->params(),array("action" => "show_alloc_table"))));
+            array_merge($PAGE->url->params(),array("action" => $action))));
         $this->renderer = $renderer;
         $this->titles   = $titles;
         $this->ratingallocate = $ratingallocate;
@@ -113,13 +119,13 @@ class ratings_and_allocations_table extends \flexible_table {
     /**
      * Should be called after setup_choices
      * 
-     * @param array $users       an array of all users participating in this module instance
      * @param array $ratings     an array of ratings -- the data for this table
      * @param array $allocations an array of allocations
+     * @param bool $writeable if true the cells are rendered as radio buttons
      */
-    public function build_table($users, $ratings, $allocations) {
+    public function build_table($ratings, $allocations, $writeable = false) {
 
-
+        $this->writeable = $writeable;
         $this->pagesize(10,count($this->ratingallocate->get_raters_in_course()));
 
         $users = $this->get_query_sorted_users();
@@ -238,16 +244,33 @@ class ratings_and_allocations_table extends \flexible_table {
         }
 
         if (isset($row->$column)) {
+
             $celldata       = $row->$column;
             if ($celldata['rating']) {
                 $ratingtext = $this->titles[$celldata['rating']];
             } else {
                 $ratingtext = get_string('no_rating_given', ratingallocate_MOD_NAME);
             }
+            $hasallocation    = $celldata['hasallocation'] ? 'checked' : '';
             $ratingclass    = $celldata['hasallocation'] ? 'ratingallocate_member' : '';
-            return \html_writer::span($ratingtext, $ratingclass);
+
+            return $this->render_cell($row->user->id, substr($column,7),
+                $ratingtext, $hasallocation, $ratingclass);
         } else {
-            return get_string('no_rating_given', ratingallocate_MOD_NAME);
+            return $this->render_cell($row->user->id, substr($column,7),
+                get_string('no_rating_given', ratingallocate_MOD_NAME), '');
+        }
+    }
+
+    private function render_cell($userid, $choiceid, $text, $checked, $class = ''){
+        if ($this->writeable) {
+            return \html_writer::span(
+                '<input type="radio" name="data[' . $userid . '][assign]"'
+                . 'name="user_' . $userid . '_alloc_' . $choiceid .
+                '" value="' . $choiceid . '" ' . $checked . '/>' .
+                $text);
+        } else {
+            return \html_writer::span($text, $class);
         }
     }
 
