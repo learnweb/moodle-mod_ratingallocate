@@ -120,7 +120,7 @@ class ratings_and_allocations_table extends \flexible_table {
     public function build_table($users, $ratings, $allocations) {
 
 
-        $this->pagesize(10,count($this->ratingallocate->get_participating_users("u.id")));
+        $this->pagesize(10,count($this->ratingallocate->get_raters_in_course()));
 
         $users = $this->get_query_sorted_users();
 
@@ -254,7 +254,7 @@ class ratings_and_allocations_table extends \flexible_table {
     public function get_query_sorted_users(){
         global $DB;
         $userids = array_map(function($c){return $c->id;},
-            $this->ratingallocate->get_participating_users());
+            $this->ratingallocate->get_raters_in_course());
         $sortfields = $this->get_sort_columns();
         $sql = "SELECT u.*
                 FROM {user} u ";
