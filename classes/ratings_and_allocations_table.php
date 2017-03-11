@@ -81,11 +81,18 @@ class ratings_and_allocations_table extends \flexible_table {
             $this->baseurl = $PAGE->url;
         }
 
+        $allocationcounts = $this->ratingallocate->get_choices_with_allocationcount();
+
         // Store choice data, and sort by choice id.
         foreach ($choices as $choice) {
             $this->choicenames[$choice->id] = $choice->title;
             $this->choicemax[$choice->id] = $choice->maxsize;
-            $this->choicesum[$choice->id] = 0;
+            if ($allocationcounts[$choice->id]->usercount) {
+                $this->choicesum[$choice->id] = $allocationcounts[$choice->id]->usercount;
+            } else {
+                $this->choicesum[$choice->id] = 0;
+            }
+
         }
         
         ksort($this->choicenames);
@@ -194,9 +201,6 @@ class ratings_and_allocations_table extends \flexible_table {
                 // User has rated this choice
                 $row[$rowkey]['hasallocation'] = true;
             }
-
-            // Increment choice allocation counter for summary.
-            $this->choicesum[$choiceid]++;
         }
         
         $this->add_data_keyed($this->format_row($row));
