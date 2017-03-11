@@ -423,6 +423,10 @@ class ratingallocate {
                 // If form was submitted using save or cancel, show the default page.
                 if (array_key_exists("submitbutton",$data)){
                     return $this->process_default();
+                // If the save and continue button was pressed,
+                // reinitialize the form to refresh the checked radiobuttons.
+                } else if (array_key_exists("submitbutton2",$data)){
+                    $mform = new manual_alloc_form($PAGE->url->out(), $this);
                 }
             }
             $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
