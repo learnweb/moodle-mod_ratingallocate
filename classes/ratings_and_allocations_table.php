@@ -103,7 +103,7 @@ class ratings_and_allocations_table extends \flexible_table {
         $headers = [];
         
         if ($this->shownames) {
-            $columns[] = 'user';
+            $columns[] = 'fullname';
             $headers[] = get_string('ratings_table_user', ratingallocate_MOD_NAME);
         }
         
@@ -169,10 +169,10 @@ class ratings_and_allocations_table extends \flexible_table {
     
     private function add_user_ratings_row($user, $userratings, $userallocations) {
         
-        $row = array();
+        $row = convert_to_array($user);
         
         if ($this->shownames) {
-            $row['user'] = $user;
+            $row['fullname'] = $user;
         }
 
         foreach ($userratings as $choiceid => $userrating) {
@@ -224,16 +224,7 @@ class ratings_and_allocations_table extends \flexible_table {
         
         $this->add_data($row, 'ratingallocate_summary');
     }
-    
-    /*
-     * Will be called by $this->format_row when processing the 'user' column.
-     * 
-     * @param unknown $row
-     */
-    protected function col_user($row) {
-        return $this->renderer->format_user_data($row->user);
-    }
-    
+
     /*
      * Will be called by $this->format_row when processing the 'choice' columns
      * 
@@ -258,10 +249,10 @@ class ratings_and_allocations_table extends \flexible_table {
             $hasallocation    = $celldata['hasallocation'] ? 'checked' : '';
             $ratingclass    = $celldata['hasallocation'] ? 'ratingallocate_member' : '';
 
-            return $this->render_cell($row->user->id, substr($column,7),
+            return $this->render_cell($row->id, substr($column,7),
                 $ratingtext, $hasallocation, $ratingclass);
         } else {
-            return $this->render_cell($row->user->id, substr($column,7),
+            return $this->render_cell($row->id, substr($column,7),
                 get_string('no_rating_given', ratingallocate_MOD_NAME), '');
         }
     }
@@ -296,8 +287,8 @@ class ratings_and_allocations_table extends \flexible_table {
                     $orderkey .= " DESC";
                 }
                 $orderby []= $orderkey;
-            } else if ($key == "user"){
-                $orderkey = "u.firstname";
+            } else {
+                $orderkey = "u.$key";
                 if ($sortfields[$key] == SORT_DESC) {
                     $orderkey .= " DESC";
                 }
