@@ -133,6 +133,7 @@ class ratings_and_allocations_table extends \flexible_table {
     public function build_table($ratings, $allocations, $writeable = false) {
 
         $this->writeable = $writeable;
+        $this->initialbars(true);
         $this->pagesize(10,count($this->ratingallocate->get_raters_in_course()));
 
         $users = $this->get_query_sorted_users();
@@ -296,6 +297,12 @@ class ratings_and_allocations_table extends \flexible_table {
             }
         }
         $sql .= "WHERE u.id in (".implode(",",$userids).")";
+        if ($this->get_initial_first()){
+            $sql .= " AND u.firstname like '".$this->get_initial_first()."%'";
+        }
+        if ($this->get_initial_last()){
+            $sql .= " AND u.lastname like '".$this->get_initial_last()."%'";
+        }
         if (count($orderby)>0){
             $sql .= " ORDER BY ".implode(",",$orderby);
         }
