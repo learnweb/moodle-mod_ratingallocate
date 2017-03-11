@@ -108,7 +108,33 @@ class manual_alloc_form extends moodleform {
         ob_end_clean();
         $mform->addElement('html', $tableoutput);
 
-        $this->add_action_buttons();
+        $this->add_special_action_buttons();
+    }
+
+    /**
+     * Overriding formslib's add_action_buttons() method, to add an extra submit "save changes and continue" button.
+     *
+     * @param bool $cancel show cancel button
+     * @param string $submitlabel null means default, false means none, string is label text
+     * @param string $submit2label  null means default, false means none, string is label text
+     * @return void
+     */
+    public function add_special_action_buttons() {
+        $submitlabel = get_string('savechanges');
+        $submit2label = get_string('saveandcontinue', ratingallocate_MOD_NAME);
+
+        $mform = $this->_form;
+
+        // elements in a row need a group
+        $buttonarray = array();
+
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton2', $submit2label);
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
+        $buttonarray[] = &$mform->createElement('cancel');
+
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->setType('buttonar', PARAM_RAW);
+        $mform->closeHeaderBefore('buttonar');
     }
 
     /**

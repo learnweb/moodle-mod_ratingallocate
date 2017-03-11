@@ -417,14 +417,17 @@ class ratingallocate {
                         $renderer->add_notification(get_string('manual_allocation_saved', ratingallocate_MOD_NAME),
                             self::NOTIFY_SUCCESS);
                     }
+                } else {
+                    return $this->process_default();
                 }
                 // If form was submitted using save or cancel, show the default page.
-                return $this->process_default();
-            } else {
-                $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
-
-                $output .= $mform->to_html();
+                if (array_key_exists("submitbutton",$data)){
+                    return $this->process_default();
+                }
             }
+            $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
+
+            $output .= $mform->to_html();
         }
         return $output;
     }

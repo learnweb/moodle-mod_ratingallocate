@@ -94,6 +94,7 @@ $string['publish_allocation'] = 'Publish Allocation';
 $string['distribution_published'] = 'Allocation has been published.';
 $string['create_moodle_groups'] = 'Create Groups From Allocation';
 $string['moodlegroups_created'] = 'The corresponding Moodle groups and groupings have been created.';
+$string['saveandcontinue'] = 'Save and Continue';
 
 $string['last_algorithm_run_date'] = 'Last algorithm run at';
 $string['last_algorithm_run_date_none'] = '-';
