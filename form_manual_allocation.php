@@ -67,6 +67,9 @@ class manual_alloc_form extends moodleform {
 
         $mform->addElement('hidden', 'data', 0);
         $mform->setType('data', PARAM_INT);
+
+        $mform->addElement('hidden', 'page', 0);
+        $mform->setType('page', PARAM_INT);
     }
     
     public function definition_after_data(){
@@ -107,6 +110,8 @@ class manual_alloc_form extends moodleform {
         $tableoutput = ob_get_contents();
         ob_end_clean();
         $mform->addElement('html', $tableoutput);
+
+        $mform->setDefault('page', $table->get_page_start()/$table->get_page_size());
 
         $this->add_special_action_buttons();
     }
