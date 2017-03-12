@@ -269,7 +269,7 @@ class ratings_and_allocations_table extends \flexible_table {
         }
     }
 
-    private $shownorating = false;
+    private $shownorating = true;
     private $showallocnecessary = false;
 
     public function setup_filter($shownorating, $showallocnecessary){
@@ -294,7 +294,9 @@ class ratings_and_allocations_table extends \flexible_table {
                 "JOIN {ratingallocate_choices} as c2 ON c2.id = a.choiceid AND c2.active=1 ".
                 "AND a.ratingallocateid = :ratingallocateid2 )" .
                 "ON u.id=a.userid ".
-                "WHERE a.id is null";
+                "WHERE a.id is null AND u.id in (".implode(",",$userids).") ";
+        } else {
+            $sql .= "WHERE u.id in (".implode(",",$userids).") ";
         }
         return array_map(function($u){return $u->id;},
             $DB->get_records_sql($sql, array('ratingallocateid' => $this->ratingallocate->ratingallocate->id,

@@ -95,7 +95,7 @@ class manual_alloc_form extends moodleform {
         $different_ratings = array();
         // Add actual rating data to userdata
         foreach ($ratingdata as $rating) {
-            if ($rating->rating) {
+            if ($rating->rating != null) {
                 $different_ratings[$rating->rating] = $rating->rating;
             }
         }
@@ -105,11 +105,11 @@ class manual_alloc_form extends moodleform {
             $this->ratingallocate->get_options_titles($different_ratings), $this->ratingallocate,
             'manual_allocation');
         $table->setup_choices($this->ratingallocate->get_rateable_choices());
-        if ($mform->isSubmitted() && $this->no_submit_button_pressed()){
-            $shownorating = true && $mform->getSubmitValue('show_users_with_no_rating');
-            $showallocnecessary = true && $mform->getSubmitValue('show_alloc_necessary');
-            $table->setup_filter($shownorating, $showallocnecessary);
-        }
+
+        // Setup the filter settings.
+        $shownorating = true && $mform->getSubmitValue('show_users_with_no_rating');
+        $showallocnecessary = true && $mform->getSubmitValue('show_alloc_necessary');
+        $table->setup_filter($shownorating, $showallocnecessary);
 
         // The rest must be done through output buffering due to the way flextable works.
         ob_start();
