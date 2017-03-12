@@ -240,9 +240,8 @@ class ratings_and_allocations_table extends \flexible_table {
         }
 
         if (isset($row->$column)) {
-
             $celldata       = $row->$column;
-            if ($celldata['rating']) {
+            if ($celldata['rating'] != null) {
                 $ratingtext = $this->titles[$celldata['rating']];
             } else {
                 $ratingtext = get_string('no_rating_given', ratingallocate_MOD_NAME);
@@ -270,10 +269,49 @@ class ratings_and_allocations_table extends \flexible_table {
         }
     }
 
+    private $shownorating = false;
+    private $showallocnecessary = false;
+
+    public function setup_filter($shownorating, $showallocnecessary){
+        $this->shownorating = $shownorating;
+        $this->showallocnecessary = $showallocnecessary;
+    }
+
+    private function filter_userids($userids){
+        global $DB;
+        if ($this->shownorating && !$this->showallocnecessary){
+            return $userids;
+        }
+        $sql = "SELECT distinct u.id FROM {user} as u ";
+        if (!$this->shownorating) {
+            $sql .= "JOIN {ratingallocate_ratings} as r ON u.id=r.userid " .
+                "JOIN {ratingallocate_choices} as c ON r.choiceid = c.id ".
+                "AND c.ratingallocateid = :ratingallocateid ".
+                "AND c.active=1";
+        }
+        if ($this->showallocnecessary) {
+            $sql .= "LEFT JOIN ({ratingallocate_allocations} as a " .
+                "JOIN {ratingallocate_choices} as c2 ON c2.id = a.choiceid AND c2.active=1 ".
+                "AND a.ratingallocateid = :ratingallocateid2 )" .
+                "ON u.id=a.userid ".
+                "WHERE a.id is null";
+        }
+        return array_map(function($u){return $u->id;},
+            $DB->get_records_sql($sql, array('ratingallocateid' => $this->ratingallocate->ratingallocate->id,
+                'ratingallocateid2' => $this->ratingallocate->ratingallocate->id)));
+    }
+
     public function get_query_sorted_users(){
         global $DB;
         $userids = array_map(function($c){return $c->id;},
             $this->ratingallocate->get_raters_in_course());
+        $userids = $this->filter_userids($userids);
+
+        // The following db-query is not necessary if no users are there in the first place.
+        if (count($userids) == 0){
+            return array();
+        }
+
         $sortfields = $this->get_sort_columns();
         $sql = "SELECT u.*
                 FROM {user} u ";
@@ -313,6 +351,8 @@ class ratings_and_allocations_table extends \flexible_table {
         global $DB;
         $userids = array_map(function($c){return $c->id;},
             $this->ratingallocate->get_raters_in_course());
+        $userids = $this->filter_userids($userids);
+
         $sql = "SELECT count(*)
                 FROM {user} u ";
 

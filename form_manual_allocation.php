@@ -70,39 +70,46 @@ class manual_alloc_form extends moodleform {
 
         $mform->addElement('hidden', 'page', 0);
         $mform->setType('page', PARAM_INT);
+
+        $this->render_filter();
     }
-    
+
+    protected function render_filter(){
+        $mform = & $this->_form;
+
+        $mform->addElement('checkbox', 'show_users_with_no_rating','show users with no rating');
+        $mform->setType('show_users_with_no_rating', PARAM_BOOL);
+
+        $mform->addElement('checkbox', 'show_alloc_necessary','show alloc necessary');
+        $mform->setType('show_alloc_necessary', PARAM_BOOL);
+
+        $mform->addElement('submit', 'update_filter','update filter');
+        $mform->registerNoSubmitButton('update_filter');
+    }
+
     public function definition_after_data(){
         parent::definition_after_data();
         $mform = & $this->_form;
 
         $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices();
         $different_ratings = array();
-        $empty_preferences = array();
-        foreach ($this->ratingallocate->get_rateable_choices() as $choiceid => $choice){
-            $empty_preferences[$choiceid] = get_string('no_rating_given' , ratingallocate_MOD_NAME);
-        }
-        $userdata = array();
-        // Create one entry for each user choice combination
-            foreach ($this->ratingallocate->get_raters_in_course() as $userid => $users) {
-                $userdata[$userid] = $empty_preferences;
-            }
-
         // Add actual rating data to userdata
         foreach ($ratingdata as $rating) {
-            if (!array_key_exists($rating->userid, $userdata)) {
-                $userdata[$rating->userid] = $empty_preferences;
-            }
             if ($rating->rating) {
-                $userdata[$rating->userid][$rating->choiceid] = $rating->rating;
                 $different_ratings[$rating->rating] = $rating->rating;
             }
         }
+
         // Create and set up the flextable for ratings and allocations.
         $table = new mod_ratingallocate\ratings_and_allocations_table($this->ratingallocate->get_renderer(),
             $this->ratingallocate->get_options_titles($different_ratings), $this->ratingallocate,
             'manual_allocation');
         $table->setup_choices($this->ratingallocate->get_rateable_choices());
+        if ($mform->isSubmitted() && $this->no_submit_button_pressed()){
+            $shownorating = true && $mform->getSubmitValue('show_users_with_no_rating');
+            $showallocnecessary = true && $mform->getSubmitValue('show_alloc_necessary');
+            $table->setup_filter($shownorating, $showallocnecessary);
+        }
 
         // The rest must be done through output buffering due to the way flextable works.
         ob_start();
