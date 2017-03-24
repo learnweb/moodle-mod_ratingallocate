@@ -19,7 +19,7 @@
  *
  * @package    mod_ratingallocate
  * @category   test
- * @group mod_ratingallocate2
+ * @group mod_ratingallocate
  * @copyright  reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -141,7 +141,6 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
         $data['action'] = 'manual_allocation';
         $data['data'] = $allocdata;
         $data['submitbutton'] = 'Save changes';
-        $data['filter_state'] = manual_alloc_form::FILTER_ALL;
         manual_alloc_form::mock_submit($data);
     }
 
