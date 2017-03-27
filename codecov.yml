@@ -1,0 +1,4 @@
+fixes:
+	- "moodle/mod/ratingallocate/::"
+ignore:
+	- "tests"
