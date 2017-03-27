@@ -69,11 +69,12 @@ script:
   - moodle-plugin-ci shifter
   - moodle-plugin-ci jshint
   - moodle-plugin-ci validate
-  - moodle-plugin-ci phpunit
-
+  - moodle-plugin-ci phpunit --coverage-clover
   - >
     if [ "$MOODLE_BRANCH" \> 'MOODLE_30_STABLE' ];
       then
           moodle-plugin-ci behat
       fi
 
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
