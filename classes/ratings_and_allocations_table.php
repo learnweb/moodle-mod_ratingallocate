@@ -355,7 +355,7 @@ class ratings_and_allocations_table extends \flexible_table {
             $this->ratingallocate->get_raters_in_course());
         $userids = $this->filter_userids($userids);
 
-        $sql = "SELECT count(*)
+        $sql = "SELECT count(*) as c
                 FROM {user} u ";
 
         $sql .= "WHERE u.id in (".implode(",",$userids).")";
@@ -365,6 +365,6 @@ class ratings_and_allocations_table extends \flexible_table {
         if ($this->get_initial_last()){
             $sql .= " AND u.lastname like '".$this->get_initial_last()."%'";
         }
-        return $DB->get_record_sql($sql)->count;
+        return $DB->get_record_sql($sql)->c;
     }
 }
