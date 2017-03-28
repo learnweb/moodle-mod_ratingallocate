@@ -287,7 +287,7 @@ class ratings_and_allocations_table extends \flexible_table {
             $sql .= "JOIN {ratingallocate_ratings} as r ON u.id=r.userid " .
                 "JOIN {ratingallocate_choices} as c ON r.choiceid = c.id ".
                 "AND c.ratingallocateid = :ratingallocateid ".
-                "AND c.active=1";
+                "AND c.active=1 ";
         }
         if ($this->showallocnecessary) {
             $sql .= "LEFT JOIN ({ratingallocate_allocations} as a " .
