@@ -27,16 +27,16 @@ global $CFG;
 require_once($CFG->libdir.'/tablelib.php');
 
 class ratings_and_allocations_table extends \flexible_table {
-    
+
     const CHOICE_COL = 'choice_';
-    
+
     private $choicenames = array();
     private $choicemax = array();
     private $choicesum = array();
-    
+
     private $ratings;
     private $titles;
-    
+
     private $shownames;
 
     /**
@@ -53,7 +53,7 @@ class ratings_and_allocations_table extends \flexible_table {
      * @var \mod_ratingallocate_renderer
      */
     private $renderer;
-    
+
     public function __construct(\mod_ratingallocate_renderer $renderer, $titles, $ratingallocate,
                                 $action = 'show_alloc_table') {
         parent::__construct('mod_ratingallocate_table');
@@ -68,14 +68,14 @@ class ratings_and_allocations_table extends \flexible_table {
         // $this->shownames = get_config('mod_ratingallocate', 'show_names');
         $this->shownames = true;
     }
-    
+
     /**
      * Setup this table with choices
-     * 
-     * @param array $choices an array of choices 
+     *
+     * @param array $choices an array of choices
      */
     public function setup_choices($choices) {
-        
+
         if (empty($this->baseurl)) {
             global $PAGE;
             $this->baseurl = $PAGE->url;
@@ -94,38 +94,38 @@ class ratings_and_allocations_table extends \flexible_table {
             }
 
         }
-        
+
         ksort($this->choicenames);
         ksort($this->choicesum);
-        
+
         // Prepare the table structure.
         $columns = [];
         $headers = [];
-        
+
         if ($this->shownames) {
             $columns[] = 'fullname';
             $headers[] = get_string('ratings_table_user', ratingallocate_MOD_NAME);
         }
-        
+
         foreach ($this->choicenames as $choiceid => $choicetitle) {
             $columns[] = self::CHOICE_COL . $choiceid;
             $headers[] = $choicetitle;
         }
-        
+
         $this->define_columns($columns);
         $this->define_headers($headers);
 
         // Set additional table settings.
         $this->sortable(true);
         $this->set_attribute('class', 'ratingallocate_ratings_table');
-        
+
         // Perform the rest of the flextable setup.
         parent::setup();
     }
-    
+
     /**
      * Should be called after setup_choices
-     * 
+     *
      * @param array $ratings     an array of ratings -- the data for this table
      * @param array $allocations an array of allocations
      * @param bool $writeable if true the cells are rendered as radio buttons
@@ -146,7 +146,7 @@ class ratings_and_allocations_table extends \flexible_table {
             }
             $ratingsbyuser[$rating->userid][$rating->choiceid] = $rating->rating;
         }
-        
+
         // Group all memberships per user per choice.
         $allocationsbyuser = array();
         foreach ($allocations as $allocation) {
@@ -155,14 +155,14 @@ class ratings_and_allocations_table extends \flexible_table {
             }
             $allocationsbyuser[$allocation->userid][$allocation->choiceid] = true;
         }
-        
+
         // Add rating rows for each user.
         foreach ($users as $user) {
             $userratings        = isset($ratingsbyuser[$user->id]) ? $ratingsbyuser[$user->id] : array();
             $userallocations    = isset($allocationsbyuser[$user->id]) ? $allocationsbyuser[$user->id] : array();
             $this->add_user_ratings_row($user, $userratings, $userallocations);
         }
-        
+
         $this->add_summary_row();
 
         $this->finish_output();
@@ -210,7 +210,7 @@ class ratings_and_allocations_table extends \flexible_table {
                 $row[$rowkey]['hasallocation'] = true;
             }
         }
-        
+
         $this->add_data_keyed($this->format_row($row));
     }
 
@@ -218,13 +218,13 @@ class ratings_and_allocations_table extends \flexible_table {
      * Will be called by build_table when processing the summary row
      */
     private function add_summary_row() {
-        
+
         $row = array();
-        
+
         if ($this->shownames) {
             $row[] = get_string('ratings_table_sum_allocations', ratingallocate_MOD_NAME);
         }
-        
+
         foreach ($this->choicesum as $choiceid => $sum) {
             $row[] = get_string(
                 'ratings_table_sum_allocations_value',
@@ -232,13 +232,13 @@ class ratings_and_allocations_table extends \flexible_table {
                 array('sum' => $sum, 'max' => $this->choicemax[$choiceid])
             );
         }
-        
+
         $this->add_data($row, 'ratingallocate_summary');
     }
 
     /**
      * Will be called by $this->format_row when processing the 'choice' columns
-     * 
+     *
      * @param string $column
      * @param object $row
      *
@@ -281,7 +281,7 @@ class ratings_and_allocations_table extends \flexible_table {
      *
      * @return string html of the rendered cell
      */
-    private function render_cell($userid, $choiceid, $text, $checked, $class = ''){
+    private function render_cell($userid, $choiceid, $text, $checked, $class = '') {
         if ($this->writeable) {
             return \html_writer::span(
                 '<input type="radio" name="data[' . $userid . '][assign]"'
@@ -303,7 +303,7 @@ class ratings_and_allocations_table extends \flexible_table {
      * @param $shownorating
      * @param $showallocnecessary
      */
-    public function setup_filter($shownorating, $showallocnecessary){
+    public function setup_filter($shownorating, $showallocnecessary) {
         $this->shownorating = $shownorating;
         $this->showallocnecessary = $showallocnecessary;
     }
@@ -313,7 +313,7 @@ class ratings_and_allocations_table extends \flexible_table {
      * @param $userids array ids, which should be filtered.
      * @return array of filtered user ids.
      */
-    private function filter_userids($userids){
+    private function filter_userids($userids) {
         global $DB;
         if ($this->shownorating && !$this->showallocnecessary){
             return $userids;
@@ -334,7 +334,8 @@ class ratings_and_allocations_table extends \flexible_table {
         } else {
             $sql .= "WHERE u.id in (".implode(",",$userids).") ";
         }
-        return array_map(function($u){return $u->id;},
+        return array_map(function($u){return $u->id;
+        },
             $DB->get_records_sql($sql, array('ratingallocateid' => $this->ratingallocate->ratingallocate->id,
                 'ratingallocateid2' => $this->ratingallocate->ratingallocate->id)));
     }
@@ -344,9 +345,10 @@ class ratings_and_allocations_table extends \flexible_table {
      * according by the current filter and page selection of the user.
      * @return array of sorted users.
      */
-    public function get_query_sorted_users(){
+    public function get_query_sorted_users() {
         global $DB;
-        $userids = array_map(function($c){return $c->id;},
+        $userids = array_map(function($c){return $c->id;
+        },
             $this->ratingallocate->get_raters_in_course());
         $userids = $this->filter_userids($userids);
 
@@ -359,7 +361,7 @@ class ratings_and_allocations_table extends \flexible_table {
         $sql = "SELECT u.*
                 FROM {user} u ";
         $orderby = [];
-        for ($i=0; $i<count($sortfields); $i++){
+        for ($i = 0; $i < count($sortfields); $i++){
             $key = array_keys($sortfields)[$i];
             if (substr($key, 0, 6) == "choice"){
                 $id = substr($key, 7);
@@ -368,13 +370,13 @@ class ratings_and_allocations_table extends \flexible_table {
                 if ($sortfields[$key] == SORT_DESC) {
                     $orderkey .= " DESC";
                 }
-                $orderby []= $orderkey;
+                $orderby [] = $orderkey;
             } else {
                 $orderkey = "u.$key";
                 if ($sortfields[$key] == SORT_DESC) {
                     $orderkey .= " DESC";
                 }
-                $orderby []= $orderkey;
+                $orderby [] = $orderkey;
             }
         }
         $sql .= "WHERE u.id in (".implode(",",$userids).")";
@@ -384,7 +386,7 @@ class ratings_and_allocations_table extends \flexible_table {
         if ($this->get_initial_last()){
             $sql .= " AND u.lastname like '".$this->get_initial_last()."%'";
         }
-        if (count($orderby)>0){
+        if (count($orderby) > 0){
             $sql .= " ORDER BY ".implode(",",$orderby);
         }
         return $DB->get_records_sql($sql,null,$this->get_page_start(),$this->get_page_size());
@@ -394,9 +396,10 @@ class ratings_and_allocations_table extends \flexible_table {
      * Calculates the total number of users, which meet the current filter preferences
      * @return integer number of users
      */
-    public function get_count_filtered_users(){
+    public function get_count_filtered_users() {
         global $DB;
-        $userids = array_map(function($c){return $c->id;},
+        $userids = array_map(function($c){return $c->id;
+        },
             $this->ratingallocate->get_raters_in_course());
         $userids = $this->filter_userids($userids);
 
