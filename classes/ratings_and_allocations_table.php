@@ -167,11 +167,18 @@ class ratings_and_allocations_table extends \flexible_table {
 
         $this->finish_output();
     }
-    
+
+    /**
+     * Adds one row for each user
+     *
+     * @param $user object of the user for who a row should be added.
+     * @param $userratings array consisting of pairs of choiceid to rating for the user.
+     * @param $userallocations array constisting of paris of choiceid and allocation of the user.
+     */
     private function add_user_ratings_row($user, $userratings, $userallocations) {
-        
+
         $row = convert_to_array($user);
-        
+
         if ($this->shownames) {
             $row['fullname'] = $user;
         }
@@ -206,7 +213,10 @@ class ratings_and_allocations_table extends \flexible_table {
         
         $this->add_data_keyed($this->format_row($row));
     }
-    
+
+    /**
+     * Will be called by build_table when processing the summary row
+     */
     private function add_summary_row() {
         
         $row = array();
@@ -226,11 +236,13 @@ class ratings_and_allocations_table extends \flexible_table {
         $this->add_data($row, 'ratingallocate_summary');
     }
 
-    /*
+    /**
      * Will be called by $this->format_row when processing the 'choice' columns
      * 
      * @param string $column
-     * @param unknown $row
+     * @param object $row
+     *
+     * @return string rendered choice cell
      */
     public function other_cols($column, $row) {
 
@@ -257,6 +269,18 @@ class ratings_and_allocations_table extends \flexible_table {
         }
     }
 
+    /**
+     * Renders a single table cell.
+     * The result is either a checkbox, if the table is writeable, or a text otherwise.
+     *
+     * @param integer $userid
+     * @param integer $choiceid
+     * @param string $text of the cell
+     * @param string $checked string, which represents if the checkbox is checked
+     * @param string $class class string, which is added to the input element
+     *
+     * @return string html of the rendered cell
+     */
     private function render_cell($userid, $choiceid, $text, $checked, $class = ''){
         if ($this->writeable) {
             return \html_writer::span(
@@ -269,14 +293,26 @@ class ratings_and_allocations_table extends \flexible_table {
         }
     }
 
+    /** @var bool Defines if users with no rating at all should be displayed. */
     private $shownorating = true;
+    /** @var bool Defines if only users with no allocation should be displayed. */
     private $showallocnecessary = false;
 
+    /**
+     * Sets two variables used for filtering the table.
+     * @param $shownorating
+     * @param $showallocnecessary
+     */
     public function setup_filter($shownorating, $showallocnecessary){
         $this->shownorating = $shownorating;
         $this->showallocnecessary = $showallocnecessary;
     }
 
+    /**
+     * Filters a set of given userids in accordance of the two filter variables $shownorating and $showallocnecessary
+     * @param $userids array ids, which should be filtered.
+     * @return array of filtered user ids.
+     */
     private function filter_userids($userids){
         global $DB;
         if ($this->shownorating && !$this->showallocnecessary){
@@ -303,6 +339,11 @@ class ratings_and_allocations_table extends \flexible_table {
                 'ratingallocateid2' => $this->ratingallocate->ratingallocate->id)));
     }
 
+    /**
+     * Returns a array of users according to the current user sort preferences. The result is also reduced
+     * according by the current filter and page selection of the user.
+     * @return array of sorted users.
+     */
     public function get_query_sorted_users(){
         global $DB;
         $userids = array_map(function($c){return $c->id;},
@@ -349,6 +390,10 @@ class ratings_and_allocations_table extends \flexible_table {
         return $DB->get_records_sql($sql,null,$this->get_page_start(),$this->get_page_size());
     }
 
+    /**
+     * Calculates the total number of users, which meet the current filter preferences
+     * @return integer number of users
+     */
     public function get_count_filtered_users(){
         global $DB;
         $userids = array_map(function($c){return $c->id;},
