@@ -74,7 +74,7 @@ class ratings_and_allocations_table extends \flexible_table {
      *
      * @param array $choices an array of choices
      */
-    public function setup_choices($choices) {
+    public function setup_with_choices($choices) {
 
         if (empty($this->baseurl)) {
             global $PAGE;
@@ -119,8 +119,13 @@ class ratings_and_allocations_table extends \flexible_table {
         $this->sortable(true);
         $this->set_attribute('class', 'ratingallocate_ratings_table');
 
+        $this->initialbars(true);
+
         // Perform the rest of the flextable setup.
         parent::setup();
+
+        // Has to be called after setup!
+        $this->pagesize(10, $this->get_count_filtered_users());
     }
 
     /**
@@ -133,8 +138,6 @@ class ratings_and_allocations_table extends \flexible_table {
     public function build_table($ratings, $allocations, $writeable = false) {
 
         $this->writeable = $writeable;
-        $this->initialbars(true);
-        $this->pagesize(10,$this->get_count_filtered_users());
 
         $users = $this->get_query_sorted_users();
 

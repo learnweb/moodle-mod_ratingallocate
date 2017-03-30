@@ -104,7 +104,7 @@ class manual_alloc_form extends moodleform {
         $table = new mod_ratingallocate\ratings_and_allocations_table($this->ratingallocate->get_renderer(),
             $this->ratingallocate->get_options_titles($different_ratings), $this->ratingallocate,
             'manual_allocation');
-        $table->setup_choices($this->ratingallocate->get_rateable_choices());
+        $table->setup_with_choices($this->ratingallocate->get_rateable_choices());
 
         // Setup the filter settings.
         $shownorating = true && $mform->getSubmitValue('show_users_with_no_rating');
