@@ -54,11 +54,13 @@ $string['publishdate_estimated'] = 'Estimated publication date';
 $string['rateable_choices'] = 'Rateable Choices';
 $string['rating_is_over'] = 'The rating is over.';
 $string['ratings_saved'] = 'Your ratings have been saved.';
+$string['ratings_deleted'] = 'Your ratings have been deleted.';
 $string['strategyname'] = 'Strategy is "{$a}"';
 $string['too_early_to_rate'] = 'It is too early to rate.';
 $string['your_allocated_choice'] = 'Your Allocation';
 $string['your_rating'] = 'Your Rating';
 $string['edit_rating'] = 'Edit Rating';
+$string['delete_rating'] = 'Delete Rating';
 $string['results_not_yet_published'] = 'Results have not yet been published.';
 $string['no_choice_to_rate'] = 'There are no choices to rate!';
 $string['at_least_one_rateable_choices_needed'] = 'You need at least one rateable choice.';
@@ -270,6 +272,9 @@ $string['allocation_notification_message'] = 'Concerning the "{$a->ratingallocat
 // Logging
 $string['log_rating_saved'] = 'User rating saved';
 $string['log_rating_saved_description'] =  'The user with id "{$a->userid}" saved his rating for the Fair Allocation with id "{$a->ratingallocateid}".';
+
+$string['log_rating_deleted'] = 'User rating deleted';
+$string['log_rating_deleted_description'] =  'The user with id "{$a->userid}" deleted his rating for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_rating_viewed'] = 'User rating viewed';
 $string['log_rating_viewed_description'] =  'The user with id "{$a->userid}" viewed his rating for the Fair Allocation with id "{$a->ratingallocateid}".';

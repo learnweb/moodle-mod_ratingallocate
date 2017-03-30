@@ -74,6 +74,7 @@ class strategymanager {
 }
 
 define('ACTION_GIVE_RATING', 'give_rating');
+define('ACTION_DELETE_RATING', 'delete_rating');
 define('ACTION_SHOW_CHOICES', 'show_choices');
 define('ACTION_EDIT_CHOICE', 'edit_choice');
 define('ACTION_ENABLE_CHOICE', 'enable_choice');
@@ -268,6 +269,30 @@ class ratingallocate {
             }
         }
         return $output;
+    }
+
+    /**
+     * Processes the action of a user deleting his rating.
+     * @return string rendered html
+     */
+    private function process_action_delete_rating() {
+        /* @var mod_ratingallocate_renderer */
+        $renderer = $this->get_renderer();
+        // Print data and controls for students, but not for admins.
+        if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
+            global $USER;
+
+            $status = $this->get_status();
+            if ($status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
+                // Rating is possible...
+
+                $this->delete_ratings_of_user($USER->id);
+                $renderer->add_notification(get_string('ratings_deleted', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
+
+                return $this->process_default();
+            }
+        }
+        return '';
     }
 
     private function process_action_show_choices() {
@@ -608,6 +633,12 @@ class ratingallocate {
                         'ratingallocateid' => $this->ratingallocateid,
                         'action' => ACTION_GIVE_RATING)),
                     get_string('edit_rating', ratingallocate_MOD_NAME));
+
+                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
+                    array('id' => $this->coursemodule->id,
+                        'ratingallocateid' => $this->ratingallocateid,
+                        'action' => ACTION_DELETE_RATING)),
+                    get_string('delete_rating', ratingallocate_MOD_NAME));
             }
         }
         // Print data and controls to edit the choices.
@@ -656,6 +687,10 @@ class ratingallocate {
 
             case ACTION_GIVE_RATING:
                 $output .= $this->process_action_give_rating();
+                break;
+
+            case ACTION_DELETE_RATING:
+                $output .= $this->process_action_delete_rating();
                 break;
 
             case ACTION_SHOW_CHOICES:
@@ -1013,6 +1048,40 @@ class ratingallocate {
                     'ratingallocateid' => $this->ratingallocateid,
                     'userid' => $userid
         ));
+    }
+
+    /**
+     * Delete all ratings of a users
+     * @param int $userid
+     */
+    public function delete_ratings_of_user($userid) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        try {
+
+            $choices = $this->get_choices();
+
+            foreach ($choices as $id => $choice) {
+                $data = array(
+                    'userid' => $userid,
+                    'choiceid' => $id
+                );
+
+                // Actually delete the rating.
+                $DB->delete_records('ratingallocate_ratings', $data);
+            }
+
+            $transaction->allow_commit();
+
+            // Logging.
+            $event = \mod_ratingallocate\event\rating_deleted::create_simple(
+                context_course::instance($this->course->id), $this->ratingallocateid);
+            $event->trigger();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
+        }
     }
 
     /**
