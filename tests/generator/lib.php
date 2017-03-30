@@ -106,7 +106,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
     /**
      * creates a user and enroles him into the given course as teacher or student
      * @param advanced_testcase $tc
-     * @param unknown $course
+     * @param stdClass $course
      * @param boolean $isteacher
      * @param stdClass $user userobject to enrol.
      * @return stdClass
@@ -187,6 +187,14 @@ class mod_ratingallocate_generator extends testing_module_generator {
         $record['accesstimestart'] = time() + ($numdays * 24 * 60 * 60);
         $record['accesstimestop'] = time() + (($numdays + 6) * 24 * 60 * 60);
         $record['publishdate'] = time() + (($numdays + 7) * 24 * 60 * 60);
+        $testmodule = new mod_ratingallocate_generated_module($tc, $record, $choices);
+        return self::get_ratingallocate_for_user($tc,
+            $testmodule->moddb, $testmodule->teacher);
+    }
+
+    public static function get_small_ratingallocate_for_filter_tests(advanced_testcase $tc, $choices = null) {
+        $record = self::get_default_values();
+        $record['num_students'] = 4;
         $testmodule = new mod_ratingallocate_generated_module($tc, $record, $choices);
         return self::get_ratingallocate_for_user($tc,
             $testmodule->moddb, $testmodule->teacher);
