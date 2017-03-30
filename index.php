@@ -26,32 +26,36 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Replace ratingallocate with the name of your module and remove this line
-
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
-$id = required_param('id', PARAM_INT);   // course
+$id = required_param('id', PARAM_INT);   // Courseid.
 
 $course = get_course($id);
 
 require_course_login($course);
 
-add_to_log($course->id, 'ratingallocate', 'view all', 'index.php?id='.$course->id, '');
-
 $coursecontext = context_course::instance($course->id);
-require_capability('mod/ratingallocate:addinstance', $coursecontext);
 
+$PAGE->set_pagelayout('incourse');
 $PAGE->set_url('/mod/ratingallocate/index.php', array('id' => $id));
 $PAGE->set_title(format_string($course->fullname));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($coursecontext);
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('modulenameplural', ratingallocate_MOD_NAME), 2);
 
-if (! $ratingallocates = get_all_instances_in_course('ratingallocate', $course)) {
-    notice(get_string('noratingallocates', ratingallocate_MOD_NAME), new moodle_url('/course/view.php', array('id' => $course->id)));
+require_capability('mod/ratingallocate:view', $coursecontext);
+
+$event = \mod_ratingallocate\event\index_viewed::create_simple(
+    context_course::instance($course->id));
+$event->trigger();
+
+if (! $ratingallocates = get_all_instances_in_course('ratingallocate', $course, $USER->id)) {
+    notice(get_string('noratingallocates', ratingallocate_MOD_NAME),
+        new moodle_url('/course/view.php', array('id' => $course->id)));
 }
 
 $table = new html_table();
@@ -85,6 +89,5 @@ foreach ($ratingallocates as $ratingallocate) {
     }
 }
 
-echo $OUTPUT->heading(get_string('modulenameplural', ratingallocate_MOD_NAME), 2);
 echo html_writer::table($table);
 echo $OUTPUT->footer();
