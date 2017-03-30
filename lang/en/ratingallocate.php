@@ -208,6 +208,8 @@ $string['choice_table_active'] = 'Active';
 $string['choice_table_tools'] = 'Edit';
 // </editor-fold>
 
+$string['is_published'] = 'Published';
+
 $string['strategy_settings_label'] = 'Designation for "{$a}"';
 
 /* Specific to Strategy01, YesNo */

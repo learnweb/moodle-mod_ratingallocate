@@ -59,18 +59,16 @@ if (! $ratingallocates = get_all_instances_in_course('ratingallocate', $course, 
 }
 
 $table = new html_table();
-if ($course->format == 'weeks') {
-    $table->head  = array(get_string('week'), get_string('name'));
-    $table->align = array('center', 'left');
-} else if ($course->format == 'topics') {
-    $table->head  = array(get_string('topic'), get_string('name'));
-    $table->align = array('center', 'left', 'left', 'left');
-} else {
-    $table->head  = array(get_string('name'));
-    $table->align = array('left', 'left', 'left');
-}
+$table->head  = array(
+                    get_string('name'),
+                    get_string('rating_begintime', 'mod_ratingallocate'),
+                    get_string('rating_endtime', 'mod_ratingallocate'),
+                    get_string('is_published', 'mod_ratingallocate'));
+$table->align = array('left', 'left', 'left', 'left');
+
 
 foreach ($ratingallocates as $ratingallocate) {
+    $ratingallocateinstance = $DB->get_record('ratingallocate', array('id' => $ratingallocate->id));
     if (!$ratingallocate->visible) {
         $link = html_writer::link(
             new moodle_url('/mod/ratingallocate/view.php', array('id' => $ratingallocate->coursemodule)),
@@ -81,12 +79,10 @@ foreach ($ratingallocates as $ratingallocate) {
             new moodle_url('/mod/ratingallocate/view.php', array('id' => $ratingallocate->coursemodule)),
             format_string($ratingallocate->name, true));
     }
+    $table->data[] = array($link, userdate($ratingallocateinstance->accesstimestart),
+        userdate($ratingallocateinstance->accesstimestop),
+        $ratingallocateinstance->published == 0 ? get_string('no') : get_string('yes'));
 
-    if ($course->format == 'weeks' or $course->format == 'topics') {
-        $table->data[] = array($ratingallocate->section, $link);
-    } else {
-        $table->data[] = array($link);
-    }
 }
 
 echo html_writer::table($table);
