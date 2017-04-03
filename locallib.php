@@ -27,6 +27,9 @@
  */
 defined('MOODLE_INTERNAL') || die();
 use ratingallocate\db as this_db;
+
+global $CFG;
+
 require_once(dirname(__FILE__) . '/lib.php');
 require_once($CFG->libdir  . '/eventslib.php');
 require_once(dirname(__FILE__) . '/form_manual_allocation.php');
