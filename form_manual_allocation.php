@@ -74,13 +74,16 @@ class manual_alloc_form extends moodleform {
     protected function render_filter(){
         $mform = & $this->_form;
 
-        $mform->addElement('checkbox', 'show_users_with_no_rating','show users with no rating');
+        $mform->addElement('checkbox', 'show_users_with_no_rating',
+            get_string('filter_show_users_with_no_rating', ratingallocate_MOD_NAME));
         $mform->setType('show_users_with_no_rating', PARAM_BOOL);
 
-        $mform->addElement('checkbox', 'show_alloc_necessary','show alloc necessary');
+        $mform->addElement('checkbox', 'show_alloc_necessary',
+            get_string('filter_show_alloc_necessary', ratingallocate_MOD_NAME));
         $mform->setType('show_alloc_necessary', PARAM_BOOL);
 
-        $mform->addElement('submit', 'update_filter','update filter');
+        $mform->addElement('submit', 'update_filter',
+            get_string('update_filter', ratingallocate_MOD_NAME));
         $mform->registerNoSubmitButton('update_filter');
     }
 

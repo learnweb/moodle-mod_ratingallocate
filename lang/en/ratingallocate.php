@@ -132,8 +132,9 @@ $string['reports_group'] = 'Reports';
 
 $string['manual_allocation'] = 'Manual Allocation';
 $string['manual_allocation_form'] = 'Manual Allocation Form';
-$string['manual_allocation_filter_only_raters'] = 'Show only users with ratings';
-$string['manual_allocation_filter_all'] = 'Show all users';
+$string['filter_show_users_with_no_rating'] = 'Show users with no rating';
+$string['filter_show_alloc_necessary'] = 'Show only users with no allocation';
+$string['update_filter'] = 'Update Filter';
 
 $string['show_table'] = 'Show Ratings and Allocations';
 
