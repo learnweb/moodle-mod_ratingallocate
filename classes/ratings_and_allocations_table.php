@@ -58,8 +58,9 @@ class ratings_and_allocations_table extends \flexible_table {
                                 $action = 'show_alloc_table') {
         parent::__construct('mod_ratingallocate_table');
         global $PAGE;
-        $PAGE->set_url(new \moodle_url($PAGE->url->get_path(),
-            array_merge($PAGE->url->params(),array("action" => $action))));
+        $url = $PAGE->url;
+        $url->params(array("action" => $action));
+        $PAGE->set_url($url);
         $this->renderer = $renderer;
         $this->titles   = $titles;
         $this->ratingallocate = $ratingallocate;
