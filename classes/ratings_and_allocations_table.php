@@ -290,7 +290,8 @@ class ratings_and_allocations_table extends \flexible_table {
                 '<input type="radio" name="data[' . $userid . '][assign]"'
                 . 'id="user_' . $userid . '_alloc_' . $choiceid .
                 '" value="' . $choiceid . '" ' . $checked . '/>' .
-                '<label for="user_' . $userid . '_alloc_' . $choiceid.'"">'.$text.'</label>');
+                '<label for="user_' . $userid . '_alloc_' . $choiceid.
+                    '"><span class="ratingallocate_checkbox"></span>'.$text.'</label>');
         } else {
             return \html_writer::span($text, $class);
         }
