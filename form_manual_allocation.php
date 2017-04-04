@@ -89,6 +89,8 @@ class manual_alloc_form extends moodleform {
 
     public function definition_after_data(){
         parent::definition_after_data();
+        global $PAGE;
+
         $mform = & $this->_form;
 
         $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices();
@@ -105,6 +107,8 @@ class manual_alloc_form extends moodleform {
             $this->ratingallocate->get_options_titles($different_ratings), $this->ratingallocate,
             'manual_allocation');
         $table->setup_with_choices($this->ratingallocate->get_rateable_choices());
+
+        $PAGE->requires->js_call_amd('mod_ratingallocate/radiobuttondeselect', 'init');
 
         // Setup the filter settings.
         $shownorating = true && $mform->getSubmitValue('show_users_with_no_rating');
