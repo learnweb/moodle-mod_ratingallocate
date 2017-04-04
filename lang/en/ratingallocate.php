@@ -90,6 +90,7 @@ $string['rated'] = 'rated {$a}';
 $string['no_rating_given'] = 'Unrated';
 $string['export_options'] = 'Export Options';
 $string['manual_allocation_saved'] = 'Your manual allocation has been saved.';
+$string['manual_allocation_nothing_to_be_saved'] = 'There was nothing to be saved.';
 $string['publish_allocation'] = 'Publish Allocation';
 $string['distribution_published'] = 'Allocation has been published.';
 $string['create_moodle_groups'] = 'Create Groups From Allocation';

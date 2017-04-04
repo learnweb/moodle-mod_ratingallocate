@@ -65,9 +65,6 @@ class manual_alloc_form extends moodleform {
         $mform->addElement('hidden', 'courseid', $COURSE->id);
         $mform->setType('courseid', PARAM_INT);
 
-        $mform->addElement('hidden', 'data', 0);
-        $mform->setType('data', PARAM_INT);
-
         $mform->addElement('hidden', 'page', 0);
         $mform->setType('page', PARAM_INT);
 

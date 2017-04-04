@@ -287,7 +287,7 @@ class ratings_and_allocations_table extends \flexible_table {
     private function render_cell($userid, $choiceid, $text, $checked, $class = '') {
         if ($this->writeable) {
             return \html_writer::span(
-                '<input type="radio" name="data[' . $userid . '][assign]"'
+                '<input type="radio" name="ratingdata[' . $userid . ']"'
                 . 'id="user_' . $userid . '_alloc_' . $choiceid .
                 '" value="' . $choiceid . '" ' . $checked . '/>' .
                 '<label for="user_' . $userid . '_alloc_' . $choiceid.

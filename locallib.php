@@ -163,6 +163,7 @@ class ratingallocate {
     protected $renderer;
 
     const NOTIFY_SUCCESS = 'notifysuccess';
+    const NOTIFY_MESSAGE = 'notifymessage';
 
     /**
      * Returns all users enrolled in the course the ratingallocate is in
@@ -413,9 +414,14 @@ class ratingallocate {
                         $renderer->add_notification(
                             get_string('modify_allocation_group_desc_'.$status, ratingallocate_MOD_NAME));
                     } else {
-                        $this->save_manual_allocation_form($data);
-                        $renderer->add_notification(get_string('manual_allocation_saved', ratingallocate_MOD_NAME),
-                            self::NOTIFY_SUCCESS);
+                        if ($ratingdata = optional_param_array('ratingdata', null, PARAM_INT)) {
+                            $this->save_manual_allocation_form($ratingdata);
+                            $renderer->add_notification(get_string('manual_allocation_saved',
+                                ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
+                        } else {
+                            $renderer->add_notification(get_string('manual_allocation_nothing_to_be_saved',
+                                ratingallocate_MOD_NAME), self::NOTIFY_MESSAGE);
+                        }
                     }
                 } else {
                     return $this->process_default();
@@ -1123,9 +1129,9 @@ class ratingallocate {
     /**
      * Adds the manual allocation to db. Does not perform checks if there is already an allocation user-choice
      * @global mixed $DB
-     * @param mixed $data
+     * @param mixed $allocdata array of users to the choice ids they should be allocated to.
      */
-    public function save_manual_allocation_form($data) {
+    public function save_manual_allocation_form($allocdata) {
         try {
             $transaction = $this->db->start_delegated_transaction();
             $loggingdata = array();
@@ -1133,27 +1139,26 @@ class ratingallocate {
             $allusers = $this->get_raters_in_course();
             $allchoices = $this->get_rateable_choices();
 
-            $allocdata = $data->data;
             foreach ($allocdata as $id => $choiceallocationid) {
                 // Is this user in this course?
-                if (key_exists($id, $allusers) && key_exists($choiceallocationid[manual_alloc_form::ASSIGN], $allchoices)) {
+                if (key_exists($id, $allusers) && key_exists($choiceallocationid, $allchoices)) {
                     $existingallocations = $this->get_allocations_for_user($id);
                     $existingallocation = array_pop($existingallocations);
                     if (empty($existingallocation)) {
                         // Create new allocation.
-                        $this->add_allocation($choiceallocationid[manual_alloc_form::ASSIGN], $id);
+                        $this->add_allocation($choiceallocationid, $id);
                         // Logging.
                         array_push($loggingdata,
-                            array('userid' => $id, 'choiceid' => $choiceallocationid[manual_alloc_form::ASSIGN]));
+                            array('userid' => $id, 'choiceid' => $choiceallocationid));
                     } else {
                         if ($existingallocation->{this_db\ratingallocate_allocations::CHOICEID} !=
-                            $choiceallocationid[manual_alloc_form::ASSIGN]) {
+                            $choiceallocationid) {
                             // Alter existing allocation.
                             $this->alter_allocation(
                                 $existingallocation->{this_db\ratingallocate_allocations::CHOICEID},
-                                $choiceallocationid[manual_alloc_form::ASSIGN], $id);
+                                $choiceallocationid, $id);
                             array_push($loggingdata,
-                                array('userid' => $id, 'choiceid' => $choiceallocationid[manual_alloc_form::ASSIGN]));
+                                array('userid' => $id, 'choiceid' => $choiceallocationid));
                         }
                     }
                 }
