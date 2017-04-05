@@ -71,11 +71,13 @@ class ratings_and_allocations_table extends \flexible_table {
     }
 
     /**
-     * Setup this table with choices
+     * Setup this table with choices and filter options
      *
      * @param array $choices an array of choices
+     * @param $shownorating
+     * @param $showallocnecessary
      */
-    public function setup_with_choices($choices) {
+    public function setup_table($choices, $shownorating = false, $showallocnecessary = false) {
 
         if (empty($this->baseurl)) {
             global $PAGE;
@@ -121,6 +123,9 @@ class ratings_and_allocations_table extends \flexible_table {
         $this->set_attribute('class', 'ratingallocate_ratings_table');
 
         $this->initialbars(true);
+
+        // Setup filter.
+        $this->setup_filter($shownorating, $showallocnecessary);
 
         // Perform the rest of the flextable setup.
         parent::setup();
@@ -308,7 +313,7 @@ class ratings_and_allocations_table extends \flexible_table {
      * @param $shownorating
      * @param $showallocnecessary
      */
-    public function setup_filter($shownorating, $showallocnecessary) {
+    private function setup_filter($shownorating, $showallocnecessary) {
         $this->shownorating = $shownorating;
         $this->showallocnecessary = $showallocnecessary;
     }

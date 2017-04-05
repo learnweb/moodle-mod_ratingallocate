@@ -171,11 +171,43 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
         // Setup the ratingallocate instanz with 4 Students.
         $ratingallocate = mod_ratingallocate_generator::get_small_ratingallocate_for_filter_tests($this);
 
+        // Count of users with ratings should equal to 4.
+        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false);
+        self::assertEquals(4, count($table->get_query_sorted_users()),
+            "Filtering the users to those with ratings should return 4 users.");
+
+        // Count of users in total should be equal to 6.
+        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, true, false);
+        self::assertEquals(6, count($table->get_query_sorted_users()),
+            "Filtering the users to those with or without ratings should return 6 users.");
+
+        // Count of users with ratings where a allocation is necessary equal to 1.
+        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, true);
+        self::assertEquals(1, count($table->get_query_sorted_users()),
+            'Filtering the users to those with ratings and' .
+            'where a allocation is necessary should return 1 user.');
+
+        // Count of users with or without ratings where a allocation is necessary equal to 1.
+        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, true, true);
+        self::assertEquals(2, count($table->get_query_sorted_users()),
+            'Filtering the users to those with or without ratings and' .
+            'where a allocation is necessary should return 2 users.');
+
+    }
+
+    /**
+     * Creates a ratings and allocation table with specific filter options
+     * @param $ratingallocate ratingallocate
+     * @param $shownorating bool
+     * @param $showallocnecessary bool
+     * @return \mod_ratingallocate\ratings_and_allocations_table
+     */
+    private function setup_ratings_table_with_filter_options($ratingallocate, $shownorating, $showallocnecessary) {
         // Create and set up the flextable for ratings and allocations.
         $choices = $ratingallocate->get_rateable_choices();
         $table = new mod_ratingallocate\ratings_and_allocations_table($ratingallocate->get_renderer(),
             array(), $ratingallocate, 'show_alloc_table');
-        $table->setup_with_choices($choices);
+        $table->setup_table($choices);
 
         // Remove the allocation of one user.
         $allusers = $ratingallocate->get_raters_in_course();
@@ -192,28 +224,7 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
             get_course($ratingallocate->ratingallocate->course));
         $ratingallocate->add_allocation(reset($choices)->id, $userwithoutratingwithallocation->id);
 
-        // Count of users with ratings should equal to 4.
-        $table->setup_filter(false, false);
-        self::assertEquals(4, count($table->get_query_sorted_users()),
-            "Filtering the users to those with ratings should return 4 users.");
-
-        // Count of users in total should be equal to 6.
-        $table->setup_filter(true, false);
-        self::assertEquals(6, count($table->get_query_sorted_users()),
-            "Filtering the users to those with or without ratings should return 6 users.");
-
-        // Count of users with ratings where a allocation is necessary equal to 1.
-        $table->setup_filter(false, true);
-        self::assertEquals(1, count($table->get_query_sorted_users()),
-            'Filtering the users to those with ratings and' .
-            'where a allocation is necessary should return 1 user.');
-
-        // Count of users with or without ratings where a allocation is necessary equal to 1.
-        $table->setup_filter(true, true);
-        self::assertEquals(2, count($table->get_query_sorted_users()),
-            'Filtering the users to those with or without ratings and' .
-            'where a allocation is necessary should return 2 users.');
-
+        return $table;
     }
 
 }
