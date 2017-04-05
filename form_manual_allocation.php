@@ -102,15 +102,27 @@ class manual_alloc_form extends moodleform {
             }
         }
         // Get the filter settings.
-        $shownorating = true && $mform->getSubmitValue('show_users_with_no_rating');
-        $showallocnecessary = true && $mform->getSubmitValue('show_alloc_necessary');
+        $filter = json_decode(get_user_preferences('flextable_manual_allocation_filter'), true);
+        if (!$filter) {
+            $filter = array(
+                'shownorating' => false,
+                'showallocnecessary' => false,
+            );
+        }
+        if ($this->is_submitted()) {
+            $filter['shownorating'] = true && $mform->getSubmitValue('show_users_with_no_rating');
+            $filter['showallocnecessary'] = true && $mform->getSubmitValue('show_alloc_necessary');
+            set_user_preference('flextable_manual_allocation_filter', json_encode($filter));
+        }
+        $mform->setDefault('show_users_with_no_rating', $filter['shownorating']);
+        $mform->setDefault('show_alloc_necessary', $filter['showallocnecessary']);
 
         // Create and set up the flextable for ratings and allocations.
         $table = new mod_ratingallocate\ratings_and_allocations_table($this->ratingallocate->get_renderer(),
             $this->ratingallocate->get_options_titles($different_ratings), $this->ratingallocate,
             'manual_allocation');
         $table->setup_table($this->ratingallocate->get_rateable_choices(),
-            $shownorating, $showallocnecessary);
+            $filter['shownorating'], $filter['showallocnecessary']);
 
         $PAGE->requires->js_call_amd('mod_ratingallocate/radiobuttondeselect', 'init');
 

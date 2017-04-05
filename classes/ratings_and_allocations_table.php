@@ -304,7 +304,7 @@ class ratings_and_allocations_table extends \flexible_table {
     }
 
     /** @var bool Defines if users with no rating at all should be displayed. */
-    private $shownorating = true;
+    private $shownorating = false;
     /** @var bool Defines if only users with no allocation should be displayed. */
     private $showallocnecessary = false;
 
