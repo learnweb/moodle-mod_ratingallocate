@@ -412,6 +412,9 @@ class ratings_and_allocations_table extends \flexible_table {
         },
             $this->ratingallocate->get_raters_in_course());
         $userids = $this->filter_userids($userids);
+        if (count($userids) === 0) {
+            return 0;
+        }
 
         $sql = "SELECT count(*) as c
                 FROM {user} u ";
