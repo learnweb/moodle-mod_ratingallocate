@@ -294,12 +294,19 @@ class ratings_and_allocations_table extends \flexible_table {
      */
     private function render_cell($userid, $choiceid, $text, $checked, $class = '') {
         if ($this->writeable) {
-            return \html_writer::span(
-                '<input class="ratingallocate_checkbox_label" type="radio" name="allocdata[' . $userid . ']"'
-                . 'id="user_' . $userid . '_alloc_' . $choiceid .
-                '" value="' . $choiceid . '" ' . $checked . '/>' .
-                '<label for="user_' . $userid . '_alloc_' . $choiceid.
-                '"><span class="ratingallocate_checkbox"></span>'.$text.'</label>');
+            $result = \html_writer::start_span();
+            $result .= \html_writer::tag('input', '',
+                array('class' => 'ratingallocate_checkbox_label',
+                    'type' => 'radio',
+                    'name' => 'allocdata[' . $userid . ']',
+                    'id' => 'user_' . $userid . '_alloc_' . $choiceid,
+                    'value' => $choiceid,
+                     $checked => ''));
+            $result .= \html_writer::label(
+                \html_writer::span('', 'ratingallocate_checkbox') . $text,
+                'user_' . $userid . '_alloc_' . $choiceid
+            );
+            return $result;
         } else {
             return \html_writer::span($text, $class);
         }
