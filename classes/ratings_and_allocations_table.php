@@ -55,8 +55,8 @@ class ratings_and_allocations_table extends \flexible_table {
     private $renderer;
 
     public function __construct(\mod_ratingallocate_renderer $renderer, $titles, $ratingallocate,
-                                $action = 'show_alloc_table') {
-        parent::__construct('mod_ratingallocate_table');
+                                $action = 'show_alloc_table', $uniqueid = 'mod_ratingallocate_table') {
+        parent::__construct($uniqueid);
         global $PAGE;
         $url = $PAGE->url;
         $url->params(array("action" => $action));
@@ -77,7 +77,7 @@ class ratings_and_allocations_table extends \flexible_table {
      * @param $shownorating
      * @param $showallocnecessary
      */
-    public function setup_table($choices, $shownorating = false, $showallocnecessary = false) {
+    public function setup_table($choices, $shownorating = null, $showallocnecessary = null) {
 
         if (empty($this->baseurl)) {
             global $PAGE;
@@ -304,18 +304,47 @@ class ratings_and_allocations_table extends \flexible_table {
     }
 
     /** @var bool Defines if users with no rating at all should be displayed. */
-    private $shownorating = false;
+    private $shownorating = true;
     /** @var bool Defines if only users with no allocation should be displayed. */
     private $showallocnecessary = false;
 
     /**
-     * Sets two variables used for filtering the table.
-     * @param $shownorating
-     * @param $showallocnecessary
+     * Setup for filtering the table.
+     * Loads the filter settings from the user preferences and overrides them if wanted, with the two parameters.
+     * @param $shownorating bool if true it shows also users with no rating.
+     * @param $showallocnecessary bool if true it shows only users without allocations.
      */
-    private function setup_filter($shownorating, $showallocnecessary) {
-        $this->shownorating = $shownorating;
-        $this->showallocnecessary = $showallocnecessary;
+    private function setup_filter($shownorating = null, $showallocnecessary = null) {
+        // Get the filter settings.
+        $filter = json_decode(get_user_preferences('flextable_'.$this->uniqueid.'_filter'), true);
+        if (!$filter) {
+            $filter = array(
+                'shownorating' => $this->shownorating,
+                'showallocnecessary' => $this->showallocnecessary,
+            );
+        }
+        if (!is_null($shownorating)) {
+            $filter['shownorating'] = $shownorating;
+        }
+        if (!is_null($showallocnecessary)) {
+            $filter['showallocnecessary'] = $showallocnecessary;
+        }
+        set_user_preference('flextable_'.$this->uniqueid.'_filter', json_encode($filter));
+
+        $this->shownorating = $filter['shownorating'];
+        $this->showallocnecessary = $filter['showallocnecessary'];
+    }
+
+    /**
+     * Gets the filter array used for filtering the table.
+     * @return array with keys shownorating and showallocnecessary
+     */
+    public function get_filter() {
+        $filter = array(
+            'shownorating' => $this->shownorating,
+            'showallocnecessary' => $this->showallocnecessary,
+        );
+        return $filter;
     }
 
     /**

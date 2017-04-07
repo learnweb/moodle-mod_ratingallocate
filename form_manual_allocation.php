@@ -101,28 +101,25 @@ class manual_alloc_form extends moodleform {
                 $different_ratings[$rating->rating] = $rating->rating;
             }
         }
-        // Get the filter settings.
-        $filter = json_decode(get_user_preferences('flextable_manual_allocation_filter'), true);
-        if (!$filter) {
-            $filter = array(
-                'shownorating' => false,
-                'showallocnecessary' => false,
-            );
-        }
+
+        $shownorating = null;
+        $showallocnecessary = null;
+        // Get filter settings.
         if ($this->is_submitted()) {
-            $filter['shownorating'] = true && $mform->getSubmitValue('show_users_with_no_rating');
-            $filter['showallocnecessary'] = true && $mform->getSubmitValue('show_alloc_necessary');
-            set_user_preference('flextable_manual_allocation_filter', json_encode($filter));
+            $shownorating = true && $mform->getSubmitValue('show_users_with_no_rating');
+            $showallocnecessary = true && $mform->getSubmitValue('show_alloc_necessary');
         }
-        $mform->setDefault('show_users_with_no_rating', $filter['shownorating']);
-        $mform->setDefault('show_alloc_necessary', $filter['showallocnecessary']);
 
         // Create and set up the flextable for ratings and allocations.
         $table = new mod_ratingallocate\ratings_and_allocations_table($this->ratingallocate->get_renderer(),
             $this->ratingallocate->get_options_titles($different_ratings), $this->ratingallocate,
-            'manual_allocation');
+            'manual_allocation', 'mod_ratingallocate_manual_allocation');
         $table->setup_table($this->ratingallocate->get_rateable_choices(),
-            $filter['shownorating'], $filter['showallocnecessary']);
+            $shownorating, $showallocnecessary);
+
+        $filter = $table->get_filter();
+        $mform->setDefault('show_users_with_no_rating', $filter['shownorating']);
+        $mform->setDefault('show_alloc_necessary', $filter['showallocnecessary']);
 
         $PAGE->requires->js_call_amd('mod_ratingallocate/radiobuttondeselect', 'init');
 

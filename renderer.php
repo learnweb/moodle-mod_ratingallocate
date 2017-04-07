@@ -573,7 +573,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         // Create and set up the flextable for ratings and allocations.
         $table = new mod_ratingallocate\ratings_and_allocations_table($this, $titles, $ratingallocate);
-        $table->setup_with_choices($choices);
+        $table->setup_table($choices);
 
         // The rest must be done through output buffering due to the way flextable works.
         ob_start();
