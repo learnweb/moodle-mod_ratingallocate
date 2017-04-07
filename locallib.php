@@ -414,8 +414,9 @@ class ratingallocate {
                         $renderer->add_notification(
                             get_string('modify_allocation_group_desc_'.$status, ratingallocate_MOD_NAME));
                     } else {
-                        if ($ratingdata = optional_param_array('allocdata', null, PARAM_INT)) {
-                            $this->save_manual_allocation_form($ratingdata);
+                        if (($allocationdata = optional_param_array('allocdata', null, PARAM_INT)) &&
+                            ($userdata = optional_param_array('userdata', null, PARAM_INT))) {
+                            $this->save_manual_allocation_form($allocationdata, $userdata);
                             $renderer->add_notification(get_string('manual_allocation_saved',
                                 ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
                         } else {
@@ -1129,38 +1130,24 @@ class ratingallocate {
     /**
      * Adds the manual allocation to db. Does not perform checks if there is already an allocation user-choice
      * @global mixed $DB
-     * @param mixed $allocdata array of users to the choice ids they should be allocated to.
+     * @param $allocdata array of users to the choice ids they should be allocated to.
      */
-    public function save_manual_allocation_form($allocdata) {
+    public function save_manual_allocation_form($allocdata, $userdata) {
         try {
             $transaction = $this->db->start_delegated_transaction();
-            $loggingdata = array();
 
             $allusers = $this->get_raters_in_course();
             $allchoices = $this->get_rateable_choices();
 
+            foreach ($userdata as $id => $user) {
+                $this->remove_allocations($id);
+            }
+
             foreach ($allocdata as $id => $choiceallocationid) {
                 // Is this user in this course?
-                if (key_exists($id, $allusers) && key_exists($choiceallocationid, $allchoices)) {
-                    $existingallocations = $this->get_allocations_for_user($id);
-                    $existingallocation = array_pop($existingallocations);
-                    if (empty($existingallocation)) {
-                        // Create new allocation.
-                        $this->add_allocation($choiceallocationid, $id);
-                        // Logging.
-                        array_push($loggingdata,
-                            array('userid' => $id, 'choiceid' => $choiceallocationid));
-                    } else {
-                        if ($existingallocation->{this_db\ratingallocate_allocations::CHOICEID} !=
-                            $choiceallocationid) {
-                            // Alter existing allocation.
-                            $this->alter_allocation(
-                                $existingallocation->{this_db\ratingallocate_allocations::CHOICEID},
-                                $choiceallocationid, $id);
-                            array_push($loggingdata,
-                                array('userid' => $id, 'choiceid' => $choiceallocationid));
-                        }
-                    }
+                if (key_exists($id, $allusers) && key_exists($id, $userdata) && key_exists($choiceallocationid, $allchoices)) {
+                    // Create new allocation.
+                    $this->add_allocation($choiceallocationid, $id);
                 }
             }
             // Logging.
@@ -1221,6 +1208,17 @@ class ratingallocate {
             'userid' => $userid
         ));
         return true;
+    }
+
+    /**
+     * Remove all allocations of a user.
+     * @param int $userid id of the user.
+     */
+    public function remove_allocations($userid) {
+        $this->db->delete_records('ratingallocate_allocations', array(
+            'userid' => $userid,
+            'ratingallocateid' => $this->ratingallocateid
+        ));
     }
 
     /**

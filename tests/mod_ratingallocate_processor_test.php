@@ -135,13 +135,16 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
         require_once(__DIR__ .'/../form_manual_allocation.php');
         $allocations = $DB->get_records('ratingallocate_allocations');
         $allocdata = array();
+        $userdata = array();
         foreach ($allocations as $id => $allocation) {
             $allocdata[$allocation->userid] = "$choiceid";
+            $userdata[$allocation->userid] = $allocation->userid;
         }
 
         $data = array();
         $data['action'] = 'manual_allocation';
         $data['allocdata'] = $allocdata;
+        $data['userdata'] = $userdata;
         $data['submitbutton'] = 'Save changes';
         manual_alloc_form::mock_submit($data);
     }

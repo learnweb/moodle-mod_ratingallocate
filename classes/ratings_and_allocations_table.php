@@ -174,6 +174,8 @@ class ratings_and_allocations_table extends \flexible_table {
 
         $this->add_summary_row();
 
+        $this->print_hidden_user_fields($users);
+
         $this->finish_output();
     }
 
@@ -297,9 +299,29 @@ class ratings_and_allocations_table extends \flexible_table {
                 . 'id="user_' . $userid . '_alloc_' . $choiceid .
                 '" value="' . $choiceid . '" ' . $checked . '/>' .
                 '<label for="user_' . $userid . '_alloc_' . $choiceid.
-                    '"><span class="ratingallocate_checkbox"></span>'.$text.'</label>');
+                '"><span class="ratingallocate_checkbox"></span>'.$text.'</label>');
         } else {
             return \html_writer::span($text, $class);
+        }
+    }
+
+    /**
+     * Prints one hidden field for every user currently displayed in the table.
+     * Is used for checking, which allocation have to be deleted.
+     * @param $users array of users displayed for the current filter settings.
+     */
+    private function print_hidden_user_fields($users) {
+        if ($this->writeable) {
+            echo \html_writer::start_span();
+            foreach ($users as $user) {
+                echo \html_writer::tag('input', '',
+                    array(
+                        'name' => 'userdata[' . $user->id . ']',
+                        'value' => $user->id,
+                        'type' => 'hidden',
+                    ));
+            }
+            echo \html_writer::end_span();
         }
     }
 
