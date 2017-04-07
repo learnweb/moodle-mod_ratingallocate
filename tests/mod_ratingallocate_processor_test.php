@@ -171,6 +171,8 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
         // Setup the ratingallocate instanz with 4 Students.
         $ratingallocate = mod_ratingallocate_generator::get_small_ratingallocate_for_filter_tests($this);
 
+        $this->alter_user_base_for_filter_test($ratingallocate);
+
         // Count of users with ratings should equal to 4.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false);
         self::assertEquals(4, count($table->get_query_sorted_users()),
@@ -196,6 +198,30 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
     }
 
     /**
+     * Removes the allocation for one existing user in course.
+     * Enrols one new user wihtout rating or allocations.
+     * Enrols one new user and creates an allocation for her.
+     * @param $ratingallocate ratingallocate instance
+     */
+    private function alter_user_base_for_filter_test($ratingallocate) {
+        // Remove the allocation of one user.
+        $allusers = $ratingallocate->get_raters_in_course();
+        $userwithoutallocation = reset($allusers);
+        $allocationsofuser = $ratingallocate->get_allocations_for_user($userwithoutallocation->id);
+        $ratingallocate->remove_allocation(reset($allocationsofuser)->choiceid, $userwithoutallocation->id);
+
+        // Enrol a new user without ratings to the course.
+        mod_ratingallocate_generator::create_user_and_enrol($this,
+            get_course($ratingallocate->ratingallocate->course));
+
+        $choices = $ratingallocate->get_rateable_choices();
+        // Enrol a new user without ratings to the course and create an allocation for her.
+        $userwithoutratingwithallocation = mod_ratingallocate_generator::create_user_and_enrol($this,
+            get_course($ratingallocate->ratingallocate->course));
+        $ratingallocate->add_allocation(reset($choices)->id, $userwithoutratingwithallocation->id);
+    }
+
+    /**
      * Creates a ratings and allocation table with specific filter options
      * @param $ratingallocate ratingallocate
      * @param $shownorating bool
@@ -207,22 +233,7 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
         $choices = $ratingallocate->get_rateable_choices();
         $table = new mod_ratingallocate\ratings_and_allocations_table($ratingallocate->get_renderer(),
             array(), $ratingallocate, 'show_alloc_table');
-        $table->setup_table($choices);
-
-        // Remove the allocation of one user.
-        $allusers = $ratingallocate->get_raters_in_course();
-        $userwithoutallocation = reset($allusers);
-        $allocationsofuser = $ratingallocate->get_allocations_for_user($userwithoutallocation->id);
-        $ratingallocate->remove_allocation(reset($allocationsofuser)->choiceid, $userwithoutallocation->id);
-
-        // Enrol a new user without ratings to the course.
-        mod_ratingallocate_generator::create_user_and_enrol($this,
-            get_course($ratingallocate->ratingallocate->course));
-
-        // Enrol a new user without ratings to the course and create an allocation for her.
-        $userwithoutratingwithallocation = mod_ratingallocate_generator::create_user_and_enrol($this,
-            get_course($ratingallocate->ratingallocate->course));
-        $ratingallocate->add_allocation(reset($choices)->id, $userwithoutratingwithallocation->id);
+        $table->setup_table($choices, $shownorating, $showallocnecessary);
 
         return $table;
     }
