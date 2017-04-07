@@ -46,7 +46,8 @@ class manual_alloc_form extends moodleform {
      */
     public function __construct($url, ratingallocate $ratingallocate) {
         $this->ratingallocate = $ratingallocate;
-        parent::__construct($url);
+        $url->params(array("action" => "manual_allocation"));
+        parent::__construct($url->out(false));
         $this->definition_after_data();
     }
 

@@ -402,7 +402,7 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             global $OUTPUT, $PAGE;
 
-            $mform = new manual_alloc_form($PAGE->url->out(), $this);
+            $mform = new manual_alloc_form($PAGE->url, $this);
 
             if (!$mform->no_submit_button_pressed() && $data = $mform->get_submitted_data()) {
                 if (!$mform->is_cancelled() ) {
@@ -432,7 +432,7 @@ class ratingallocate {
                 // If the save and continue button was pressed,
                 // reinitialize the form to refresh the checked radiobuttons.
                 } else if (array_key_exists("submitbutton2",$data)){
-                    $mform = new manual_alloc_form($PAGE->url->out(), $this);
+                    $mform = new manual_alloc_form($PAGE->url, $this);
                 }
             }
             $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
