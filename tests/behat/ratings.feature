@@ -17,8 +17,8 @@ Feature: When a student rates a rating should be saved and it should be possible
     And I follow "Course 1"
     And I turn editing mode on
     And the following "activities" exist:
-      | activity | course | idnumber | name |  accesstimestart  | accesstimestop |
-      | ratingallocate   | C1     | ra1  | My Fair Allocation |  ##-2 days##    | ##2 week## |
+      | activity | course | idnumber | name |
+      | ratingallocate   | C1     | ra1  | My Fair Allocation |
     And I follow "Course 1"
     And I follow "My Fair Allocation"
     And I press "Edit Choices"
@@ -36,7 +36,7 @@ Feature: When a student rates a rating should be saved and it should be possible
       | maxsize     |	2	    	  |
     And I log out
 
-  @javascript @wip
+  @javascript
   Scenario: The user can create a rating
     When I log in as "student1"
     And I follow "Course 1"
