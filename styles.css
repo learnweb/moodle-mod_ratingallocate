@@ -6,19 +6,30 @@
     font-weight: bold;
 }
 
+/* Indicate selected choice in non-writeable tables */
 .ratingallocate_ratings_table span.ratingallocate_member::before {
     content: url('[[pix:i/checked]]');
+}
+
+/* Show a tickmark for a selected choice */
+.ratingallocate_ratings_table span input[type=radio]:checked ~ label {
+    /* necessary for containing absolute position values */
+    position: relative;
 }
 .ratingallocate_ratings_table span input[type=radio]:checked ~ label::before {
     content: url('[[pix:i/checked]]');
     position: absolute;
 }
+
+/* Special highlight for values that were checked *initially* */
 .ratingallocate_ratings_table span input[type=radio][checked] ~ label > span.ratingallocate_checkbox {
-    border: 2px dashed #7ab51d;
+    border-color: #7ab51d;
 }
 .ratingallocate_ratings_table span input[type=radio][checked] ~ label {
     font-weight: bold;
 }
+
+/* Checkbox/radio replacement */
 .ratingallocate_ratings_table span input[type=radio] ~ label > span.ratingallocate_checkbox {
     display: inline-flex;
     border: 2px dashed #AAAAAA;
@@ -29,10 +40,8 @@
     margin-left: 1px;
     vertical-align: text-top;
 }
-
 .ratingallocate_ratings_table span input[type=radio]{
-    position: absolute;
-    visibility: hidden;
+    display: none;
 }
 
 .ratingallocate_ratings_box { overflow: auto; } /* Scrolling tables */
