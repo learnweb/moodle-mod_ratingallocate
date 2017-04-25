@@ -64,7 +64,7 @@ $string['no_choice_to_rate'] = 'There are no choices to rate!';
 $string['at_least_one_rateable_choices_needed'] = 'You need at least one rateable choice.';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Administrator View">
-$string['allocation_manual_explain_only_raters'] = 'Select a choice to be assigned to a user. 
+$string['allocation_manual_explain_only_raters'] = 'Select a choice to be assigned to a user.
 Only users who rated at least one choice and who are not allocated yet are listed.';
 $string['allocation_manual_explain_all'] = 'Select a choice to be assigned to a user.';
 $string['distribution_algorithm'] = 'Distribution Algorithm';
@@ -185,8 +185,8 @@ $string['runalgorithmbycron_help'] = 'Automatically runs the allocation algorith
 $string['select_strategy'] = 'Rating strategy';
 $string['select_strategy_help'] = 'Choose a rating strategy:
 
-* **Yes-No** The user can rate each choice with yes or no.
-* **Yes-Maybe-No** The user can rate each choice with yes, maybe or no.
+* **Accept-Deny** The user can decide for each choice to accept or deny it.
+* **Accept-Neutral-Deny** The user can decide for each choice to accept or deny or to be neutral about it.
 * **Likert Scale** The user can rate each choice with a number from a defined range. The range of numbers can be defined individually (beginning with 0). A high number corresponds to a high preference.
 * **Give Points** The user can rate the choices by assigning a number of points. The maximum number of points can be defined individually. A high number of points corresponds to a high preference.
 * **Rank Choices** The user has to rank the available choices. How many choices need to be rated can be defined individually.
@@ -211,21 +211,21 @@ $string['choice_table_tools'] = 'Edit';
 $string['strategy_settings_label'] = 'Designation for "{$a}"';
 
 /* Specific to Strategy01, YesNo */
-$string['strategy_yesno_name'] = 'Yes-No';
-$string['strategy_yesno_setting_crossout'] = 'Maximum number of choices the user can rate with "No"';
-$string['strategy_yesno_max_no'] = 'You may only assign "No" to {$a} choice(s).';
-$string['strategy_yesno_maximum_crossout'] = 'You may only assign "No" to at most {$a} choice(s).';
-$string['strategy_yesno_rating_crossout'] = 'No';
-$string['strategy_yesno_rating_choose'] = 'Yes';
+$string['strategy_yesno_name'] = 'Accept-Deny';
+$string['strategy_yesno_setting_crossout'] = 'Maximum number of choices the user can rate with "Deny"';
+$string['strategy_yesno_max_no'] = 'You may only assign "Deny" to {$a} choice(s).';
+$string['strategy_yesno_maximum_crossout'] = 'You may only assign "Deny" to at most {$a} choice(s).';
+$string['strategy_yesno_rating_crossout'] = 'Deny';
+$string['strategy_yesno_rating_choose'] = 'Accept';
 
 /* Specific to Strategy02, YesMayBeNo */
-$string['strategy_yesmaybeno_name'] = 'Yes-Maybe-No';
-$string['strategy_yesmaybeno_setting_maxno'] = 'Maximum number of choices the user can rate with "No"';
-$string['strategy_yesmaybeno_max_no'] = 'You may only assign "No" to {$a} choice(s).';
-$string['strategy_yesmaybeno_max_count_no'] = 'You may only assign "No" to at most {$a} choice(s).';
-$string['strategy_yesmaybeno_rating_no'] = 'No';
-$string['strategy_yesmaybeno_rating_maybe'] = 'Maybe';
-$string['strategy_yesmaybeno_rating_yes'] = 'Yes';
+$string['strategy_yesmaybeno_name'] = 'Accept-Neutral-Deny';
+$string['strategy_yesmaybeno_setting_maxno'] = 'Maximum number of choices the user can rate with "Deny"';
+$string['strategy_yesmaybeno_max_no'] = 'You may only assign "Deny" to {$a} choice(s).';
+$string['strategy_yesmaybeno_max_count_no'] = 'You may only assign "Deny" to at most {$a} choice(s).';
+$string['strategy_yesmaybeno_rating_no'] = 'Deny';
+$string['strategy_yesmaybeno_rating_maybe'] = 'Neutral';
+$string['strategy_yesmaybeno_rating_yes'] = 'Accept';
 
 // Specific to Strategy03, Likert
 $string['strategy_lickert_name'] = 'Likert Scale';
