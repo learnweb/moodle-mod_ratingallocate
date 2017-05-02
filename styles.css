@@ -19,11 +19,13 @@
 .ratingallocate_ratings_table span input[type=radio]:checked ~ label::before {
     content: url('[[pix:i/checked]]');
     position: absolute;
+    margin-top: -2px;
 }
 
 /* Special highlight for values that were checked *initially* */
 .ratingallocate_ratings_table span input[type=radio][checked] ~ label > span.ratingallocate_checkbox {
-    border-color: #7ab51d;
+    background: url('[[pix:ratingallocate|checkbox-selected]]');
+    background-size: 13px 13px;
 }
 .ratingallocate_ratings_table span input[type=radio][checked] ~ label {
     font-weight: bold;
@@ -32,13 +34,12 @@
 /* Checkbox/radio replacement */
 .ratingallocate_ratings_table span input[type=radio] ~ label > span.ratingallocate_checkbox {
     display: inline-flex;
-    border: 2px dashed #AAAAAA;
-    border-radius: 20%;
-    height: 9px;
-    width: 9px;
+    height: 13px;
+    width: 13px;
     margin-right: 5px;
-    margin-left: 1px;
     vertical-align: text-top;
+    background: url('[[pix:ratingallocate|checkbox]]');
+    background-size: 13px 13px;
 }
 .ratingallocate_ratings_table span input[type=radio]{
     display: none;
