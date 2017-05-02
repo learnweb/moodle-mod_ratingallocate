@@ -414,8 +414,8 @@ class ratingallocate {
                         $renderer->add_notification(
                             get_string('modify_allocation_group_desc_'.$status, ratingallocate_MOD_NAME));
                     } else {
-                        if (($allocationdata = optional_param_array('allocdata', null, PARAM_INT)) &&
-                            ($userdata = optional_param_array('userdata', null, PARAM_INT))) {
+                        $allocationdata = optional_param_array('allocdata', array(), PARAM_INT);
+                        if ($userdata = optional_param_array('userdata', null, PARAM_INT)) {
                             $this->save_manual_allocation_form($allocationdata, $userdata);
                             $renderer->add_notification(get_string('manual_allocation_saved',
                                 ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
