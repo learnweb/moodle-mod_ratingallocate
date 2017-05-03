@@ -74,10 +74,10 @@ class ratings_and_allocations_table extends \flexible_table {
      * Setup this table with choices and filter options
      *
      * @param array $choices an array of choices
-     * @param $shownorating
+     * @param $hidenorating
      * @param $showallocnecessary
      */
-    public function setup_table($choices, $shownorating = null, $showallocnecessary = null) {
+    public function setup_table($choices, $hidenorating = null, $showallocnecessary = null) {
 
         if (empty($this->baseurl)) {
             global $PAGE;
@@ -125,7 +125,7 @@ class ratings_and_allocations_table extends \flexible_table {
         $this->initialbars(true);
 
         // Setup filter.
-        $this->setup_filter($shownorating, $showallocnecessary);
+        $this->setup_filter($hidenorating, $showallocnecessary);
 
         // Perform the rest of the flextable setup.
         parent::setup();
@@ -333,61 +333,61 @@ class ratings_and_allocations_table extends \flexible_table {
     }
 
     /** @var bool Defines if users with no rating at all should be displayed. */
-    private $shownorating = true;
+    private $hidenorating = true;
     /** @var bool Defines if only users with no allocation should be displayed. */
     private $showallocnecessary = false;
 
     /**
      * Setup for filtering the table.
      * Loads the filter settings from the user preferences and overrides them if wanted, with the two parameters.
-     * @param $shownorating bool if true it shows also users with no rating.
+     * @param $hidenorating bool if true it shows also users with no rating.
      * @param $showallocnecessary bool if true it shows only users without allocations.
      */
-    private function setup_filter($shownorating = null, $showallocnecessary = null) {
+    private function setup_filter($hidenorating = null, $showallocnecessary = null) {
         // Get the filter settings.
         $filter = json_decode(get_user_preferences('flextable_'.$this->uniqueid.'_filter'), true);
+
         if (!$filter) {
             $filter = array(
-                'shownorating' => $this->shownorating,
+                'hidenorating' => $this->hidenorating,
                 'showallocnecessary' => $this->showallocnecessary,
             );
         }
-        if (!is_null($shownorating)) {
-            $filter['shownorating'] = $shownorating;
+        if (!is_null($hidenorating)) {
+            $filter['hidenorating'] = $hidenorating;
         }
         if (!is_null($showallocnecessary)) {
             $filter['showallocnecessary'] = $showallocnecessary;
         }
         set_user_preference('flextable_'.$this->uniqueid.'_filter', json_encode($filter));
-
-        $this->shownorating = $filter['shownorating'];
+        $this->hidenorating = $filter['hidenorating'];
         $this->showallocnecessary = $filter['showallocnecessary'];
     }
 
     /**
      * Gets the filter array used for filtering the table.
-     * @return array with keys shownorating and showallocnecessary
+     * @return array with keys hidenorating and showallocnecessary
      */
     public function get_filter() {
         $filter = array(
-            'shownorating' => $this->shownorating,
+            'hidenorating' => $this->hidenorating,
             'showallocnecessary' => $this->showallocnecessary,
         );
         return $filter;
     }
 
     /**
-     * Filters a set of given userids in accordance of the two filter variables $shownorating and $showallocnecessary
+     * Filters a set of given userids in accordance of the two filter variables $hidenorating and $showallocnecessary
      * @param $userids array ids, which should be filtered.
      * @return array of filtered user ids.
      */
     private function filter_userids($userids) {
         global $DB;
-        if ($this->shownorating && !$this->showallocnecessary){
+        if (!$this->hidenorating && !$this->showallocnecessary){
             return $userids;
         }
         $sql = "SELECT distinct u.id FROM {user} as u ";
-        if (!$this->shownorating) {
+        if ($this->hidenorating) {
             $sql .= "JOIN {ratingallocate_ratings} as r ON u.id=r.userid " .
                 "JOIN {ratingallocate_choices} as c ON r.choiceid = c.id ".
                 "AND c.ratingallocateid = :ratingallocateid ".
