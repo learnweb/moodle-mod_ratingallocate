@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir.'/tablelib.php');
 
-class ratings_and_allocations_table extends \flexible_table {
+class ratings_and_allocations_table extends \table_sql {
 
     const CHOICE_COL = 'choice_';
 
@@ -34,7 +34,6 @@ class ratings_and_allocations_table extends \flexible_table {
     private $choicemax = array();
     private $choicesum = array();
 
-    private $ratings;
     private $titles;
 
     private $shownames;
@@ -65,8 +64,6 @@ class ratings_and_allocations_table extends \flexible_table {
         $this->titles   = $titles;
         $this->ratingallocate = $ratingallocate;
 
-        // MAXDO maybe a setting in the future?
-        // $this->shownames = get_config('mod_ratingallocate', 'show_names');
         $this->shownames = true;
     }
 
@@ -130,8 +127,7 @@ class ratings_and_allocations_table extends \flexible_table {
         // Perform the rest of the flextable setup.
         parent::setup();
 
-        // Has to be called after setup!
-        $this->pagesize(20, $this->get_count_filtered_users());
+        $this->init_sql();
     }
 
     /**
@@ -141,11 +137,11 @@ class ratings_and_allocations_table extends \flexible_table {
      * @param array $allocations an array of allocations
      * @param bool $writeable if true the cells are rendered as radio buttons
      */
-    public function build_table($ratings, $allocations, $writeable = false) {
+    public function build_table_by_sql($ratings, $allocations, $writeable = false) {
 
         $this->writeable = $writeable;
 
-        $users = $this->get_query_sorted_users();
+        $users = $this->rawdata;
 
         // Group all ratings per user to match table structure.
         $ratingsbyuser = array();
@@ -217,7 +213,7 @@ class ratings_and_allocations_table extends \flexible_table {
                     'hasallocation' => true
                 );
             } else {
-                // User has rated this choice
+                // User has rated this choice.
                 $row[$rowkey]['hasallocation'] = true;
             }
         }
@@ -272,10 +268,10 @@ class ratings_and_allocations_table extends \flexible_table {
             $hasallocation    = $celldata['hasallocation'] ? 'checked' : '';
             $ratingclass    = $celldata['hasallocation'] ? 'ratingallocate_member' : '';
 
-            return $this->render_cell($row->id, substr($column,7),
+            return $this->render_cell($row->id, substr($column, 7),
                 $ratingtext, $hasallocation, $ratingclass);
         } else {
-            return $this->render_cell($row->id, substr($column,7),
+            return $this->render_cell($row->id, substr($column, 7),
                 get_string('no_rating_given', ratingallocate_MOD_NAME), '');
         }
     }
@@ -383,107 +379,69 @@ class ratings_and_allocations_table extends \flexible_table {
      */
     private function filter_userids($userids) {
         global $DB;
-        if (!$this->hidenorating && !$this->showallocnecessary){
+        if (!$this->hidenorating && !$this->showallocnecessary) {
             return $userids;
         }
-        $sql = "SELECT distinct u.id FROM {user} as u ";
+        $sql = "SELECT distinct u.id FROM {user} u ";
         if ($this->hidenorating) {
-            $sql .= "JOIN {ratingallocate_ratings} as r ON u.id=r.userid " .
-                "JOIN {ratingallocate_choices} as c ON r.choiceid = c.id ".
+            $sql .= "JOIN {ratingallocate_ratings} r ON u.id=r.userid " .
+                "JOIN {ratingallocate_choices} c ON r.choiceid = c.id ".
                 "AND c.ratingallocateid = :ratingallocateid ".
                 "AND c.active=1 ";
         }
         if ($this->showallocnecessary) {
-            $sql .= "LEFT JOIN ({ratingallocate_allocations} as a " .
-                "JOIN {ratingallocate_choices} as c2 ON c2.id = a.choiceid AND c2.active=1 ".
+            $sql .= "LEFT JOIN ({ratingallocate_allocations} a " .
+                "JOIN {ratingallocate_choices} c2 ON c2.id = a.choiceid AND c2.active=1 ".
                 "AND a.ratingallocateid = :ratingallocateid2 )" .
                 "ON u.id=a.userid ".
-                "WHERE a.id is null AND u.id in (".implode(",",$userids).") ";
+                "WHERE a.id is null AND u.id in (".implode(",", $userids).") ";
         } else {
-            $sql .= "WHERE u.id in (".implode(",",$userids).") ";
+            $sql .= "WHERE u.id in (".implode(",", $userids).") ";
         }
-        return array_map(function($u){return $u->id;
-        },
-            $DB->get_records_sql($sql, array('ratingallocateid' => $this->ratingallocate->ratingallocate->id,
-                'ratingallocateid2' => $this->ratingallocate->ratingallocate->id)));
+        return array_map(
+            function($u) {
+                return $u->id;
+            },
+            $DB->get_records_sql($sql,
+                array(
+                    'ratingallocateid' => $this->ratingallocate->ratingallocate->id,
+                    'ratingallocateid2' => $this->ratingallocate->ratingallocate->id
+                )
+            )
+        );
     }
 
     /**
-     * Returns a array of users according to the current user sort preferences. The result is also reduced
-     * according by the current filter and page selection of the user.
-     * @return array of sorted users.
+     * Sets up the sql statement for querying the table data.
      */
-    public function get_query_sorted_users() {
-        global $DB;
+    public function init_sql() {
         $userids = array_map(function($c){return $c->id;
         },
             $this->ratingallocate->get_raters_in_course());
         $userids = $this->filter_userids($userids);
-
-        // The following db-query is not necessary if no users are there in the first place.
-        if (count($userids) == 0){
-            return array();
-        }
 
         $sortfields = $this->get_sort_columns();
-        $sql = "SELECT u.*
-                FROM {user} u ";
-        $orderby = [];
-        for ($i = 0; $i < count($sortfields); $i++){
+
+        $fields = "u.*, u.firstname as firstname, u.lastname as lastname";
+        if ($userids) {
+            $where = "u.id in (".implode(",", $userids).")";
+        } else {
+            $where = "u.id is null";
+        }
+
+        $from = "{user} u";
+        for ($i = 0; $i < count($sortfields); $i++) {
             $key = array_keys($sortfields)[$i];
-            if (substr($key, 0, 6) == "choice"){
+            if (substr($key, 0, 6) == "choice") {
                 $id = substr($key, 7);
-                $sql .= "LEFT JOIN {ratingallocate_ratings} as r$i ON u.id=r$i.userid AND r$i.choiceid=$id ";
-                $orderkey = "r$i.rating";
-                if ($sortfields[$key] == SORT_DESC) {
-                    $orderkey .= " DESC";
-                }
-                $orderby [] = $orderkey;
-            } else {
-                $orderkey = "u.$key";
-                if ($sortfields[$key] == SORT_DESC) {
-                    $orderkey .= " DESC";
-                }
-                $orderby [] = $orderkey;
+                $from .= " LEFT JOIN {ratingallocate_ratings} r$i ON u.id=r$i.userid AND r$i.choiceid=$id ";
+                $fields .= ", r$i.rating as $key";
             }
         }
-        $sql .= "WHERE u.id in (".implode(",",$userids).")";
-        if ($this->get_initial_first()){
-            $sql .= " AND u.firstname like '".$this->get_initial_first()."%'";
-        }
-        if ($this->get_initial_last()){
-            $sql .= " AND u.lastname like '".$this->get_initial_last()."%'";
-        }
-        if (count($orderby) > 0){
-            $sql .= " ORDER BY ".implode(",",$orderby);
-        }
-        return $DB->get_records_sql($sql,null,$this->get_page_start(),$this->get_page_size());
+
+        $this->set_sql($fields, $from, $where, array());
+
+        $this->query_db(20);
     }
 
-    /**
-     * Calculates the total number of users, which meet the current filter preferences
-     * @return integer number of users
-     */
-    public function get_count_filtered_users() {
-        global $DB;
-        $userids = array_map(function($c){return $c->id;
-        },
-            $this->ratingallocate->get_raters_in_course());
-        $userids = $this->filter_userids($userids);
-        if (count($userids) === 0) {
-            return 0;
-        }
-
-        $sql = "SELECT count(*) as c
-                FROM {user} u ";
-
-        $sql .= "WHERE u.id in (".implode(",",$userids).")";
-        if ($this->get_initial_first()){
-            $sql .= " AND u.firstname like '".$this->get_initial_first()."%'";
-        }
-        if ($this->get_initial_last()){
-            $sql .= " AND u.lastname like '".$this->get_initial_last()."%'";
-        }
-        return $DB->get_record_sql($sql)->c;
-    }
 }

@@ -178,23 +178,23 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
 
         // Count of users with ratings should equal to 4.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, true, false);
-        self::assertEquals(4, count($table->get_query_sorted_users()),
+        self::assertEquals(4, count($table->rawdata),
             "Filtering the users to those with ratings should return 4 users.");
 
         // Count of users in total should be equal to 6.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false);
-        self::assertEquals(6, count($table->get_query_sorted_users()),
+        self::assertEquals(6, count($table->rawdata),
             "Filtering the users to those with or without ratings should return 6 users.");
 
         // Count of users with ratings where a allocation is necessary equal to 1.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, true, true);
-        self::assertEquals(1, count($table->get_query_sorted_users()),
+        self::assertEquals(1, count($table->rawdata),
             'Filtering the users to those with ratings and' .
             'where a allocation is necessary should return 1 user.');
 
         // Count of users with or without ratings where a allocation is necessary equal to 1.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, true);
-        self::assertEquals(2, count($table->get_query_sorted_users()),
+        self::assertEquals(2, count($table->rawdata),
             'Filtering the users to those with or without ratings and' .
             'where a allocation is necessary should return 2 users.');
 

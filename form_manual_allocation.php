@@ -132,7 +132,7 @@ class manual_alloc_form extends moodleform {
 
         // The rest must be done through output buffering due to the way flextable works.
         ob_start();
-        $table->build_table($ratingdata, $this->ratingallocate->get_allocations(), true);
+        $table->build_table_by_sql($ratingdata, $this->ratingallocate->get_allocations(), true);
         $tableoutput = ob_get_contents();
         ob_end_clean();
         $mform->addElement('html', $tableoutput);

@@ -577,7 +577,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         // The rest must be done through output buffering due to the way flextable works.
         ob_start();
-        $table->build_table($ratings, $memberships);
+        $table->build_table_by_sql($ratings, $memberships);
         $tableoutput = ob_get_contents();
         ob_end_clean();
 
