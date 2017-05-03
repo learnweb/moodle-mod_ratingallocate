@@ -131,7 +131,7 @@ class ratings_and_allocations_table extends \flexible_table {
         parent::setup();
 
         // Has to be called after setup!
-        $this->pagesize(10, $this->get_count_filtered_users());
+        $this->pagesize(20, $this->get_count_filtered_users());
     }
 
     /**
