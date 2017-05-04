@@ -29,6 +29,8 @@ require_once($CFG->libdir.'/tablelib.php');
 class ratings_and_allocations_table extends \table_sql {
 
     const CHOICE_COL = 'choice_';
+    const EXPORT_CHOICE_ALLOC_SUFFIX = 'alloc';
+    const EXPORT_CHOICE_TEXT_SUFFIX = 'text';
 
     private $choicenames = array();
     private $choicemax = array();
@@ -54,7 +56,7 @@ class ratings_and_allocations_table extends \table_sql {
     private $renderer;
 
     public function __construct(\mod_ratingallocate_renderer $renderer, $titles, $ratingallocate,
-                                $action = 'show_alloc_table', $uniqueid = 'mod_ratingallocate_table') {
+                                $action = 'show_alloc_table', $uniqueid = 'mod_ratingallocate_table', $downloadable = true) {
         parent::__construct($uniqueid);
         global $PAGE;
         $url = $PAGE->url;
@@ -63,6 +65,10 @@ class ratings_and_allocations_table extends \table_sql {
         $this->renderer = $renderer;
         $this->titles   = $titles;
         $this->ratingallocate = $ratingallocate;
+        if ($downloadable && has_capability('mod/ratingallocate:export_ratings', $ratingallocate->get_context())) {
+            $download = optional_param('download', '', PARAM_ALPHA);
+            $this->is_downloading($download, 'Test', 'Testsheet');
+        }
 
         $this->shownames = true;
     }
@@ -103,13 +109,35 @@ class ratings_and_allocations_table extends \table_sql {
         $headers = [];
 
         if ($this->shownames) {
-            $columns[] = 'fullname';
-            $headers[] = get_string('ratings_table_user', ratingallocate_MOD_NAME);
+            if ($this->is_downloading()) {
+                $columns[] = 'id';
+                $headers[] = 'ID';
+                $columns[] = 'username';
+                $headers[] = get_string('username');
+                $columns[] = 'firstname';
+                $headers[] = get_string('firstname');
+                $columns[] = 'lastname';
+                $headers[] = get_string('lastname');
+                global $COURSE;
+                if (has_capability('moodle/course:useremail', $this->ratingallocate->get_context())) {
+                    $columns[] = 'email';
+                    $headers[] = get_string('email');
+                }
+            } else {
+                $columns[] = 'fullname';
+                $headers[] = get_string('ratings_table_user', ratingallocate_MOD_NAME);
+            }
         }
 
         foreach ($this->choicenames as $choiceid => $choicetitle) {
             $columns[] = self::CHOICE_COL . $choiceid;
             $headers[] = $choicetitle;
+            if ($this->is_downloading()) {
+                $columns[] = self::CHOICE_COL . $choiceid . self::EXPORT_CHOICE_TEXT_SUFFIX;
+                $headers[] = $choicetitle . get_string('export_choice_text_suffix', ratingallocate_MOD_NAME);
+                $columns[] = self::CHOICE_COL . $choiceid . self::EXPORT_CHOICE_ALLOC_SUFFIX;
+                $headers[] = $choicetitle . get_string('export_choice_alloc_suffix', ratingallocate_MOD_NAME);
+            }
         }
 
         $this->define_columns($columns);
@@ -168,9 +196,10 @@ class ratings_and_allocations_table extends \table_sql {
             $this->add_user_ratings_row($user, $userratings, $userallocations);
         }
 
-        $this->add_summary_row();
-
-        $this->print_hidden_user_fields($users);
+        if (!$this->is_downloading()) {
+            $this->add_summary_row();
+            $this->print_hidden_user_fields($users);
+        }
 
         $this->finish_output();
     }
@@ -257,22 +286,59 @@ class ratings_and_allocations_table extends \table_sql {
         if (strpos($column, self::CHOICE_COL) !== 0) {
             return null;
         }
+        $suffix = '';
+        // Suffixes for additional columns have to be removed.
+        if ($this->is_downloading()) {
+            foreach (array('text', 'alloc') as $key) {
+                if (strpos($column, $key)) {
+                    $suffix = $key;
+                    $column = str_replace($key, '', $column);
+                    break;
+                }
+            }
+        }
 
         if (isset($row->$column)) {
-            $celldata       = $row->$column;
+            $celldata = $row->$column;
             if ($celldata['rating'] != null) {
                 $ratingtext = $this->titles[$celldata['rating']];
             } else {
                 $ratingtext = get_string('no_rating_given', ratingallocate_MOD_NAME);
             }
-            $hasallocation    = $celldata['hasallocation'] ? 'checked' : '';
-            $ratingclass    = $celldata['hasallocation'] ? 'ratingallocate_member' : '';
+            $hasallocation = $celldata['hasallocation'] ? 'checked' : '';
+            $ratingclass = $celldata['hasallocation'] ? 'ratingallocate_member' : '';
+
+            if ($this->is_downloading()) {
+                if ($suffix === self::EXPORT_CHOICE_TEXT_SUFFIX) {
+                    return $ratingtext;
+                }
+                if ($suffix === self::EXPORT_CHOICE_ALLOC_SUFFIX) {
+                    return $celldata['hasallocation'] ? get_string('yes') : get_string('no');
+                }
+                if ($celldata['rating'] == null) {
+                    return "";
+                }
+                return $celldata['rating'];
+
+            }
 
             return $this->render_cell($row->id, substr($column, 7),
                 $ratingtext, $hasallocation, $ratingclass);
         } else {
-            return $this->render_cell($row->id, substr($column, 7),
-                get_string('no_rating_given', ratingallocate_MOD_NAME), '');
+
+            $ratingtext = get_string('no_rating_given', ratingallocate_MOD_NAME);
+
+            if ($this->is_downloading()) {
+                if ($suffix === self::EXPORT_CHOICE_TEXT_SUFFIX) {
+                    return $ratingtext;
+                }
+                if ($suffix === self::EXPORT_CHOICE_ALLOC_SUFFIX) {
+                    return get_string('no');
+                }
+                return "";
+            }
+
+            return $this->render_cell($row->id, substr($column, 7), $ratingtext, '');
         }
     }
 

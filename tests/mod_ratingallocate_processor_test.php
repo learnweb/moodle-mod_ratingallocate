@@ -235,7 +235,7 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
         // Create and set up the flextable for ratings and allocations.
         $choices = $ratingallocate->get_rateable_choices();
         $table = new mod_ratingallocate\ratings_and_allocations_table($ratingallocate->get_renderer(),
-            array(), $ratingallocate, 'show_alloc_table');
+            array(), $ratingallocate, 'show_alloc_table', 'mod_ratingallocate_test', false);
         $table->setup_table($choices, $hidenorating, $showallocnecessary);
 
         return $table;

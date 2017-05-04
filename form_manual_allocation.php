@@ -116,7 +116,7 @@ class manual_alloc_form extends moodleform {
         // Create and set up the flextable for ratings and allocations.
         $table = new mod_ratingallocate\ratings_and_allocations_table($this->ratingallocate->get_renderer(),
             $this->ratingallocate->get_options_titles($different_ratings), $this->ratingallocate,
-            'manual_allocation', 'mod_ratingallocate_manual_allocation');
+            'manual_allocation', 'mod_ratingallocate_manual_allocation', false);
         $table->setup_table($this->ratingallocate->get_rateable_choices(),
             $hidenorating, $showallocnecessary);
 
