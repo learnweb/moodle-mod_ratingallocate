@@ -147,7 +147,7 @@ class locallib_test extends advanced_testcase {
      * Test if option titles are returned according to the default values
      */
     public function test_get_option_titles_default() {
-        $expectedresult = array(1 => 'Yes', 0 => 'No'); // Depends on language file.
+        $expectedresult = array(1 => 'Accept', 0 => 'Deny'); // Depends on language file.
         $ratings = array(0, 1, 1, 1, 0);
 
         $record = mod_ratingallocate_generator::get_default_values();
@@ -200,7 +200,7 @@ class locallib_test extends advanced_testcase {
         $settings = array(1 => 'Ja1234'); // Test data.
         $ratings = array(0, 1, 1, 1, 1);
         $expectedresult = $settings;
-        $expectedresult [0] = 'No'; // Depends on language file.
+        $expectedresult [0] = 'Deny'; // Depends on language file.
 
         $record = mod_ratingallocate_generator::get_default_values();
         $record['strategyopt']['strategy_yesno'] = $settings;
