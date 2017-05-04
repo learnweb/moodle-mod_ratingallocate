@@ -421,7 +421,6 @@ class ratings_and_allocations_table extends \table_sql {
         $userids = $this->filter_userids($userids);
 
         $sortfields = $this->get_sort_columns();
-
         $fields = "u.*, u.firstname as firstname, u.lastname as lastname";
         if ($userids) {
             $where = "u.id in (".implode(",", $userids).")";
@@ -430,16 +429,19 @@ class ratings_and_allocations_table extends \table_sql {
         }
 
         $from = "{user} u";
+
+        $params = array();
         for ($i = 0; $i < count($sortfields); $i++) {
             $key = array_keys($sortfields)[$i];
             if (substr($key, 0, 6) == "choice") {
                 $id = substr($key, 7);
-                $from .= " LEFT JOIN {ratingallocate_ratings} r$i ON u.id=r$i.userid AND r$i.choiceid=$id ";
+                $from .= " LEFT JOIN {ratingallocate_ratings} r$i ON u.id = r$i.userid AND r$i.choiceid = :choiceid$i ";
                 $fields .= ", r$i.rating as $key";
+                $params["choiceid$i"] = $id;
             }
         }
 
-        $this->set_sql($fields, $from, $where, array());
+        $this->set_sql($fields, $from, $where, $params);
 
         $this->query_db(20);
     }
