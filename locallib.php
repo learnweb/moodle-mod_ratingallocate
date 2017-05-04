@@ -305,8 +305,23 @@ class ratingallocate {
             global $OUTPUT;
             /* @var mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
+
+            // Notifications if no choices exist or too few in comparison to strategy settings.
+            $availablechoices = $this->get_rateable_choices();
+            $strategysettings = $this->get_strategy_class()->get_static_settingfields();
+            if (array_key_exists(ratingallocate\strategy_order\strategy::COUNTOPTIONS, $strategysettings)) {
+                $necessarychoices =
+                    $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
+            } else {
+                $necessarychoices = 0;
+            }
+            if (count($availablechoices) < $necessarychoices) {
+                $renderer->add_notification(get_string('too_few_choices_to_rate', ratingallocate_MOD_NAME, $necessarychoices));
+            }
+
             echo $renderer->render_header($this->ratingallocate, $this->context, $this->coursemodule->id);
             echo $OUTPUT->heading(get_string('show_choices_header', ratingallocate_MOD_NAME));
+
             $renderer->ratingallocate_show_choices_table($this, true);
             echo $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                 'ratingallocateid' => $this->ratingallocateid,
@@ -760,6 +775,13 @@ class ratingallocate {
             $choicestatus->publishdate = $this->ratingallocate->publishdate;
             $choicestatus->is_published = $this->ratingallocate->published;
             $choicestatus->available_choices = $this->get_rateable_choices();
+            $strategysettings = $this->get_strategy_class()->get_static_settingfields();
+            if (array_key_exists(ratingallocate\strategy_order\strategy::COUNTOPTIONS, $strategysettings)) {
+                $choicestatus->necessary_choices =
+                    $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
+            } else {
+                $choicestatus->necessary_choices = 0;
+            }
             $choicestatus->own_choices = $this->get_rating_data_for_user($USER->id);
             $choicestatus->allocations = $this->get_allocations_for_user($USER->id);
             $choicestatus->strategy = $this->get_strategy_class();

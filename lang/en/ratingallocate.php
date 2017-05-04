@@ -63,6 +63,7 @@ $string['edit_rating'] = 'Edit Rating';
 $string['delete_rating'] = 'Delete Rating';
 $string['results_not_yet_published'] = 'Results have not yet been published.';
 $string['no_choice_to_rate'] = 'There are no choices to rate!';
+$string['too_few_choices_to_rate'] = 'There are too few choices to rate! Students have to rank at least {$a} choices!';
 $string['at_least_one_rateable_choices_needed'] = 'You need at least one rateable choice.';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Administrator View">
