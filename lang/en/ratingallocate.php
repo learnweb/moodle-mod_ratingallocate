@@ -65,6 +65,7 @@ $string['results_not_yet_published'] = 'Results have not yet been published.';
 $string['no_choice_to_rate'] = 'There are no choices to rate!';
 $string['too_few_choices_to_rate'] = 'There are too few choices to rate! Students have to rank at least {$a} choices!';
 $string['at_least_one_rateable_choices_needed'] = 'You need at least one rateable choice.';
+$string['no_rating_possible'] = 'Currently, there is no rating possible!';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Administrator View">
 $string['allocation_manual_explain_only_raters'] = 'Select a choice to be assigned to a user.
@@ -262,7 +263,6 @@ $string['strategy_order_explain_choices'] = 'Select one choice in each select-bo
 $string['strategy_order_setting_countoptions'] = 'Number of fields the user is presented to vote on (smaller than number of choices!)';
 $string['strategy_order_header_description'] = 'Available Choices';
 $string['strategy_order_choice_none'] = 'Please select a choice';
-$string['strategy_order_no_rating_possible'] = 'Currently, there is no rating possible.';
 
 // Specific to Strategy06, tickyes
 $string['strategy_tickyes_name'] = 'Tick Accept';

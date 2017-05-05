@@ -654,7 +654,8 @@ class ratingallocate {
         $status = $this->get_status();
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
             if ($status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
-                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
+                if ($this->is_setup_ok()) {
+                    $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
                     array('id' => $this->coursemodule->id,
                         'ratingallocateid' => $this->ratingallocateid,
                         'action' => ACTION_GIVE_RATING)),
@@ -665,6 +666,9 @@ class ratingallocate {
                         'ratingallocateid' => $this->ratingallocateid,
                         'action' => ACTION_DELETE_RATING)),
                     get_string('delete_rating', ratingallocate_MOD_NAME));
+                } else {
+                    $renderer->add_notification(get_string('no_rating_possible', ratingallocate_MOD_NAME));
+                }
             }
         }
         // Print data and controls to edit the choices.
@@ -1464,6 +1468,22 @@ class ratingallocate {
      */
     public function get_context() {
         return $this->context;
+    }
+
+    /**
+     * @return bool true, if all strategy settings are ok.
+     */
+    public function is_setup_ok() {
+        if ($this->ratingallocate->strategy === 'strategy_order') {
+            $choicecount = count($this->get_rateable_choices());
+            $strategyclass = $this->get_strategy_class();
+            $strategysettings = $strategyclass->get_static_settingfields();
+            $necessary_choices = $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
+            if ($choicecount < $necessary_choices) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

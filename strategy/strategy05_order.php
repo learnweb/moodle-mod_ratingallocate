@@ -110,26 +110,19 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             $choices[$data->choiceid] = $data->title;
         }
 
-        // If there are fewer choices than necessary choices, artificially reduce the set of choices to be ranked.
-        if ($choicecounter > count($choices)) {
-            $renderer = $this->ratingallocate->get_renderer();
-            $renderer->add_notification(get_string('strategy_order_no_rating_possible', ratingallocate_MOD_NAME));
-        } else {
+        for ($i = 1; $i <= $choicecounter; $i++) {
+            $select = $mform->createElement('select');
+            $this->fill_select($select, $i, $choices);
+            $mform->addElement($select);
+            $mform->addRule($select->getName(), 'You must select a state.', 'required');
+        }
 
-            for ($i = 1; $i <= $choicecounter; $i++) {
-                $select = $mform->createElement('select');
-                $this->fill_select($select, $i, $choices);
-                $mform->addElement($select);
-                $mform->addRule($select->getName(), 'You must select a state.', 'required');
-            }
-
-            foreach ($ratingdata as $data) {
-                // If there is a valid value in the databse, choose the according rating
-                // from the dropdown.
-                // Else use a default value.
-                if (is_numeric($data->rating) && $data->rating >= 0 && $mform->elementExists('choice[' . ($choicecounter - ($data->rating - 1)) . ']')) {
-                    $mform->getElement('choice[' . ($choicecounter - ($data->rating - 1)) . ']')->setSelected($data->choiceid);
-                }
+        foreach ($ratingdata as $data) {
+            // If there is a valid value in the databse, choose the according rating
+            // from the dropdown.
+            // Else use a default value.
+            if (is_numeric($data->rating) && $data->rating >= 0 && $mform->elementExists('choice[' . ($choicecounter - ($data->rating - 1)) . ']')) {
+                $mform->getElement('choice[' . ($choicecounter - ($data->rating - 1)) . ']')->setSelected($data->choiceid);
             }
         }
 
