@@ -262,6 +262,7 @@ $string['strategy_order_explain_choices'] = 'Select one choice in each select-bo
 $string['strategy_order_setting_countoptions'] = 'Number of fields the user is presented to vote on (smaller than number of choices!)';
 $string['strategy_order_header_description'] = 'Available Choices';
 $string['strategy_order_choice_none'] = 'Please select a choice';
+$string['strategy_order_no_rating_possible'] = 'Currently, there is no rating possible.';
 
 // Specific to Strategy06, tickyes
 $string['strategy_tickyes_name'] = 'Tick Accept';

@@ -201,7 +201,9 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         if (empty($status->available_choices)) {
             $this->add_notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
         } else if ($status->necessary_choices > count($status->available_choices)) {
-            $this->add_notification(get_string('too_few_choices_to_rate', ratingallocate_MOD_NAME, $status->necessary_choices));
+            if ($status->show_distribution_info) {
+                $this->add_notification(get_string('too_few_choices_to_rate', ratingallocate_MOD_NAME, $status->necessary_choices));
+            }
         }
 
         // To early to rate
