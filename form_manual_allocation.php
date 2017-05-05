@@ -35,16 +35,9 @@ class manual_alloc_form extends moodleform {
 
     /** @var $ratingallocate ratingallocate */
     private $ratingallocate;
-    
-    const FILTER_ALL = 'all';
-    const FILTER_ONLY_RATERS = 'only_raters';
-    const FILTER_STATE = 'filter_state';
-    const FILTER_BUTTON = 'filter_button';
+
     const FORM_ACTION = 'action';
-    const EXLPANATION_PLACEHOLDER = 'exlpanation_placeholder';
     const ASSIGN = 'assign';
-    private $filter_state = self::FILTER_ONLY_RATERS;
-    
 
     /**
      * Constructor
@@ -53,7 +46,8 @@ class manual_alloc_form extends moodleform {
      */
     public function __construct($url, ratingallocate $ratingallocate) {
         $this->ratingallocate = $ratingallocate;
-        parent::__construct($url);
+        $url->params(array("action" => "manual_allocation"));
+        parent::__construct($url->out(false));
         $this->definition_after_data();
     }
 
@@ -61,135 +55,117 @@ class manual_alloc_form extends moodleform {
      * Defines forms elements
      */
     public function definition() {
-        global $COURSE, $PAGE, $DB, $USER;
-        
-        $mform = $this->_form;
-        
-        $show_all=false;
+        global $COURSE;
 
-        $mform->addElement('static', self::EXLPANATION_PLACEHOLDER,'','');
-        
-        //Button to filter the users, which are desplayed
-        $mform->registerNoSubmitButton(self::FILTER_BUTTON);
-        $mform->addElement('submit',self::FILTER_BUTTON, '');
+        $mform = $this->_form;
 
         $mform->addElement('hidden', self::FORM_ACTION, ACTION_MANUAL_ALLOCATION);
         $mform->setType(self::FORM_ACTION, PARAM_TEXT);
-        
-        //saves the current filter
-        $mform->addElement('hidden', self::FILTER_STATE);
-        $mform->setType(self::FILTER_STATE, PARAM_TEXT);
-        
+
+
         $mform->addElement('hidden', 'courseid', $COURSE->id);
         $mform->setType('courseid', PARAM_INT);
+
+        $mform->addElement('hidden', 'page', 0);
+        $mform->setType('page', PARAM_INT);
+
+        $this->render_filter();
     }
-    
-    public function definition_after_data(){
-        parent::definition_after_data();
+
+    protected function render_filter(){
         $mform = & $this->_form;
 
-        if ($this->is_submitted()) {
-            if (property_exists($this->get_submitted_data(), self::FILTER_STATE)) {
-                $this->filter_state = $this->get_submitted_data()->{self::FILTER_STATE};
-            }
-            // Only switch the filter state, if the filter button was pressed
-            if (property_exists($this->get_submitted_data(), self::FILTER_BUTTON)) {
-                switch ($this->filter_state) {
-                    case self::FILTER_ALL:
-                        $this->filter_state = self::FILTER_ONLY_RATERS;
-                        break;
-                    case self::FILTER_ONLY_RATERS:
-                        $this->filter_state = self::FILTER_ALL;
-                        break;
-                }
-            }
-        }
+        $mform->addElement('advcheckbox', 'hide_users_without_rating',
+            get_string('filter_hide_users_without_rating', ratingallocate_MOD_NAME),
+            null, array(0, 1));
+        $mform->setType('show_users_with_no_rating', PARAM_BOOL);
 
-        // add explanation as html
-        $mform->insertElementBefore($mform->createElement('html', 
-                '<p>'.get_string('allocation_manual_explain_'.$this->filter_state, ratingallocate_MOD_NAME).'</p>'), 
-                self::EXLPANATION_PLACEHOLDER);
-        $mform->removeElement(self::EXLPANATION_PLACEHOLDER);
-        
-        // operations epending on filter_state
-        // * rename filter button
-        // * set rating data
-        $filter_button_text = 'Filter';
-        switch ($this->filter_state) {
-            case self::FILTER_ALL:
-                $filter_button_text = get_string('manual_allocation_filter_only_raters', ratingallocate_MOD_NAME);
-                $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices();
-                break;
-            case self::FILTER_ONLY_RATERS:
-                $filter_button_text = get_string('manual_allocation_filter_all', ratingallocate_MOD_NAME);
-                $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices_for_raters_without_alloc();
-                break;
-        }
-        $mform->getElement(self::FILTER_BUTTON)->setValue($filter_button_text);
-        
-        $empty_preferences = array();
-        foreach ($this->ratingallocate->get_rateable_choices() as $choiceid => $choice){
-            $empty_preferences[$choiceid] = get_string('no_rating_given' , ratingallocate_MOD_NAME);
-        }
-        $userdata = array();
-        If ($this->filter_state==self::FILTER_ALL) {
-            // Create one entry for each user choice combination
-                foreach ($this->ratingallocate->get_raters_in_course() as $userid => $users) {
-                    $userdata[$userid] = $empty_preferences;
-                }        
-        }
-        
+        $mform->addElement('advcheckbox', 'show_alloc_necessary',
+            get_string('filter_show_alloc_necessary', ratingallocate_MOD_NAME),
+            null, array(0, 1));
+        $mform->setType('show_alloc_necessary', PARAM_BOOL);
+
+        $mform->addElement('submit', 'update_filter',
+            get_string('update_filter', ratingallocate_MOD_NAME));
+        $mform->registerNoSubmitButton('update_filter');
+    }
+
+    public function definition_after_data(){
+        parent::definition_after_data();
+        global $PAGE;
+
+        $mform = & $this->_form;
+
+        $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices();
         $different_ratings = array();
-        
         // Add actual rating data to userdata
         foreach ($ratingdata as $rating) {
-            if (!array_key_exists($rating->userid, $userdata)) {
-                $userdata[$rating->userid] = $empty_preferences;
-            }
-            if ($rating->rating) {
-                $userdata[$rating->userid][$rating->choiceid] = $rating->rating;
+            if ($rating->rating != null) {
                 $different_ratings[$rating->rating] = $rating->rating;
             }
         }
-               
-        $usersincourse = $this->ratingallocate->get_raters_in_course();
-        $choicesWithAllocations = $this->ratingallocate->get_choices_with_allocationcount();
-        foreach ($userdata as $userid => $userdat) {
-            $headerelem = 'head_ratingallocate_u' . $userid;
-            $elemprefix = 'data[' . $userid . ']';
-            $ratingelem = $elemprefix . '['.self::ASSIGN.']';
-            
-            $rating_titles = $this->ratingallocate->get_options_titles($different_ratings);
-            
-            $radioarray = array();
-            foreach ($userdat as $choiceid => $rat) {
-                $title = key_exists($rat, $rating_titles)?get_string('rated', ratingallocate_MOD_NAME,$rating_titles[$rat]):$rat;
-                $optionname = $choicesWithAllocations [$choiceid]->title . ' [' . $title . "] (" .
-                        ($choicesWithAllocations [$choiceid]->usercount > 0 ? $choicesWithAllocations [$choiceid]->usercount : "0") . "/" . $choicesWithAllocations [$choiceid]->maxsize . ")";
-                $radioarray [] = & $mform->createElement('radio', $ratingelem, '', $optionname, $choiceid, '');
-            }
 
-            
-            // Adding static elements to support css
-            $radioarray = $this->ratingallocate->prepare_horizontal_radio_choice($radioarray, $mform);
-            
-            // wichtig, einen Gruppennamen zu setzen, damit später die Errors an der korrekten Stelle angezeigt werden können.
-            $mform->addGroup($radioarray, 'radioarr_' . $userid, fullname($usersincourse[$userid]), null, false);
-            $userallocations = $this->ratingallocate->get_allocations_for_user($userid);
-            $allocation = array_pop($userallocations);
-            if (isset($allocation)){
-                $mform->setDefault($ratingelem, $allocation->choiceid);
-            }
+        $hidenorating = null;
+        $showallocnecessary = null;
+        // Get filter settings.
+        if ($this->is_submitted()) {
+            $hidenorating = $mform->getSubmitValue('hide_users_without_rating');
+            $showallocnecessary = $mform->getSubmitValue('show_alloc_necessary');
         }
+
+        // Create and set up the flextable for ratings and allocations.
+        $table = new mod_ratingallocate\ratings_and_allocations_table($this->ratingallocate->get_renderer(),
+            $this->ratingallocate->get_options_titles($different_ratings), $this->ratingallocate,
+            'manual_allocation', 'mod_ratingallocate_manual_allocation', false);
+        $table->setup_table($this->ratingallocate->get_rateable_choices(),
+            $hidenorating, $showallocnecessary);
+
+        $filter = $table->get_filter();
         
-        if (!count($userdata) > 0) {
-            $mform->addElement('static', 'notification', get_string('no_user_to_allocate', ratingallocate_MOD_NAME));
-            $mform->addElement('cancel');
-        } else {
-            $this->add_action_buttons();
-        }
-        
-        $mform->getElement(self::FILTER_STATE)->setValue($this->filter_state);
+        $mform->setDefault('hide_users_without_rating', $filter['hidenorating']);
+        $mform->getElement('hide_users_without_rating')->setChecked($filter['hidenorating']);
+        $mform->setDefault('show_alloc_necessary', $filter['showallocnecessary']);
+        $mform->getElement('show_alloc_necessary')->setChecked($filter['showallocnecessary']);
+
+        $PAGE->requires->js_call_amd('mod_ratingallocate/radiobuttondeselect', 'init');
+
+
+        // The rest must be done through output buffering due to the way flextable works.
+        ob_start();
+        $table->build_table_by_sql($ratingdata, $this->ratingallocate->get_allocations(), true);
+        $tableoutput = ob_get_contents();
+        ob_end_clean();
+        $mform->addElement('html', $tableoutput);
+
+        $mform->setDefault('page', $table->get_page_start()/$table->get_page_size());
+
+        $this->add_special_action_buttons();
+    }
+
+    /**
+     * Overriding formslib's add_action_buttons() method, to add an extra submit "save changes and continue" button.
+     *
+     * @param bool $cancel show cancel button
+     * @param string $submitlabel null means default, false means none, string is label text
+     * @param string $submit2label  null means default, false means none, string is label text
+     * @return void
+     */
+    public function add_special_action_buttons() {
+        $submitlabel = get_string('savechanges');
+        $submit2label = get_string('saveandcontinue', ratingallocate_MOD_NAME);
+
+        $mform = $this->_form;
+
+        // elements in a row need a group
+        $buttonarray = array();
+
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton2', $submit2label);
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
+        $buttonarray[] = &$mform->createElement('cancel');
+
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->setType('buttonar', PARAM_RAW);
+        $mform->closeHeaderBefore('buttonar');
     }
 
     /**

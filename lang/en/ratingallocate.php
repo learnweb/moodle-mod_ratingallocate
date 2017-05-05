@@ -79,7 +79,8 @@ $string['ratings_table_user'] = 'User';
 $string['start_distribution_explanation'] = ' An algorithm will automatically try to fairly allocate the users according to their given ratings.';
 $string['distribution_table'] = 'Distribution Table';
 $string['download_problem_mps_format'] = 'Download Equation (mps/txt)';
-$string['download_votetest_allocation'] = 'Download Ratings and Allocation (csv)';
+$string['export_choice_text_suffix'] = ' - Text';
+$string['export_choice_alloc_suffix'] = ' - Allocation';
 $string['too_early_to_distribute'] = 'Too early to distribute. Rating is not over yet.';
 $string['algorithm_already_running']='Another instance of the allocation algorithm is already running. Please wait a few minutes and refresh the page.';
 $string['algorithm_scheduled_for_cron']='The allocation algorithm run is scheduled for immediate execution by the cron job. Please wait a few minutes and refresh the page.';
@@ -92,10 +93,12 @@ $string['rated'] = 'rated {$a}';
 $string['no_rating_given'] = 'Unrated';
 $string['export_options'] = 'Export Options';
 $string['manual_allocation_saved'] = 'Your manual allocation has been saved.';
+$string['manual_allocation_nothing_to_be_saved'] = 'There was nothing to be saved.';
 $string['publish_allocation'] = 'Publish Allocation';
 $string['distribution_published'] = 'Allocation has been published.';
 $string['create_moodle_groups'] = 'Create Groups From Allocation';
 $string['moodlegroups_created'] = 'The corresponding Moodle groups and groupings have been created.';
+$string['saveandcontinue'] = 'Save and Continue';
 
 $string['last_algorithm_run_date'] = 'Last algorithm run at';
 $string['last_algorithm_run_date_none'] = '-';
@@ -132,8 +135,9 @@ $string['reports_group'] = 'Reports';
 
 $string['manual_allocation'] = 'Manual Allocation';
 $string['manual_allocation_form'] = 'Manual Allocation Form';
-$string['manual_allocation_filter_only_raters'] = 'Show only users with ratings';
-$string['manual_allocation_filter_all'] = 'Show all users';
+$string['filter_hide_users_without_rating'] = 'Hide users without rating';
+$string['filter_show_alloc_necessary'] = 'Hide users with allocation';
+$string['update_filter'] = 'Update Filter';
 
 $string['show_table'] = 'Show Ratings and Allocations';
 
