@@ -114,7 +114,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             $select = $mform->createElement('select');
             $this->fill_select($select, $i, $choices);
             $mform->addElement($select);
-            $mform->addRule( $select->getName(), 'You must select a state.', 'required' );
+            $mform->addRule($select->getName(), 'You must select a state.', 'required');
         }
 
         foreach ($ratingdata as $data) {
@@ -125,6 +125,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
                 $mform->getElement('choice[' . ($choicecounter - ($data->rating - 1)) . ']')->setSelected($data->choiceid);
             }
         }
+
         $mform->addElement('header', 'choice_descriptions', get_string(strategy::STRATEGYID . '_header_description', ratingallocate_MOD_NAME));
 
         foreach ($ratingdata as $data) {

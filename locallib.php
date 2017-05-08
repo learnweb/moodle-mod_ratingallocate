@@ -305,8 +305,23 @@ class ratingallocate {
             global $OUTPUT;
             /* @var mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
+
+            // Notifications if no choices exist or too few in comparison to strategy settings.
+            $availablechoices = $this->get_rateable_choices();
+            $strategysettings = $this->get_strategy_class()->get_static_settingfields();
+            if (array_key_exists(ratingallocate\strategy_order\strategy::COUNTOPTIONS, $strategysettings)) {
+                $necessarychoices =
+                    $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
+            } else {
+                $necessarychoices = 0;
+            }
+            if (count($availablechoices) < $necessarychoices) {
+                $renderer->add_notification(get_string('too_few_choices_to_rate', ratingallocate_MOD_NAME, $necessarychoices));
+            }
+
             echo $renderer->render_header($this->ratingallocate, $this->context, $this->coursemodule->id);
             echo $OUTPUT->heading(get_string('show_choices_header', ratingallocate_MOD_NAME));
+
             $renderer->ratingallocate_show_choices_table($this, true);
             echo $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
                 'ratingallocateid' => $this->ratingallocateid,
@@ -639,7 +654,8 @@ class ratingallocate {
         $status = $this->get_status();
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
             if ($status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
-                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
+                if ($this->is_setup_ok()) {
+                    $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
                     array('id' => $this->coursemodule->id,
                         'ratingallocateid' => $this->ratingallocateid,
                         'action' => ACTION_GIVE_RATING)),
@@ -650,6 +666,9 @@ class ratingallocate {
                         'ratingallocateid' => $this->ratingallocateid,
                         'action' => ACTION_DELETE_RATING)),
                     get_string('delete_rating', ratingallocate_MOD_NAME));
+                } else {
+                    $renderer->add_notification(get_string('no_rating_possible', ratingallocate_MOD_NAME));
+                }
             }
         }
         // Print data and controls to edit the choices.
@@ -760,6 +779,13 @@ class ratingallocate {
             $choicestatus->publishdate = $this->ratingallocate->publishdate;
             $choicestatus->is_published = $this->ratingallocate->published;
             $choicestatus->available_choices = $this->get_rateable_choices();
+            $strategysettings = $this->get_strategy_class()->get_static_settingfields();
+            if (array_key_exists(ratingallocate\strategy_order\strategy::COUNTOPTIONS, $strategysettings)) {
+                $choicestatus->necessary_choices =
+                    $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
+            } else {
+                $choicestatus->necessary_choices = 0;
+            }
             $choicestatus->own_choices = $this->get_rating_data_for_user($USER->id);
             $choicestatus->allocations = $this->get_allocations_for_user($USER->id);
             $choicestatus->strategy = $this->get_strategy_class();
@@ -1442,6 +1468,22 @@ class ratingallocate {
      */
     public function get_context() {
         return $this->context;
+    }
+
+    /**
+     * @return bool true, if all strategy settings are ok.
+     */
+    public function is_setup_ok() {
+        if ($this->ratingallocate->strategy === 'strategy_order') {
+            $choicecount = count($this->get_rateable_choices());
+            $strategyclass = $this->get_strategy_class();
+            $strategysettings = $strategyclass->get_static_settingfields();
+            $necessary_choices = $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
+            if ($choicecount < $necessary_choices) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
