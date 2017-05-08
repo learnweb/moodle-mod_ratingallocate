@@ -27,6 +27,9 @@
  */
 defined('MOODLE_INTERNAL') || die();
 use ratingallocate\db as this_db;
+
+global $CFG;
+
 require_once(dirname(__FILE__) . '/lib.php');
 require_once($CFG->libdir  . '/eventslib.php');
 require_once(dirname(__FILE__) . '/form_manual_allocation.php');
@@ -74,6 +77,7 @@ class strategymanager {
 }
 
 define('ACTION_GIVE_RATING', 'give_rating');
+define('ACTION_DELETE_RATING', 'delete_rating');
 define('ACTION_SHOW_CHOICES', 'show_choices');
 define('ACTION_EDIT_CHOICE', 'edit_choice');
 define('ACTION_ENABLE_CHOICE', 'enable_choice');
@@ -163,6 +167,7 @@ class ratingallocate {
     protected $renderer;
 
     const NOTIFY_SUCCESS = 'notifysuccess';
+    const NOTIFY_MESSAGE = 'notifymessage';
 
     /**
      * Returns all users enrolled in the course the ratingallocate is in
@@ -268,6 +273,30 @@ class ratingallocate {
             }
         }
         return $output;
+    }
+
+    /**
+     * Processes the action of a user deleting his rating.
+     * @return string rendered html
+     */
+    private function process_action_delete_rating() {
+        /* @var mod_ratingallocate_renderer */
+        $renderer = $this->get_renderer();
+        // Print data and controls for students, but not for admins.
+        if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
+            global $USER;
+
+            $status = $this->get_status();
+            if ($status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
+                // Rating is possible...
+
+                $this->delete_ratings_of_user($USER->id);
+                $renderer->add_notification(get_string('ratings_deleted', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
+
+                return $this->process_default();
+            }
+        }
+        return '';
     }
 
     private function process_action_show_choices() {
@@ -401,7 +430,7 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             global $OUTPUT, $PAGE;
 
-            $mform = new manual_alloc_form($PAGE->url->out(), $this);
+            $mform = new manual_alloc_form($PAGE->url, $this);
 
             if (!$mform->no_submit_button_pressed() && $data = $mform->get_submitted_data()) {
                 if (!$mform->is_cancelled() ) {
@@ -413,18 +442,32 @@ class ratingallocate {
                         $renderer->add_notification(
                             get_string('modify_allocation_group_desc_'.$status, ratingallocate_MOD_NAME));
                     } else {
-                        $this->save_manual_allocation_form($data);
-                        $renderer->add_notification(get_string('manual_allocation_saved', ratingallocate_MOD_NAME),
-                            self::NOTIFY_SUCCESS);
+                        $allocationdata = optional_param_array('allocdata', array(), PARAM_INT);
+                        if ($userdata = optional_param_array('userdata', null, PARAM_INT)) {
+                            $this->save_manual_allocation_form($allocationdata, $userdata);
+                            $renderer->add_notification(get_string('manual_allocation_saved',
+                                ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
+                        } else {
+                            $renderer->add_notification(get_string('manual_allocation_nothing_to_be_saved',
+                                ratingallocate_MOD_NAME), self::NOTIFY_MESSAGE);
+                        }
                     }
+                } else {
+                    return $this->process_default();
                 }
                 // If form was submitted using save or cancel, show the default page.
-                return $this->process_default();
-            } else {
-                $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
-
-                $output .= $mform->to_html();
+                if (array_key_exists("submitbutton",$data)){
+                    return $this->process_default();
+                // If the save and continue button was pressed,
+                // reinitialize the form to refresh the checked radiobuttons.
+                } else if (array_key_exists("submitbutton2",$data)){
+                    $mform = new manual_alloc_form($PAGE->url, $this);
+                }
             }
+            $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
+
+            $output .= $mform->to_html();
+            $this->showinfo = false;
         }
         return $output;
     }
@@ -445,13 +488,6 @@ class ratingallocate {
                 'id' => $this->coursemodule->id,
                 'ratingallocateid' => $this->ratingallocateid,
                 'action' => '')), get_string('back'));
-
-            if (has_capability('mod/ratingallocate:export_ratings', $this->context)) {
-                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/export_ratings_csv.php',
-                    array('id' => $this->coursemodule->id,
-                        'ratingallocateid' => $this->ratingallocate->id)),
-                    get_string('download_votetest_allocation', ratingallocate_MOD_NAME));
-            }
 
             // Logging.
             $event = \mod_ratingallocate\event\allocation_table_viewed::create_simple(
@@ -608,6 +644,12 @@ class ratingallocate {
                         'ratingallocateid' => $this->ratingallocateid,
                         'action' => ACTION_GIVE_RATING)),
                     get_string('edit_rating', ratingallocate_MOD_NAME));
+
+                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
+                    array('id' => $this->coursemodule->id,
+                        'ratingallocateid' => $this->ratingallocateid,
+                        'action' => ACTION_DELETE_RATING)),
+                    get_string('delete_rating', ratingallocate_MOD_NAME));
             }
         }
         // Print data and controls to edit the choices.
@@ -631,6 +673,9 @@ class ratingallocate {
         return $output;
     }
 
+    // States if the ratingallocate info schould be displayed.
+    private $showinfo = true;
+
     /**
      * This is what the view.php calls to make the output
      */
@@ -646,9 +691,6 @@ class ratingallocate {
         /* @var mod_ratingallocate_renderer */
         $renderer = $this->get_renderer();
 
-        // States if the ratingallocate info schould be displayed.
-        $showinfo = true;
-
         switch ($action) {
             case ACTION_START_DISTRIBUTION:
                 $output .= $this->process_action_start_distribution();
@@ -656,6 +698,10 @@ class ratingallocate {
 
             case ACTION_GIVE_RATING:
                 $output .= $this->process_action_give_rating();
+                break;
+
+            case ACTION_DELETE_RATING:
+                $output .= $this->process_action_delete_rating();
                 break;
 
             case ACTION_SHOW_CHOICES:
@@ -668,7 +714,7 @@ class ratingallocate {
                     return "";
                 }
                 $output .= $result;
-                $showinfo = false;
+                $this->showinfo = false;
                 break;
 
             case ACTION_ENABLE_CHOICE:
@@ -707,7 +753,7 @@ class ratingallocate {
                 $output .= $this->process_default();
         }
 
-        if ($showinfo) {
+        if ($this->showinfo) {
             $choicestatus = new ratingallocate_choice_status();
             $choicestatus->accesstimestart = $this->ratingallocate->accesstimestart;
             $choicestatus->accesstimestop = $this->ratingallocate->accesstimestop;
@@ -1016,6 +1062,40 @@ class ratingallocate {
     }
 
     /**
+     * Delete all ratings of a users
+     * @param int $userid
+     */
+    public function delete_ratings_of_user($userid) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        try {
+
+            $choices = $this->get_choices();
+
+            foreach ($choices as $id => $choice) {
+                $data = array(
+                    'userid' => $userid,
+                    'choiceid' => $id
+                );
+
+                // Actually delete the rating.
+                $DB->delete_records('ratingallocate_ratings', $data);
+            }
+
+            $transaction->allow_commit();
+
+            // Logging.
+            $event = \mod_ratingallocate\event\rating_deleted::create_simple(
+                context_course::instance($this->course->id), $this->ratingallocateid);
+            $event->trigger();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
+        }
+    }
+
+    /**
      * Save all the users rating to db
      * @param int $userid
      * @param array $data
@@ -1115,39 +1195,24 @@ class ratingallocate {
     /**
      * Adds the manual allocation to db. Does not perform checks if there is already an allocation user-choice
      * @global mixed $DB
-     * @param mixed $data
+     * @param $allocdata array of users to the choice ids they should be allocated to.
      */
-    public function save_manual_allocation_form($data) {
+    public function save_manual_allocation_form($allocdata, $userdata) {
         try {
             $transaction = $this->db->start_delegated_transaction();
-            $loggingdata = array();
 
             $allusers = $this->get_raters_in_course();
             $allchoices = $this->get_rateable_choices();
 
-            $allocdata = $data->data;
+            foreach ($userdata as $id => $user) {
+                $this->remove_allocations($id);
+            }
+
             foreach ($allocdata as $id => $choiceallocationid) {
                 // Is this user in this course?
-                if (key_exists($id, $allusers) && key_exists($choiceallocationid[manual_alloc_form::ASSIGN], $allchoices)) {
-                    $existingallocations = $this->get_allocations_for_user($id);
-                    $existingallocation = array_pop($existingallocations);
-                    if (empty($existingallocation)) {
-                        // Create new allocation.
-                        $this->add_allocation($choiceallocationid[manual_alloc_form::ASSIGN], $id);
-                        // Logging.
-                        array_push($loggingdata,
-                            array('userid' => $id, 'choiceid' => $choiceallocationid[manual_alloc_form::ASSIGN]));
-                    } else {
-                        if ($existingallocation->{this_db\ratingallocate_allocations::CHOICEID} !=
-                            $choiceallocationid[manual_alloc_form::ASSIGN]) {
-                            // Alter existing allocation.
-                            $this->alter_allocation(
-                                $existingallocation->{this_db\ratingallocate_allocations::CHOICEID},
-                                $choiceallocationid[manual_alloc_form::ASSIGN], $id);
-                            array_push($loggingdata,
-                                array('userid' => $id, 'choiceid' => $choiceallocationid[manual_alloc_form::ASSIGN]));
-                        }
-                    }
+                if (key_exists($id, $allusers) && key_exists($id, $userdata) && key_exists($choiceallocationid, $allchoices)) {
+                    // Create new allocation.
+                    $this->add_allocation($choiceallocationid, $id);
                 }
             }
             // Logging.
@@ -1208,6 +1273,17 @@ class ratingallocate {
             'userid' => $userid
         ));
         return true;
+    }
+
+    /**
+     * Remove all allocations of a user.
+     * @param int $userid id of the user.
+     */
+    public function remove_allocations($userid) {
+        $this->db->delete_records('ratingallocate_allocations', array(
+            'userid' => $userid,
+            'ratingallocateid' => $this->ratingallocateid
+        ));
     }
 
     /**
@@ -1359,6 +1435,13 @@ class ratingallocate {
      */
     public function get_algorithm_status() {
         return (int) $this->ratingallocate->algorithmstatus;
+    }
+
+    /** Returns the context of the ratingallocate instance
+     * @return context_module
+     */
+    public function get_context() {
+        return $this->context;
     }
 
 }

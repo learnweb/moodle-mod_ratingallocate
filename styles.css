@@ -6,9 +6,45 @@
     font-weight: bold;
 }
 
+/* Indicate selected choice in non-writeable tables */
 .ratingallocate_ratings_table span.ratingallocate_member::before {
     content: url('[[pix:i/checked]]');
 }
+
+/* Show a tickmark for a selected choice */
+.ratingallocate_ratings_table span input[type=radio]:checked ~ label {
+    /* necessary for containing absolute position values */
+    position: relative;
+}
+.ratingallocate_ratings_table span input[type=radio]:checked ~ label::before {
+    content: url('[[pix:i/checked]]');
+    position: absolute;
+    margin-top: -2px;
+}
+
+/* Special highlight for values that were checked *initially* */
+.ratingallocate_ratings_table span input[type=radio][checked] ~ label > span.ratingallocate_checkbox {
+    background: url('[[pix:ratingallocate|checkbox-selected]]');
+    background-size: 13px 13px;
+}
+.ratingallocate_ratings_table span input[type=radio][checked] ~ label {
+    font-weight: bold;
+}
+
+/* Checkbox/radio replacement */
+.ratingallocate_ratings_table span input[type=radio] ~ label > span.ratingallocate_checkbox {
+    display: inline-flex;
+    height: 13px;
+    width: 13px;
+    margin-right: 5px;
+    vertical-align: text-top;
+    background: url('[[pix:ratingallocate|checkbox]]');
+    background-size: 13px 13px;
+}
+.ratingallocate_ratings_table span input[type=radio]{
+    display: none;
+}
+
 .ratingallocate_ratings_box { overflow: auto; } /* Scrolling tables */
 .path-mod-ratingallocate .mod-ratingallocate-choice-maxno {
     text-align: right;

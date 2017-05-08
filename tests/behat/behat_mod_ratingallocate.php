@@ -236,9 +236,51 @@ class behat_mod_ratingallocate extends behat_base {
         $choice = $this->get_choice($title);
         if ($choice->explanation !== $value) {
             throw new ExpectationException('The explanation of the choice '.$title.
-            ' was expected to be "'.$value.'" but was "'.$choice->explanation.'".',
+                ' was expected to be "'.$value.'" but was "'.$choice->explanation.'".',
                 $this->getSession());
         }
+    }
+
+    /**
+     * @Then the user :useridentifier should have ratings
+     *
+     * @throws ExpectationException
+     * @param string $username username of a user.
+     */
+    public function the_user_should_have_ratings($username) {
+        $ratings = $this->get_ratings_for_username($username);
+        if (count($ratings) == 0) {
+            throw new ExpectationException("It was expected that the user $username has ratings, ".
+                "but there were none.",
+                $this->getSession());
+        }
+    }
+
+    /**
+     * @Then the user :useridentifier should not have ratings
+     *
+     * @throws ExpectationException
+     * @param string $username username of a user.
+     */
+    public function the_user_should_not_have_ratings($username) {
+        $ratings = $this->get_ratings_for_username($username);
+        if (count($ratings) > 0) {
+            throw new ExpectationException("It was expected that the user $username has no ratings, ".
+                "but there were some.",
+                $this->getSession());
+        }
+    }
+
+    /**
+     * Get ratings for a user.
+     * @param string $username username of a user.
+     * @return array of ratings
+     * @throws Exception
+     */
+    private function get_ratings_for_username($username) {
+        global $DB;
+        $user = \core_user::get_user_by_username($username);
+        return $DB->get_records("ratingallocate_ratings", array('userid' => $user->id));
     }
 
     /**
