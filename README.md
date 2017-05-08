@@ -24,10 +24,9 @@ For more information please visit the [moodle wiki](https://docs.moodle.org/31/e
 
 Moodle version
 ======================
-The plugin is continously tested with all moodle versions since 2.7.x.
+The plugin is continously tested with all moodle versions, which are security supported by the moodle headquarter.
 Therefore, Travis uses the most current release to build a test instance and run the behat and unit tests on them.
 In addition to all stable branches the version is also tested against the master branch to support early adopters.
-Due to conflicts with the new behat 3, versions below 3.1.x can no longer be tested against the behat tests!
 
 Algorithm
 =========
