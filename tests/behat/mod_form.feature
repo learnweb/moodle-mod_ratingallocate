@@ -15,8 +15,7 @@ Background:
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Fair Allocation" to section "0" and I fill the form with:
       | id_name | "My Fair Allocation" |
     And I follow "My Fair Allocation"

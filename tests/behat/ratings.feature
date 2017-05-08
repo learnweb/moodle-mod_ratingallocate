@@ -13,13 +13,11 @@ Feature: When a student rates a rating should be saved and it should be possible
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
     And the following "activities" exist:
       | activity | course | idnumber | name |
       | ratingallocate   | C1     | ra1  | My Fair Allocation |
-    And I follow "Course 1"
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
     And I follow "My Fair Allocation"
     And I press "Edit Choices"
     And I add a new choice with the values:
@@ -39,7 +37,7 @@ Feature: When a student rates a rating should be saved and it should be possible
   @javascript
   Scenario: The user can create a rating
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "My Fair Allocation"
     And I press "Edit Rating"
     And I press "Save changes"
@@ -48,7 +46,7 @@ Feature: When a student rates a rating should be saved and it should be possible
   @javascript
   Scenario: The user can delete a rating
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "My Fair Allocation"
     And I press "Edit Rating"
     And I press "Save changes"
