@@ -306,7 +306,7 @@ $string['log_allocation_statistics_viewed'] = 'Allocation statistics viewed';
 $string['log_allocation_statistics_viewed_description'] =  'The user with id "{$a->userid}" viewed the allocation statistics for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_index_viewed'] = 'User viewed all instances of Fair Allocation';
-$string['log_index_viewed_description'] =  'The user with id "{$a->userid}" viewed all instances of Fair Allocation in this course".';
+$string['log_index_viewed_description'] =  'The user with id "{$a->userid}" viewed all instances of Fair Allocation in this course.';
 
 
 $string['no_id_or_m_error'] = 'You must specify a course_module ID or an instance ID';
