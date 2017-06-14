@@ -804,6 +804,22 @@ class ratingallocate {
     }
 
     /**
+     * Returns the number of all users that placed a rating on the current ratingallocate activity.
+     * @param int $courseid course id
+     * @return int
+     */
+    public function get_number_of_active_raters() {
+        $sql = 'SELECT COUNT(DISTINCT ra_ratings.userid) AS number
+                FROM mdl_ratingallocate as ra INNER JOIN mdl_ratingallocate_choices as ra_choices
+                ON ra.id = ra_choices.ratingallocateid INNER JOIN mdl_ratingallocate_ratings as ra_ratings
+                ON ra_choices.id = ra_ratings.choiceid
+                WHERE ra.course = :courseid AND ra.id = :ratingallocateid';
+        $numberofratersfromdb = $this->db->get_field_sql($sql, array(
+            'courseid' => $this->course->id, 'ratingallocateid' => $this->ratingallocateid));
+        return (int)$numberofratersfromdb;
+    }
+
+    /**
      * Returns all ratings for active choices
      */
     public function get_ratings_for_rateable_choices() {

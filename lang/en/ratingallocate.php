@@ -145,13 +145,20 @@ $string['show_table'] = 'Show Ratings and Allocations';
 
 $string['allocation_statistics'] = 'Allocation Statistics';
 $string['show_allocation_statistics'] = 'Show Allocation Statistics';
-$string['allocation_statistics_description'] = 'This table gives an impression of the overall satisfaction of the allocation.
+$string['allocation_statistics_description'] = 'This statistic gives an impression of the overall satisfaction of the allocation.
 It is counting the allocations according to the rating the user has given to the respective choice.
-In this case {$a->users} out of {$a->total} users got a choice they rated with "{$a->rating}".
-For {$a->unassigned} users no choice has been allocated yet.';
+<ul>
+<li>{$a->rated} out of {$a->usersinchoice} user(s) have placed their vote.</li>
+<li>{$a->users} out of {$a->total} user(s) got a choice they rated with "{$a->rating}".</li>
+<li>{$a->unassigned} user(s) could not been allocated to a choice yet.</li>
+</ul>';
 $string['allocation_statistics_description_no_alloc'] = 'This statistic gives an impression of the overall satisfaction of the allocation.
 It is counting the allocations according to the rating the user has given to the respective choice.
-There are no allocations yet. Currently {$a->unassigned} users have given their rating.';
+<ul>
+<li>Currently {$a->notrated} user(s) have not yet given his/their rating.</li>
+<li>{$a->rated} user(s) already placed his/their vote.</li>
+<li>There are no allocations yet.</li>
+</ul>';
 
 $string['rating_raw'] = '{$a}';
 // </editor-fold>
