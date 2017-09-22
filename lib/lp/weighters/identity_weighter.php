@@ -16,8 +16,6 @@
 
 namespace ratingallocate\lp\weighters;
 
-require_once('polynomial_weighter.php');
-
 /**
  * Class which represents an identity weighter
  */

@@ -15,6 +15,5 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once(dirname(__FILE__).'/weighter.php');
-
-foreach(glob(dirname(__FILE__).'/weighters/*.php') as $weighter)
-    require_once($weighter);
+require_once(dirname(__FILE__).'/weighters/polynomial_weighter.php');
+require_once(dirname(__FILE__).'/weighters/identity_weighter.php');
