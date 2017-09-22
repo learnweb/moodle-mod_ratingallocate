@@ -103,7 +103,7 @@ class linear_program {
         if(empty($this->objective_function))
             throw new \exception('Linear program objectives function is invalid!');
 
-        return this->write_objective_method($this->objective_method)."\n  ".str_replace('*', ' ', $this->objective_function)."\n";
+        return $this->write_objective_method($this->objective_method)."\n  ".str_replace('*', ' ', $this->objective_function)."\n";
     }
     
     public function write_constraints() {
@@ -134,9 +134,9 @@ class linear_program {
     }
     
     public function write() {
-        return this->write_objective()
-            .this->write_constraints()
-            .this->write_bounds()
-            .this->write_variables().'End';
+        return $this->write_objective()
+            .$this->write_constraints()
+            .$this->write_bounds()
+            .$this->write_variables().'End';
     }
 };
