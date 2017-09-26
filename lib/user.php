@@ -19,18 +19,18 @@ namespace ratingallocate;
 class user {
     
 	private $id = -1;
-	private $chosen_groups = [];
+	private $selected_groups = [];
     private $assigned_group = null;
 
     /**
      * Creates a user
      *
      * @param $id id of the user
-     * @param $chosen_groups Chosen groups of the user
+     * @param $selected_groups Selected groups of the user
      */
-	public function __construct($id, $chosen_groups = []) {
+	public function __construct($id, $selected_groups = []) {
 		$this->id = $id;
-        $this->set_chosen_groups($chosen_groups);
+        $this->set_selected_groups($selected_groups);
 	}
 	
     /**
@@ -43,71 +43,113 @@ class user {
 	}
 
     /**
-     * Sets chosen groups of user
+     * Sets selected groups of user
      *
-     * @param $chosen_groups Array of chosen groups
+     * @param $selected_groups Array of selected groups
      */
-    public function set_chosen_groups($chosen_groups) {
-        foreach($chosen_groups as & $group)
-            $this->add_chosen_group($group);
+    public function set_selected_groups($selected_groups) {
+        foreach($selected_groups as $value)
+            $this->add_selected_group($value['group'], $value['priority']);
     }
 
     /**
-     * Returns chosen groups
+     * Returns selected groups
      *
-     * @return Array of chosen groups 
+     * @return Array of selected groups 
      */
-	public function get_chosen_groups() {
-		return $this->chosen_groups;
+	public function get_selected_groups() {
+		return $this->selected_groups;
 	}
 
     /**
      * Adds a group choice
      *
-     * @param $group Groups that gets added to chosen groups
+     * @param $group Group that is selected by the user
+     * @param $priority Selections priority
      *
-     * @throws Exception If group has been already chosen by the user
+     * @throws exception If group has already been selected by the user
      */
-    public function add_chosen_group(&$group) {
-        if($this->exists_chosen_group($group))
-            throw new \Exception('Group has been already chosen by the user!');
+    public function add_selected_group(&$group, $priority = 1) {
+        if($this->exists_selected_group($group))
+            throw new \exception('Group has already been selected by the user!');
 
-        $this->chosen_groups[$group->get_id()] = & $group;
+        $this->selected_groups[$group->get_id()] = ['group' => &$group, 'priority' => 0];
+
+        try
+        {
+            $this->set_priority($group, $priority);
+        }
+        catch(exception $e)
+        {
+            $this->remove_selected_group($group);
+            throw $e;
+        }
     }
 
     /**
-     * Checks if a group was chosen by the user
+     * Checks if a group was selected by the user
      *
-     * @return True of group was chosen
+     * @return True of group was selected
      */
-    public function exists_chosen_group($group) {
-        return isset($this->chosen_groups[$group->get_id()]);
+    public function exists_selected_group($group) {
+        return isset($this->selected_groups[$group->get_id()]);
     }
 
     /**
-     * Removes a choice from chosen groups
+     * Removes a choice from selected groups
      *
-     * @param $group group that gets removed from chosen groups
+     * @param $group group that gets removed from selected groups
      *
-     * @throws Exception If group has not been chosen by the user
+     * @throws exception If group has not been selected by the user
      */
-    public function remove_chosen_group($group) {
-        if(!$this->exists_chosen_group($group))
-            throw new \Exception('Group has not been chosen by the user!');
+    public function remove_selected_group($group) {
+        if(!$this->exists_selected_group($group))
+            throw new \exception('Group has not been selected by the user!');
 
-        unset($this->chosen_groups[$group->get_id()]);
+        unset($this->selected_groups[$group->get_id()]);
     }
 
     /**
-     * Returns the priority for the given group, which is 0 if the group was not chosen by the user
+     * Sets the priority for the given group
+     *
+     * @param $group Group whichs priority get changed
+     * @param $priority New priority
+     *
+     * @throws exception If group has not been selected by the user
+     * @throws exception If priority is not numeric
+     * @throws exception If priority is less than zero
+     * @throws exception If priority is zero
+     */
+    public function set_priority($group, $priority) {
+        if(!$this->exists_selected_group($group))
+            throw new \exception('Group has not been selected by the user!');
+
+        if(!is_numeric($priority))
+            throw new \exception('Priority is not numeric!');
+
+        if($priority < 0)
+            throw new \exception('Priority is not positive!');
+
+        if($priority == 0)
+            throw new \exception('Cannot set priority to zero!');
+        
+        $this->selected_groups[$group->get_id()]['priority'] = $priority;
+    }
+    
+    /**
+     * Returns the priority for the given group, which is 0 if the group was not selected by the user
      *
      * @param $group Group
      *
      * @return Priority for the given group
      */
     public function get_priority($group) {
-        $return = array_search($group->get_id(), array_keys($this->chosen_groups));
-        return $return === false ? 0 : $return + 1;
+        $return = $this->selected_groups[$group->get_id()];
+
+        if($return == null)
+            return 0;
+
+        return $return['priority'];
     }
     
     /**
@@ -138,25 +180,25 @@ class user {
     }
 
     /**
-     * Checks if assigned group is an element of the chosen groups and therefor if the choice is satisfied by
+     * Checks if assigned group is an element of the selected groups and therefor if the choice is satisfied by
      * the assigned group
      *
-     * @return True is the choice is satisfied
+     * @return True If the choice is satisfied
      */
     public function is_choice_satisfied() {
-        return (!$this->assigned_group ? false : $this->exists_chosen_group($this->assigned_group));
+        return (!$this->assigned_group ? false : $this->exists_selected_group($this->assigned_group));
     }
 
     /**
-     * Returns the choice satisfactions, representing the satisfaction of the assigned group  
+     * Returns the choice satisfaction, representing the satisfaction with the assigned group
      *
-     * @return 0 for no satisfaction, otherwise a value which represents the satisfaction (1 for best satisfaction)
+     * @return Between 0 and 1, representing how satisfying the assigned group is
      */
     public function get_choice_satisfaction() {
-        if(!$this->assigned_group)
+        if(!$this->is_choice_satisfied())
             return 0;
         
-        return array_search($this->assigned_group->get_id(), array_keys($this->chosen_groups)) + 1;
+        return $this->get_priority($this->assigned_group) / max(array_map(function($x) { return $x['priority']; }, $this->selected_groups));
     }
-
+    
 }
