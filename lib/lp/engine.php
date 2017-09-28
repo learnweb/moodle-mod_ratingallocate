@@ -21,17 +21,6 @@ abstract class engine {
     private $name = '';
     private $description = '';
     private $configuration = [];
-    
-    /**
-     * Returns an array of available engines
-     *
-     * @param $abstract Whether abstract engines should be included or not
-     * 
-     * @return Array with names of available engines
-     */
-    public static function get_engines($abstract = false) {
-        throw new \exception('TODO');
-    }
 
     /**
      * Creates a new engine instance
