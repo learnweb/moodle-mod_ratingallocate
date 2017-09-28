@@ -827,10 +827,26 @@ class ratingallocate {
     }
 
     /**
+     * Returns solver instance, based on $CFG
+     */
+    public function get_solver() {
+        switch($CFG->ratingallocate_solver) {
+        case 'lp':
+            return new solver_lp();
+            
+        case 'ford_fulkerson':
+            return new solver_ford_fulkerson();
+            
+        case 'edmonds_karp':
+        default: new solver_edmonds_karp();
+        }
+    }
+
+    /**
      * distribution of choices for each user
      * take care about max_execution_time and memory_limit
      */
-    public function distrubute_choices() {
+    public function distrubute_choices() {        
         require_capability('mod/ratingallocate:start_distribution', $this->context);
 
         // Set algorithm status to running.
@@ -838,12 +854,11 @@ class ratingallocate {
         $this->origdbrecord->algorithmstarttime = time();
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
 
-        $distributor = new solver_edmonds_karp();
-        // $distributor = new solver_ford_fulkerson();
+        $distributor = $this->get_solver();
+        
         $timestart = microtime(true);
         $distributor->distribute_users($this);
         $timeneeded = (microtime(true) - $timestart);
-        // echo memory_get_peak_usage();
 
         // Set algorithm status to finished.
         $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::finished;
