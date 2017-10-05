@@ -16,7 +16,7 @@
 
 namespace ratingallocate\lp\engines;
 
-class cplex extends linear_program_engine {
+class cplex extends \ratingallocate\lp\engine {
 
     /**
      * Returns the command that gets executed

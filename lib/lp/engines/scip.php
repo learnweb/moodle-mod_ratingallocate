@@ -16,7 +16,7 @@
 
 namespace ratingallocate\lp\engines;
 
-class scip extends linear_program_engine {
+class scip extends \ratingallocate\lp\engine {
     
     /**
      * Returns the command that gets executed

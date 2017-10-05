@@ -68,12 +68,72 @@ abstract class engine {
     }
     
     /**
-     * Runs the distribution
+     * Runs the distribution with user and group objects
      *
      * @param $users Array of users
      * @param $groups Array of groups
      * @param $weighter Weighter instace
      */
-    abstract public function solve(&$users, &$groups, $weighter);
+    public function solve_objects(&$users, &$groups, $weighter) {
+        utility::solve_linear_program($this->create_linear_program($users, $groups, $weighter));
+    }
+    
+    /**
+     * Runs the distribution with a linear program
+     */
+    public function solve_linear_program($linear_program) {
+        $this->solve_lp_file($linear_program->write());
+    }
 
+    /**
+     * Runs the distribution with a lp file
+     */
+    public function solve_lp_file($lp_file) {
+        $temp_file = tmpfile();
+        fwrite($temp_file, $this->write($lp_file));
+        fseek($temp_file, 0);
+
+        utility::assign_groups($this->read($this->fetch_stream($temp_file), $users, $groups), $users, $groups);
+        fclose($temp_file);
+    }
+    
+    /**
+     * Fetchs the engines output stream
+     *
+     * @param $temp_file Temp file handle
+     *
+     * @return Stream of engines output stream
+     */
+    private function fetch_stream($temp_file) { 
+        if($this->get_configuration()['SSH']) {
+            $authentication = new \ratingallocate\ssh\password_authentication($this->get_configuration()['SSH']['USERNAME'], $this->get_configuration()['SSH']['PASSWORD']);
+            $connection = new \ratingallocate\ssh\connection($this->get_configuration()['SSH']['HOSTNAME'], $this->get_configuration()['SSH']['FINGERPRINT'], $authentication);
+            
+            $connection->send_file(stream_get_meta_data($temp_file)['uri'], $this->get_configuration()['SSH']['REMOTE_FILE']);
+
+            return $connection->execute($this->execute($this->get_configuration()['SSH']['REMOTE_FILE']));
+        }
+
+        throw \Exception('TODO');
+        
+        return '';
+    }
+    
+    /**
+     * Reads the content of the stream and returns the variables and their optimized values
+     *
+     * @param $stream Output stream of the program that was executed
+     *
+     * @return Array of variables and their values
+     */
+    abstract protected function read($stream);
+
+    /**
+     * Returns the command that gets executed
+     *
+     * @param $input_file Name of the input file
+     *
+     * @returns Command as a string 
+     */
+    abstract protected function execute($input_file);
 };
