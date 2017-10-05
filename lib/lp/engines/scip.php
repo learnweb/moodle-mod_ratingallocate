@@ -25,7 +25,7 @@ class scip extends \ratingallocate\lp\engine {
      *
      * @returns Command as a string 
      */
-    protected function execute($input_file) {
+    protected function get_command($input_file) {
         return "scip -f $input_file";
     }
 
@@ -50,17 +50,6 @@ class scip extends \ratingallocate\lp\engine {
         }
         
         return $solution;
-    }
-
-    /**
-     * Creates a new SCIP engine object
-     *
-     * @param $configuration Array of configuration directives
-     *
-     * @return SCIP engine object
-     */
-    public function __construct($configuration = []) {
-        parent::__construct('', '', $configuration);
     }
 
 }

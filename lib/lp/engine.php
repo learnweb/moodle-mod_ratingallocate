@@ -19,24 +19,21 @@ namespace ratingallocate\lp;
 abstract class engine {
     
     private $name = '';
-    private $description = '';
     private $configuration = [];
 
     /**
      * Creates a new engine instance
      *
      * @param $name Name of the engine
-     * @param $description Description of the engine
      * @param $configuration Array of configuration directives     
      */
-    public function __construct($name = '', $description = '', $configuration = []) {
+    public function __construct($name = '', $configuration = []) {
         if(empty($name)) {
     		$segments = explode("\\", get_class($this));
     		$name = $segments[count($segments) - 1];
     	}
     		
         $this->name = $name;
-        $this->description = $description;
         $this->configuration = $configuration;
     }
 
@@ -49,15 +46,6 @@ abstract class engine {
         return $this->name;
     }
     
-    /**
-     * Returns the description of the engine
-     * 
-     * @return Description of the engine
-     */
-    public function get_description() {
-    	return $this->description;
-    }
-
     /**
      * Returns the configuration directives of the engine
      *
@@ -93,32 +81,20 @@ abstract class engine {
         fwrite($temp_file, $this->write($lp_file));
         fseek($temp_file, 0);
 
-        utility::assign_groups($this->read($this->fetch_stream($temp_file), $users, $groups), $users, $groups);
+        utility::assign_groups($this->read($this->execute($temp_file), $users, $groups), $users, $groups);
         fclose($temp_file);
     }
-    
-    /**
-     * Fetchs the engines output stream
-     *
-     * @param $temp_file Temp file handle
-     *
-     * @return Stream of engines output stream
-     */
-    private function fetch_stream($temp_file) { 
+
+    public function execute() {
         if($this->get_configuration()['SSH']) {
             $authentication = new \ratingallocate\ssh\password_authentication($this->get_configuration()['SSH']['USERNAME'], $this->get_configuration()['SSH']['PASSWORD']);
             $connection = new \ratingallocate\ssh\connection($this->get_configuration()['SSH']['HOSTNAME'], $this->get_configuration()['SSH']['FINGERPRINT'], $authentication);
             
             $connection->send_file(stream_get_meta_data($temp_file)['uri'], $this->get_configuration()['SSH']['REMOTE_FILE']);
-
-            return $connection->execute($this->execute($this->get_configuration()['SSH']['REMOTE_FILE']));
+            return $connection->execute($this->get_command($this->get_configuration()['SSH']['REMOTE_FILE']));
         }
-
-        throw \Exception('TODO');
-        
-        return '';
     }
-    
+
     /**
      * Reads the content of the stream and returns the variables and their optimized values
      *
@@ -135,5 +111,5 @@ abstract class engine {
      *
      * @returns Command as a string 
      */
-    abstract protected function execute($input_file);
+    abstract protected function get_command($input_file);
 };
