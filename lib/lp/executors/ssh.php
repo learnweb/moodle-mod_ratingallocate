@@ -17,13 +17,43 @@
 namespace ratingallocate\lp\executors;
 
 class ssh extends \ratingallocate\lp\executor {
+
+    public function get_ssh_configuration($name) {
+        return $this->get_configuration()["RATINGALLOCATE_SSH_$name"];
+    }
+
+    public function get_ssh_hostname() {
+        return $this->get_ssh_configuration('HOSTNAME') || '';
+    }
+    
+    public function get_ssh_username() {
+        return $this->get_ssh_configuration('USERNAME') || '';
+    }
+    
+    public function get_ssh_password() {
+        return $this->get_ssh_configuration('PASSWORD') || '';
+    }
+    
+    public function get_ssh_fingerprint() {
+        return $this->get_ssh_configuration('FINGERPRINT') || '';
+    }
+
+    public function get_ssh_authentication() {
+        return new \ratingallocate\ssh\password_authentication($this->get_ssh_username(), $this->get_ssh_password());
+    }
+    
+    public function get_ssh_remote_file() {
+        return $this->get_ssh_configuration('FILE') || 'lp.lp';
+    }
     
     public function main() {
-        $authentication = new \ratingallocate\ssh\password_authentication($this->get_configuration()['SSH']['USERNAME'], $this->get_configuration()['SSH']['PASSWORD']);
-        $connection = new \ratingallocate\ssh\connection($this->get_configuration()['SSH']['HOSTNAME'], $this->get_configuration()['SSH']['FINGERPRINT'], $authentication);
-            
-        $connection->send_file(stream_get_meta_data($temp_file)['uri'], $this->get_configuration()['SSH']['REMOTE_FILE']);
-        return $connection->execute($this->get_command($this->get_configuration()['SSH']['REMOTE_FILE']));
+        $connection = new \ratingallocate\ssh\connection($this->get_ssh_hostname(),
+                                                         $this->get_ssh_fingerprint(),
+                                                         $this->get_ssh_authentication());
+        
+        $connection->send_file(stream_get_meta_data($temp_file)['uri'], $this->get_ssh_remote_file());
+        
+        return $connection->execute($this->get_engine()->get_command($this->get_ssh_remote_file()));
     }
     
 }

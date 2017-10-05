@@ -45,6 +45,15 @@ abstract class executor {
     public function get_engine() {
         return $this->engine;
     }
+
+    /**
+     * Returns the configuration of the engine
+     *
+     * @return Engine configuration
+     */
+    public function get_configuration() {
+        return $this->get_engine()->get_configuration();
+    }
     
     /**
      * Returns the name of the executor
@@ -54,6 +63,6 @@ abstract class executor {
     public function get_name() {
         return $this->name;
     }
-    
-    abstract public function main();
+
+    abstract public function main($lp_file);
 }

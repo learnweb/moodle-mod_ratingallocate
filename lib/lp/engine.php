@@ -54,6 +54,13 @@ abstract class engine {
     public function get_configuration() {
         return $this->configuration;
     }
+
+    /**
+     * 
+     */
+    public function get_executor() {
+        return $this->get_configuration()['RATINGALLOCATE_EXECUTOR'] || 'local';
+    }
     
     /**
      * Runs the distribution with user and group objects
@@ -77,22 +84,10 @@ abstract class engine {
      * Runs the distribution with a lp file
      */
     public function solve_lp_file($lp_file) {
-        $temp_file = tmpfile();
-        fwrite($temp_file, $this->write($lp_file));
-        fseek($temp_file, 0);
-
-        utility::assign_groups($this->read($this->execute($temp_file), $users, $groups), $users, $groups);
-        fclose($temp_file);
-    }
-
-    public function execute() {
-        if($this->get_configuration()['SSH']) {
-            $authentication = new \ratingallocate\ssh\password_authentication($this->get_configuration()['SSH']['USERNAME'], $this->get_configuration()['SSH']['PASSWORD']);
-            $connection = new \ratingallocate\ssh\connection($this->get_configuration()['SSH']['HOSTNAME'], $this->get_configuration()['SSH']['FINGERPRINT'], $authentication);
-            
-            $connection->send_file(stream_get_meta_data($temp_file)['uri'], $this->get_configuration()['SSH']['REMOTE_FILE']);
-            return $connection->execute($this->get_command($this->get_configuration()['SSH']['REMOTE_FILE']));
-        }
+        $executor = new $var($this);
+        $stream = $executor->main($lp_file);
+        
+        utility::assign_groups($this->read($this->execute($lp_file), $users, $groups), $users, $groups);
     }
 
     /**
