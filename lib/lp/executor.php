@@ -19,22 +19,14 @@ namespace ratingallocate\lp;
 abstract class executor {
 
     private $engine = null;
-    private $name = '';
     
     /**
-     * Creates a new engine instance
+     * Creates a new executor instance
      *
-     * @param $name Name of the engine
-     * @param $configuration Array of configuration directives     
+     * @param $engine Engine instance
      */
-    public function __construct($engine, $name = '') {
-        if(empty($name)) {
-    		$segments = explode("\\", get_class($this));
-    		$name = $segments[count($segments) - 1];
-    	}
-    		
+    public function __construct($engine) {
         $this->engine = $engine;
-        $this->name = $name;
     }
     
     /**
@@ -55,14 +47,5 @@ abstract class executor {
         return $this->get_engine()->get_configuration();
     }
     
-    /**
-     * Returns the name of the executor
-     *
-     * @return Name of the executor
-     */
-    public function get_name() {
-        return $this->name;
-    }
-
-    abstract public function main($lp_file);
+    abstract public function main($linear_program);
 }

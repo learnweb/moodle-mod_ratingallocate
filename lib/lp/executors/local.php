@@ -19,15 +19,15 @@ namespace ratingallocate\lp\executors;
 class local extends \ratingallocate\lp\executor {
 
     public function get_local_configuration($name) {
-        return $this->get_configuration()["RATINGALLOCATE_LOCAL_$name"];
+        return $this->get_configuration()["local_$name"] ?: [];
     }
 
     public function get_local_file() {
-        return $this->get_local_configuration('FILE');
+        return $this->get_local_configuration('file') ?: 'problem.lp';
     }
     
-    abstract public function main() {
-        $handle = popen($this->get_engine()->get_command($this->get_local_file()), 'r'):
+    public function main($lp_file) {
+        $handle = popen($this->get_engine()->get_command($this->get_local_file()), 'r');
     }
     
 }

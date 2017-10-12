@@ -18,7 +18,11 @@ namespace ratingallocate\lp\executors;
 
 class webservice extends \ratingallocate\lp\executor {
     
-    abstract public function main() {
+    public function get_webservice_configuration($name) {
+        return $this->get_configuration()["webservice_$name"] ?: [];
+    }
+    
+    public function main($linear_program) {
     }
     
 }

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(__FILE__).'/executors.php');
+require_once(dirname(__FILE__).'/executor.php');
 require_once(dirname(__FILE__).'/executors/local.php');
 require_once(dirname(__FILE__).'/executors/ssh.php');
 require_once(dirname(__FILE__).'/executors/webservice.php');
