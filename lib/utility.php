@@ -39,7 +39,7 @@ class utility {
     
     public static function transform_to_users($ratings) {
         $users = [];
-    
+        
         foreach(array_unique(array_map(function($x) { return $x->userid; }, $ratings)) as $id)
             $users[$id] = new \ratingallocate\user($id);
         
@@ -69,9 +69,9 @@ class utility {
     public static function get_configuration($directives) {
         $configuration = [];
 
-        foreach($directive as $key => $value)
-            if(this::starts_with($key, 'ratingallocate_'))
-                $configuration[str_replace($key, '', 'ratingallocate_', 1)] = $value;
+        foreach($directives as $key => $value)
+            if(self::starts_with($key, 'ratingallocate_'))
+                $configuration[str_replace('ratingallocate_', '', $key)] = $value;
         
         return $configuration;
     }
