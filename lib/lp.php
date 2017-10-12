@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+require_once(dirname(__FILE__).'/lp/utility.php');
 require_once(dirname(__FILE__).'/lp/linear_program.php');
 require_once(dirname(__FILE__).'/lp/weighters.php');
 require_once(dirname(__FILE__).'/lp/engines.php');
+require_once(dirname(__FILE__).'/lp/executors.php');
