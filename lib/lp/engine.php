@@ -18,34 +18,17 @@ namespace ratingallocate\lp;
 
 abstract class engine {
     
-    private $name = '';
     private $configuration = [];
 
     /**
      * Creates a new engine instance
      *
-     * @param $name Name of the engine
      * @param $configuration Array of configuration directives     
      */
-    public function __construct($name = '', $configuration = []) {
-        if(empty($name)) {
-    		$segments = explode("\\", get_class($this));
-    		$name = $segments[count($segments) - 1];
-    	}
-    		
-        $this->name = $name;
+    public function __construct($configuration = []) {
         $this->configuration = $configuration;
     }
 
-    /**
-     * Returns the name of the engine
-     *
-     * @return Name of the engine
-     */
-    public function get_name() {
-        return $this->name;
-    }
-    
     /**
      * Returns the configuration directives of the engine
      *
@@ -56,10 +39,10 @@ abstract class engine {
     }
 
     /**
-     * 
+     *
      */
     public function get_executor() {
-        return $this->get_configuration()['RATINGALLOCATE_EXECUTOR'] || 'local';
+        return $this->get_configuration()['executor'] ?: 'local';
     }
     
     /**
@@ -67,10 +50,10 @@ abstract class engine {
      *
      * @param $users Array of users
      * @param $groups Array of groups
-     * @param $weighter Weighter instace
+     * @param $weighter Weighter instance
      */
     public function solve_objects(&$users, &$groups, $weighter) {
-        utility::solve_linear_program($this->create_linear_program($users, $groups, $weighter));
+        $this->solve_linear_program(utility::create_linear_program($users, $groups, $weighter));
     }
     
     /**
@@ -84,10 +67,14 @@ abstract class engine {
      * Runs the distribution with a lp file
      */
     public function solve_lp_file($lp_file) {
-        $executor = new $var($this);
-        $stream = $executor->main($lp_file);
+        $executor_path = '\\ratingallocate\\lp\\executors\\'.$this->get_executor();
+        $executor = new $executor_path($this);
+
+        echo get_class($executor);
         
-        utility::assign_groups($this->read($this->execute($lp_file), $users, $groups), $users, $groups);
+        //$stream = $executor->main($lp_file);
+        
+        //utility::assign_groups($this->read($this->execute($lp_file), $users, $groups), $users, $groups);
     }
 
     /**
