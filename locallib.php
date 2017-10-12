@@ -41,6 +41,7 @@ require_once(__DIR__.'/classes/algorithm_status.php');
 // Takes care of loading all the solvers.
 require_once(dirname(__FILE__) . '/solver/ford-fulkerson-koegel.php');
 require_once(dirname(__FILE__) . '/solver/edmonds-karp.php');
+require_once(dirname(__FILE__) . '/solver/lp-solver.php');
 
 // Now come all the strategies.
 require_once(dirname(__FILE__) . '/strategy/strategy01_yes_no.php');
@@ -214,7 +215,7 @@ class ratingallocate {
                 raise_memory_limit(MEMORY_EXTRA);
                 core_php_time_limit::raise();
                 // Distribute choices.
-                $timeneeded = $this->distrubute_choices();
+                $timeneeded = $this->distribute_choices();
 
                 // Logging.
                 $event = \mod_ratingallocate\event\distribution_triggered::create_simple(
@@ -830,6 +831,8 @@ class ratingallocate {
      * Returns solver instance, based on $CFG
      */
     public function get_solver() {
+        global $CFG;
+        
         switch($CFG->ratingallocate_solver) {
         case 'lp':
             return new solver_lp();
@@ -838,7 +841,7 @@ class ratingallocate {
             return new solver_ford_fulkerson();
             
         case 'edmonds_karp':
-        default: new solver_edmonds_karp();
+        default: return new solver_edmonds_karp();
         }
     }
 
@@ -846,14 +849,14 @@ class ratingallocate {
      * distribution of choices for each user
      * take care about max_execution_time and memory_limit
      */
-    public function distrubute_choices() {        
+    public function distribute_choices() {        
         require_capability('mod/ratingallocate:start_distribution', $this->context);
 
         // Set algorithm status to running.
         $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::running;
         $this->origdbrecord->algorithmstarttime = time();
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
-
+        
         $distributor = $this->get_solver();
         
         $timestart = microtime(true);
