@@ -62,4 +62,18 @@ class utility {
                 $users[$rating->userid]->add_selected_group($groups[$rating->choiceid], $rating->rating);
     }
 
+    public static function starts_with($string, $word) {
+        return substr($string, 0, strlen($word)) === $word;
+    }
+    
+    public static function get_configuration($directives) {
+        $configuration = [];
+
+        foreach($directive as $key => $value)
+            if(this::starts_with($key, 'ratingallocate_'))
+                $configuration[str_replace($key, '', 'ratingallocate_', 1)] = $value;
+        
+        return $configuration;
+    }
+
 };
