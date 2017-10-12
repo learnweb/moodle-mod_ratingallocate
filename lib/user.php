@@ -144,12 +144,10 @@ class user {
      * @return Priority for the given group
      */
     public function get_priority($group) {
-        $return = $this->selected_groups[$group->get_id()];
-
-        if($return == null)
+        if(!$this->exists_selected_group($group))
             return 0;
 
-        return $return['priority'];
+        return $this->selected_groups[$group->get_id()]['priority'];
     }
     
     /**
