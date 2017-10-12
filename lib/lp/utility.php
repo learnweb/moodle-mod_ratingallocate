@@ -64,13 +64,13 @@ class utility
                 $weighting = $weighter->apply($user->get_priority($group));
                 
                 if($weighting == 1)
-                    $objective_function .= $this->translate_to_name($user, $group);
+                    $objective_function .= self::translate_to_name($user, $group);
                 else if($weighting != 0)
-                    $objective_function .= $weighting.'*'.$this->translate_to_name($user, $group);
+                    $objective_function .= $weighting.'*'.self::translate_to_name($user, $group);
             }
         }
             
-        $linear_program->set_objective(\ratingallocate\lp\LinearProgram::MAXIMIZE, $objective_function);
+        $linear_program->set_objective(\ratingallocate\lp\linear_program::MAXIMIZE, $objective_function);
     }
 
     /**
@@ -88,7 +88,7 @@ class utility
                 if(!empty($lhs))
                     $lhs .= '+';
                 
-                $lhs .= $this->translate_to_name($user, $group); 
+                $lhs .= self::translate_to_name($user, $group); 
             }
             
             $linear_program->add_constraint("$lhs <= {$group->get_limit()}");
@@ -105,7 +105,7 @@ class utility
     public static function add_bounds(&$linear_program, $users, $groups) {
         foreach($users as $user)
             foreach($groups as $group)
-                $linear_program->add_bound('0 <= '.$this->translate_to_name($user, $group));
+                $linear_program->add_bound('0 <= '.self::translate_to_name($user, $group));
          
         foreach($users as $user) {
             $lhs = '';
