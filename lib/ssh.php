@@ -16,14 +16,8 @@
 
 namespace ratingallocate\ssh;
 
-abstract class authentication {
+class authentication {
     
-    public abstract function authenticate($connection);
-
-};
-
-class none_authentication extends authentication {
-
     private $username = '';
     
     public function __construct($username) {
@@ -44,7 +38,7 @@ class none_authentication extends authentication {
 
 };
 
-class password_authentication extends none_authentication {
+class password_authentication extends authentication {
 
     private $password;
     
@@ -92,7 +86,7 @@ class connection {
 
         $this->handle = \ssh2_connect($this->address);
 
-        if($this->fingerprint && ssh2_fingerprint($this->handle) != $this->fingerprint)
+            if($this->fingerprint && ssh2_fingerprint($this->handle) != $this->fingerprint)
             throw new \exception("Fingerprints do not match!");
         
         if(!$this->handle)
