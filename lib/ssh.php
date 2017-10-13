@@ -40,7 +40,7 @@ class authentication {
 
 class password_authentication extends authentication {
 
-    private $password;
+    private $password = '';
     
     public function __construct($username, $password) {
         parent::__construct($username);
@@ -60,6 +60,49 @@ class password_authentication extends authentication {
     }
 
 };
+
+class public_key_authentication extends authentication {
+
+    private $public_key = '';
+    private $private_key = '';
+    private $passphrase = '';
+
+    public function __construct($username, $public_key, $private_key, $passphrase = '') {
+        parent::__construct($username);
+        $this->public_key = $public_key;
+        $this->private_key = $private_key;
+        $this->passphrase = $passphrase;
+    }
+
+    public function set_public_key($public_key) {
+        $this->public_key = $public_key;
+    }
+
+    public function get_public_key() {
+        return $this->public_key;
+    }
+    
+    public function set_private_key($private_key) {
+        $this->private_key = $private_key;
+    }
+
+    public function get_private_key() {
+        return $this->private_key;
+    }
+
+    public function set_passphrase($passphrase) {
+        $this->passphrase = $passphrase;
+    }
+
+    public function get_passphrase() {
+        return $this->passphrase;
+    }
+    
+    public function authenticate($connection) {
+        return ssh2_auth_pubkey_file($connection, $this->get_username(), $this->get_public_key(), $this->get_private_key(), $this->get_passphrase());
+    }
+    
+}
 
 class connection {
 
