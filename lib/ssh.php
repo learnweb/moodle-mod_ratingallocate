@@ -93,13 +93,13 @@ class connection {
         $this->handle = \ssh2_connect($this->address);
 
         if($this->fingerprint && ssh2_fingerprint($this->handle) != $this->fingerprint)
-            throw new \Exception("Fingerprints do not match!");
+            throw new \exception("Fingerprints do not match!");
         
         if(!$this->handle)
-            throw new \Exception("Could not connect to ssh server with address {$this->address}!");
+            throw new \exception("Could not connect to ssh server with address {$this->address}!");
 
         if(!$this->authentication->authenticate($this->handle))
-            throw new \Exception('Authentication failed!');
+            throw new \exception('Authentication failed!');
     }
 
     /**
@@ -168,7 +168,7 @@ class connection {
      */
     public function send_file($local_file, $remote_file) {
         if(!ssh2_scp_send($this->handle, $local_file, $remote_file))
-            throw \exception('Error sending file!');
+            throw new \exception('Error sending file!');
     }
 
     /**
@@ -181,7 +181,7 @@ class connection {
      */
     public function receive_file($remote_file, $local_file) {
         if(!ssh2_scp_recv($this->handle, $remote_file, $local_file))
-            throw \exception('Error receiving file!');
+            throw new \exception('Error receiving file!');
     }
 
 };
