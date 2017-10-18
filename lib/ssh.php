@@ -116,20 +116,20 @@ class connection {
      * Creates a new SSH connection
      *
      * @param $address Address of the ssh server
-     * @param $fingerprint Fingerprint of the ssh server (null for none)
      * @param $authentication Authentication method
+     * @param $fingerprint Fingerprint of the ssh server (null for none)
      *
      * @throws Exception If the connection to the ssh server could not be established
      * @throws Exception If authentication failed
      */
-    public function __construct($address, $fingerprint, $authentication) {
+    public function __construct($address, $authentication, $fingerprint) {
         $this->address = $address;
-        $this->fingerprint = $fingerprint;
         $this->authentication = $authentication;
+        $this->fingerprint = $fingerprint;
 
         $this->handle = \ssh2_connect($this->address);
 
-            if($this->fingerprint && ssh2_fingerprint($this->handle) != $this->fingerprint)
+        if($this->fingerprint && ssh2_fingerprint($this->handle) != $this->fingerprint)
             throw new \exception("Fingerprints do not match!");
         
         if(!$this->handle)
