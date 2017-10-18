@@ -122,7 +122,7 @@ class connection {
      * @throws Exception If the connection to the ssh server could not be established
      * @throws Exception If authentication failed
      */
-    public function __construct($address, $authentication, $fingerprint) {
+    public function __construct($address, $authentication, $fingerprint = null) {
         $this->address = $address;
         $this->authentication = $authentication;
         $this->fingerprint = $fingerprint;
