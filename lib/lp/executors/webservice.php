@@ -20,21 +20,34 @@ class webservice extends \ratingallocate\lp\executor {
 
     private $uri = '';
     
-    public function __construct($uri) {
+    /**
+     * Creates a webservice executor
+     */
+    public function __construct($engine, $uri) {
+        parent::__construct($engine);
         $this->uri = $uri;
     }
 
+    /**
+     * Returns the uri to the webservice
+     */
     public function get_uri() {
         return $this->uri;
     }
 
-    public function main($engine, $lp_file) {
+    /**
+     * Executes engine command on a remote machine using a webservice
+     *
+     * @param $engine Engine that is used
+     * @param $lp_file Content of the LP file
+     *
+     * @return Stream of stdout
+     */
+    protected function solve($lp_file) {
         $data = http_build_query(['lp' => $lp_file]);
         $context = stream_context_create(['http' => ['method' => 'POST', 'header' => 'Context-type: application/x-www-form-urlencoded', 'content' => $data]]);
         
-        $solution = file_get_contents($this->get_uri(), false, $context);
-
-        exit;
+        return fopen($this->get_uri(), 'rb', false, $context);
     }
     
 }

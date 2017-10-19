@@ -18,9 +18,7 @@ namespace ratingallocate\lp\executors;
 
 class local extends \ratingallocate\lp\executor {
     
-    public function main($engine, $lp_file) {
-        
-        //$handle = popen($this->get_engine()->get_command($this->get_local_file()), 'r');
+    protected function solve($lp_file) {
     }
     
 }

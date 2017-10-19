@@ -17,7 +17,64 @@
 namespace ratingallocate\lp;
 
 abstract class executor {
+
+    private $engine = null;
+
+    /**
+     * Creates an executor instance
+     *
+     * @param $engine Engine that is used
+     *
+     * @return Executor instance
+     */
+    public function __construct($engine) {
+        $this->engine = $engine;
+    }
+
+    /**
+     * Returns the engine
+     *
+     * @return Engine
+     */
+    public function get_engine() {
+        return $this->engine;
+    }
     
-    abstract public function main($lp_file, $engine);
+    /**
+     * Runs the distribution with user and group objects and assigns users to their selected groups
+     *
+     * @param $users Array of users
+     * @param $groups Array of groups
+     * @param $weighter Weighter instance
+     */
+    public function solve_objects(&$users, &$groups, $weighter) {
+        $values = $this->solve_linear_program(utility::create_linear_program($users, $groups, $weighter));
+    }
+    
+    /**
+     * Runs the distribution with a linear program and returns variables and their values
+     *
+     * @param $linear_program Linear program that gets solved
+     * @param $executor Executor that is used
+     *
+     * @return Array of variables and their value
+     */
+    public function solve_linear_program($linear_program) {
+        return $this->solve_lp_file($linear_program->write());
+    }
+
+    /**
+     * Runs the distribution with a lp file and returns variables and their values
+     *
+     * @param $linear_program LP file that gets solved
+     * @param $executor Executor that is used
+     *
+     * @return Array of variables and their value
+     */
+    public function solve_lp_file($lp_file) {
+        return $this->get_engine()->read($this->solve($lp_file));
+    }
+
+    abstract protected function solve($lp_file);
 
 }
