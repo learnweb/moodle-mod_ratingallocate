@@ -43,7 +43,7 @@ class webservice extends \ratingallocate\lp\executor {
      *
      * @return Stream of stdout
      */
-    protected function solve($lp_file) {
+    public function solve($lp_file) {
         $data = http_build_query(['lp' => $lp_file]);
         $context = stream_context_create(['http' => ['method' => 'POST', 'header' => 'Context-type: application/x-www-form-urlencoded', 'content' => $data]]);
         

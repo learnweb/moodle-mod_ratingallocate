@@ -18,7 +18,7 @@ namespace ratingallocate\lp\executors;
 
 class local extends \ratingallocate\lp\executor {
     
-    protected function solve($lp_file) {
+    public function solve($lp_file) {
     }
     
 }

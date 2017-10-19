@@ -49,6 +49,7 @@ abstract class executor {
      */
     public function solve_objects(&$users, &$groups, $weighter) {
         $values = $this->solve_linear_program(utility::create_linear_program($users, $groups, $weighter));
+        print_r($values);
     }
     
     /**
@@ -75,6 +76,6 @@ abstract class executor {
         return $this->get_engine()->read($this->solve($lp_file));
     }
 
-    abstract protected function solve($lp_file);
+    abstract public function solve($lp_file);
 
 }

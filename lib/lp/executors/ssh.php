@@ -81,7 +81,7 @@ class ssh extends \ratingallocate\lp\executor {
      *
      * @return Stream of stdout
      */
-    protected function solve($lp_file) {
+    public function solve($lp_file) {
         fwrite($this->get_local_file(), $lp_file);
         fseek($this->get_local_file(), 0);
 
