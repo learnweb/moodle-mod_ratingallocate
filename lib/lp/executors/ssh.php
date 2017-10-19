@@ -21,29 +21,63 @@ class ssh extends \ratingallocate\lp\executor {
     private $connection = null;    
     private $local_file = null;
     private $remote_path = '';
-    
+
+    /**
+     * Creates a ssh executor
+     *
+     * @param $connection SSH connection
+     * @param $remote_path Remote path where the lp file will be stored temporarily
+     *
+     * @return ssh executor instance
+     */
     public function __construct($connection, $remote_path) {
         $this->connection = $connection;
         $this->local_file = tmpfile();
         $this->remote_path = $remote_path;
     }
 
+    /**
+     * Returns the SSH connection
+     */
     public function get_connection() {
         return $this->connection;
     }
 
+    /**
+     * Returns the handle of the local file
+     *
+     * @return Handle of the local file
+     */
     public function get_local_file() {
         return $this->local_file;
     }
     
+    /**
+     * Returns the path of the local file
+     *
+     * @return Local path
+     */
     public function get_local_path() {
         return stream_get_meta_data($this->local_file)['uri'];
     }
     
+    /**
+     * Returns the remote path
+     *
+     * @return Remote path
+     */
     public function get_remote_path() {
         return $this->remote_path;
     }
-    
+
+    /**
+     * Executes engine command on a remote machine using SSH
+     *
+     * @param $engine Engine that is used
+     * @param $lp_file Content of the LP file
+     *
+     * @return Stream of stdout
+     */
     public function main($engine, $lp_file) {
         fwrite($this->get_local_file(), $lp_file);
         fseek($this->get_local_file(), 0);
