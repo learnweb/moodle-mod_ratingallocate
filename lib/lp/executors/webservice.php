@@ -44,10 +44,18 @@ class webservice extends \ratingallocate\lp\executor {
      * @return Stream of stdout
      */
     public function solve($lp_file) {
-        $data = http_build_query(['lp' => $lp_file]);
-        $context = stream_context_create(['http' => ['method' => 'POST', 'header' => 'Context-type: application/x-www-form-urlencoded', 'content' => $data]]);
-        
-        return fopen($this->get_uri(), 'rb', false, $context);
+        return fopen($this->get_uri(), 'rb', false, $this->build_request($lp_file));
+    }
+
+    /**
+     * Builds the request for fopen
+     *
+     * @param $lp_file Content of the lp file
+     *
+     * @returns Stream context
+     */
+    public function build_request($lp_file) {
+        return stream_context_create(['http' => ['method' => 'POST', 'header' => 'Content-type: application/x-www-form-urlencoded', 'content' => http_build_query(['lp' => $lp_file])]]);
     }
     
 }
