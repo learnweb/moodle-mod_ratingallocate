@@ -17,8 +17,46 @@
 namespace ratingallocate\lp\executors;
 
 class local extends \ratingallocate\lp\executor {
-    
+
+    private $local_path = '';
+
+    /**
+     * Creates a local executor
+     *
+     * @param $engine Engine that is used
+     * @param $local_path Local path
+     *
+     * @return Local executor instance
+     */
+    public function __construct($engine, $local_path) {
+        parent::__construct($engine);
+        
+        $this->local_path = $local_path;
+    }
+
+    /**
+     * Returns the local path
+     *
+     * @return Local path
+     */
+    public function get_local_path() {
+        return $this->local_path;
+    }
+
+    /**
+     * Executes engine command on a remote machine using a webservice
+     *
+     * @param $engine Engine that is used
+     * @param $lp_file Content of the LP file
+     *
+     * @return Stream of stdout
+     */
     public function solve($lp_file) {
+        $local_file = fopen($this->get_local_path(), 'w+');
+        fwrite($local_file, $lp_file);
+        fseek($local_file, 0);
+        
+        return popen($this->get_engine()->get_command($this->get_local_path()), 'r');
     }
     
 }
