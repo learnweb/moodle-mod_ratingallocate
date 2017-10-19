@@ -18,65 +18,38 @@ namespace ratingallocate\lp;
 
 abstract class engine {
     
-    private $configuration = [];
-
-    /**
-     * Creates a new engine instance
-     *
-     * @param $configuration Array of configuration directives     
-     */
-    public function __construct($configuration = []) {
-        $this->configuration = $configuration;
-    }
-
-    /**
-     * Returns the configuration directives of the engine
-     *
-     * @return Configuration directives
-     */
-    public function get_configuration() {
-        return $this->configuration;
-    }
-
-    /**
-     *
-     */
-    public function get_executor() {
-        return $this->get_configuration()['executor'] ?: 'local';
-    }
-    
     /**
      * Runs the distribution with user and group objects
      *
      * @param $users Array of users
      * @param $groups Array of groups
      * @param $weighter Weighter instance
+     * @param $executor Executor that is used
      */
-    public function solve_objects(&$users, &$groups, $weighter) {
-        $this->solve_linear_program(utility::create_linear_program($users, $groups, $weighter));
+    public function solve(&$users, &$groups, $weighter, $executor) {
+        $values = $this->solve_linear_program(utility::create_linear_program($users, $groups, $weighter), $executor);
     }
     
     /**
-     * Runs the distribution with a linear program
+     * Runs the distribution with a linear program and returns variables and their values
+     *
+     * @param $linear_program Linear program that gets solved
+     * @param $executor Executor that is used
      */
-    public function solve_linear_program($linear_program) {
-        $this->solve_lp_file($linear_program->write());
+    public function solve_linear_program($linear_program, $executor) {
+        return $this->solve_lp_file($linear_program->write(), $executor);
     }
 
     /**
-     * Runs the distribution with a lp file
+     * Runs the distribution with a lp file and returns variables and their values
+     *
+     * @param $linear_program LP file that gets solved
+     * @param $executor Executor that is used
      */
-    public function solve_lp_file($lp_file) {
-        $executor_path = '\\ratingallocate\\lp\\executors\\'.$this->get_executor();
-        $executor = new $executor_path($this);
-
-        echo get_class($executor);
-        
-        //$stream = $executor->main($lp_file);
-        
-        //utility::assign_groups($this->read($this->execute($lp_file), $users, $groups), $users, $groups);
+    public function solve_lp_file($lp_file, $executor) {
+        return $this->read($executor->main($this, $lp_file));
     }
-
+    
     /**
      * Reads the content of the stream and returns the variables and their optimized values
      *
@@ -84,7 +57,7 @@ abstract class engine {
      *
      * @return Array of variables and their values
      */
-    abstract protected function read($stream);
+    abstract public function read($stream);
 
     /**
      * Returns the command that gets executed
@@ -93,5 +66,5 @@ abstract class engine {
      *
      * @returns Command as a string 
      */
-    abstract protected function get_command($input_file);
+    abstract public function get_command($input_file);
 };

@@ -25,7 +25,7 @@ class scip extends \ratingallocate\lp\engine {
      *
      * @returns Command as a string 
      */
-    protected function get_command($input_file) {
+    public function get_command($input_file) {
         return "scip -f $input_file";
     }
 
@@ -36,7 +36,7 @@ class scip extends \ratingallocate\lp\engine {
      *
      * @return Array of variables and their values
      */
-    protected function read($stream) {
+    public function read($stream) {
         $content = stream_get_contents($stream);
         $solution = [];
         

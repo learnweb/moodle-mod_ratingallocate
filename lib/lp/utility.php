@@ -106,7 +106,7 @@ class utility
         foreach($users as $user)
             foreach($groups as $group)
                 $linear_program->add_bound('0 <= '.self::translate_to_name($user, $group));
-         
+        
         foreach($users as $user) {
             $lhs = '';
 

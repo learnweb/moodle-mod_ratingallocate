@@ -17,12 +17,24 @@
 namespace ratingallocate\lp\executors;
 
 class webservice extends \ratingallocate\lp\executor {
+
+    private $uri = '';
     
-    public function get_webservice_configuration($name) {
-        return $this->get_configuration()["webservice_$name"] ?: [];
+    public function __construct($uri) {
+        $this->uri = $uri;
     }
-    
-    public function main($linear_program) {
+
+    public function get_uri() {
+        return $this->uri;
+    }
+
+    public function main($engine, $lp_file) {
+        $data = http_build_query(['lp' => $lp_file]);
+        $context = stream_context_create(['http' => ['method' => 'POST', 'header' => 'Context-type: application/x-www-form-urlencoded', 'content' => $data]]);
+        
+        $solution = file_get_contents($this->get_uri(), false, $context);
+
+        exit;
     }
     
 }

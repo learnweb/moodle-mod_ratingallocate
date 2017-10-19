@@ -17,35 +17,7 @@
 namespace ratingallocate\lp;
 
 abstract class executor {
+    
+    abstract public function main($lp_file, $engine);
 
-    private $engine = null;
-    
-    /**
-     * Creates a new executor instance
-     *
-     * @param $engine Engine instance
-     */
-    public function __construct($engine) {
-        $this->engine = $engine;
-    }
-    
-    /**
-     * Returns the engine the executor
-     *
-     * @return Engine of the executor
-     */
-    public function get_engine() {
-        return $this->engine;
-    }
-
-    /**
-     * Returns the configuration of the engine
-     *
-     * @return Engine configuration
-     */
-    public function get_configuration() {
-        return $this->get_engine()->get_configuration();
-    }
-    
-    abstract public function main($linear_program);
 }

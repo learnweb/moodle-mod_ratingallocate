@@ -18,42 +18,38 @@ namespace ratingallocate\lp\executors;
 
 class ssh extends \ratingallocate\lp\executor {
 
-    public function get_ssh_configuration($name) {
-        return $this->get_configuration()["ssh_$name"] ?: [];
+    private $connection = null;    
+    private $local_file = null;
+    private $remote_path = '';
+    
+    public function __construct($connection, $remote_path) {
+        $this->connection = $connection;
+        $this->local_file = tmpfile();
+        $this->remote_path = $remote_path;
     }
 
-    public function get_ssh_hostname() {
-        return $this->get_ssh_configuration('hostname') ?: '';
-    }
-    
-    public function get_ssh_username() {
-        return $this->get_ssh_configuration('username') ?: '';
-    }
-    
-    public function get_ssh_password() {
-        return $this->get_ssh_configuration('password') ?: '';
-    }
-    
-    public function get_ssh_fingerprint() {
-        return $this->get_ssh_configuration('fingerprint') ?: '';
+    public function get_connection() {
+        return $this->connection;
     }
 
-    public function get_ssh_authentication() {
-        return new \ratingallocate\ssh\password_authentication($this->get_ssh_username(), $this->get_ssh_password());
+    public function get_local_file() {
+        return $this->local_file;
     }
     
-    public function get_ssh_file() {
-        return $this->get_ssh_configuration('file') ?: 'problem.lp';
+    public function get_local_path() {
+        return stream_get_meta_data($this->local_file)['uri'];
     }
     
-    public function main($lp_file) {
-        $connection = new \ratingallocate\ssh\connection($this->get_ssh_hostname(),
-                                                         $this->get_ssh_fingerprint(),
-                                                         $this->get_ssh_authentication());
-        
-        $connection->send_file(stream_get_meta_data($temp_file)['uri'], $this->get_ssh_file());
-        
-        return $connection->execute($this->get_engine()->get_command($this->get_ssh_file()));
+    public function get_remote_path() {
+        return $this->remote_path;
+    }
+    
+    public function main($engine, $lp_file) {
+        fwrite($this->get_local_file(), $lp_file);
+        fseek($this->get_local_file(), 0);
+
+        $this->get_connection()->send_file($this->get_local_path(), $this->get_remote_path());
+        return $this->get_connection()->execute($engine->get_command($this->get_remote_path()));
     }
     
 }

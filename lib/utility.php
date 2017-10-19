@@ -76,4 +76,8 @@ class utility {
         return $configuration;
     }
 
+    public static function default_for($value, $default) {
+        return isset($value) ? $value : $default;
+    }
+
 };
