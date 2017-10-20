@@ -2,8 +2,8 @@
 Feature: Creating a new rating allocation, where new choices need to
   be added and if necessary deleted prior to submission.
 
-Background:	
-	Given the following "courses" exist:
+  Background:
+    Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1        | 0        | 1         |
     And the following "users" exist:
@@ -42,7 +42,7 @@ Background:
     And I should see the choice with the title "My second choice"
     And I should see the choice with the title "My third choice"
     And I should see the choice with the title "My fourth choice"
-    
+
   Scenario: Create a new rating alloation and add two additonal new choices using the add next button.
     Given I add new choices with the values:
   	| title            | explanation     | maxsize |
@@ -134,5 +134,3 @@ Background:
   Scenario: Create a new rating alloation and assume the default for the field runalgorithmbycron is true.
     When I navigate to "Edit settings" node in "Fair Allocation administration"
     Then the field "runalgorithmbycron" matches value "1"
-
-
