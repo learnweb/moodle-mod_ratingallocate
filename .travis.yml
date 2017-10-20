@@ -9,10 +9,7 @@ cache:
 
 addons:
   postgresql: "9.3"
-  apt:
-    packages:
-      - oracle-java9-installer
-      - oracle-java9-set-default
+  jdk: oraclejdk9
 
 matrix:
  exclude:
