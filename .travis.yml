@@ -12,8 +12,10 @@ addons:
   postgresql: "9.3"
 
 php:
-  - 5.6
-  - 7.0
+  - if: branch = master
+    5.6
+  - if: branch = master
+    7.0
   - 7.1
 
 matrix:
@@ -29,12 +31,17 @@ matrix:
 
 
 env:
-  - DB=pgsql MOODLE_BRANCH=MOODLE_32_STABLE
+  - if: branch = master
+    DB=pgsql MOODLE_BRANCH=MOODLE_32_STABLE
   - DB=pgsql MOODLE_BRANCH=MOODLE_33_STABLE
-  - DB=pgsql MOODLE_BRANCH=master
-  - DB=mysqli MOODLE_BRANCH=MOODLE_32_STABLE
-  - DB=mysqli MOODLE_BRANCH=MOODLE_33_STABLE
-  - DB=mysqli MOODLE_BRANCH=master
+  - if: branch = master
+    DB=pgsql MOODLE_BRANCH=master
+  - if: branch = master
+    DB=mysqli MOODLE_BRANCH=MOODLE_32_STABLE
+  - if: branch = master
+    DB=mysqli MOODLE_BRANCH=MOODLE_33_STABLE
+  - if: branch = master
+    DB=mysqli MOODLE_BRANCH=master
 
 before_install:
   - phpenv config-rm xdebug.ini
