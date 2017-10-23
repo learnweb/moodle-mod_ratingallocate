@@ -50,7 +50,7 @@ install:
 jobs:
   include:
     # Prechecks against latest Moodle stable only.
-    - stage: pretest
+    - stage: static
       php: 7.1
       env: DB=mysqli MOODLE_BRANCH=MOODLE_33_STABLE
       script:
@@ -62,14 +62,14 @@ jobs:
       # - moodle-plugin-ci mustache
       - moodle-plugin-ci grunt
       - moodle-plugin-ci validate
-    # Unit tests and behat tests against full matrix.
-    - stage: test
-      script:
-      - moodle-plugin-ci phpunit --coverage-clover
-      - moodle-plugin-ci behat
-      after_success:
-        - bash <(curl -s https://codecov.io/bash)
+
+# Unit tests and behat tests against full matrix.
+script:
+  - moodle-plugin-ci phpunit --coverage-clover
+  - moodle-plugin-ci behat
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
 stages:
-  - pretest
+  - static
   - test
