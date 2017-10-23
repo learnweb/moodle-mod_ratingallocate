@@ -26,7 +26,7 @@ matrix:
  include:
     - if: branch = master
       php: 5.6
-    - if: branch = master
+    - if: branch = feature/moodle34
       php: 7.0
  fast_finish: true
 
