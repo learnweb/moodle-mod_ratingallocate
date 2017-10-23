@@ -155,6 +155,39 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         // Ratingallocate savepoint reached.
         upgrade_mod_savepoint(true, 2017102300, 'ratingallocate');
     }
+
+    if ($oldversion < 2017102303) {
+
+        // Translate old idnumber group mappings to new group_mappings.
+        $ratingallocateinstances = $DB->get_records('ratingallocate');
+
+        foreach ($ratingallocateinstances as $id => $ratingallocate) {
+            $groupingidname = 'ratingallocate_instid_' . $id;
+            // Search if there is already a grouping from us.
+            $grouping = groups_get_grouping_by_idnumber($ratingallocate->course, $groupingidname);
+            if ($grouping) {
+                // Find all associated groups in this grouping.
+                $groups = groups_get_all_groups($ratingallocate->course, 0, $grouping->id);
+                foreach ($groups as $group) {
+                    if ($group->idnumber && strpos($group->idnumber, '_c_') >= 0) {
+                        $choiceid = (int)substr($group->idnumber, strpos($group->idnumber, '_c_') + 3);
+                        if ($choiceid) {
+                            $mapping = new \mod_ratingallocate\group_mapping();
+                            $mapping->set('groupid', $group->id);
+                            $mapping->set('choiceid', $choiceid);
+                            $mapping->create();
+                        }
+                        $group->idnumber = '';
+                        groups_update_group($group);
+                    }
+                }
+            }
+            groups_delete_grouping($grouping->id);
+        }
+
+        // Ratingallocate savepoint reached.
+        upgrade_mod_savepoint(true, 2017102303, 'ratingallocate');
+    }
     
     return true;
 }
