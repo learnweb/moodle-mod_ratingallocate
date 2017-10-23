@@ -131,6 +131,30 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         }
 
     }
+
+    if ($oldversion < 2017102300) {
+
+        // Define table ratingallocate_groups to be created.
+        $table = new xmldb_table('ratingallocate_groups');
+
+        // Adding fields to table ratingallocate_groups.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('choiceid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('groupid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table ratingallocate_groups.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('groupid', XMLDB_KEY_FOREIGN, array('groupid'), 'groups', array('id'));
+        $table->add_key('choiceid', XMLDB_KEY_FOREIGN, array('choiceid'), 'ratingallocate_choices', array('id'));
+
+        // Conditionally launch create table for ratingallocate_groups.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Ratingallocate savepoint reached.
+        upgrade_mod_savepoint(true, 2017102300, 'ratingallocate');
+    }
     
     return true;
 }

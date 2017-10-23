@@ -27,6 +27,7 @@
  */
 defined('MOODLE_INTERNAL') || die();
 use ratingallocate\db as this_db;
+use \mod_ratingallocate\group_mapping as group_mapping;
 
 global $CFG;
 
@@ -571,62 +572,49 @@ class ratingallocate {
     }
 
     private function process_action_allocation_to_grouping() {
-        $groupingidname = ratingallocate_MOD_NAME . '_instid_' . $this->ratingallocateid;
-        // Search if there is already a grouping from us.
-        $grouping = groups_get_grouping_by_idnumber($this->course->id, $groupingidname);
-        $groupingid = null;
-        if (!$grouping) {
-            // Create grouping.
-            $data = new stdClass();
-            $data->name = get_string('groupingname', ratingallocate_MOD_NAME, $this->ratingallocate->name);
-            $data->idnumber = $groupingidname;
-            $data->courseid = $this->course->id;
-            $groupingid = groups_create_grouping($data);
-        } else {
-            $groupingid = $grouping->id;
+        $choicerecords = $this->get_choices_with_allocationcount();
+        $choices = array();
+        foreach ($choicerecords as $choice) {
+            $choices[$choice->id] = $choice;
         }
+        $groupmapping = group_mapping::get_records_by_ratingallocate_id($this->ratingallocateid);
 
-        $groupidentifierfromchoiceid = function ($choiceid) {
-            return ratingallocate_MOD_NAME . '_c_' . $choiceid;
-        };
-
-        $choices = $this->get_choices_with_allocationcount();
-
-        // Make a new array containing only the identifiers of the choices.
-        $choiceids = array();
+        // Make a new array containing identifiers of the choices to previously created groups.
+        $groupsbychoice = array();
         foreach ($choices as $id => $choice) {
-            $choiceids[$groupidentifierfromchoiceid($choice->id)] = array('key' => $id            );
+            $groupsbychoice[$id] = null;
         }
-
-        // Dind all associated groups in this grouping.
-        $groups = groups_get_all_groups($this->course->id, 0, $groupingid);
+        foreach ($groupmapping as $mapping) {
+            $groupsbychoice[$mapping->choiceid] = $mapping->groupid;
+        }
 
         // Loop through the groups in the grouping: if the choice does not exist anymore -> delete.
         // Otherwise mark it.
-        foreach ($groups as $group) {
-            if (array_key_exists($group->idnumber, $choiceids)) {
-                // Group exists, mark.
-                $choiceids[$group->idnumber]['exists'] = true;
-                $choiceids[$group->idnumber]['groupid'] = $group->id;
-            } else {
+        foreach ($groupsbychoice as $choiceid => $groupid) {
+            if ($groupid && !array_key_exists($choiceid, $choices)) {
                 // Delete group $group->id.
-                groups_delete_group($group->id);
+                groups_delete_group($groupid);
             }
         }
 
         // Create groups groups for new identifiers or empty group if it exists.
-        foreach ($choiceids as $groupid => $choice) {
-            if (key_exists('exists', $choice)) {
+        foreach ($groupsbychoice as $choiceid => $groupid) {
+            if ($groupid && $group = groups_get_group($groupid)) {
                 // Remove all members.
-                groups_delete_group_members_by_group($choice['groupid']);
+                groups_delete_group_members_by_group($groupid);
+                // Update name
+                $group->name = $choices[$choiceid]->title;
+                groups_update_group($group);
             } else {
                 $data = new stdClass();
                 $data->courseid = $this->course->id;
-                $data->name = $choices[$choice['key']]->title;
-                $data->idnumber = $groupid;
+                $data->name = $choices[$choiceid]->title;
                 $createdid = groups_create_group($data);
-                groups_assign_grouping($groupingid, $createdid);
-                $choiceids[$groupid]['groupid'] = $createdid;
+                $mapping = new group_mapping();
+                $mapping->set('choiceid', $choiceid);
+                $mapping->set('groupid', $createdid);
+                $mapping->create();
+                $groupsbychoice[$choiceid] = $createdid;
             }
         }
 
@@ -635,8 +623,7 @@ class ratingallocate {
         foreach ($allocations as $id => $allocation) {
             $choiceid = $allocation->choiceid;
             $userid = $allocation->userid;
-            $choiceidentifier = $groupidentifierfromchoiceid($choiceid);
-            groups_add_member($choiceids[$choiceidentifier]['groupid'], $userid);
+            groups_add_member($groupsbychoice[$choiceid], $userid);
         }
         // Invalidate the grouping cache for the course.
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($this->course->id));
