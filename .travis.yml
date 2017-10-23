@@ -62,9 +62,7 @@ jobs:
       # - moodle-plugin-ci mustache
       - moodle-plugin-ci grunt
       - moodle-plugin-ci validate
-
-jobs:
-  include:
+      
     # Smaller build matrix for development builds
     - stage: develop
       if: branch != master
