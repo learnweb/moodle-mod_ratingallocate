@@ -1,5 +1,11 @@
-.path-mod-ratingallocate ul.horizontal.choices {margin: 0 !important;}
-.path-mod-ratingallocate .horizontal.choices .option {padding-right: 20px; display: inline-block; white-space: normal;}
+.path-mod-ratingallocate ul.horizontal.choices {
+    margin: 0;
+}
+.path-mod-ratingallocate .horizontal.choices .option {
+    padding-right: 20px;
+    display: inline-block;
+    white-space: normal;
+}
 
 .ratingallocate_ratings_table tr.ratingallocate_summary,
 .ratingallocate_ratings_table span.ratingallocate_member {
@@ -41,11 +47,13 @@
     background: url('[[pix:ratingallocate|checkbox]]');
     background-size: 13px 13px;
 }
-.ratingallocate_ratings_table span input[type=radio]{
+.ratingallocate_ratings_table span input[type=radio] {
     display: none;
 }
 
-.ratingallocate_ratings_box { overflow: auto; } /* Scrolling tables */
+.ratingallocate_ratings_box {
+    overflow: auto; /* Scrolling tables */
+}
 .path-mod-ratingallocate .mod-ratingallocate-choice-maxno {
     text-align: right;
 }
