@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace ratingallocate\lp\executors;
+namespace ratingallocate\lp\executors\webservice;
 
-class webservice extends \ratingallocate\lp\executor {
+class connector extends \ratingallocate\lp\executor {
 
     private $uri = '';
     
@@ -44,7 +44,11 @@ class webservice extends \ratingallocate\lp\executor {
      * @return Stream of stdout
      */
     public function solve($lp_file) {
-        return fopen($this->get_uri(), 'rb', false, $this->build_request($lp_file));
+        $handle =  fopen($this->get_uri(), 'rb', false, $this->build_request($lp_file));
+
+        echo stream_get_contents($handle);
+        
+        exit;
     }
 
     /**
@@ -55,7 +59,39 @@ class webservice extends \ratingallocate\lp\executor {
      * @returns Stream context
      */
     public function build_request($lp_file) {
-        return stream_context_create(['http' => ['method' => 'POST', 'header' => 'Content-type: application/x-www-form-urlencoded', 'content' => http_build_query(['lp' => $lp_file])]]);
+        return stream_context_create(['http' => ['method' => 'POST',
+                                                 'header' => 'Content-type: application/x-www-form-urlencoded',
+                                                 'content' => http_build_query(['lp' => $lp_file])]]);
+    }
+    
+}
+
+class backend
+{
+
+    private $local_path = '';
+    
+    public function __construct($local_path) {
+        $this->local_path = $local_path;
+    }
+
+    public function get_local_path() {
+        return $this->local_path;
+    }
+    
+    public function get_lp_file() {
+        return $_POST['lp'];
+    }
+    
+    public function main() {
+
+        if(isset($_POST['lp'])) {
+            $engine = new \ratingallocate\lp\engines\cplex();
+            $executor = new \ratingallocate\lp\executors\local($engine, $this->local_path);
+            
+            fpassthru($executor->solve($this->get_lp_file()));
+        }
+        
     }
     
 }
