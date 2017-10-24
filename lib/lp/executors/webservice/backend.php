@@ -29,11 +29,20 @@ class backend
      *
      * @return Webservice backend instance
      */
-    public function __construct($secret, $local_path) {
-        $this->secret = $secret;
-        $this->local_path = $local_path;
+    public function __construct($local_path = '', $secret = null) {
+        $this->set_local_path($local_path);
+        $this->set_secret($secret);
     }
 
+    /**
+     * Sets the webservices secret
+     *
+     * @param $secret Webservice secret
+     */
+    public function set_secret($secret) {
+        $this->secret = $secret;
+    }
+    
     /**
      * Returns the webservice secret
      *
@@ -43,6 +52,15 @@ class backend
         return $this->secret;
     }
 
+    /**
+     * Sets the local path
+     *
+     * @param $local_path Local path
+     */
+    public function set_local_path($local_path) {
+        $this->local_path = $local_path;
+    }
+    
     /**
      * Returns the local path
      *
@@ -70,8 +88,7 @@ class backend
             $executor = new \ratingallocate\lp\executors\local($engine, $this->local_path);
             
             fpassthru($executor->solve($this->get_lp_file()));
-        }
-        
+        }        
     }
     
 }

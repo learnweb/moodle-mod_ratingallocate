@@ -19,24 +19,42 @@ namespace ratingallocate\lp\executors\webservice;
 class connector extends \ratingallocate\lp\executor {
 
     private $uri = '';
-    private $secret = '';
+    private $secret = null;
     
     /**
      * Creates a webservice connector
      */
-    public function __construct($engine, $uri, $secret) {
+    public function __construct($engine = null, $uri = '', $secret = null) {
         parent::__construct($engine);
-        $this->uri = $uri;
-        $this->secret = $secret;
+        $this->set_uri($uri);
+        $this->set_secret($secret);
     }
 
     /**
-     * Returns the secret backend
+     * Sets the webservices secret
+     *
+     * @param $secret Webservice secret
+     */
+    public function set_secret($secret) {
+        $this->secret = $secret;
+    }
+    
+    /**
+     * Returns the webservices secret
      *
      * @return Secret of the backend
      */
     public function get_secret() {
         return $this->secret;
+    }
+
+    /**
+     * Sets the uri to the backend
+     *
+     * @param $uri URI to the backend
+     */
+    public function set_uri($uri) {
+        $this->uri = $uri;
     }
     
     /**
@@ -57,7 +75,7 @@ class connector extends \ratingallocate\lp\executor {
      * @return Stream of stdout
      */
     public function solve($lp_file) {
-        $handle =  fopen($this->get_uri(), 'rb', false, $this->build_request($lp_file));
+        $handle = fopen($this->get_uri(), 'rb', false, $this->build_request($lp_file));
 
         echo stream_get_contents($handle);
         
