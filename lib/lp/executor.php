@@ -27,10 +27,17 @@ abstract class executor {
      *
      * @return Executor instance
      */
-    public function __construct($engine) {
-        $this->engine = $engine;
+    public function __construct($engine = null) {
+        $this->set_engine($engine);
     }
 
+    /**
+     * Sets the engine used by the executor
+     */
+    public function set_engine($engine) {
+        $this->engine = $engine;
+    }
+    
     /**
      * Returns the engine
      *
