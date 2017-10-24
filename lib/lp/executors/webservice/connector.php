@@ -22,15 +22,27 @@ class connector extends \ratingallocate\lp\executor {
     private $secret = '';
     
     /**
-     * Creates a webservice executor
+     * Creates a webservice connector
      */
     public function __construct($engine, $uri, $secret) {
         parent::__construct($engine);
         $this->uri = $uri;
+        $this->secret = $secret;
     }
 
     /**
-     * Returns the uri to the webservice
+     * Returns the secret backend
+     *
+     * @return Secret of the backend
+     */
+    public function get_secret() {
+        return $this->secret;
+    }
+    
+    /**
+     * Returns the uri to the backend
+     *
+     * @return URI of the backend
      */
     public function get_uri() {
         return $this->uri;
@@ -57,12 +69,24 @@ class connector extends \ratingallocate\lp\executor {
      *
      * @param $lp_file Content of the lp file
      *
-     * @returns Stream context
+     * @return Stream context
      */
     public function build_request($lp_file) {
         return stream_context_create(['http' => ['method' => 'POST',
                                                  'header' => 'Content-type: application/x-www-form-urlencoded',
-                                                 'content' => http_build_query(['lp' => $lp_file])]]);
+                                                 'content' => $this->build_query($lp_file)]]);
+    }
+
+    /**
+     * Build the query for the request
+     *
+     * @param $lp_file Content of the lp file
+     *
+     * @return Encoded http query
+     */
+    public function build_query($lp_file) {
+        return http_build_query(['lp_file' => $lp_file,
+                                 'secret' => $this->get_secret()]);
     }
     
 }
