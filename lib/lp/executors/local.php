@@ -24,7 +24,7 @@ class local extends \ratingallocate\lp\executor {
      * Creates a local executor
      *
      * @param $engine Engine that is used
-     * @param $local_path Local path
+     * @param $local_path Path of the local file used for solver execution
      *
      * @return Local executor instance
      */
