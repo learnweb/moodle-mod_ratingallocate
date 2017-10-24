@@ -14,55 +14,5 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace ratingallocate\lp\executors\webservice;
-
-class connector extends \ratingallocate\lp\executor {
-
-    private $uri = '';
-    private $secret = '';
-    
-    /**
-     * Creates a webservice executor
-     */
-    public function __construct($engine, $uri, $secret) {
-        parent::__construct($engine);
-        $this->uri = $uri;
-    }
-
-    /**
-     * Returns the uri to the webservice
-     */
-    public function get_uri() {
-        return $this->uri;
-    }
-
-    /**
-     * Executes engine command on a remote machine using a webservice
-     *
-     * @param $engine Engine that is used
-     * @param $lp_file Content of the LP file
-     *
-     * @return Stream of stdout
-     */
-    public function solve($lp_file) {
-        $handle =  fopen($this->get_uri(), 'rb', false, $this->build_request($lp_file));
-
-        echo stream_get_contents($handle);
-        
-        exit;
-    }
-
-    /**
-     * Builds the request for fopen
-     *
-     * @param $lp_file Content of the lp file
-     *
-     * @returns Stream context
-     */
-    public function build_request($lp_file) {
-        return stream_context_create(['http' => ['method' => 'POST',
-                                                 'header' => 'Content-type: application/x-www-form-urlencoded',
-                                                 'content' => http_build_query(['lp' => $lp_file])]]);
-    }
-    
-}
+require_once(dirname(__FILE__).'/webservice/connector.php');
+require_once(dirname(__FILE__).'/webservice/backend.php');
