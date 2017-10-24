@@ -28,12 +28,21 @@ class local extends \ratingallocate\lp\executor {
      *
      * @return Local executor instance
      */
-    public function __construct($engine, $local_path) {
+    public function __construct($engine = null, $local_path = '') {
         parent::__construct($engine);
-        
-        $this->local_path = $local_path;
+
+        $this->set_local_path($local_path);
     }
 
+    /**
+     * Sets the local path
+     *
+     * @return Local path
+     */
+    public function set_local_path($local_path) {
+        $this->local_path = $local_path;
+    }
+    
     /**
      * Returns the local path
      *

@@ -31,16 +31,28 @@ class ssh extends \ratingallocate\lp\executor {
      *
      * @return ssh executor instance
      */
-    public function __construct($engine, $connection, $remote_path) {
+    public function __construct($engine = null, $connection = null, $remote_path = '') {
         parent::__construct($engine);
         
-        $this->connection = $connection;
         $this->local_file = tmpfile();
-        $this->remote_path = $remote_path;
+
+        $this->set_connection($connection);
+        $this->set_remote_path($remote_path);
     }
 
     /**
+     * Sets the SSH connection
+     *
+     * @return SSH connection
+     */
+    public function set_connection($connection) {
+        $this->connection = $connection;
+    }
+    
+    /**
      * Returns the SSH connection
+     *
+     * @return SSH connection
      */
     public function get_connection() {
         return $this->connection;
@@ -62,6 +74,15 @@ class ssh extends \ratingallocate\lp\executor {
      */
     public function get_local_path() {
         return stream_get_meta_data($this->local_file)['uri'];
+    }
+
+    /**
+     * Sets the remote path
+     *
+     * @param $remote_path Remote path
+     */
+    public function set_remote_path($remote_path) {
+        $this->remote_path = $remote_path;
     }
     
     /**
