@@ -71,24 +71,33 @@ class backend
     }
     
     /**
-     * Returns the content of the LP file
-     *
-     * @return LP file content
-     */
-    public function get_lp_file() {
-        return $_POST['lp'];
-    }
-    
-    /**
      * Handles an incomming request
      */
     public function main() {
-        if(isset($_POST['lp'])) {
+        if(!$this->verify_secret()) {
+            http_response_code(401);
+            echo 'Unauthorized';
+            
+            return;
+        }
+        
+        if(isset($_POST['lp_file'])) {
             $engine = new \ratingallocate\lp\engines\cplex();
             $executor = new \ratingallocate\lp\executors\local($engine, $this->local_path);
             
-            fpassthru($executor->solve($this->get_lp_file()));
-        }        
+            fpassthru($executor->solve($_POST['lp_file']));
+        }
     }
-    
+
+    /**
+     * Verifys the secret
+     *
+     * @return true if secret was verified successfully
+     */
+    private function verify_secret() {
+        if($this->get_secret() === null)
+            return true;
+        
+        return $this->get_secret() === $_POST['secret'];
+    }
 }
