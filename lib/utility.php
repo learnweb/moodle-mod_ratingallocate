@@ -19,11 +19,12 @@ namespace ratingallocate;
 class utility {
 
     public static function transform_from_users_and_groups($users, $groups) {
-        $allocation = array_map(function($x, $y) { return [$x => $y]; }, array_keys($groups), array_pad([], count($groups), []));
-
+        $allocation = array_map(function($x) { return $x->get_id(); }, $groups);
+        array_walk($allocation, function(&$x, $y) { $x = []; });
+        
         foreach($users as $user)
             if($user->is_choice_satisfied())
-                $allocation[$user->get_assigned_group()->get_id()] = $user->get_id();
+                $allocation[$user->get_assigned_group()->get_id()][] = $user->get_id();
 
         return $allocation;
     }
