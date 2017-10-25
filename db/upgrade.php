@@ -184,7 +184,8 @@ function xmldb_ratingallocate_upgrade($oldversion) {
                     }
                 }
             }
-            groups_delete_grouping($grouping->id);
+            $grouping->idnumber = '';
+            groups_update_grouping($grouping);
         }
 
         // Ratingallocate savepoint reached.
