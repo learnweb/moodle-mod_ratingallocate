@@ -52,8 +52,6 @@ class group_mapping extends \core\persistent {
             ),
             'maxsize' => array(
                 'type' => PARAM_INT,
-                'null' => NULL_ALLOWED,
-                'default' => null,
             ),
         );
     }

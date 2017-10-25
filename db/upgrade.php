@@ -142,7 +142,7 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         $table->add_field('choiceid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('groupid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('title', XMLDB_TYPE_CHAR, '255', null, null, null, null);
-        $table->add_field('maxsize', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('maxsize', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table ratingallocate_groups.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
