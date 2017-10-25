@@ -72,14 +72,17 @@ class connector extends \ratingallocate\lp\executor {
      * @param $engine Engine that is used
      * @param $lp_file Content of the LP file
      *
+     * @throws exception 
+     *
      * @return Stream of stdout
      */
     public function solve($lp_file) {
         $handle = fopen($this->get_uri(), 'rb', false, $this->build_request($lp_file));
 
-        echo stream_get_contents($handle);
-        
-        exit;
+        if(!$handle)
+            throw new \exception('Could not connect to webservice backend!');
+
+        return $handle;
     }
 
     /**
