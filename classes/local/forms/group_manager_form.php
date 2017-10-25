@@ -28,7 +28,6 @@ global $CFG;
 use mod_ratingallocate\group_mapping;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
-require_once(dirname(__FILE__) . '/../../form/choice_group_mapping.php');
 require_once(dirname(__FILE__) . '/../../../locallib.php');
 defined('MOODLE_INTERNAL') || die();
 
@@ -78,7 +77,6 @@ class group_manager_form extends \moodleform {
 
             $grouprecors = groups_get_all_groups($COURSE->id);
             $groups = array();
-            $groups[0] = get_string('nogroup', 'mod_ratingallocate');
             foreach ($grouprecors as $group) {
                 $groups[$group->id] = $group->name;
             }
@@ -87,10 +85,12 @@ class group_manager_form extends \moodleform {
                 $groupelems = array();
                 $groupelems[] = $mform->createElement('checkbox', 'mapping_new_' . $mapping->get('id'), 'Create new');
                 $mform->setType('mapping_new_' . $mapping->get('id'), PARAM_INT);
-                $groupelems[] = $mform->createElement('text', 'mapping_name_' . $mapping->get('id'), 'Group label');
+                $groupelems[] = $mform->createElement('text', 'mapping_name_' . $mapping->get('id'), 'Group label',
+                    array('size' => 10));
                 $mform->setType('mapping_name_' . $mapping->get('id'), PARAM_TEXT);
                 $groupelems[] = $mform->createElement('select', 'mapping_group_' . $mapping->get('id'), get_string('group'),
-                    $groups;
+                    $groups,
+                    array('size' => 5));
                 $mform->setType('mapping_group_' . $mapping->get('id'), PARAM_TEXT);
                 $groupelems[] = $mform->createElement('text', 'mapping_size_' . $mapping->get('id'), 'Group size',
                     array('size' => 5));
@@ -98,13 +98,20 @@ class group_manager_form extends \moodleform {
                 if ($group) {
                     $mform->setDefault('mapping_group_' . $mapping->get('id'), $group->name);
                 } else {
+                    $mform->setDefault('mapping_name_' . $mapping->get('id'), $choice->title);
                     $mform->setDefault('mapping_new_' . $mapping->get('id'), true);
                 }
+                $mform->setDefault('mapping_size_' . $mapping->get('id'), $mapping->get('maxsize'));
+
                 $mform->addGroup($groupelems, 'groupname', 'Test', '', false);
-                $mform->disabledIf('mapping_name_' . $mapping->get('id'), 'mapping_new_' . $mapping->get('id'), 'checked');
-                $mform->disabledIf('mapping_group_' . $mapping->get('id'), 'mapping_new_' . $mapping->get('id'), 'notchecked');
-                $mform->hideIf('mapping_name_' . $mapping->get('id'), 'mapping_new_' . $mapping->get('id'), 'checked');
-                $mform->hideIf('mapping_group_' . $mapping->get('id'), 'mapping_new_' . $mapping->get('id'), 'notchecked');
+                $mform->disabledIf('mapping_name_' . $mapping->get('id'),
+                    'mapping_new_' . $mapping->get('id'), 'notchecked');
+                $mform->disabledIf('mapping_group_' . $mapping->get('id'),
+                    'mapping_new_' . $mapping->get('id'), 'checked');
+                $mform->hideIf('mapping_name_' . $mapping->get('id'),
+                    'mapping_new_' . $mapping->get('id'), 'notchecked');
+                $mform->hideIf('mapping_group_' . $mapping->get('id'),
+                    'mapping_new_' . $mapping->get('id'), 'checked');
             }
         }
 
