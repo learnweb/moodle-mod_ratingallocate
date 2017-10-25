@@ -17,6 +17,7 @@
 namespace ratingallocate\lp;
 
 abstract class engine {
+    
     /**
      * Reads the content of the stream and returns the variables and their optimized values
      *
@@ -34,4 +35,5 @@ abstract class engine {
      * @returns Command as a string 
      */
     abstract public function get_command($input_file);
+
 };
