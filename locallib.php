@@ -26,8 +26,10 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
+
 use ratingallocate\db as this_db;
 use \mod_ratingallocate\group_mapping as group_mapping;
+use mod_ratingallocate\local\forms\group_manager_form;
 
 global $CFG;
 
@@ -572,6 +574,55 @@ class ratingallocate {
     }
 
     private function process_action_allocation_to_grouping() {
+        // Manual allocation.
+        $output = '';
+        if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
+            global $OUTPUT, $PAGE;
+
+            $mform = new group_manager_form($PAGE->url, $this);
+
+            if (!$mform->no_submit_button_pressed() && $data = $mform->get_submitted_data()) {
+                if (!$mform->is_cancelled()) {
+                    /* @var mod_ratingallocate_renderer */
+                    $renderer = $this->get_renderer();
+                    $status = $this->get_status();
+                    if ($status === self::DISTRIBUTION_STATUS_TOO_EARLY ||
+                        $status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS
+                    ) {
+                        $renderer->add_notification(
+                            get_string('modify_allocation_group_desc_' . $status, ratingallocate_MOD_NAME));
+                    } else {
+                        $allocationdata = optional_param_array('allocdata', array(), PARAM_INT);
+                        if ($userdata = optional_param_array('userdata', null, PARAM_INT)) {
+                            //$this->save_manual_allocation_form($allocationdata, $userdata);
+                            $renderer->add_notification(get_string('manual_allocation_saved',
+                                ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
+                        } else {
+                            $renderer->add_notification(get_string('manual_allocation_nothing_to_be_saved',
+                                ratingallocate_MOD_NAME), self::NOTIFY_MESSAGE);
+                        }
+                    }
+                } else {
+                    return $this->process_default();
+                }
+                // If form was submitted using save or cancel, show the default page.
+                if (array_key_exists("submitbutton", $data)) {
+                    return $this->process_default();
+                    // If the save and continue button was pressed,
+                    // reinitialize the form to refresh the checked radiobuttons.
+                }
+            }
+            $output .= $OUTPUT->heading(get_string('choice_group_mapping_form', ratingallocate_MOD_NAME), 2);
+
+            $output .= $mform->to_html();
+            $this->showinfo = false;
+        }
+        return $output;
+
+    }
+
+    private function old() {
+
         $choicerecords = $this->get_choices_with_allocationcount();
         $choices = array();
         foreach ($choicerecords as $choice) {
