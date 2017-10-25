@@ -119,8 +119,8 @@ class connection {
      * @param $authentication Authentication method
      * @param $fingerprint Fingerprint of the ssh server (null for none)
      *
-     * @throws Exception If the connection to the ssh server could not be established
-     * @throws Exception If authentication failed
+     * @throws exception If the connection to the ssh server could not be established
+     * @throws exception If authentication failed
      */
     public function __construct($address, $authentication, $fingerprint = null) {
         $this->address = $address;
@@ -180,7 +180,7 @@ class connection {
      *
      * @param $command Command which gets executed
      *
-     * @throws Exception If the command could not be executed
+     * @throws exception If the command could not be executed
      *
      * @return Stream handle
      */
@@ -201,7 +201,7 @@ class connection {
      * @param $local_file Name of the local file
      * @param $remote_file Name of the remote file
      *
-     * @throws Exception If file was not transmitted successfully     
+     * @throws exception If file was not transmitted successfully     
      */
     public function send_file($local_file, $remote_file) {
         if(!ssh2_scp_send($this->handle, $local_file, $remote_file))
@@ -214,7 +214,7 @@ class connection {
      * @param $remote_file Name of the remote file
      * @param $local_file Name of the local file
      *
-     * @throws Exception If file was not transmitted successfully
+     * @throws exception If file was not transmitted successfully
      */
     public function receive_file($remote_file, $local_file) {
         if(!ssh2_scp_recv($this->handle, $remote_file, $local_file))

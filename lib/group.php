@@ -86,11 +86,11 @@ class group {
      * Sets the group limit (zero for no limit)
      *
      * @param $limit The new group limit
-     * @throws Exception if the group limit is negative
+     * @throws exception if the group limit is negative
      */
     public function set_limit($limit) {
         if($limit < 0)
-            throw new Exception('Limit cannot be negative!');
+            throw new exception('Limit cannot be negative!');
 
         $this->limit = $limit;
     }
@@ -109,17 +109,17 @@ class group {
 	 * 
 	 * @param $user User that gets added to the group
      *
-     * @throws Exception if the group limit has been reached or the user has been already assigned a group  
+     * @throws exception if the group limit has been reached or the user has been already assigned a group  
 	 */
 	public function add_assigned_user(& $user) {
         if($this->is_full())
-            throw new \Exception('Limit has been reached!');
+            throw new \exception('Limit has been reached!');
 
         if($this->exists_assigned_user($user) || $user->get_assigned_group() == $this)
-            throw new \Exception('User has been already assigned to this group!');
+            throw new \exception('User has been already assigned to this group!');
 
         if($user->get_assigned_group() != null)
-            throw new \Exception('User has been already assigned to another group!');
+            throw new \exception('User has been already assigned to another group!');
 
         $this->assigned_users[$user->get_id()] = & $user;
 	}
@@ -140,11 +140,11 @@ class group {
 	 * 
 	 * @param $user User that gets removed from the group
      *
-	 * @throws Exception If user was not assigned from the group
+	 * @throws exception If user was not assigned from the group
 	 */
 	public function remove_assigned_user($user) {
         if(!$this->exists_assigned_user($user))
-            throw new \Exception('User has not been assigned to this group!');
+            throw new \exception('User has not been assigned to this group!');
 		
         unset($this->assigned_users[$user->get_id()]);
     }
