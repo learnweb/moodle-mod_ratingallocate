@@ -34,11 +34,26 @@ class group_mapping extends \core\persistent {
      */
     protected static function define_properties() {
         return array(
+            'id' => array(
+                'type' => PARAM_INT,
+            ),
             'choiceid' => array(
                 'type' => PARAM_INT,
             ),
             'groupid' => array(
                 'type' => PARAM_INT,
+                'null' => NULL_ALLOWED,
+                'default' => null,
+            ),
+            'title' => array(
+                'type' => PARAM_TEXT,
+                'null' => NULL_ALLOWED,
+                'default' => null,
+            ),
+            'maxsize' => array(
+                'type' => PARAM_INT,
+                'null' => NULL_ALLOWED,
+                'default' => null,
             ),
         );
     }
@@ -50,7 +65,7 @@ class group_mapping extends \core\persistent {
      */
     public static function get_records_by_ratingallocate_id($ratingallocateid) {
         global $DB;
-        $sql = 'SELECT g.groupid, g.choiceid
+        $sql = 'SELECT g.id, g.groupid, g.choiceid
                 FROM {ratingallocate_choices} c
                 JOIN {ratingallocate_groups} g
                 ON c.id = g.choiceid
