@@ -18,22 +18,43 @@ namespace ratingallocate\lp\executors\webservice;
 
 class backend
 {
+    private $engine = null;
     private $local_path = '';
     private $secret = null;
-
+    
     /**
      * Creates a webservice backend
      *
+     * @param $engine Engine which is used by the backend
      * @param $secret Secret used for backend protection
      * @param $local_path Local path where a temporary lp file is stored
      *
      * @return Webservice backend instance
      */
-    public function __construct($local_path = '', $secret = null) {
+    public function __construct($engine = null, $local_path = '', $secret = null) {
+        $this->set_engine($engine);
         $this->set_local_path($local_path);
         $this->set_secret($secret);
     }
 
+    /**
+     * Sets the engine used by the backend
+     *
+     * @param $engine Engine
+     */
+    public function set_engine($engine) {
+        $this->engine = $engine;
+    }
+
+    /**
+     * Returns the engine used by the backend
+     *
+     * @return Engine     
+     */
+    public function get_engine() {
+        return $this->engine;
+    }
+    
     /**
      * Sets the webservices secret
      *
@@ -82,8 +103,7 @@ class backend
         }
         
         if(isset($_POST['lp_file'])) {
-            $engine = new \ratingallocate\lp\engines\cplex();
-            $executor = new \ratingallocate\lp\executors\local($engine, $this->local_path);
+            $executor = new \ratingallocate\lp\executors\local($this->get_engine(), $this->get_local_path());
             
             fpassthru($executor->solve($_POST['lp_file']));
         }
@@ -100,4 +120,5 @@ class backend
         
         return $this->get_secret() === $_POST['secret'];
     }
+    
 }
