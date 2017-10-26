@@ -198,26 +198,26 @@ class connection {
     /**
      * Sends a file to a remote server
      *
-     * @param $local_file Name of the local file
-     * @param $remote_file Name of the remote file
+     * @param $local_path Local path
+     * @param $remote_path Remote path
      *
      * @throws exception If file was not transmitted successfully     
      */
-    public function send_file($local_file, $remote_file) {
-        if(!ssh2_scp_send($this->handle, $local_file, $remote_file))
+    public function send_file($local_path, $remote_path) {
+        if(!ssh2_scp_send($this->handle, $local_path, $remote_path))
             throw new \exception('Error sending file!');
     }
 
     /**
      * Receives a file from a remote server
      *
-     * @param $remote_file Name of the remote file
-     * @param $local_file Name of the local file
+     * @param $remote_path Remote path
+     * @param $local_path Local path
      *
      * @throws exception If file was not transmitted successfully
      */
-    public function receive_file($remote_file, $local_file) {
-        if(!ssh2_scp_recv($this->handle, $remote_file, $local_file))
+    public function receive_file($remote_path, $local_path) {
+        if(!ssh2_scp_recv($this->handle, $remote_path, $local_path))
             throw new \exception('Error receiving file!');
     }
 
