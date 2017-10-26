@@ -82,36 +82,46 @@ class group_manager_form extends \moodleform {
             }
             foreach ($mappings as $mapping) {
                 $group = groups_get_group($mapping->get('groupid'));
-                $groupelems = array();
-                $groupelems[] = $mform->createElement('checkbox', 'mapping_new_' . $mapping->get('id'), 'Create new');
-                $mform->setType('mapping_new_' . $mapping->get('id'), PARAM_INT);
-                $groupelems[] = $mform->createElement('text', 'mapping_name_' . $mapping->get('id'), 'Group label',
-                    array('size' => 10));
-                $mform->setType('mapping_name_' . $mapping->get('id'), PARAM_TEXT);
-                $groupelems[] = $mform->createElement('select', 'mapping_group_' . $mapping->get('id'), get_string('group'),
-                    $groups,
-                    array('size' => 5));
-                $mform->setType('mapping_group_' . $mapping->get('id'), PARAM_TEXT);
-                $groupelems[] = $mform->createElement('text', 'mapping_size_' . $mapping->get('id'), 'Group size',
-                    array('size' => 5));
-                $mform->setType('mapping_size_' . $mapping->get('id'), PARAM_INT);
-                if ($group) {
-                    $mform->setDefault('mapping_group_' . $mapping->get('id'), $group->name);
-                } else {
-                    $mform->setDefault('mapping_name_' . $mapping->get('id'), $choice->title);
-                    $mform->setDefault('mapping_new_' . $mapping->get('id'), true);
-                }
-                $mform->setDefault('mapping_size_' . $mapping->get('id'), $mapping->get('maxsize'));
+                $formelems = array();
+                $createnewid = 'mapping_new_' . $mapping->get('id');
+                $newtitleid = 'mapping_title_' . $mapping->get('id');
+                $groupid = 'mapping_group_' . $mapping->get('id');
+                $sizeid = 'mapping_size_' . $mapping->get('id');
+                $titlegroupelementid = 'titleelem_' . $mapping->get('id');
+                $groupgroupelementid = 'groupelem_' . $mapping->get('id');
 
-                $mform->addGroup($groupelems, 'groupname', 'Test', '', false);
-                $mform->disabledIf('mapping_name_' . $mapping->get('id'),
-                    'mapping_new_' . $mapping->get('id'), 'notchecked');
-                $mform->disabledIf('mapping_group_' . $mapping->get('id'),
-                    'mapping_new_' . $mapping->get('id'), 'checked');
-                $mform->hideIf('mapping_name_' . $mapping->get('id'),
-                    'mapping_new_' . $mapping->get('id'), 'notchecked');
-                $mform->hideIf('mapping_group_' . $mapping->get('id'),
-                    'mapping_new_' . $mapping->get('id'), 'checked');
+                $formelems[] = $mform->createElement('static', 'labelcreatenew', '', 'Create new');
+                $formelems[] = $mform->createElement('checkbox', $createnewid, '');
+
+                $titleelems = array();
+                $titleelems[] = $mform->createElement('static', 'labeltitle',  '', 'New Group name');
+                $titleelems[] = $mform->createElement('text', $newtitleid, '', array('size' => 10));
+                $formelems[] = $mform->createElement('group', $titlegroupelementid, '', $titleelems);
+
+                $groupelems = array();
+                $groupelems[] = $mform->createElement('static', 'labelgroup', '', 'Group');
+                $groupelems[] = $mform->createElement('select', $groupid, '', $groups, array('size' => 5));
+                $formelems[] = $mform->createElement('group', $groupgroupelementid, '', $groupelems);
+
+                $formelems[] = $mform->createElement('static', 'labelsize', '', 'Size');
+                $formelems[] = $mform->createElement('text', $sizeid, '', array('size' => 5));
+                $mform->setType($createnewid, PARAM_INT);
+                $mform->setType($newtitleid, PARAM_TEXT);
+                $mform->setType($groupid, PARAM_TEXT);
+                $mform->setType($sizeid, PARAM_INT);
+                if ($group) {
+                    $mform->setDefault($groupid, $group->name);
+                } else {
+                    $mform->setDefault($newtitleid, $choice->title);
+                    $mform->setDefault($createnewid, true);
+                }
+                $mform->setDefault($sizeid, $mapping->get('maxsize'));
+
+                $mform->addGroup($formelems, 'groupname', 'Test', '', false);
+                $mform->disabledIf($newtitleid, $createnewid, 'notchecked');
+                $mform->disabledIf($groupid, $createnewid, 'checked');
+                $mform->hideIf($titlegroupelementid, $createnewid, 'notchecked');
+                $mform->hideIf($groupgroupelementid, $createnewid, 'checked');
             }
         }
 
