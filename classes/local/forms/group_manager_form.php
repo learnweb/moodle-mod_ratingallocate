@@ -46,14 +46,15 @@ class group_manager_form extends \moodleform {
      */
     public function __construct($url, \ratingallocate $ratingallocate) {
         $this->ratingallocate = $ratingallocate;
-        parent::__construct($url);
+        $url->params(array("action" => ACTION_ALLOCATION_TO_GROUPING));
+        parent::__construct($url->out(false));
     }
 
     /**
      * Defines forms elements
      */
     public function definition() {
-        global $COURSE, $OUTPUT;
+        global $COURSE;
         $mform = $this->_form;
 
         $mform->addElement('hidden', 'ratingallocateid'); // Save the record's id.
@@ -84,8 +85,8 @@ class group_manager_form extends \moodleform {
                 $group = groups_get_group($mapping->get('groupid'));
                 $formelems = array();
                 $createnewid = 'mapping_new_' . $mapping->get('id');
-                $newtitleid = 'mapping_title_' . $mapping->get('id');
-                $groupid = 'mapping_group_' . $mapping->get('id');
+                $newtitleid = 'title';
+                $groupid = 'group';
                 $sizeid = 'mapping_size_' . $mapping->get('id');
                 $titlegroupelementid = 'titleelem_' . $mapping->get('id');
                 $groupgroupelementid = 'groupelem_' . $mapping->get('id');
@@ -103,7 +104,8 @@ class group_manager_form extends \moodleform {
                 $groupelems = array();
                 $groupelems[] = $mform->createElement('static', 'labelgroup', '',
                     get_string('group_label_group_form', ratingallocate_MOD_NAME));
-                $groupelems[] = $mform->createElement('select', $groupid, '', $groups, array('size' => 5));
+                $groupselect = $mform->createElement('select', $groupid, '', $groups, array('size' => 5));
+                $groupelems[] = $groupselect;
                 $formelems[] = $mform->createElement('group', $groupgroupelementid, '', $groupelems);
 
                 $formelems[] = $mform->createElement('static', 'labelsize', '',
@@ -114,7 +116,7 @@ class group_manager_form extends \moodleform {
                 $mform->setType($groupid, PARAM_TEXT);
                 $mform->setType($sizeid, PARAM_INT);
                 if ($group) {
-                    $mform->setDefault($groupid, $group->name);
+                    $groupselect->setSelected($group->id);
                 } else {
                     $mform->setDefault($newtitleid, $choice->title);
                     $mform->setDefault($createnewid, true);
@@ -124,8 +126,8 @@ class group_manager_form extends \moodleform {
                 $mform->addGroup($formelems, 'groupname',
                     get_string('mapping_label_group_form', ratingallocate_MOD_NAME),
                     '', false);
-                $mform->disabledIf($newtitleid, $createnewid, 'notchecked');
-                $mform->disabledIf($groupid, $createnewid, 'checked');
+                $mform->disabledIf($titlegroupelementid, $createnewid, 'notchecked');
+                $mform->disabledIf($groupgroupelementid, $createnewid, 'checked');
                 $mform->hideIf($titlegroupelementid, $createnewid, 'notchecked');
                 $mform->hideIf($groupgroupelementid, $createnewid, 'checked');
             }

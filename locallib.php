@@ -585,23 +585,9 @@ class ratingallocate {
                 if (!$mform->is_cancelled()) {
                     /* @var mod_ratingallocate_renderer */
                     $renderer = $this->get_renderer();
-                    $status = $this->get_status();
-                    if ($status === self::DISTRIBUTION_STATUS_TOO_EARLY ||
-                        $status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS
-                    ) {
-                        $renderer->add_notification(
-                            get_string('modify_allocation_group_desc_' . $status, ratingallocate_MOD_NAME));
-                    } else {
-                        $allocationdata = optional_param_array('allocdata', array(), PARAM_INT);
-                        if ($userdata = optional_param_array('userdata', null, PARAM_INT)) {
-                            //$this->save_manual_allocation_form($allocationdata, $userdata);
-                            $renderer->add_notification(get_string('manual_allocation_saved',
-                                ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
-                        } else {
-                            $renderer->add_notification(get_string('manual_allocation_nothing_to_be_saved',
-                                ratingallocate_MOD_NAME), self::NOTIFY_MESSAGE);
-                        }
-                    }
+                    $this->save_group_manager_form($data);
+                        $renderer->add_notification(get_string('manual_allocation_saved',
+                            ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
                 } else {
                     return $this->process_default();
                 }
@@ -1282,6 +1268,41 @@ class ratingallocate {
             // Logging.
             $event = \mod_ratingallocate\event\manual_allocation_saved::create_simple(
                     context_course::instance($this->course->id), $this->ratingallocateid);
+            $event->trigger();
+
+            $transaction->allow_commit();
+        } catch (Exception $e) {
+            if (isset($transaction)) {
+                $transaction->rollback($e);
+            }
+        }
+    }
+
+    public function save_group_manager_form($data) {
+        try {
+            $transaction = $this->db->start_delegated_transaction();
+
+            $allmappings = group_mapping::get_records_by_ratingallocate_id($this->ratingallocateid);
+
+            foreach ($allmappings as $id => $mapping) {
+                if (property_exists($data, 'mapping_new_' . $id)) {
+                    $newgroup = new stdClass();
+                    $newgroup->courseid = $this->course->id;
+                    $newgroup->name = $data->{'titleelem_'. $id}['title'];
+                    $newgroup->description = '';
+                    $newgroup->id = groups_create_group($newgroup);
+                    $mapping->set('groupid', $newgroup->id);
+                } else if (property_exists($data, 'groupelem_' . $id)) {
+                        $mapping->set('groupid', $data->{'groupelem_' . $id}['group']);
+                }
+                if (property_exists($data, 'mapping_size_' . $id)) {
+                    $mapping->set('maxsize', $data->{'mapping_size_' . $id});
+                }
+                $mapping->save();
+            }
+            // Logging.
+            $event = \mod_ratingallocate\event\group_mappings_saved::create_simple(
+                context_course::instance($this->course->id), $this->ratingallocateid);
             $event->trigger();
 
             $transaction->allow_commit();

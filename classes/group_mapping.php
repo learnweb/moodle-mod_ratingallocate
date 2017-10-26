@@ -58,17 +58,14 @@ class group_mapping extends \core\persistent {
 
     /**
      * Return the mapping of moodle groups to ratingallocate choices
-     * @param int id of the ratingallocate instance.
-     * @return array or groupids to choiceids.
+     * @param int $ratingallocateid id of the ratingallocate instance.
+     * @return \core\persistent[] or groupids to choiceids.
      */
     public static function get_records_by_ratingallocate_id($ratingallocateid) {
-        global $DB;
-        $sql = 'SELECT g.id, g.groupid, g.choiceid
+        $sql = 'choiceid in (SELECT c.id
                 FROM {ratingallocate_choices} c
-                JOIN {ratingallocate_groups} g
-                ON c.id = g.choiceid
-                WHERE c.ratingallocateid = :ratingallocateid';
+                WHERE c.ratingallocateid = :ratingallocateid)';
 
-        return $DB->get_records_sql($sql, array("ratingallocateid" => $ratingallocateid));
+        return group_mapping::get_records_select($sql, array("ratingallocateid" => $ratingallocateid));
     }
 }
