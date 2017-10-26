@@ -130,7 +130,19 @@ class group_manager_form extends \moodleform {
                 $mform->hideIf($groupgroupelementid, $createnewid, 'checked');
             }
         }
+        $this->add_buttons();
+    }
 
+    public function add_buttons() {
+        $mform =& $this->_form;
+
+        $buttonarray = array();
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+        $buttonarray[] = &$mform->createElement('submit', 'generategroups',
+                get_string('create_moodle_groups', ratingallocate_MOD_NAME));
+        $buttonarray[] = &$mform->createElement('cancel', '', 'back');
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->closeHeaderBefore('buttonar');
     }
 
     /**
