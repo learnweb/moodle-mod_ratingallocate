@@ -218,6 +218,11 @@ $string['choice_table_tools'] = 'Edit';
 
 // <editor-fold defaultstate="collapsed" desc="Form to edit group mappings">
 $string['choice_group_mapping_header'] = 'Edit group mappings';
+$string['size_label_group_form'] = 'Size';
+$string['createnew_label_group_form'] = 'Create new group?';
+$string['newtitle_label_group_form'] = 'New group name';
+$string['group_label_group_form'] = 'Group';
+$string['mapping_label_group_form'] = 'Mapping';
 // </editor-fold>
 
 $string['is_published'] = 'Published';
