@@ -90,20 +90,24 @@ class group_manager_form extends \moodleform {
                 $titlegroupelementid = 'titleelem_' . $mapping->get('id');
                 $groupgroupelementid = 'groupelem_' . $mapping->get('id');
 
-                $formelems[] = $mform->createElement('static', 'labelcreatenew', '', 'Create new');
+                $formelems[] = $mform->createElement('static', 'labelcreatenew', '',
+                    get_string('createnew_label_group_form', ratingallocate_MOD_NAME));
                 $formelems[] = $mform->createElement('checkbox', $createnewid, '');
 
                 $titleelems = array();
-                $titleelems[] = $mform->createElement('static', 'labeltitle',  '', 'New Group name');
+                $titleelems[] = $mform->createElement('static', 'labeltitle',  '',
+                    get_string('newtitle_label_group_form', ratingallocate_MOD_NAME));
                 $titleelems[] = $mform->createElement('text', $newtitleid, '', array('size' => 10));
                 $formelems[] = $mform->createElement('group', $titlegroupelementid, '', $titleelems);
 
                 $groupelems = array();
-                $groupelems[] = $mform->createElement('static', 'labelgroup', '', 'Group');
+                $groupelems[] = $mform->createElement('static', 'labelgroup', '',
+                    get_string('group_label_group_form', ratingallocate_MOD_NAME));
                 $groupelems[] = $mform->createElement('select', $groupid, '', $groups, array('size' => 5));
                 $formelems[] = $mform->createElement('group', $groupgroupelementid, '', $groupelems);
 
-                $formelems[] = $mform->createElement('static', 'labelsize', '', 'Size');
+                $formelems[] = $mform->createElement('static', 'labelsize', '',
+                    get_string('size_label_group_form', ratingallocate_MOD_NAME));
                 $formelems[] = $mform->createElement('text', $sizeid, '', array('size' => 5));
                 $mform->setType($createnewid, PARAM_INT);
                 $mform->setType($newtitleid, PARAM_TEXT);
@@ -117,7 +121,9 @@ class group_manager_form extends \moodleform {
                 }
                 $mform->setDefault($sizeid, $mapping->get('maxsize'));
 
-                $mform->addGroup($formelems, 'groupname', 'Test', '', false);
+                $mform->addGroup($formelems, 'groupname',
+                    get_string('mapping_label_group_form', ratingallocate_MOD_NAME),
+                    '', false);
                 $mform->disabledIf($newtitleid, $createnewid, 'notchecked');
                 $mform->disabledIf($groupid, $createnewid, 'checked');
                 $mform->hideIf($titlegroupelementid, $createnewid, 'notchecked');
