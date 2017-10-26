@@ -216,6 +216,10 @@ $string['choice_table_active'] = 'Active';
 $string['choice_table_tools'] = 'Edit';
 // </editor-fold>
 
+// <editor-fold defaultstate="collapsed" desc="Form to edit group mappings">
+$string['choice_group_mapping_header'] = 'Edit group mappings';
+// </editor-fold>
+
 $string['is_published'] = 'Published';
 
 $string['strategy_settings_label'] = 'Designation for "{$a}"';

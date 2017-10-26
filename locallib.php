@@ -612,7 +612,7 @@ class ratingallocate {
                     // reinitialize the form to refresh the checked radiobuttons.
                 }
             }
-            $output .= $OUTPUT->heading(get_string('choice_group_mapping_form', ratingallocate_MOD_NAME), 2);
+            $output .= $OUTPUT->heading(get_string('choice_group_mapping_header', ratingallocate_MOD_NAME), 2);
 
             $output .= $mform->to_html();
             $this->showinfo = false;
