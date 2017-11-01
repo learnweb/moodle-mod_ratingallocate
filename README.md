@@ -70,8 +70,8 @@ In addition to all stable branches the version is also tested against the master
 
 Algorithm
 =========
-This module uses a modified Edmonds-karp algorithm to solve the minimum-cost flow problem. Augmenting paths are found using Bellman-Ford, but the user ratings are multiplied with -1 first.
-
-Worst-Case complexity is O(m^2n^2) with m,n being number of edges (#users+#choices+#ratings_users_gave) and nodes (2+#users+#choices) in the graph.
+Using the Edmonds-Karp algorithm the Worst-Case complexity is O(m^2n^2) with m,n being number of edges (#users+#choices+#ratings_users_gave) and nodes (2+#users+#choices) in the graph.
 Distributing 500 users to 21 choices takes around 11sec.
+
+Measurements for using the LP solver or Ford-Fulkerson are not available.
 
