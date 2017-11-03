@@ -863,11 +863,14 @@ class ratingallocate {
             $timestart = microtime(true);
             $distributor->distribute_users($this);
             $timeneeded = (microtime(true) - $timestart);
-        }
-        finally {
+
             // Set algorithm status to finished.
             $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::finished;
             $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+        }
+        catch(\exception $e) {
+            $this->set_algorithm_failed();
+            throw $e;
         }
 
         return $timeneeded;
