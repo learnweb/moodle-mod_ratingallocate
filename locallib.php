@@ -200,7 +200,7 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             /* @var mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
-            if ($this->get_algorithm_status() === \mod_ratingallocate\algorithm_status::running) {
+            /*if ($this->get_algorithm_status() === \mod_ratingallocate\algorithm_status::running) {
                 // Don't run, if an instance is already running.
                 $renderer->add_notification(get_string('algorithm_already_running', ratingallocate_MOD_NAME));
             } else if ($this->ratingallocate->runalgorithmbycron === "1" &&
@@ -208,7 +208,7 @@ class ratingallocate {
             ) {
                 // Don't run, if the cron has not started yet, but is set as priority.
                 $renderer->add_notification(get_string('algorithm_scheduled_for_cron', ratingallocate_MOD_NAME));
-            } else {
+                } else*/ if(true) {
                 $this->origdbrecord->{this_db\ratingallocate::ALGORITHMSTATUS} = \mod_ratingallocate\algorithm_status::running;
                 $DB->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
                 // Try to get some more memory, 500 users in 10 groups take about 15mb.
@@ -832,14 +832,14 @@ class ratingallocate {
      */
     public function get_solver() {
         global $CFG;
-        
+
         switch($CFG->ratingallocate_solver) {
         case 'lp':
             return new solver_lp();
-            
+
         case 'ford_fulkerson':
             return new solver_ford_fulkerson();
-            
+
         case 'edmonds_karp':
         default: return new solver_edmonds_karp();
         }
@@ -849,23 +849,26 @@ class ratingallocate {
      * distribution of choices for each user
      * take care about max_execution_time and memory_limit
      */
-    public function distribute_choices() {        
+    public function distribute_choices() {
         require_capability('mod/ratingallocate:start_distribution', $this->context);
+
+        $distributor = $this->get_solver();
 
         // Set algorithm status to running.
         $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::running;
         $this->origdbrecord->algorithmstarttime = time();
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
-        
-        $distributor = $this->get_solver();
-        
-        $timestart = microtime(true);
-        $distributor->distribute_users($this);
-        $timeneeded = (microtime(true) - $timestart);
 
-        // Set algorithm status to finished.
-        $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::finished;
-        $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+        try {
+            $timestart = microtime(true);
+            $distributor->distribute_users($this);
+            $timeneeded = (microtime(true) - $timestart);
+        }
+        finally {
+            // Set algorithm status to finished.
+            $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::finished;
+            $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+        }
 
         return $timeneeded;
     }
