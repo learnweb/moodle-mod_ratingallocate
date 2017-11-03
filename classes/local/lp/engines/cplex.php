@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace ratingallocate\lp\engines;
+namespace mod_ratingallocate\local\lp\engines;
 
-class cplex extends \ratingallocate\lp\engine {
+class cplex extends \mod_ratingallocate\local\lp\engine {
 
     /**
      * Returns the command that gets executed
      *
      * @param $input_file Name of the input file
      *
-     * @returns Command as a string 
+     * @returns Command as a string
      */
     public function get_command($input_file) {
         return "cplex -c \"read $input_file\" \"optimize\" \"display solution variables -\"";
@@ -42,14 +42,14 @@ class cplex extends \ratingallocate\lp\engine {
 
         foreach(array_slice(explode("\n", substr($content, strpos($content, "Solution Value"))), 1) as $variable) {
             $parts = explode(' ', preg_replace('!\s+!', ' ', $variable));
-            
+
             if(count($parts) > 2)
                 break;
-           
+
             $solution[$parts[0]] = intval($parts[1]);
         }
-        
+
         return $solution;
     }
-    
+
 }

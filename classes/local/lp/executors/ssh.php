@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace ratingallocate\lp\executors;
+namespace mod_ratingallocate\local\lp\executors;
 
-class ssh extends \ratingallocate\lp\executor {
+class ssh extends \mod_ratingallocate\local\lp\executor {
 
-    private $connection = null;    
+    private $connection = null;
     private $local_file = null;
     private $remote_path = '';
 
@@ -33,7 +33,7 @@ class ssh extends \ratingallocate\lp\executor {
      */
     public function __construct($engine = null, $connection = null, $remote_path = '') {
         parent::__construct($engine);
-        
+
         $this->local_file = tmpfile();
 
         $this->set_connection($connection);
@@ -48,7 +48,7 @@ class ssh extends \ratingallocate\lp\executor {
     public function set_connection($connection) {
         $this->connection = $connection;
     }
-    
+
     /**
      * Returns the SSH connection
      *
@@ -66,7 +66,7 @@ class ssh extends \ratingallocate\lp\executor {
     public function get_local_file() {
         return $this->local_file;
     }
-    
+
     /**
      * Returns the path of the local file
      *
@@ -84,7 +84,7 @@ class ssh extends \ratingallocate\lp\executor {
     public function set_remote_path($remote_path) {
         $this->remote_path = $remote_path;
     }
-    
+
     /**
      * Returns the remote path
      *
@@ -109,5 +109,5 @@ class ssh extends \ratingallocate\lp\executor {
         $this->get_connection()->send_file($this->get_local_path(), $this->get_remote_path());
         return $this->get_connection()->execute($this->get_engine()->get_command($this->get_remote_path()));
     }
-    
+
 }

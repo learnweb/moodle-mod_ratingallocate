@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace ratingallocate\lp\executors\webservice;
+namespace mod_ratingallocate\local\lp\executors\webservice;
 
-class connector extends \ratingallocate\lp\executor {
+class connector extends \mod_ratingallocate\local\lp\executor {
 
     private $uri = '';
     private $secret = null;
-    
+
     /**
      * Creates a webservice connector
      */
@@ -38,7 +38,7 @@ class connector extends \ratingallocate\lp\executor {
     public function set_secret($secret) {
         $this->secret = $secret;
     }
-    
+
     /**
      * Returns the webservices secret
      *
@@ -56,7 +56,7 @@ class connector extends \ratingallocate\lp\executor {
     public function set_uri($uri) {
         $this->uri = $uri;
     }
-    
+
     /**
      * Returns the uri to the backend
      *
@@ -84,21 +84,21 @@ class connector extends \ratingallocate\lp\executor {
                                     CURLOPT_RETURNTRANSFER => true,
                                     CURLOPT_POSTFIELDS => ['lp_file' => $lp_file,
                                                            'secret' => $this->get_secret()]]);
-        
+
         $result = curl_exec($handle);
 
         if(($status = curl_getinfo($handle, CURLINFO_HTTP_CODE)) != 200) {
             curl_close($handle);
             throw new \exception("Could not retrieve solution (HTTP Status $status)!");
         }
-        
+
         curl_close($handle);
-        
+
         $stream = fopen('php://memory', 'r+');
         fwrite($stream, $result);
         rewind($stream);
-        
+
         return $stream;
     }
-    
+
 }

@@ -14,49 +14,49 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace ratingallocate;
+namespace mod_ratingallocate\local;
 
 class utility {
 
     public static function transform_from_users_and_groups($users, $groups) {
         $allocation = array_map(function($x) { return $x->get_id(); }, $groups);
         array_walk($allocation, function(&$x, $y) { $x = []; });
-        
+
         foreach($users as $user)
             if($user->is_choice_satisfied())
                 $allocation[$user->get_assigned_group()->get_id()][] = $user->get_id();
 
         return $allocation;
     }
-    
+
     public static function transform_to_users_and_groups($choices, $ratings) {
         $groups = self::transform_to_groups($choices);
         $users = self::transform_to_users($ratings);
 
         self::transform_user_selection($ratings, $users, $groups);
-        
+
         return [&$users, &$groups];
     }
-    
+
     public static function transform_to_users($ratings) {
         $users = [];
-        
+
         foreach(array_unique(array_map(function($x) { return $x->userid; }, $ratings)) as $id)
-            $users[$id] = new \ratingallocate\user($id);
-        
+            $users[$id] = new \mod_ratingallocate\local\user($id);
+
         return $users;
     }
 
     public static function transform_to_groups($choices) {
         $groups = [];
-    
+
         foreach($choices as $choice)
             if($choice->active)
-                $groups[$choice->id] = new \ratingallocate\group($choice->id, $choice->maxsize);
-        
+                $groups[$choice->id] = new \mod_ratingallocate\local\group($choice->id, $choice->maxsize);
+
         return $groups;
     }
-    
+
     public static function transform_user_selection($ratings, &$users, &$groups) {
         foreach($ratings as $rating)
             if($rating->rating > 0)
@@ -66,19 +66,9 @@ class utility {
     public static function starts_with($string, $word) {
         return substr($string, 0, strlen($word)) === $word;
     }
-    
-    public static function get_configuration($directives) {
-        $configuration = [];
-
-        foreach($directives as $key => $value)
-            if(self::starts_with($key, 'ratingallocate_'))
-                $configuration[str_replace('ratingallocate_', '', $key)] = $value;
-        
-        return $configuration;
-    }
 
     public static function default_for($value, $default) {
         return isset($value) ? $value : $default;
     }
 
-};
+}

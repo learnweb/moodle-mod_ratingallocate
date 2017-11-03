@@ -14,95 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace ratingallocate\ssh;
-
-class authentication {
-    
-    private $username = '';
-    
-    public function __construct($username) {
-        $this->username = $username;
-    }
-    
-    public function set_username($username) {
-        $this->username = $username;
-    }
-
-    public function get_username() {
-        return $this->username;
-    }
-
-    public function authenticate($connection) {
-        return ssh2_auth_none($connection, $this->username);
-    }
-
-};
-
-class password_authentication extends authentication {
-
-    private $password = '';
-    
-    public function __construct($username, $password) {
-        parent::__construct($username);
-        $this->password = $password;
-    }
-
-    public function set_password($password) {
-        $this->password = $password;
-    }
-
-    public function get_password() {
-        return $this->password;
-    }
-    
-    public function authenticate($connection) {
-        return ssh2_auth_password($connection, $this->get_username(), $this->get_password());        
-    }
-
-};
-
-class public_key_authentication extends authentication {
-
-    private $public_key = '';
-    private $private_key = '';
-    private $passphrase = '';
-
-    public function __construct($username, $public_key, $private_key, $passphrase = '') {
-        parent::__construct($username);
-        $this->public_key = $public_key;
-        $this->private_key = $private_key;
-        $this->passphrase = $passphrase;
-    }
-
-    public function set_public_key($public_key) {
-        $this->public_key = $public_key;
-    }
-
-    public function get_public_key() {
-        return $this->public_key;
-    }
-    
-    public function set_private_key($private_key) {
-        $this->private_key = $private_key;
-    }
-
-    public function get_private_key() {
-        return $this->private_key;
-    }
-
-    public function set_passphrase($passphrase) {
-        $this->passphrase = $passphrase;
-    }
-
-    public function get_passphrase() {
-        return $this->passphrase;
-    }
-    
-    public function authenticate($connection) {
-        return ssh2_auth_pubkey_file($connection, $this->get_username(), $this->get_public_key(), $this->get_private_key(), $this->get_passphrase());
-    }
-    
-}
+namespace mod_ratingallocate\local\ssh;
 
 class connection {
 
@@ -111,7 +23,7 @@ class connection {
     private $authentication = null;
 
     private $handle = null;
-    
+
     /**
      * Creates a new SSH connection
      *
@@ -131,7 +43,7 @@ class connection {
 
         if($this->fingerprint && ssh2_fingerprint($this->handle) != $this->fingerprint)
             throw new \exception("Fingerprints do not match!");
-        
+
         if(!$this->handle)
             throw new \exception("Could not connect to ssh server with address {$this->address}!");
 
@@ -147,7 +59,7 @@ class connection {
     public function get_address() {
         return $this->address;
     }
-    
+
     /**
      * Returns the fingerprint of the ssh server
      *
@@ -156,7 +68,7 @@ class connection {
     public function get_fingerprint() {
         return $this->fingerprint;
     }
-    
+
     /**
      * Returns the authentication method of the ssh server
      *
@@ -165,7 +77,7 @@ class connection {
     public function get_authentication() {
         return $this->authentication;
     }
-    
+
     /**
      * Returns the connection handle of the ssh server
      *
@@ -186,13 +98,13 @@ class connection {
      */
     public function execute($command) {
         $stream = \ssh2_exec($this->handle, $command);
-        
+
         if(!$stream)
             throw new \exception("Could not execute the command {$this->command}!");
-        
+
         stream_set_blocking($stream, true);
 
-        return $stream;        
+        return $stream;
     }
 
     /**
@@ -201,7 +113,7 @@ class connection {
      * @param $local_path Local path
      * @param $remote_path Remote path
      *
-     * @throws exception If file was not transmitted successfully     
+     * @throws exception If file was not transmitted successfully
      */
     public function send_file($local_path, $remote_path) {
         if(!ssh2_scp_send($this->handle, $local_path, $remote_path))
@@ -221,4 +133,4 @@ class connection {
             throw new \exception('Error receiving file!');
     }
 
-};
+}

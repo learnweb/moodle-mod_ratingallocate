@@ -14,8 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(__FILE__).'/lp/utility.php');
-require_once(dirname(__FILE__).'/lp/linear_program.php');
-require_once(dirname(__FILE__).'/lp/weighters.php');
-require_once(dirname(__FILE__).'/lp/engines.php');
-require_once(dirname(__FILE__).'/lp/executors.php');
+namespace mod_ratingallocate\local\ssh;
+
+class authentication {
+
+    private $username = '';
+
+    public function __construct($username) {
+        $this->username = $username;
+    }
+
+    public function set_username($username) {
+        $this->username = $username;
+    }
+
+    public function get_username() {
+        return $this->username;
+    }
+
+    public function authenticate($connection) {
+        return ssh2_auth_none($connection, $this->username);
+    }
+
+}

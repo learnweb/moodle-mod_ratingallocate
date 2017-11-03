@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace ratingallocate\lp\weighters;
+namespace mod_ratingallocate\local\lp\weighters;
 
 /**
  * Class which represents a polynomial weighter
  */
-class polynomial_weighter extends \ratingallocate\lp\weighter {
-    
+class polynomial_weighter extends \mod_ratingallocate\local\lp\weighter {
+
     /**
      * Coeefficients, that represent the polynom
      */
@@ -29,7 +29,7 @@ class polynomial_weighter extends \ratingallocate\lp\weighter {
     /**
      * Creates a polynomial weighter
      *
-     * @param $coefficients Coefficients, which reprent the polynom 
+     * @param $coefficients Coefficients, which reprent the polynom
      */
     public function __construct($coefficients) {
         $this->coefficients = array_reverse($coefficients);
@@ -56,10 +56,10 @@ class polynomial_weighter extends \ratingallocate\lp\weighter {
 
         for($i = 0; $i < count($this->coefficients); ++$i)
             $weight += $this->coefficients[$i] * pow($x, $i);
-        
+
         return $weight;
     }
- 
+
     /**
      * Returns the functional representation as a string
      *
@@ -69,19 +69,19 @@ class polynomial_weighter extends \ratingallocate\lp\weighter {
      */
     public function to_string($variable_name = 'x') {
         $string = '';
-        
+
         $coefficients_size = count($this->coefficients);
-        
+
         for($i = 0; $i < $coefficients_size; ++$i) {
             if($this->coefficients[$i] == 0)
                 continue;
-            
+
             if(!empty($string))
                 $string .= '+';
 
             $string .= ($this->coefficients[$i] == 1 ? '' : $this->coefficients[$i].'*') . $variable_name . "^$i";
         }
-        
+
         return $string;
     }
 

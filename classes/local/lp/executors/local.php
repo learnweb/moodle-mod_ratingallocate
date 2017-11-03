@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace ratingallocate\lp\executors;
+namespace mod_ratingallocate\local\lp\executors;
 
-class local extends \ratingallocate\lp\executor {
+class local extends \mod_ratingallocate\local\lp\executor {
 
     private $local_path = '';
 
@@ -42,7 +42,7 @@ class local extends \ratingallocate\lp\executor {
     public function set_local_path($local_path) {
         $this->local_path = $local_path;
     }
-    
+
     /**
      * Returns the local path
      *
@@ -64,8 +64,8 @@ class local extends \ratingallocate\lp\executor {
         $local_file = fopen($this->get_local_path(), 'w+');
         fwrite($local_file, $lp_file);
         fseek($local_file, 0);
-        
+
         return popen($this->get_engine()->get_command($this->get_local_path()), 'r');
     }
-    
+
 }

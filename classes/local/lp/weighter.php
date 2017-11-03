@@ -14,25 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace ratingallocate\lp;
+namespace mod_ratingallocate\local\lp;
 
 /**
- * Abstract class which defines abstract methods for weighter 
+ * Abstract class which defines abstract methods for weighter
  */
 abstract class weighter {
-    
+
     /**
      * Returns an array of available weighters
-     * 
+     *
      * @return Array with names of available weighters
      */
     public static function get_weighters() {
     	$weighters = array_diff(scandir(dirname(__FILE__).'/weighters'), array('.', '..'));
-    	
+
     	foreach($weighters as &$weighter)
 			$weighter = str_ireplace('.php', '', $weighter);
-    	
-    	return array_values($weighters); 
+
+    	return array_values($weighters);
     }
 
     /**
@@ -43,7 +43,7 @@ abstract class weighter {
      * @return Function value for x
      */
     abstract public function apply($x);
-    
+
     /**
      * Returns the functional representation as a string
      *

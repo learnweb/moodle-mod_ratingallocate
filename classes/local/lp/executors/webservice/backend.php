@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace ratingallocate\lp\executors\webservice;
+namespace mod_ratingallocate\local\lp\executors\webservice;
 
 class backend
 {
     private $engine = null;
     private $local_path = '';
     private $secret = null;
-    
+
     /**
      * Creates a webservice backend
      *
@@ -49,12 +49,12 @@ class backend
     /**
      * Returns the engine used by the backend
      *
-     * @return Engine     
+     * @return Engine
      */
     public function get_engine() {
         return $this->engine;
     }
-    
+
     /**
      * Sets the webservices secret
      *
@@ -63,7 +63,7 @@ class backend
     public function set_secret($secret) {
         $this->secret = $secret;
     }
-    
+
     /**
      * Returns the webservice secret
      *
@@ -81,7 +81,7 @@ class backend
     public function set_local_path($local_path) {
         $this->local_path = $local_path;
     }
-    
+
     /**
      * Returns the local path
      *
@@ -90,7 +90,7 @@ class backend
     public function get_local_path() {
         return $this->local_path;
     }
-    
+
     /**
      * Handles an incomming request
      */
@@ -98,13 +98,13 @@ class backend
         if(!$this->verify_secret()) {
             http_response_code(401);
             echo 'Unauthorized';
-            
+
             return;
         }
-        
+
         if(isset($_POST['lp_file'])) {
-            $executor = new \ratingallocate\lp\executors\local($this->get_engine(), $this->get_local_path());
-            
+            $executor = new \mod_ratingallocate\lp\executors\local($this->get_engine(), $this->get_local_path());
+
             fpassthru($executor->solve($_POST['lp_file']));
         }
     }
@@ -117,8 +117,8 @@ class backend
     private function verify_secret() {
         if($this->get_secret() === null)
             return true;
-        
+
         return $this->get_secret() === $_POST['secret'];
     }
-    
+
 }

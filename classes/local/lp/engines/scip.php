@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace ratingallocate\lp\engines;
+namespace mod_ratingallocate\local\lp\engines;
 
-class scip extends \ratingallocate\lp\engine {
-    
+class scip extends \mod_ratingallocate\local\lp\engine {
+
     /**
      * Returns the command that gets executed
      *
      * @param $input_file Name of the input file
      *
-     * @returns Command as a string 
+     * @returns Command as a string
      */
     public function get_command($input_file) {
         return "scip -f $input_file";
@@ -39,16 +39,16 @@ class scip extends \ratingallocate\lp\engine {
     public function read($stream) {
         $content = stream_get_contents($stream);
         $solution = [];
-        
+
         foreach(array_slice(explode("\n", substr($content, strpos($content, 'objective value:'))), 1) as $variable) {
             $parts = explode(' ', preg_replace('!\s+!', ' ', $variable));
 
             if(empty($parts[0]))
                 break;
-            
+
             $solution[$parts[0]] = $parts[1];
         }
-        
+
         return $solution;
     }
 

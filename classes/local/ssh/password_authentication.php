@@ -14,6 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(__FILE__).'/engine.php');
-require_once(dirname(__FILE__).'/engines/cplex.php');
-require_once(dirname(__FILE__).'/engines/scip.php');
+namespace mod_ratingallocate\local\ssh;
+
+class password_authentication extends authentication {
+
+    private $password = '';
+
+    public function __construct($username, $password) {
+        parent::__construct($username);
+        $this->password = $password;
+    }
+
+    public function set_password($password) {
+        $this->password = $password;
+    }
+
+    public function get_password() {
+        return $this->password;
+    }
+
+    public function authenticate($connection) {
+        return ssh2_auth_password($connection, $this->get_username(), $this->get_password());
+    }
+
+}

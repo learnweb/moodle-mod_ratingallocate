@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace ratingallocate\lp;
+namespace mod_ratingallocate\local\lp;
 
 abstract class executor {
 
@@ -37,7 +37,7 @@ abstract class executor {
     public function set_engine($engine) {
         $this->engine = $engine;
     }
-    
+
     /**
      * Returns the engine
      *
@@ -46,7 +46,7 @@ abstract class executor {
     public function get_engine() {
         return $this->engine;
     }
-    
+
     /**
      * Runs the distribution with user and group objects and assigns users to their selected groups
      *
@@ -57,9 +57,9 @@ abstract class executor {
     public function solve_objects(&$users, &$groups, $weighter) {
         $values = $this->solve_linear_program(utility::create_linear_program($users, $groups, $weighter));
 
-        \ratingallocate\lp\utility::assign_groups($values, $users, $groups);
+        utility::assign_groups($values, $users, $groups);
     }
-    
+
     /**
      * Runs the distribution with a linear program and returns variables and their values
      *
@@ -75,7 +75,7 @@ abstract class executor {
     /**
      * Runs the distribution with a lp file and returns variables and their values
      *
-     * @param $linear_program LP file that gets solved
+     * @param $linear_program Linear program that gets solved
      * @param $executor Executor that is used
      *
      * @return Array of variables and their value
@@ -84,6 +84,13 @@ abstract class executor {
         return $this->get_engine()->read($this->solve($lp_file));
     }
 
+    /**
+     * Solves the lp file
+     *
+     * @param $lp_file Content of the lp file
+     *
+     * @return Array of variables and their value
+     */
     abstract public function solve($lp_file);
 
 }

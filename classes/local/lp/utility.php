@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace ratingallocate\lp;
+namespace mod_ratingallocate\local\lp;
 
 class utility
 {
-    
+
     /**
      * Translates a user and a group object to a name
      *
@@ -28,9 +28,9 @@ class utility
      * @return Name
      */
     public static function translate_to_name($user, $group) {
-        return 'x_'.$user->get_id().'_'.$group->get_id(); 
+        return 'x_'.$user->get_id().'_'.$group->get_id();
     }
-    
+
     /**
      * Translate a name to a user and a group object
      *
@@ -38,10 +38,10 @@ class utility
      * @param $users Array of users
      * @param $groups Array of groups
      *
-     * @return Array containing translated user as the first element and translated group as the second 
+     * @return Array containing translated user as the first element and translated group as the second
      */
     public static function translate_from_name($name, $users, $groups) {
-        $explode = explode('_', $name);        
+        $explode = explode('_', $name);
         return [$users[$explode[1]], $groups[$explode[2]]];
     }
 
@@ -51,26 +51,26 @@ class utility
      * @param $linear_program Linear program the objective function is added to
      * @param $users Array of users
      * @param $groups Array of groups
-     * @param $weighter Weighter object for the weighting process 
+     * @param $weighter Weighter object for the weighting process
      */
     public static function add_objective_function(&$linear_program, $users, $groups, $weighter) {
         $objective_function = '';
-        
+
         foreach($users as $user) {
             foreach($groups as $group) {
                 if(!empty($objective_function))
                     $objective_function .= '+';
-                
+
                 $weighting = $weighter->apply($user->get_priority($group));
-                
+
                 if($weighting == 1)
                     $objective_function .= self::translate_to_name($user, $group);
                 else if($weighting != 0)
                     $objective_function .= $weighting.'*'.self::translate_to_name($user, $group);
             }
         }
-            
-        $linear_program->set_objective(\ratingallocate\lp\linear_program::MAXIMIZE, $objective_function);
+
+        $linear_program->set_objective(\mod_ratingallocate\local\lp\linear_program::MAXIMIZE, $objective_function);
     }
 
     /**
@@ -83,18 +83,18 @@ class utility
     public static function add_constraints(&$linear_program, $users, $groups) {
         foreach($groups as $group) {
             $lhs = '';
-            
+
             foreach($users as $user) {
                 if(!empty($lhs))
                     $lhs .= '+';
-                
-                $lhs .= self::translate_to_name($user, $group); 
+
+                $lhs .= self::translate_to_name($user, $group);
             }
-            
+
             $linear_program->add_constraint("$lhs <= {$group->get_limit()}");
         }
     }
-    
+
     /**
      * Adds bounds to the linear program
      *
@@ -106,19 +106,19 @@ class utility
         foreach($users as $user)
             foreach($groups as $group)
                 $linear_program->add_bound('0 <= '.self::translate_to_name($user, $group));
-        
+
         foreach($users as $user) {
             $lhs = '';
 
             foreach($groups as $group) {
                 if(!empty($lhs))
                     $lhs .= '+';
-                
+
                 $lhs .= self::translate_to_name($user, $group);
             }
-            
+
             $linear_program->add_constraint("$lhs = 1");
-        }        
+        }
     }
 
     /**
@@ -140,11 +140,11 @@ class utility
      * @param $groups Array of groups
      * @param $users Array of $users
      * @param $weighter Weighter object
-     * 
-     * @return Fully configured linear program 
+     *
+     * @return Fully configured linear program
      */
     public static function create_linear_program(&$users, &$groups, $weighter) {
-        $linear_program = new \ratingallocate\lp\linear_program();
+        $linear_program = new \mod_ratingallocate\local\lp\linear_program();
 
         self::add_objective_function($linear_program, $users, $groups, $weighter);
         self::add_constraints($linear_program, $users, $groups);
@@ -156,7 +156,7 @@ class utility
 
     /**
      * Assigns a group determined by $solution to each user
-     * 
+     *
      * @param $solution Array of solutions
      * @param $users Array of users
      * @param $groups Array of groups
