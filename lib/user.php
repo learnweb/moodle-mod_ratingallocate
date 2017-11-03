@@ -17,7 +17,7 @@
 namespace ratingallocate;
 
 class user {
-    
+
 	private $id = -1;
 	private $selected_groups = [];
     private $assigned_group = null;
@@ -32,7 +32,7 @@ class user {
 		$this->id = $id;
         $this->set_selected_groups($selected_groups);
 	}
-	
+
     /**
      * Returns the id of the user
      *
@@ -55,7 +55,7 @@ class user {
     /**
      * Returns selected groups
      *
-     * @return Array of selected groups 
+     * @return Array of selected groups
      */
 	public function get_selected_groups() {
 		return $this->selected_groups;
@@ -75,12 +75,10 @@ class user {
 
         $this->selected_groups[$group->get_id()] = ['group' => &$group, 'priority' => 0];
 
-        try
-        {
+        try {
             $this->set_priority($group, $priority);
         }
-        catch(exception $e)
-        {
+        catch(exception $e) {
             $this->remove_selected_group($group);
             throw $e;
         }
@@ -132,10 +130,10 @@ class user {
 
         if($priority == 0)
             throw new \exception('Cannot set priority to zero!');
-        
+
         $this->selected_groups[$group->get_id()]['priority'] = $priority;
     }
-    
+
     /**
      * Returns the priority for the given group, which is 0 if the group was not selected by the user
      *
@@ -149,7 +147,7 @@ class user {
 
         return $this->selected_groups[$group->get_id()]['priority'];
     }
-    
+
     /**
      * Returns the assigned group
      *
@@ -167,13 +165,13 @@ class user {
      */
     public function set_assigned_group(&$group) {
         if($this->assigned_group)
-            $this->assigned_group->remove_assigned_user($this);  
+            $this->assigned_group->remove_assigned_user($this);
 
         $this->assigned_group = null;
-    
+
         if($group) {
             $group->add_assigned_user($this);
-            $this->assigned_group = &$group;
+            $this->assigned_group = $group;
         }
     }
 
@@ -195,8 +193,8 @@ class user {
     public function get_choice_satisfaction() {
         if(!$this->is_choice_satisfied())
             return 0;
-        
+
         return $this->get_priority($this->assigned_group) / max(array_map(function($x) { return $x['priority']; }, $this->selected_groups));
     }
-    
+
 }
