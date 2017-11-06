@@ -43,7 +43,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('ratingallocate_uri', t('uri'), t('uri_description'), 'http://localhost/moodle-mod_ratingallocate/webservice', PARAM_TEXT));
 
     $settings->add(new admin_setting_heading('ratingallocate_ssh', t('ssh'), t('ssh_description')));
-    $settings->add(new admin_setting_configtext('ratingallocate_ssh_hostname', t('ssh_hostname'), t('ssh_hostname_description'), null, PARAM_TEXT));
+    $settings->add(new admin_setting_configtext('ratingallocate_ssh_address', t('ssh_address'), t('ssh_address_description'), null, PARAM_TEXT));
     $settings->add(new admin_setting_configtext('ratingallocate_ssh_username', t('ssh_username'), t('ssh_username_description'), null, PARAM_TEXT));
     $settings->add(new admin_setting_configtext('ratingallocate_ssh_password', t('ssh_password'), t('ssh_password_description'), null, PARAM_TEXT));
     $settings->add(new admin_setting_configtext('ratingallocate_remote_path', t('remote_path'), t('remote_path_description'), '/tmp/file.lp', PARAM_TEXT));

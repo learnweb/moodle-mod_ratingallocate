@@ -41,7 +41,7 @@ class solver_lp extends distributor {
     public function get_ssh_connection() {
         global $CFG;
 
-        return new \mod_ratingallocate\local\ssh\connection($CFG->ratingallocate_ssh_hostname,
+        return new \mod_ratingallocate\local\ssh\connection($CFG->ratingallocate_ssh_address,
                                                             $this->get_ssh_authentication());
     }
 
