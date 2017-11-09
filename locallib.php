@@ -1390,6 +1390,52 @@ class ratingallocate {
     }
 
     /**
+     * Returns an array of settigs for the used strategy
+     */
+    public function get_settingfields() {
+        $strategy = $this->get_strategy_class();
+        $array = $strategy->get_dynamic_settingfields();
+
+        if(empty($array))
+            $array = $strategy->get_static_settingfields();
+
+        if(empty($array))
+            $array = $strategy->get_default_settingfields();
+
+        return $array;
+    }
+
+    /**
+     * Returns an array of available choices
+     */
+    public function get_available_ratings() {
+        return array_filter($this->get_settingfields(), function($value, $key) {
+            return is_numeric($key);
+        }, ARRAY_FILTER_USE_BOTH);
+    }
+
+    /**
+     * Another internal helper to populate the database with random data
+     */
+    public function add_test_data($overwrite = true) {
+        $transaction = $this->db->start_delegated_transaction();
+        $ratings = array_keys($this->get_available_ratings());
+
+        foreach(get_enrolled_users($this->context) as $user) {
+            foreach($this->get_choices() as $choice) {
+                $rating = new stdclass();
+                $rating->userid = $user->id;
+                $rating->choiceid = $choice->id;
+                $rating->rating = $ratings[array_rand($ratings)];
+
+                $this->db->insert_record('ratingallocate_ratings', $rating);
+            }
+        }
+
+        $transaction->allow_commit();
+    }
+
+    /**
      * Lazy load the page renderer and expose the renderer to plugin.
      *
      * @return mod_ratingallocate_renderer
