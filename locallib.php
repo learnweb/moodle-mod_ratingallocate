@@ -846,11 +846,33 @@ class ratingallocate {
     }
 
     /**
+     * Returns the total choice size
+     *
+     * @return Total choice size
+     */
+    public function get_total_choice_size() {
+        return array_reduce(array_map(function($x) {return $x->maxsize;}, $this->get_rateable_choices()), function($carry, $item) { return $carry + $item; });
+    }
+
+    /**
+     * Checks if choices are big enough for the amount of raters
+     *
+     * @return True if choices are big enough for the amount of raters
+     */
+    public function check_choice_sizes() {
+        return count($this->get_raters_in_course()) <= $this->get_total_choice_size();
+    }
+
+    /**
      * distribution of choices for each user
      * take care about max_execution_time and memory_limit
      */
     public function distribute_choices() {
         require_capability('mod/ratingallocate:start_distribution', $this->context);
+
+        if(!$this->check_choice_sizes()) {
+            throw new \exception(get_string('choices_are_to_small', 'ratingallocate'));
+        }
 
         $distributor = $this->get_solver();
 

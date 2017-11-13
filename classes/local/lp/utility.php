@@ -42,6 +42,10 @@ class utility
      */
     public static function translate_from_name($name, $users, $groups) {
         $explode = explode('_', $name);
+
+        if(count($explode) < 3)
+            return [null, null];
+
         return [$users[$explode[1]], $groups[$explode[2]]];
     }
 
@@ -165,7 +169,9 @@ class utility
         foreach($solution as $key => $value) {
             if($value) {
                 list($user, $group) = self::translate_from_name($key, $users, $groups);
-                $user->set_assigned_group($group);
+
+                if($user && $group)
+                    $user->set_assigned_group($group);
             }
         }
     }
