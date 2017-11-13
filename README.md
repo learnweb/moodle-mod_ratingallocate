@@ -26,40 +26,13 @@ Configuration
 =============
 General
 ---------
+You can configure ``mod/ratingallocate`` using moodles administration interface. Three different solvers are available for selection. For LP it is necessary to configure the way it will use the external LP solver by selecting an executor.
 
-mod_ratingallocate can be configured by using the ``$CFG`` object inside the ``config.php`` file or by using the ``config`` table. Currently there are three supported solving strategies: ``edmonds_karp``, which is the default solver, ``ford_fulkerson`` and ``lp``. In order to use the lp solving strategy it is necessary to configure how mod_ratingallocate is using the external lp solver. This is done by using one of the three available executors ``local``, ``ssh`` and ``webservice``. It is recommended to avoid the usage of the ssh executor in production, but using the webservice executor. For now the only supported lp solvers are [scip](http://scip.zib.de/) and [cplex](https://www-01.ibm.com/software/commerce/optimization/cplex-optimizer/).
 
 Webservice backend
 ------------
 Using the webservice executor mod_ratingallocate can use an external lp solver which is not on the same machine as the moodle instance.
 A working webserver with PHP is needed. Clone the mod_ratingallocate into the document root and take a look into ``webservice/config.php`` for configuring the executors backend. A strong secret and HTTPS are recommended.
-
-Directives
------------
-
-    // Solver
-    $CFG->ratingallocate_solver = 'lp';
-    $CFG->ratingallocate_solver = 'edmonds_karp';
-    $CFG->ratingallocate_solver = 'ford_fulkerson';
-
-    // Engine configuration
-    $CFG->ratingallocate_engine = 'scip';
-    $CFG->ratingallocate_engine = 'cplex';
-
-    // SSH executor
-    $CFG->ratingallocate_executor = 'ssh';
-    $CFG->ratingallocate_ssh_hostname = '';
-    $CFG->ratingallocate_ssh_username = '';
-    $CFG->ratingallocate_ssh_password = '';
-    $CFG->ratingallocate_remote_path = '/tmp/file.lp';
-
-    // Webservice executor
-    $CFG->ratingallocate_executor = 'webservice';
-    $CFG->ratingallocate_uri = 'https://hostname/ratingallocate/webservice';
-    $CFG->ratingallocate_secret = 'strong_secret';
-
-    // Local executor
-    $CFG->ratingallocate_local_path = '/tmp/file.lp';
 
 
 Moodle version
