@@ -17,6 +17,9 @@
 namespace mod_ratingallocate\local\lp;
 
 class linear_program {
+    const MAXIMUM_LINE_INPUT = 510;
+    const MAXIMUM_NAME_LENGTH = 255;
+
     const NONE = -1;
     const MINIMIZE = 0;
     const MAXIMIZE = 1;
@@ -87,32 +90,35 @@ class linear_program {
     }
 
     public function add_variable($variable, $type = self::REAL) {
+        if(strlen($variable) > self::MAXIMUM_NAME_LENGTH)
+            throw new \exception('Name length exceeds the maximum!');
+
         $this->variables[$variable] = ['type' => $type, 'name' => $variable];
     }
 
     public function write_objective_method() {
-        if($this->objective_method == linear_program::MINIMIZE)
+        if($this->get_objective_method() == linear_program::MINIMIZE)
             return 'Minimize';
-        elseif($this->objective_method == linear_program::MAXIMIZE)
+        elseif($this->get_objective_method() == linear_program::MAXIMIZE)
             return 'Maximize';
 
         throw new \exception('Linear program objectives method is invalid!');
     }
 
     public function write_objective() {
-        if(empty($this->objective_function))
+        if(empty($this->get_objective_function()))
             throw new \exception('Linear program objectives function is invalid!');
 
-        return $this->write_objective_method($this->objective_method)."\n  ".str_replace('*', ' ', $this->objective_function)."\n";
+        return $this->write_objective_method($this->get_objective_method())."\n".$this->prepare_term($this->get_objective_function())."\n";
     }
 
     public function write_constraints() {
-        if(empty($this->constraints))
+        if(empty($this->get_constraints()))
             return '';
 
         return "Subject To\n".implode(array_map(function($constraint) {
-            return "  $constraint\n";
-        }, $this->constraints));
+            return $this->prepare_term($constraint)."\n";
+        }, $this->get_constraints()));
     }
 
     public function write_bounds() {
@@ -120,17 +126,15 @@ class linear_program {
             return '';
 
         return "Bounds\n".implode(array_map(function($bound) {
-            return "  $bound\n";
-        }, $this->bounds));
+            return $this->prepare_term($bound)."\n";
+        }, $this->get_bounds()));
     }
 
     public function write_variables() {
-        if(empty($this->variables))
+        if(empty($this->get_variables()))
             return '';
 
-        return "General\n  ".implode(array_map(function($variable) {
-            return $variable['name'].' ';
-        }, $this->variables))."\n";
+        return "General\n".$this->prepare_string(array_map(function($x) { return $x['name'].' '; }, $this->get_variables()))."\n";
     }
 
     public function write() {
@@ -138,5 +142,26 @@ class linear_program {
             .$this->write_constraints()
             .$this->write_bounds()
             .$this->write_variables().'End';
+    }
+
+    public function prepare_term($term) {
+        return $this->prepare_string(preg_split('$([\+\-])$', str_replace(['*', ' '], '', $term), null, PREG_SPLIT_DELIM_CAPTURE));
+    }
+
+    public function prepare_string($array) {
+        $line_size = 0;
+
+        return array_reduce($array, function($carry, $x) use (&$line_size) {
+            $x_length = strlen($x);
+
+            if(($line_size + $x_length + 1) > self::MAXIMUM_LINE_INPUT) {
+                $line_size = 0;
+                $x = "\n".$x;
+                $carry = trim($carry);
+            }
+
+            $line_size += $x_length;
+            return $carry.$x;
+        }, '');
     }
 };
