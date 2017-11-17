@@ -18,9 +18,9 @@ namespace mod_ratingallocate\local;
 
 class group {
 
-	private $id = '';
-	private $limit = 0;
-	private $assigned_users = [];
+    private $id = '';
+    private $limit = 0;
+    private $assigned_users = [];
 
     /**
      * Creates a new group
@@ -28,19 +28,19 @@ class group {
      * @param $id Id of the group
      * @param $limit Group limit
      */
-	public function __construct($id, $limit = 0) {
-		$this->id = $id;
+    public function __construct($id, $limit = 0) {
+        $this->id = $id;
         $this->set_limit($limit);
-	}
+    }
 
     /**
      * Returns the group id
      *
      * @return Id of the group
      */
-	public function get_id() {
-		return $this->id;
-	}
+    public function get_id() {
+        return $this->id;
+    }
 
     /**
      * Checks if the group has a limit (limit is zero)
@@ -57,9 +57,9 @@ class group {
      * @return Group limit
      */
 
-	public function get_limit() {
-		return $this->limit;
-	}
+    public function get_limit() {
+        return $this->limit;
+    }
 
     /**
      * Checks if the group is empty
@@ -100,18 +100,18 @@ class group {
      *
      * @return Array of users which are assigned to the group
      */
-	public function get_assigned_users() {
-		return $this->assigned_users;
-	}
+    public function get_assigned_users() {
+        return $this->assigned_users;
+    }
 
-	/**
-	 * Adds an assigned user to the group
-	 *
-	 * @param $user User that gets added to the group
+    /**
+     * Adds an assigned user to the group
+     *
+     * @param $user User that gets added to the group
      *
      * @throws exception if the group limit has been reached or the user has been already assigned a group
-	 */
-	public function add_assigned_user(&$user) {
+     */
+    public function add_assigned_user(&$user) {
         if($this->is_full())
             throw new \exception('Limit has been reached!');
 
@@ -122,7 +122,7 @@ class group {
             throw new \exception('User has been already assigned to another group!');
 
         $this->assigned_users[$user->get_id()] = $user;
-	}
+    }
 
     /**
      * Checks if user belongs to this group
@@ -135,14 +135,14 @@ class group {
         return isset($this->assigned_users[$user->get_id()]);
     }
 
-	/**
-	 * Removes a user from the group
-	 *
-	 * @param $user User that gets removed from the group
+    /**
+     * Removes a user from the group
      *
-	 * @throws exception If user was not assigned from the group
-	 */
-	public function remove_assigned_user($user) {
+     * @param $user User that gets removed from the group
+     *
+     * @throws exception If user was not assigned from the group
+     */
+    public function remove_assigned_user($user) {
         if(!$this->exists_assigned_user($user))
             throw new \exception('User has not been assigned to this group!');
 

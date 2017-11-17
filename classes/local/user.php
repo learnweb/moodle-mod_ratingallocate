@@ -18,8 +18,8 @@ namespace mod_ratingallocate\local;
 
 class user {
 
-	private $id = -1;
-	private $selected_groups = [];
+    private $id = -1;
+    private $selected_groups = [];
     private $assigned_group = null;
 
     /**
@@ -28,19 +28,19 @@ class user {
      * @param $id id of the user
      * @param $selected_groups Selected groups of the user
      */
-	public function __construct($id, $selected_groups = []) {
-		$this->id = $id;
+    public function __construct($id, $selected_groups = []) {
+        $this->id = $id;
         $this->set_selected_groups($selected_groups);
-	}
+    }
 
     /**
      * Returns the id of the user
      *
      * @return Id of the user
      */
-	public function get_id() {
-		return $this->id;
-	}
+    public function get_id() {
+        return $this->id;
+    }
 
     /**
      * Sets selected groups of user
@@ -57,9 +57,9 @@ class user {
      *
      * @return Array of selected groups
      */
-	public function get_selected_groups() {
-		return $this->selected_groups;
-	}
+    public function get_selected_groups() {
+        return $this->selected_groups;
+    }
 
     /**
      * Adds a group choice

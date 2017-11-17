@@ -22,20 +22,6 @@ namespace mod_ratingallocate\local\lp;
 abstract class weighter {
 
     /**
-     * Returns an array of available weighters
-     *
-     * @return Array with names of available weighters
-     */
-    public static function get_weighters() {
-    	$weighters = array_diff(scandir(dirname(__FILE__).'/weighters'), array('.', '..'));
-
-    	foreach($weighters as &$weighter)
-			$weighter = str_ireplace('.php', '', $weighter);
-
-    	return array_values($weighters);
-    }
-
-    /**
      * Applys a concrete value for x
      *
      * @param $x Value for x
