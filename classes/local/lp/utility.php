@@ -121,7 +121,7 @@ class utility
                 $lhs .= self::translate_to_name($user, $group);
             }
 
-            $linear_program->add_constraint("$lhs = 1");
+            $linear_program->add_constraint("$lhs <= 1");
         }
     }
 

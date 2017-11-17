@@ -43,7 +43,6 @@ $string['ratingallocate:start_distribution'] = 'Start allocation of users to cho
 $string['ratingallocate:export_ratings'] = 'Ability to export the user ratings';
 $string['ratingallocate:modify_choices'] = 'Ability to modify, edit or delete the set of choices of a Fair Allocation';
 $string['crontask'] = 'Automated allocation for Fair Allocation';
-$string['choices_are_to_small'] = 'Your configured choice sizes do not meet the requirement to handle the amount of raters.';
 $string['algorithmtimeout'] = 'Algorithm timeout';
 $string['configalgorithmtimeout'] = 'The time in seconds after which the algorithm is assumed to be stuck.
 The current run is terminated and marked as failed.';
