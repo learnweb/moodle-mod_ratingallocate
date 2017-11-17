@@ -66,18 +66,12 @@ $string['ssh_username'] = 'SSH username';
 $string['ssh_username_description'] = 'Username of the ssh user.';
 $string['ssh_password'] = 'SSH password';
 $string['ssh_password_description'] = 'Password of the ssh user.';
-$string['remote_path'] = 'Remote path';
-$string['remote_path_description'] = 'Remote path for a temporary file, used for storing a linear program, which is optimized by the engine.';
 $string['webservice'] = 'Webservice';
 $string['webservice_description'] = 'Executor for connecting to a remote engine by using HTTP or HTTPS.';
 $string['secret'] = 'Secret';
 $string['secret_description'] = 'Webservices backend secret, used for protecting it.';
 $string['uri'] = 'URI';
 $string['uri_description'] = 'URI of webservice backend.';
-$string['local'] = 'Local';
-$string['local_description'] = 'Executor for using an engine running on the local machine.';
-$string['local_path'] = 'Local path';
-$string['local_path_description'] = 'Local path for a temporary file, used for storing a linear program, which is optimized by the engine.';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Rating Form for Users">
 $string['choicestatusheading'] = 'Status';

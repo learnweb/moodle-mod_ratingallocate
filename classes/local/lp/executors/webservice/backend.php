@@ -19,7 +19,7 @@ namespace mod_ratingallocate\local\lp\executors\webservice;
 class backend
 {
     private $engine = null;
-    private $local_path = '';
+    private $local_file = null;
     private $secret = null;
 
     /**
@@ -31,9 +31,10 @@ class backend
      *
      * @return Webservice backend instance
      */
-    public function __construct($engine = null, $local_path = '', $secret = null) {
+    public function __construct($engine = null, $secret = null) {
+        $this->local_file = tmpfile();
+
         $this->set_engine($engine);
-        $this->set_local_path($local_path);
         $this->set_secret($secret);
     }
 
@@ -74,21 +75,21 @@ class backend
     }
 
     /**
-     * Sets the local path
+     * Returns the handle of the local file
      *
-     * @param $local_path Local path
+     * @return Handle of the local file
      */
-    public function set_local_path($local_path) {
-        $this->local_path = $local_path;
+    public function get_local_file() {
+        return $this->local_file;
     }
 
     /**
-     * Returns the local path
+     * Returns the path of the local file
      *
      * @return Local path
      */
     public function get_local_path() {
-        return $this->local_path;
+        return stream_get_meta_data($this->get_local_file())['uri'];
     }
 
     /**

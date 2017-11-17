@@ -18,7 +18,7 @@ namespace mod_ratingallocate\local\lp\executors;
 
 class local extends \mod_ratingallocate\local\lp\executor {
 
-    private $local_path = '';
+    private $local_file = null,
 
     /**
      * Creates a local executor
@@ -28,28 +28,19 @@ class local extends \mod_ratingallocate\local\lp\executor {
      *
      * @return Local executor instance
      */
-    public function __construct($engine = null, $local_path = '') {
+    public function __construct($engine = null) {
         parent::__construct($engine);
 
-        $this->set_local_path($local_path);
+        $this->local_file = tmpfile();
     }
 
     /**
-     * Sets the local path
-     *
-     * @return Local path
-     */
-    public function set_local_path($local_path) {
-        $this->local_path = $local_path;
-    }
-
-    /**
-     * Returns the local path
+     * Returns the path of the local file
      *
      * @return Local path
      */
     public function get_local_path() {
-        return $this->local_path;
+        return stream_get_meta_data($this->local_file)['uri'];
     }
 
     /**

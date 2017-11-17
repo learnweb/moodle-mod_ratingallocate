@@ -20,24 +20,21 @@ class ssh extends \mod_ratingallocate\local\lp\executor {
 
     private $connection = null;
     private $local_file = null;
-    private $remote_path = '';
 
     /**
      * Creates a ssh executor
      *
      * @param $engine Engine that is used
      * @param $connection SSH connection
-     * @param $remote_path Remote path where the lp file will be stored temporarily
      *
      * @return ssh executor instance
      */
-    public function __construct($engine = null, $connection = null, $remote_path = '') {
+    public function __construct($engine = null, $connection = null) {
         parent::__construct($engine);
 
         $this->local_file = tmpfile();
 
         $this->set_connection($connection);
-        $this->set_remote_path($remote_path);
     }
 
     /**
@@ -73,25 +70,7 @@ class ssh extends \mod_ratingallocate\local\lp\executor {
      * @return Local path
      */
     public function get_local_path() {
-        return stream_get_meta_data($this->local_file)['uri'];
-    }
-
-    /**
-     * Sets the remote path
-     *
-     * @param $remote_path Remote path
-     */
-    public function set_remote_path($remote_path) {
-        $this->remote_path = $remote_path;
-    }
-
-    /**
-     * Returns the remote path
-     *
-     * @return Remote path
-     */
-    public function get_remote_path() {
-        return $this->remote_path;
+        return stream_get_meta_data($this->get_local_file())['uri'];
     }
 
     /**
@@ -103,11 +82,12 @@ class ssh extends \mod_ratingallocate\local\lp\executor {
      * @return Stream of stdout
      */
     public function solve($lp_file) {
+        $remote_path = trim(stream_get_contents($this->get_connection()->execute('mktemp --suffix=.lp')));
+
         fwrite($this->get_local_file(), $lp_file);
         fseek($this->get_local_file(), 0);
+        $this->get_connection()->send_file($this->get_local_path(), $remote_path);
 
-        $this->get_connection()->send_file($this->get_local_path(), $this->get_remote_path());
-        return $this->get_connection()->execute($this->get_engine()->get_command($this->get_remote_path()));
+        return $this->get_connection()->execute($this->get_engine()->get_command($remote_path));
     }
-
 }
