@@ -90,7 +90,7 @@ class group {
      */
     public function set_limit($limit) {
         if($limit < 0)
-            throw new exception('Limit cannot be negative!');
+            throw new \exception('Limit cannot be negative!');
 
         $this->limit = $limit;
     }
@@ -109,18 +109,19 @@ class group {
      *
      * @param $user User that gets added to the group
      *
-     * @throws exception if the group limit has been reached or the user has been already assigned a group
+     * @throws exception if the group limit has been reached or the user has been already assigned to a group
      */
     public function add_assigned_user(&$user) {
+        if($this->exists_assigned_user($user))
+            return;
+
         if($this->is_full())
             throw new \exception('Limit has been reached!');
 
-        if($this->exists_assigned_user($user) || $user->get_assigned_group() == $this)
-            throw new \exception('User has been already assigned to this group!');
-
-        if($user->get_assigned_group() != null)
+        if($user->get_assigned_group() && $user->get_assigned_group() != $this)
             throw new \exception('User has been already assigned to another group!');
 
+        $user->set_assigned_group($this);
         $this->assigned_users[$user->get_id()] = $user;
     }
 

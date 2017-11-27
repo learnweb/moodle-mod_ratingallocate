@@ -48,8 +48,17 @@ class user {
      * @param $selected_groups Array of selected groups
      */
     public function set_selected_groups($selected_groups) {
-        foreach($selected_groups as $value)
-            $this->add_selected_group($value['group'], $value['priority']);
+        $this->clear_selected_groups();
+
+        foreach($selected_groups as &$value)
+            $this->add_selected_group($value);
+    }
+
+    /**
+     * Clears selected groups of user
+     */
+    public function clear_selected_groups() {
+        $this->selected_groups = [];
     }
 
     /**
@@ -58,7 +67,7 @@ class user {
      * @return Array of selected groups
      */
     public function get_selected_groups() {
-        return $this->selected_groups;
+        return array_map(function($x){return $x['group'];}, $this->selected_groups);
     }
 
     /**
@@ -164,14 +173,17 @@ class user {
      * @param $group Group that the user gets added to
      */
     public function set_assigned_group(&$group) {
+        if($group == $this->get_assigned_group())
+            return;
+
         if($this->assigned_group)
             $this->assigned_group->remove_assigned_user($this);
 
         $this->assigned_group = null;
 
         if($group) {
-            $group->add_assigned_user($this);
             $this->assigned_group = $group;
+            $group->add_assigned_user($this);
         }
     }
 

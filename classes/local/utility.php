@@ -63,12 +63,4 @@ class utility {
                 $users[$rating->userid]->add_selected_group($groups[$rating->choiceid], $rating->rating);
     }
 
-    public static function starts_with($string, $word) {
-        return substr($string, 0, strlen($word)) === $word;
-    }
-
-    public static function default_for($value, $default) {
-        return isset($value) ? $value : $default;
-    }
-
 }
