@@ -19,7 +19,7 @@ defined('MOODLE_INTERNAL') || die();
 class mod_ratingallocate_utility_test extends basic_testcase {
 
     /**
-     * @covers utility::transform_to_users_and_groups
+     * @covers \mod_ratingallocate\local\utility::transform_to_users_and_groups
      */
     public static function test_to_transformation() {
         $choices = [];
@@ -29,7 +29,7 @@ class mod_ratingallocate_utility_test extends basic_testcase {
     }
 
     /**
-     * @covers utility::transform_from_users_and_groups
+     * @covers \mod_ratingallocate\local\utility::transform_from_users_and_groups
      */
     public static function test_from_transformation() {
         $users = [];

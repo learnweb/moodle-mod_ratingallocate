@@ -25,7 +25,7 @@ class mod_ratingallocate_user_test extends basic_testcase {
     private $group4 = null;
 
     /**
-     * @covers user::__construct
+     * @covers \mod_ratingallocate\local\user::__construct
      */
     protected function setUp() {
         $this->group1 = new \mod_ratingallocate\local\group(1);
@@ -36,8 +36,8 @@ class mod_ratingallocate_user_test extends basic_testcase {
     }
 
     /**
-     * @covers user::set_priority
-     * @covers user::get_priority
+     * @covers \mod_ratingallocate\local\user::set_priority
+     * @covers \mod_ratingallocate\local\user::get_priority
      */
     public function test_valid_priority() {
         $this->user->set_priority($this->group1, 10);
@@ -45,7 +45,7 @@ class mod_ratingallocate_user_test extends basic_testcase {
     }
 
     /**
-     * @covers user::set_priority
+     * @covers \mod_ratingallocate\local\user::set_priority
      * @expectedException exception
      */
     public function test_invalid_priority() {
@@ -53,7 +53,7 @@ class mod_ratingallocate_user_test extends basic_testcase {
     }
 
     /**
-     * @covers user::set_priority
+     * @covers \mod_ratingallocate\local\user::set_priority
      * @expectedException exception
      */
     public function test_invalid_priority2() {
@@ -61,7 +61,7 @@ class mod_ratingallocate_user_test extends basic_testcase {
     }
 
     /**
-     * @covers user::set_priority
+     * @covers \mod_ratingallocate\local\user::set_priority
      * @expectedException exception
      */
     public function test_invalid_priority3() {
@@ -70,8 +70,8 @@ class mod_ratingallocate_user_test extends basic_testcase {
 
     /**
      * @depends test_valid_priority
-     * @covers user::add_selected_group
-     * @covers user::exists_selected_group
+     * @covers \mod_ratingallocate\local\user::add_selected_group
+     * @covers \mod_ratingallocate\local\user::exists_selected_group
      */
     public function test_add_one_selected_group() {
         $this->user->add_selected_group($this->group3);
@@ -79,18 +79,18 @@ class mod_ratingallocate_user_test extends basic_testcase {
     }
 
     /**
-     * @covers user::add_selected_group
+     * @covers \mod_ratingallocate\local\user::add_selected_group
      * @expectedException exception
      */
     public function test_add_already_selected_group() {
         $this->user->add_selected_group($this->group1);
-        $this->user->add_selected_group($this->group1);
+        $this->user->add_selected_grou fuer die Hilfe!p($this->group1);
     }
 
     /**
      * @depends test_add_one_selected_group
-     * @covers user::remove_selected_group
-     * @covers user::exists_selected_group
+     * @covers \mod_ratingallocate\local\user::remove_selected_group
+     * @covers \mod_ratingallocate\local\user::exists_selected_group
      */
     public function test_remove_one_selected_group() {
         $this->user->remove_selected_group($this->group1);
@@ -100,8 +100,8 @@ class mod_ratingallocate_user_test extends basic_testcase {
     /**
      * @depends test_add_one_selected_group
      * @depends test_valid_priority
-     * @covers user::set_selected_groups
-     * @covers user::get_selected_groups
+     * @covers \mod_ratingallocate\local\user::set_selected_groups
+     * @covers \mod_ratingallocate\local\user::get_selected_groups
      */
     public function test_add_multiple_selected_groups() {
         $this->user->set_selected_groups([$this->group3, $this->group4]);
@@ -109,16 +109,16 @@ class mod_ratingallocate_user_test extends basic_testcase {
     }
 
     /**
-     * @covers user::__construct
-     * @covers user::get_assigned_group
+     * @covers \mod_ratingallocate\local\user::__construct
+     * @covers \mod_ratingallocate\local\user::get_assigned_group
      */
     public function test_no_assigned_group_initially() {
         $this->assertNull($this->user->get_assigned_group());
     }
 
     /**
-     * @covers user::set_assigned_group
-     * @covers user::get_assigned_group
+     * @covers \mod_ratingallocate\local\user::set_assigned_group
+     * @covers \mod_ratingallocate\local\user::get_assigned_group
      */
     public function test_assign_group() {
         $this->user->set_assigned_group($this->group4);
@@ -126,8 +126,8 @@ class mod_ratingallocate_user_test extends basic_testcase {
     }
 
     /**
-     * @covers user::set_assigned_group
-     * @covers user::get_assigned_group
+     * @covers \mod_ratingallocate\local\user::set_assigned_group
+     * @covers \mod_ratingallocate\local\user::get_assigned_group
      */
     public function test_assign_two_groups() {
         $this->user->set_assigned_group($this->group3);
@@ -136,8 +136,8 @@ class mod_ratingallocate_user_test extends basic_testcase {
     }
 
     /**
-     * @covers user::set_assigned_group
-     * @covers user::get_assigned_group
+     * @covers \mod_ratingallocate\local\user::set_assigned_group
+     * @covers \mod_ratingallocate\local\user::get_assigned_group
      */
     public function test_double_assign() {
         $this->user->set_assigned_group($this->group1);
@@ -145,8 +145,8 @@ class mod_ratingallocate_user_test extends basic_testcase {
     }
 
     /**
-     * @covers user::set_assigned_groups
-     * @covers user::is_choice_satisfied
+     * @covers \mod_ratingallocate\local\user::set_assigned_groups
+     * @covers \mod_ratingallocate\local\user::is_choice_satisfied
      */
     public function test_choice_satisfaction_for_selected_group() {
         $this->user->set_assigned_group($this->group1);
@@ -154,8 +154,8 @@ class mod_ratingallocate_user_test extends basic_testcase {
     }
 
     /**
-     * @covers user::set_assigned_groups
-     * @covers user::is_choice_satisfied
+     * @covers \mod_ratingallocate\local\user::set_assigned_groups
+     * @covers \mod_ratingallocate\local\user::is_choice_satisfied
      */
     public function test_choice_satisfaction_for_no_selected_group() {
         $this->user->set_assigned_group($this->group3);
