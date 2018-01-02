@@ -16,7 +16,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class mod_ratingallocate_utility_test extends basic_testcase {
+class utility_test extends basic_testcase {
 
     /**
      * @covers \mod_ratingallocate\local\utility::transform_to_users_and_groups

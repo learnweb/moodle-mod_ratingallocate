@@ -16,7 +16,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class mod_ratingallocate_lp_utility_test extends basic_testcase {
+class lp_utility_test extends basic_testcase {
 
     private $users = null;
     private $groups = null;

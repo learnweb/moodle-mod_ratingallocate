@@ -16,7 +16,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class mod_ratingallocate_user_test extends basic_testcase {
+class user_test extends basic_testcase {
 
     private $user = null;
     private $group1= null;

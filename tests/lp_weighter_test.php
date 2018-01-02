@@ -16,7 +16,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class mod_ratingallocate_lp_weighter_test extends basic_testcase {
+class lp_weighter_test extends basic_testcase {
 
     private $weighter1 = null;
     private $weighter2 = null;
