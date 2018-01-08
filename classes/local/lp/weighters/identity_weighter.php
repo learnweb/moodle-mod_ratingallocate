@@ -25,7 +25,7 @@ class identity_weighter extends polynomial_weighter {
      * Creates an identity weighter
      */
     public function __construct() {
-        parent::__construct([1, 1]);
+        parent::__construct([1, 0]);
     }
 
 };

@@ -79,7 +79,9 @@ class polynomial_weighter extends \mod_ratingallocate\local\lp\weighter {
             if(!empty($string))
                 $string .= '+';
 
-            $string .= ($this->coefficients[$i] == 1 ? '' : $this->coefficients[$i].'*') . $variable_name . "^$i";
+            $string .= $this->coefficients[$i] == 1 ? '' : $this->coefficients[$i].'*';
+            $string .= $variable_name;
+            $string .= $i != 1 ? '^'.$i : '';
         }
 
         return $string;
