@@ -51,7 +51,7 @@ class utility {
         $groups = [];
 
         foreach($choices as $choice)
-            if($choice->active)
+            if(!isset($choices->active) || $choice->active)
                 $groups[$choice->id] = new \mod_ratingallocate\local\group($choice->id, $choice->maxsize);
 
         return $groups;
