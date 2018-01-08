@@ -19,13 +19,23 @@ defined('MOODLE_INTERNAL') || die();
 class utility_test extends basic_testcase {
 
     /**
-     * @covers \mod_ratingallocate\local\utility::transform_to_users_and_groups
+     * @covers \mod_ratingallocate\local\utility::transform_to_groups
      */
-    public static function test_to_transformation() {
+    public static function test_to_group_transformation() {
         $choices = [];
-        $ratings = [];
 
-        list($users, $groups) = \mod_ratingallocate\local\utility::transform_to_users_and_groups($choices, $ratings);
+        $choices[1] = new stdClass();
+        $choices[1]->maxsize = 2;
+        $choices[1]->id = 1;
+
+        $choices[2] = new stdClass();
+        $choices[2]->maxsize = 2;
+        $choices[2]->id = 2;
+
+        $groups = \mod_ratingallocate\local\utility::transform_to_groups($choices);
+
+        foreach($groups as $group)
+          self::assertTrue($choices[$group->get_id()]->maxsize == $group->get_limit());
     }
 
     /**
