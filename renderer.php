@@ -186,6 +186,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             foreach ($status->allocations as $allocation) {
                 $allocation_html .= '<li>';
                 $allocation_html .= format_string($allocation->{this_db\ratingallocate_choices::TITLE});
+                $allocation_html .= '<br/>' . format_string($allocation->{this_db\ratingallocate_choices::EXPLANATION});
                 $allocation_html .= '</li>';
             }
             $allocation_html = '<ul>' . $allocation_html . '</ul>';
