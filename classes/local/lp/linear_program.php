@@ -111,11 +111,15 @@ class linear_program {
         throw new \exception('Linear program objectives method is invalid!');
     }
 
+    public function write_objective_function() {
+        return $this->prepare_term($this->get_objective_function());
+    }
+
     public function write_objective() {
         if(empty($this->get_objective_function()))
             throw new \exception('Linear program objectives function is invalid!');
 
-        return $this->write_objective_method($this->get_objective_method())."\n".$this->prepare_term($this->get_objective_function())."\n";
+        return $this->write_objective_method($this->get_objective_method())."\n".$this->write_objective_function()."\n";
     }
 
     public function write_constraints() {
