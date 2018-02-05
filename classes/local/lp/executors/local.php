@@ -18,7 +18,7 @@ namespace mod_ratingallocate\local\lp\executors;
 
 class local extends \mod_ratingallocate\local\lp\executor {
 
-    private $local_file = null,
+    private $local_file = null;
 
     /**
      * Creates a local executor
