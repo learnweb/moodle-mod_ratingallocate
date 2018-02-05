@@ -50,4 +50,5 @@ class lp_weighter_test extends basic_testcase {
     public function test_identity_apply() {
         $this->assertEquals($this->weighter2->apply(4), 4);
     }
+
 }

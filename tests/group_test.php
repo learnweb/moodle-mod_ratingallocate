@@ -155,4 +155,5 @@ class group_test extends basic_testcase {
     public function test_remove_invalid_user() {
         $this->group1->remove_assigned_user($this->user1);
     }
+
 }
