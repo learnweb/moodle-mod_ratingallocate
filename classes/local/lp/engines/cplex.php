@@ -43,7 +43,7 @@ class cplex extends \mod_ratingallocate\local\lp\engine {
         foreach(array_slice(explode("\n", substr($content, strpos($content, "Solution Value"))), 1) as $variable) {
             $parts = explode(' ', preg_replace('!\s+!', ' ', $variable));
 
-            if(count($parts) > 2)
+            if(count($parts) < 2)
                 break;
 
             $solution[$parts[0]] = intval($parts[1]);
