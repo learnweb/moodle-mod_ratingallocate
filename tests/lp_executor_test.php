@@ -17,4 +17,45 @@
 defined('MOODLE_INTERNAL') || die();
 
 class lp_executor_test extends basic_testcase {
+
+    private $local = null;
+    private $ssh = null;
+    private $webservice = null;
+
+    public function setUp() {
+        $this->local = new \mod_ratingallocate\local\lp\executors\local();
+        $this->ssh= new \mod_ratingallocate\local\lp\executors\ssh();
+        $this->webservice = new \mod_ratingallocate\local\lp\executors\webservice\connector();
+    }
+
+    /**
+     * @covers \mod_ratingallocate\local\lp\executor::set_engine
+     * @covers \mod_ratingallocate\local\lp\executor::get_engine
+     */
+    public function test_engine() {
+        $this->local->set_engine(new stdClass());
+        $this->assertEquals($this->local->get_engine(), new stdClass());
+    }
+
+    /**
+     * @covers \mod_ratingallocate\local\lp\executors\local::get_local_path
+     */
+    public function test_local_file_path() {
+        $this->assertNotEmpty($this->local->get_local_path());
+    }
+
+    /**
+     * @covers \mod_ratingallocate\local\lp\executors\ssh::get_local_path
+     */
+    public function test_ssh_file_path() {
+        $this->assertNotEmpty($this->ssh->get_local_path());
+    }
+
+    /**
+     * @covers \mod_ratingallocate\local\lp\executors\ssh::get_local_path
+     */
+    public function test_ssh_file() {
+        $this->assertNotNull($this->ssh->get_local_file());
+    }
+
 }
