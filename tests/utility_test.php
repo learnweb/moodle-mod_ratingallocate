@@ -35,7 +35,65 @@ class utility_test extends basic_testcase {
         $groups = \mod_ratingallocate\local\utility::transform_to_groups($choices);
 
         foreach($groups as $group)
-          self::assertTrue($choices[$group->get_id()]->maxsize == $group->get_limit());
+            self::assertEquals($choices[$group->get_id()]->maxsize, $group->get_limit());
+    }
+
+    /**
+     * @covers \mod_ratingallocate\local\utility::transform_to_users
+     */
+    public static function test_to_user_transformation() {
+        $ratings = [];
+
+        $ratings = [];
+        $ratings[1] = new stdClass();
+        $ratings[1]->userid = 1;
+        $ratings[1]->choiceid = 1;
+        $ratings[1]->rating = 5;
+
+        $ratings[2] = new stdClass();
+        $ratings[2]->userid = 1;
+        $ratings[2]->choiceid = 2;
+        $ratings[2]->rating = 5;
+
+        $users = \mod_ratingallocate\local\utility::transform_to_users($ratings);
+
+        foreach($ratings as $rating)
+            self::assertEquals($rating->userid, $users[$rating->userid]->get_id());
+    }
+
+    /**
+     * @depends test_to_user_transformation
+     * @depends test_to_group_transformation
+     * @covers \mod_ratingallocate\local\utility::transform_to_users_and_groups
+     */
+    public static function test_to_user_and_group_transformation() {
+        $choices = [];
+
+        $choices[1] = new stdClass();
+        $choices[1]->maxsize = 2;
+        $choices[1]->id = 1;
+
+        $choices[2] = new stdClass();
+        $choices[2]->maxsize = 2;
+        $choices[2]->id = 2;
+
+        $ratings = [];
+
+        $ratings[1] = new stdClass();
+        $ratings[1]->userid = 2;
+        $ratings[1]->choiceid = 1;
+        $ratings[1]->rating = 5;
+
+        $ratings[2] = new stdClass();
+        $ratings[2]->userid = 1;
+        $ratings[2]->choiceid = 2;
+        $ratings[2]->rating = 5;
+
+        list($users, $groups) = \mod_ratingallocate\local\utility::transform_to_users_and_groups($choices, $ratings);
+
+        foreach($users as $user)
+            foreach($user->get_selected_groups() as $group)
+                self::assertEquals($group->get_id(), $ratings[$group->get_id()]->choiceid);
     }
 
     /**
