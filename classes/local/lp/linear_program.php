@@ -89,6 +89,12 @@ class linear_program {
         return $this->variables;
     }
 
+    public function get_variable_names() {
+        return array_map(function($x) {
+            return $x['name'];
+        }, $this->variables);
+    }
+
     public function add_variable($variable, $type = self::REAL) {
         if(strlen($variable) > self::MAXIMUM_NAME_LENGTH)
             throw new \exception('Name length exceeds the maximum!');
