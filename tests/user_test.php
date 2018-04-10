@@ -84,7 +84,7 @@ class user_test extends basic_testcase {
      */
     public function test_add_already_selected_group() {
         $this->user->add_selected_group($this->group1);
-        $this->user->add_selected_grou fuer die Hilfe!p($this->group1);
+        $this->user->add_selected_group($this->group1);
     }
 
     /**
