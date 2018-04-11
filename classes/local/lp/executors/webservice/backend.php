@@ -104,7 +104,7 @@ class backend
         }
 
         if(isset($_POST['lp_file'])) {
-            $executor = new \mod_ratingallocate\lp\executors\local($this->get_engine(), $this->get_local_path());
+            $executor = new \mod_ratingallocate\local\lp\executors\local($this->get_engine(), $this->get_local_path());
 
             fpassthru($executor->solve($_POST['lp_file']));
         }
