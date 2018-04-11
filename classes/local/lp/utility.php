@@ -62,15 +62,15 @@ class utility
 
         foreach($users as $user) {
             foreach($groups as $group) {
-                if(!empty($objective_function))
+                $weight = $weighter->apply($user->get_priority($group));
+
+                if(!empty($objective_function) && $weight != 0)
                     $objective_function .= '+';
 
-                $weighting = $weighter->apply($user->get_priority($group));
-
-                if($weighting == 1)
+                if($weight == 1)
                     $objective_function .= self::translate_to_name($user, $group);
-                else if($weighting != 0)
-                    $objective_function .= $weighting.'*'.self::translate_to_name($user, $group);
+                else if($weight != 0)
+                    $objective_function .= $weight.'*'.self::translate_to_name($user, $group);
             }
         }
 

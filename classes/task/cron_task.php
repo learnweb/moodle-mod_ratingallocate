@@ -73,7 +73,7 @@ class cron_task extends \core\task\scheduled_task {
             if ($ratingallocate->ratingallocate->runalgorithmbycron === "1" &&
                 $ratingallocate->get_algorithm_status() === \mod_ratingallocate\algorithm_status::notstarted) {
                 // Run allocation.
-                $ratingallocate->distrubute_choices();
+                $ratingallocate->distribute_choices();
             }
         }
         return true;

@@ -95,7 +95,7 @@ class locallib_test extends advanced_testcase {
 
         // Allocate choices.
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $teacher);
-        $timeneeded = $ratingallocate->distrubute_choices();
+        $timeneeded = $ratingallocate->distribute_choices();
         $this->assertGreaterThan(0, $timeneeded);
         $this->assertLessThan(0.1, $timeneeded, 'Allocation is very slow');
 

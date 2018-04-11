@@ -19,7 +19,6 @@ namespace mod_ratingallocate\local\lp\executors\webservice;
 class backend
 {
     private $engine = null;
-    private $local_file = null;
     private $secret = null;
 
     /**
