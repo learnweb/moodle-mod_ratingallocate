@@ -32,8 +32,6 @@ class backend
      * @return Webservice backend instance
      */
     public function __construct($engine = null, $secret = null) {
-        $this->local_file = tmpfile();
-
         $this->set_engine($engine);
         $this->set_secret($secret);
     }
@@ -75,25 +73,7 @@ class backend
     }
 
     /**
-     * Returns the handle of the local file
-     *
-     * @return Handle of the local file
-     */
-    public function get_local_file() {
-        return $this->local_file;
-    }
-
-    /**
-     * Returns the path of the local file
-     *
-     * @return Local path
-     */
-    public function get_local_path() {
-        return stream_get_meta_data($this->get_local_file())['uri'];
-    }
-
-    /**
-     * Handles an incomming request
+     * Handles an incoming request
      */
     public function main() {
         if(!$this->verify_secret()) {
@@ -104,8 +84,7 @@ class backend
         }
 
         if(isset($_POST['lp_file'])) {
-            $executor = new \mod_ratingallocate\lp\executors\local($this->get_engine(), $this->get_local_path());
-
+            $executor = new \mod_ratingallocate\local\lp\executors\local($this->get_engine());
             fpassthru($executor->solve($_POST['lp_file']));
         }
     }
@@ -119,7 +98,7 @@ class backend
         if($this->get_secret() === null)
             return true;
 
-        return $this->get_secret() === $_POST['secret'];
+        return isset($POST_['secret']) && $this->get_secret() === $_POST['secret'];
     }
 
 }
