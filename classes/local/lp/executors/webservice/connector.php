@@ -18,6 +18,8 @@ namespace mod_ratingallocate\local\lp\executors\webservice;
 
 class connector extends \mod_ratingallocate\local\lp\executor {
 
+    const CURL_TIMEOUT = 5;
+
     private $uri = '';
     private $secret = null;
 
@@ -83,7 +85,8 @@ class connector extends \mod_ratingallocate\local\lp\executor {
                                     CURLOPT_POST => true,
                                     CURLOPT_RETURNTRANSFER => true,
                                     CURLOPT_POSTFIELDS => ['lp_file' => $lp_file,
-                                                           'secret' => $this->get_secret()]]);
+                                                           'secret' => $this->get_secret()],
+                                    CURLOPT_CONNECTTIMEOUT => self::CURL_TIMEOUT]);
 
         $result = curl_exec($handle);
 
