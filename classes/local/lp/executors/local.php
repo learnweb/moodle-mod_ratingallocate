@@ -34,6 +34,11 @@ class local extends \mod_ratingallocate\local\lp\executor {
         $this->local_file = tmpfile();
     }
 
+    public function __destruct() {
+        unlink($this->get_local_path().'.lp');
+        unlink($this->get_local_path());
+    }
+
     /**
      * Returns the path of the local file
      *
@@ -52,11 +57,13 @@ class local extends \mod_ratingallocate\local\lp\executor {
      * @return Stream of stdout
      */
     public function solve($lp_file) {
-        $local_file = fopen($this->get_local_path(), 'w+');
+        $path = $this->get_local_path().'.lp';
+        $local_file = fopen($path, 'w+');
+
         fwrite($local_file, $lp_file);
         fseek($local_file, 0);
 
-        return popen($this->get_engine()->get_command($this->get_local_path()), 'r');
+        return popen($this->get_engine()->get_command($path), 'r');
     }
 
 }
