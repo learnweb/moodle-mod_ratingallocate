@@ -38,7 +38,7 @@ env:
 
 before_install:
   - phpenv config-rm xdebug.ini
-  - nvm install node
+  - nvm install 8.9.4
   - cd ../..
   - composer selfupdate
   - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^2
