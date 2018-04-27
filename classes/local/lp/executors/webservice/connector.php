@@ -81,18 +81,23 @@ class connector extends \mod_ratingallocate\local\lp\executor {
     public function solve($lp_file) {
         $handle = curl_init();
 
-        curl_setopt_array($handle, [CURLOPT_URL => $this->get_uri(),
-                                    CURLOPT_POST => true,
-                                    CURLOPT_RETURNTRANSFER => true,
-                                    CURLOPT_POSTFIELDS => ['lp_file' => $lp_file,
-                                                           'secret' => $this->get_secret()],
-                                    CURLOPT_CONNECTTIMEOUT => self::CURL_TIMEOUT]);
+        curl_setopt_array($handle, [
+            CURLOPT_URL => $this->get_uri(),
+            CURLOPT_POST => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POSTFIELDS => ['lp_file' => $lp_file,
+                                   'secret' => $this->get_secret()],
+            CURLOPT_CONNECTTIMEOUT => self::CURL_TIMEOUT,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+        ]);
 
         $result = curl_exec($handle);
 
         if(($status = curl_getinfo($handle, CURLINFO_HTTP_CODE)) != 200) {
+            $error = curl_error($handle);
             curl_close($handle);
-            throw new \exception("Could not retrieve solution (HTTP Status $status)!");
+            throw new \exception("Could not retrieve solution (HTTP Status: $status, cURL: ".$error.", result: $result)!");
         }
 
         curl_close($handle);

@@ -97,7 +97,7 @@ class backend
         if($this->get_secret() === null)
             return true;
 
-        return isset($POST_['secret']) && $this->get_secret() === $_POST['secret'];
+        return isset($_POST['secret']) && $this->get_secret() === $_POST['secret'];
     }
 
 }
