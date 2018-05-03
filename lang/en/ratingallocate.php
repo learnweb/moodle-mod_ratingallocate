@@ -58,6 +58,7 @@ $string['ratings_deleted'] = 'Your ratings have been deleted.';
 $string['strategyname'] = 'Strategy is "{$a}"';
 $string['too_early_to_rate'] = 'It is too early to rate.';
 $string['your_allocated_choice'] = 'Your Allocation';
+$string['you_are_not_allocated'] = 'You were not allocated to any choice!';
 $string['your_rating'] = 'Your Rating';
 $string['edit_rating'] = 'Edit Rating';
 $string['delete_rating'] = 'Delete Rating';

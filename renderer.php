@@ -178,20 +178,42 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $t->data[] = $row;
         }
 
-        if (!empty($status->allocations) && $status->is_published) {
-            $row = new html_table_row();
-            $cell1 = new html_table_cell(
+        if ($status->is_published) {
+            if (!empty($status->allocations)) {
+                $row = new html_table_row();
+                $cell1 = new html_table_cell(
                     get_string('your_allocated_choice', ratingallocate_MOD_NAME));
-            $allocation_html = '';
-            foreach ($status->allocations as $allocation) {
-                $allocation_html .= '<li>';
-                $allocation_html .= format_string($allocation->{this_db\ratingallocate_choices::TITLE});
-                $allocation_html .= '</li>';
+                $allocation_html = '';
+                foreach ($status->allocations as $allocation) {
+                    $allocation_html .= html_writer::span(
+                        format_string($allocation->{this_db\ratingallocate_choices::TITLE}),
+                        'allocation tag tag-success');
+                }
+                $cell2 = new html_table_cell($allocation_html);
+                $row->cells = array($cell1, $cell2);
+                $t->data[] = $row;
+            } else if (!empty($status->own_choices)) {
+                $has_rating = false;
+                // Check if the user has rated at least one choice.
+                foreach ($status->own_choices as $choice) {
+                    if (object_property_exists($choice, 'ratingid') && $choice->ratingid != null) {
+                        $has_rating = true;
+                        break;
+                    }
+                }
+                // Only print warning that user is not allocated if she has any rating.
+                if ($has_rating) {
+                    $row = new html_table_row();
+                    $cell1 = new html_table_cell(
+                        get_string('your_allocated_choice', ratingallocate_MOD_NAME));
+                    $allocation_html = html_writer::span(
+                        get_string('you_are_not_allocated', ratingallocate_MOD_NAME),
+                        'allocation tag tag-danger');
+                    $cell2 = new html_table_cell($allocation_html);
+                    $row->cells = array($cell1, $cell2);
+                    $t->data[] = $row;
+                }
             }
-            $allocation_html = '<ul>' . $allocation_html . '</ul>';
-            $cell2 = new html_table_cell($allocation_html);
-            $row->cells = array($cell1, $cell2);
-            $t->data[] = $row;
         }
 
         $o .= html_writer::table($t);
