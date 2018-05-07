@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once(__DIR__ . '/../locallib.php');
+require_once(dirname(__FILE__) . '/generator/lib.php');
 
 /**
  * Tests the internal processor, which controls the different steps of the workflow.

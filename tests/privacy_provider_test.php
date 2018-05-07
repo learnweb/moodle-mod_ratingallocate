@@ -22,12 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/generator/lib.php');
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\deletion_criteria;
 use mod_ratingallocate\privacy\provider;
 
 defined('MOODLE_INTERNAL') || die();
+require_once(dirname(__FILE__) . '/generator/lib.php');
 
 /**
  * Privacy provider tests class.
@@ -151,7 +151,7 @@ class mod_ratingallocate_privacy_provider_testcase extends \core_privacy\tests\p
         $count = $DB->count_records('ratingallocate_allocations', ['userid' => $student->id]);
         $this->assertEquals(0, $count);
 
-        // The other ratings and allocations should be still available
+        // The other ratings and allocations should be still available.
         $count = $DB->count_records('ratingallocate_ratings');
         $this->assertEquals(19, $count);
         $count = $DB->count_records('ratingallocate_allocations');
