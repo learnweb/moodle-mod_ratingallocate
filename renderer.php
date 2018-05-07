@@ -537,11 +537,11 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $distributiondata[$rating] = 1;
             }
         }
-        
+
         // get rating titles
         $titles = $this->get_options_titles(array_keys($distributiondata),$ratingallocate);
 
-        // Although al indizes should be numeric or null, 
+        // Although al indizes should be numeric or null,
         // SORT_STRING cares for the correct comparison of null and 0
         krsort($distributiondata, SORT_STRING);
         $allocationrow = array();
@@ -572,15 +572,22 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $output = $this->heading(get_string('allocation_statistics', ratingallocate_MOD_NAME), 2);
         $output .= $this->box_start();
+        // Get the number of users that have placed a vote.
+        $activeraters = $ratingallocate->get_number_of_active_raters();
+        $notrated = count($usersinchoice) - $activeraters;
         if (count($distributiondata) == 0) {
             $output .= $this->format_text(get_string('allocation_statistics_description_no_alloc',
                 ratingallocate_MOD_NAME,
-                array('unassigned' => count($usersinchoice) - count($memberships))));
+                array('notrated' => $notrated, 'rated' => $activeraters)));
         } else {
             $output .= $this->format_text(get_string('allocation_statistics_description', ratingallocate_MOD_NAME,
-            array('users' => $distributiondata[max(array_keys($distributiondata))], 'total' => count($memberships),
-                'rating' => $titles[max(array_keys($distributiondata))],
-                'unassigned' => count($usersinchoice) - count($memberships))));
+            array('users' => $distributiondata[max(array_keys($distributiondata))],
+                    'usersinchoice' => count($usersinchoice),
+                    'total' => count($memberships),
+                    'notrated' => $notrated,
+                    'rated' => $activeraters,
+                    'rating' => $titles[max(array_keys($distributiondata))],
+                    'unassigned' => count($usersinchoice) - count($memberships))));
             $output .= html_writer::table($allocationtable);
         }
         $output .= $this->box_end();
@@ -631,7 +638,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         }
         return $titles;
     }
-    
+
     /**
      * Formats the rating
      * @param unknown $rating
