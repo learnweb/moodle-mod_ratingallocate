@@ -41,6 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class provider implements
     // This plugin stores personal data.
+
     \core_privacy\local\metadata\provider,
 
     // This plugin is a core_user_data_provider.
@@ -67,8 +68,10 @@ class provider implements
             'choiceid'         => 'privacy:metadata:ratingallocate_allocations:choiceid'
         ], 'privacy:metadata:ratingallocate_allocations');
 
-        $items->add_user_preference('flextable_mod_ratingallocate_table_filter', 'privacy:metadata:preference:flextable_filter');
-        $items->add_user_preference('flextable_mod_ratingallocate_manual_allocation_filter', 'privacy:metadata:preference:flextable_manual_filter');
+        $items->add_user_preference('flextable_mod_ratingallocate_table_filter',
+            'privacy:metadata:preference:flextable_filter');
+        $items->add_user_preference('flextable_mod_ratingallocate_manual_allocation_filter',
+            'privacy:metadata:preference:flextable_manual_filter');
 
         return $items;
     }
@@ -120,11 +123,11 @@ class provider implements
 
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
 
-        // Export choices and ratings
+        // Export choices and ratings.
         $sql = "SELECT cm.id AS cmid,
                        ra.name AS name,
                        choices.title AS choice,
-                       ratings.rating AS rating  
+                       ratings.rating AS rating
                   FROM {context} c
             INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
             INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
@@ -145,7 +148,7 @@ class provider implements
         }
         $choiceanswers->close();
 
-        foreach($choices as $key => $value) {
+        foreach ($choices as $key => $value) {
             $area = array('choices');
             $context = \context_module::instance($key);
 
@@ -160,7 +163,7 @@ class provider implements
             helper::export_context_files($context, $user);
         }
 
-        // Export allocations
+        // Export allocations.
         $sql = "SELECT cm.id AS cmid,
                        ra.name AS name,
                        choices.title AS choice
@@ -183,7 +186,7 @@ class provider implements
         }
         $alloc->close();
 
-        foreach($allocations as $key => $value) {
+        foreach ($allocations as $key => $value) {
             $area = array('allocations');
             $context = \context_module::instance($key);
 
@@ -203,13 +206,15 @@ class provider implements
         $filtertable = get_user_preferences('flextable_mod_ratingallocate_table_filter', null, $userid);
         if (null !== $filtertable) {
             $filtertabledesc = get_string('filtertabledesc', 'mod_ratingallocate');
-            writer::export_user_preference('mod_ratingallocate', 'flextable_mod_ratingallocate_table_filter', $filtertable, $filtertabledesc);
+            writer::export_user_preference('mod_ratingallocate',
+                'flextable_mod_ratingallocate_table_filter', $filtertable, $filtertabledesc);
         }
 
         $filtermanualtable = get_user_preferences('flextable_mod_ratingallocate_manual_allocation_filter', null, $userid);
         if (null !== $filtermanualtable) {
             $filtermanualtabledesc = get_string('filtermanualtabledesc', 'mod_ratingallocate');
-            writer::export_user_preference('mod_ratingallocate', 'flextable_mod_ratingallocate_manual_allocation_filter', $filtermanualtable, $filtermanualtabledesc);
+            writer::export_user_preference('mod_ratingallocate',
+                'flextable_mod_ratingallocate_manual_allocation_filter', $filtermanualtable, $filtermanualtabledesc);
         }
     }
 
