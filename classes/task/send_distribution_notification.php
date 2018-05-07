@@ -35,7 +35,6 @@ class send_distribution_notification extends \core\task\adhoc_task {
         $site = get_site();
         // parse customdata passed
         $customdata = $this->get_custom_data();
-        $userid = $customdata->userid;
         $ratingallocateid = $customdata->ratingallocateid;
 
         //get instance of ratingallocate
@@ -48,7 +47,7 @@ class send_distribution_notification extends \core\task\adhoc_task {
 
         $ratingallocateobj = new \ratingallocate($ratingallocate, $course, $cm, $context);
         
-        $ratingallocateobj->notify_users_distribution($userid);
+        $ratingallocateobj->notify_users_distribution();
         
     }                                                                                                                               
 } 
