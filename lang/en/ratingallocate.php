@@ -310,3 +310,20 @@ $string['log_index_viewed_description'] =  'The user with id "{$a->userid}" view
 
 
 $string['no_id_or_m_error'] = 'You must specify a course_module ID or an instance ID';
+
+// Language strings for Privacy API
+$string['privacy:metadata:ratingallocate_ratings'] = 'Information about the user\'s ratings for given choices.';
+$string['privacy:metadata:ratingallocate_ratings:choiceid'] = 'The ID of the choice the user has rated';
+$string['privacy:metadata:ratingallocate_ratings:userid'] = 'The ID of the user rating this choice';
+$string['privacy:metadata:ratingallocate_ratings:rating'] = 'The rating a user has given to a choice.';
+
+$string['privacy:metadata:ratingallocate_allocations'] = 'Information about the user\'s allocated choices for an activity instance.';
+$string['privacy:metadata:ratingallocate_allocations:userid'] = 'The ID of the user who was allocated to a choice';
+$string['privacy:metadata:ratingallocate_allocations:ratingallocateid'] = 'The ID of the activity instance this allocation belongs to';
+$string['privacy:metadata:ratingallocate_allocations:choiceid'] = 'The ID of the choice the user was allocated to';
+
+$string['privacy:metadata:preference:flextable_filter'] = 'Stores the filters that are applied to the allocations table.';
+$string['privacy:metadata:preference:flextable_manual_filter'] = 'Stores the filters that are applied to the manual allocations table.';
+
+$string['filtertabledesc'] = 'Describes the filters that are applied to the allocation table.';
+$string['filtermanualtabledesc'] = 'Describes the filters that are applied to the table of the manual allocation form.';
