@@ -22,7 +22,7 @@ require_once(__DIR__ . '/../locallib.php');
  *
  * @package    mod_ratingallocate
  * @category   test
- * @group      mod_ratingallocate2
+ * @group      mod_ratingallocate
  * @copyright  2018 T Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
