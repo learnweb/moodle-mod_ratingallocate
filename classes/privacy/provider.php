@@ -90,11 +90,12 @@ class provider implements
             INNER JOIN {ratingallocate_choices} choices ON choices.ratingallocateid = cm.instance
             LEFT JOIN {ratingallocate_allocations} alloc ON alloc.choiceid = choices.id
             LEFT JOIN {ratingallocate_ratings} ratings ON ratings.choiceid = choices.id
-                 WHERE alloc.userid = :userid OR ratigns.userid = :userid";
+                 WHERE alloc.userid = :aluserid OR ratings.userid = :userid";
 
         $params = [
             'modname'      => 'ratingallocate',
             'contextlevel' => CONTEXT_MODULE,
+            'aluserid'     => $userid,
             'userid'       => $userid,
         ];
         $contextlist = new contextlist();
@@ -121,16 +122,43 @@ class provider implements
 
         // Export choices and ratings
         $sql = "SELECT cm.id AS cmid,
+                       ra.name AS name,
                        choices.title AS choice,
                        ratings.rating AS rating  
                   FROM {context} c
             INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
             INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
             INNER JOIN {ratingallocate} ra ON ra.id = cm.instance
-            INNER JOIN {ratingallocate_choices} choices ON choices.ratingallocateid = cm.instance
+            INNER JOIN {ratingallocate_choices} choices ON choices.ratingallocateid = ra.id
             INNER JOIN {ratingallocate_ratings} ratings ON ratings.choiceid = choices.id
-                 WHERE c.id {$contextsql} AND ratigns.userid = :userid
+                 WHERE c.id {$contextsql} AND ratings.userid = :userid
                  ORDER BY cm.id";
+
+        $params = ['modname' => 'ratingallocate', 'contextlevel' => CONTEXT_MODULE, 'userid' => $user->id] + $contextparams;
+        $choiceanswers = $DB->get_recordset_sql($sql, $params);
+        $choices = array();
+        foreach ($choiceanswers as $choiceanswer) {
+            $choicedata = new \stdClass();
+            $choicedata->choice = $choiceanswer->choice;
+            $choicedata->rating = $choiceanswer->rating;
+            $choices[$choiceanswer->cmid]->choices[] = $choicedata;
+        }
+        $choiceanswers->close();
+
+        foreach($choices as $key => $value) {
+            $area = array('choices');
+            $context = \context_module::instance($key);
+
+            // Fetch the generic module data for the choice.
+            $contextdata = helper::get_context_data($context, $user);
+
+            // Merge with choice data and write it.
+            $contextdata = (object)array_merge((array)$contextdata, (array)$value);
+            writer::with_context($context)->export_data($area, $contextdata);
+
+            // Write generic module intro files.
+            helper::export_context_files($context, $user);
+        }
 
         // Export allocations
         $sql = "SELECT cm.id AS cmid,
@@ -140,70 +168,49 @@ class provider implements
             INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
             INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
             INNER JOIN {ratingallocate} ra ON ra.id = cm.instance
-            INNER JOIN {ratingallocate_choices} choices ON choices.ratingallocateid = cm.instance
-            INNER JOIN {ratingallocate_allocations} alloc ON alloc.choiceid = choices.id
+            INNER JOIN {ratingallocate_allocations} alloc ON alloc.ratingallocateid = ra.id
+            INNER JOIN {ratingallocate_choices} choices ON choices.id = alloc.choiceid
                  WHERE c.id {$contextsql} AND alloc.userid = :userid
                  ORDER BY cm.id";
 
         $params = ['modname' => 'ratingallocate', 'contextlevel' => CONTEXT_MODULE, 'userid' => $user->id] + $contextparams;
-
-        // TODO
-        $choiceanswers = $DB->get_recordset_sql($sql, $params);
-        foreach ($choiceanswers as $choiceanswer) {
-            // If we've moved to a new choice, then write the last choice data and reinit the choice data array.
-            if ($lastcmid != $choiceanswer->cmid) {
-                if (!empty($choicedata)) {
-                    $context = \context_module::instance($lastcmid);
-                    self::export_choice_data_for_user($choicedata, $context, $user);
-                }
-                $choicedata = [
-                    'answer'       => [],
-                    'timemodified' => \core_privacy\local\request\transform::datetime($choiceanswer->timemodified),
-                ];
-            }
-            $choicedata['answer'][] = $choiceanswer->answer;
-            $lastcmid = $choiceanswer->cmid;
+        $alloc = $DB->get_recordset_sql($sql, $params);
+        $allocations = array();
+        foreach ($alloc as $allocation) {
+            $allocationdata = new \stdClass();
+            $allocationdata->choice = $allocation->choice;
+            $allocations[$allocation->cmid]->allocations[] = $allocationdata;
         }
-        $choiceanswers->close();
+        $alloc->close();
 
-        // The data for the last activity won't have been written yet, so make sure to write it now!
-        if (!empty($choicedata)) {
-            $context = \context_module::instance($lastcmid);
-            self::export_choice_data_for_user($choicedata, $context, $user);
+        foreach($allocations as $key => $value) {
+            $area = array('allocations');
+            $context = \context_module::instance($key);
+
+            // Fetch the generic module data for the choice.
+            $contextdata = helper::get_context_data($context, $user);
+
+            // Merge with choice data and write it.
+            $contextdata = (object)array_merge((array)$contextdata, (array)$value);
+            writer::with_context($context)->export_data($area, $contextdata);
+
+            // Write generic module intro files.
+            helper::export_context_files($context, $user);
         }
     }
 
     public static function export_user_preferences(int $userid) {
         $filtertable = get_user_preferences('flextable_mod_ratingallocate_table_filter', null, $userid);
-        if(null !== $filtertable) {
+        if (null !== $filtertable) {
             $filtertabledesc = get_string('filtertabledesc', 'mod_ratingallocate');
             writer::export_user_preference('mod_ratingallocate', 'flextable_mod_ratingallocate_table_filter', $filtertable, $filtertabledesc);
         }
 
         $filtermanualtable = get_user_preferences('flextable_mod_ratingallocate_manual_allocation_filter', null, $userid);
-        if(null !== $filtermanualtable) {
+        if (null !== $filtermanualtable) {
             $filtermanualtabledesc = get_string('filtermanualtabledesc', 'mod_ratingallocate');
             writer::export_user_preference('mod_ratingallocate', 'flextable_mod_ratingallocate_manual_allocation_filter', $filtermanualtable, $filtermanualtabledesc);
         }
-    }
-
-    /**
-     * Export the supplied personal data for a single ratingallocate activity, along with any generic data or area files.
-     *
-     * @param array           $choicedata the personal data to export for the choice.
-     * @param \context_module $context    the context of the choice.
-     * @param \stdClass       $user       the user record
-     */
-    protected static function export_choice_data_for_user(array $choicedata, \context_module $context, \stdClass $user) {
-        // Fetch the generic module data for the choice.
-        $contextdata = helper::get_context_data($context, $user);
-
-        // Merge with choice data and write it.
-        $contextdata = (object) array_merge((array) $contextdata, $choicedata);
-        writer::with_context($context)->export_data([], $contextdata);
-
-        // Write generic module intro files.
-        helper::export_context_files($context, $user);
     }
 
     /**
@@ -264,7 +271,7 @@ class provider implements
                 "choiceid IN (SELECT id FROM {ratingallocate_choices} WHERE ratingallocateid = :instanceid) AND userid = :userid",
                 [
                     'instanceid' => $instanceid,
-                    'userid' => $userid
+                    'userid'     => $userid
                 ]
             );
         }
