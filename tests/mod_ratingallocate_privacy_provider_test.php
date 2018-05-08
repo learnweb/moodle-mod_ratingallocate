@@ -136,7 +136,7 @@ class mod_ratingallocate_privacy_provider_testcase extends \core_privacy\tests\p
 
         $cm = get_coursemodule_from_instance('ratingallocate',  $this->testmodule->moddb->id);
         $context = context_module::instance($cm->id);
-        $student = $this->testmodule->students[3];
+        $student = core_user::get_user(array_pop($this->testmodule->allocations)->userid);
 
         // Before deletion, we should have 2 responses.
         $count = $DB->count_records('ratingallocate_ratings');
