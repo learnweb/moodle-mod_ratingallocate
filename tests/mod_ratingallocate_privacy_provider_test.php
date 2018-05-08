@@ -34,6 +34,7 @@ require_once(dirname(__FILE__) . '/generator/lib.php');
  *
  * @package    mod_ratingallocate
  * @copyright  2018 Tamara Gunkel
+ * @group      mod_ratingallocate
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_ratingallocate_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
