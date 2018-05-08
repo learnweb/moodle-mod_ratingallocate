@@ -107,6 +107,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             $mform->addGroup($radioarray, 'radioarr_' . $data->choiceid, $data->explanation, null, false);
 
             $defaultrating = $this->get_strategysetting('default');
+            $defaultrating = $defaultrating == null ? max(array_keys($choiceoptions)) : $defaultrating;
             // Try to restore previous ratings.
             if (is_numeric($data->rating) && $data->rating >= 0 && $data->rating <= $defaultrating) {
                 $mform->setDefault($ratingelem, $data->rating);
