@@ -151,13 +151,13 @@ It is counting the allocations according to the rating the user has given to the
 <ul>
 <li>{$a->rated} out of {$a->usersinchoice} user(s) have placed their vote.</li>
 <li>{$a->users} out of {$a->total} user(s) got a choice they rated with "{$a->rating}".</li>
-<li>{$a->unassigned} user(s) could not been allocated to a choice yet.</li>
+<li>{$a->unassigned} user(s) could not be allocated to a choice yet.</li>
 </ul>';
 $string['allocation_statistics_description_no_alloc'] = 'This statistic gives an impression of the overall satisfaction of the allocation.
 It is counting the allocations according to the rating the user has given to the respective choice.
 <ul>
-<li>Currently {$a->notrated} user(s) have not yet given his/their rating.</li>
-<li>{$a->rated} user(s) already placed his/their vote.</li>
+<li>Currently {$a->notrated} user(s) have not yet given a rating.</li>
+<li>{$a->rated} user(s) already placed a vote.</li>
 <li>There are no allocations yet.</li>
 </ul>';
 
