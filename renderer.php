@@ -178,6 +178,15 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $t->data[] = $row;
         }
 
+        $has_rating = false;
+        // Check if the user has rated at least one choice.
+        foreach ($status->own_choices as $choice) {
+            if (object_property_exists($choice, 'ratingid') && $choice->ratingid != null) {
+                $has_rating = true;
+                break;
+            }
+        }
+
         if ($status->is_published) {
             if (!empty($status->allocations)) {
                 $row = new html_table_row();
@@ -194,14 +203,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $row->cells = array($cell1, $cell2);
                 $t->data[] = $row;
             } else if (!empty($status->own_choices)) {
-                $has_rating = false;
-                // Check if the user has rated at least one choice.
-                foreach ($status->own_choices as $choice) {
-                    if (object_property_exists($choice, 'ratingid') && $choice->ratingid != null) {
-                        $has_rating = true;
-                        break;
-                    }
-                }
                 // Only print warning that user is not allocated if she has any rating.
                 if ($has_rating) {
                     $row = new html_table_row();
@@ -237,7 +238,16 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         else if ($status->accesstimestop < $time) {
             // if results already published
             if ($status->is_published == true) {
-                $this->add_notification(get_string('rating_is_over', ratingallocate_MOD_NAME), 'notifymessage');
+                if (count($status->allocations) > 0) {
+                    $this->add_notification(get_string('rating_is_over_with_allocation', ratingallocate_MOD_NAME,
+                        array_pop($status->allocations)->title), 'notifysuccess');
+                } else if ($has_rating) {
+                    $this->add_notification(get_string('rating_is_over_no_allocation', ratingallocate_MOD_NAME),
+                        'notifyproblem');
+                } else {
+                    $this->add_notification(get_string('rating_is_over', ratingallocate_MOD_NAME),
+                        'notifymessage');
+                }
             } else {
                 $this->add_notification(get_string('results_not_yet_published', ratingallocate_MOD_NAME), 'notifymessage');
             }

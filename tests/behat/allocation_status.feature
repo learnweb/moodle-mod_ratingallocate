@@ -66,6 +66,7 @@ Feature: Students should get status information according to their rating and th
     And I am on "Course 1" course homepage
     And I follow "My Fair Allocation"
     Then I should see "My only choice" in the "//*[contains(@class, 'allocation')]" "xpath_element"
+    And I should see "My only choice" in the "//*[contains(@class, 'alert-success')]" "xpath_element"
 
   @javascript
   Scenario: As a user, who rated and was not allocated, I should see a warning.
@@ -73,6 +74,7 @@ Feature: Students should get status information according to their rating and th
     And I am on "Course 1" course homepage
     And I follow "My Fair Allocation"
     Then I should see "You were not allocated to any choice!" in the "//*[contains(@class, 'allocation')]" "xpath_element"
+    And I should see "You could not be allocated to any choice." in the "//*[contains(@class, 'alert-danger')]" "xpath_element"
 
   @javascript
   Scenario: As a user, who did not rate, I should not see my allocated choice
@@ -80,3 +82,4 @@ Feature: Students should get status information according to their rating and th
     And I am on "Course 1" course homepage
     And I follow "My Fair Allocation"
     Then I should not see "Your Allocation"
+    And I should see "The rating is over." in the "//*[contains(@class, 'alert-info')]" "xpath_element"
