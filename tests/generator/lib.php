@@ -14,21 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(__FILE__) . '/../../locallib.php');
-
-/**
- * mod_ratinallocate generator tests
-*
-* @package    mod_ratingallocate
-* @category   test
-* @copyright  usener
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
-
 defined('MOODLE_INTERNAL') || die();
+
+require_once(dirname(__FILE__) . '/../../locallib.php');
 
 use ratingallocate\db as this_db;
 
+/**
+ * mod_ratinallocate generator tests
+ *
+ * @package    mod_ratingallocate
+ * @category   test
+ * @copyright  usener
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class mod_ratingallocate_generator extends testing_module_generator {
 
     public function create_instance($record = null, array $options = null) {
@@ -135,9 +134,9 @@ class mod_ratingallocate_generator extends testing_module_generator {
     /**
      * login with given user and save his rating
      * @param advanced_testcase $tc
-     * @param unknown $modratingallocate
-     * @param unknown $user
-     * @param unknown $rating
+     * @param stdClass $modratingallocate
+     * @param stdClass $user
+     * @param array $rating
      */
     public static function save_rating_for_user(advanced_testcase $tc, $modratingallocate, $user,
                                                 $rating) {
@@ -174,20 +173,26 @@ class mod_ratingallocate_generator extends testing_module_generator {
         return new ratingallocate($ratingallocatedb, $course, $cm, $context);
     }
 
-    public static function get_open_ratingallocate_for_teacher(advanced_testcase $tc, $choices = null) {
-        return self::get_ratingallocate_for_teacher_open_in(0, $tc, $choices);
+    public static function get_open_ratingallocate_for_teacher(advanced_testcase $tc, $choices = null,
+                                                               $course = null, $ratings = null) {
+        return self::get_ratingallocate_for_teacher_open_in(0, $tc, $choices, $course, $ratings);
     }
 
-    public static function get_closed_ratingallocate_for_teacher(advanced_testcase $tc, $choices = null) {
-        return self::get_ratingallocate_for_teacher_open_in(-7, $tc, $choices);
+    public static function get_closed_ratingallocate_for_teacher(advanced_testcase $tc, $choices = null,
+                                                                 $course = null, $ratings = null) {
+        return self::get_ratingallocate_for_teacher_open_in(-7, $tc, $choices, $course, $ratings);
     }
 
-    private static function get_ratingallocate_for_teacher_open_in($numdays, advanced_testcase $tc, $choices = null) {
+    private static function get_ratingallocate_for_teacher_open_in($numdays, advanced_testcase $tc, $choices = null,
+                                                                   $course = null, $ratings = null) {
         $record = self::get_default_values();
         $record['accesstimestart'] = time() + ($numdays * 24 * 60 * 60);
         $record['accesstimestop'] = time() + (($numdays + 6) * 24 * 60 * 60);
         $record['publishdate'] = time() + (($numdays + 7) * 24 * 60 * 60);
-        $testmodule = new mod_ratingallocate_generated_module($tc, $record, $choices);
+        if ($course) {
+            $record['course'] = $course;
+        }
+        $testmodule = new mod_ratingallocate_generated_module($tc, $record, $choices, $ratings);
         return self::get_ratingallocate_for_user($tc,
             $testmodule->moddb, $testmodule->teacher);
     }
@@ -215,10 +220,11 @@ class mod_ratingallocate_generated_module {
      * @param advanced_testcase $tc
      * @param array $moduledata
      * @param array $choicedata
+     * @param array $ratings
      * @param boolean $assertintermediateresult
      */
     public function __construct(advanced_testcase $tc, $moduledata = null, $choicedata = null,
-                                $assertintermediateresult = true) {
+                                $ratings = null, $assertintermediateresult = true) {
         global $DB;
         $tc->resetAfterTest();
         $tc->setAdminUser();
@@ -246,73 +252,94 @@ class mod_ratingallocate_generated_module {
         // Create activity.
         $this->moddb = mod_ratingallocate_generator::create_instance_with_choices($tc, $moduledata, $choicedata);
 
-        // Create students.
-        $numstudents = array_key_exists('num_students', $moduledata) ? $moduledata['num_students'] : 20;
-        for ($i = 0; $i < $numstudents; $i++) {
-            $this->students[$i] = mod_ratingallocate_generator::create_user_and_enrol($tc,
-                    $this->course);
-        }
-
-        // Assert number of choices is correct.
-        $numberofrecords = $DB->count_records(this_db\ratingallocate_choices::TABLE,
-            array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->moddb->id));
-        $tc->assertEquals(2, $numberofrecords);
-
         // Load Ratingallocate object.
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($tc,
             $this->moddb, $this->teacher);
 
-        // Load choices.
-        $this->choices = $choices = $ratingallocate->get_rateable_choices();
-        $choicesnummerated = array_values($choices);
-        $numchoices = count($choicesnummerated);
-
-        // create students' preferences as array
-        //    array ('Choice 1' => 1 )
-        if (!array_key_exists('ratings', $moduledata)) {
-            $moduledata['ratings'] = array();
-            for ($i = 0; $i < $numstudents; $i++) {
-                $moduledata['ratings'][$i] = array(
-                    $choicesnummerated[$i % $numchoices]->{this_db\ratingallocate_choices::TITLE} => 1
-                );
-            }
-        }
-        $this->ratings = $moduledata['ratings'];
-
-        // Create preferences
-        $prefersnon = array();
-        $choiceidbytitle = array();
-        foreach ($choices as $choice) {
-            $prefersnon[$choice->{this_db\ratingallocate_choices::ID}] = array(
-                this_db\ratingallocate_ratings::CHOICEID => $choice->{this_db\ratingallocate_choices::ID},
-                    this_db\ratingallocate_ratings::RATING => 0
-            );
-            $choiceidbytitle[$choice->{this_db\ratingallocate_choices::TITLE}] = $choice->{this_db\ratingallocate_choices::ID};
-        }
-
-        // rate for student
-        for ($i = 0; $i < $numstudents; $i++) {
-            $rating = json_decode(json_encode($prefersnon), true);
-
-            // create user's rating according to the modules specifications
-            foreach ($this->ratings[$i] as $choicename => $preference) {
-                $choiceid = $choiceidbytitle[$choicename];
-                $rating[$choiceid][this_db\ratingallocate_ratings::RATING] = $preference;
-            }
-
-            // assign preferences
-            mod_ratingallocate_generator::save_rating_for_user($tc, $this->moddb,
-                    $this->students[$i], $rating);
-            if ($assertintermediateresult) {
-                $alloc = mod_ratingallocate_generator::get_ratingallocate_for_user($tc,
-                        $this->moddb, $this->students[$i]);
-                $savedratings = $alloc->get_rating_data_for_user($this->students[$i]->id);
-                $savedratingarr = array();
-                foreach ($savedratings as $savedrating) {
-                    if(!$savedrating->{this_db\ratingallocate_ratings::RATING} == 0)
-                        $savedratingarr[$savedrating->{this_db\ratingallocate_choices::TITLE}] = $savedrating->{this_db\ratingallocate_ratings::RATING};
+        // If rating data is provided restore it. Otherwise generate random ones.
+        if ($ratings) {
+            foreach ($ratings as $userid => $rating) {
+                $choices = $ratingallocate->get_choices();
+                $user = get_complete_user_data('id', $userid);
+                $ratingdata = array();
+                foreach ($rating as $singlerating) {
+                    foreach ($choices as $choice) {
+                        if ($choice->title == $singlerating['choice']) {
+                            $ratingdata [] = array(
+                                    'rating' => $singlerating['rating'],
+                                    'choiceid' => $choice->id
+                            );
+                        }
+                    }
                 }
-                $tc->assertEquals($this->ratings[$i], $savedratingarr);
+                mod_ratingallocate_generator::save_rating_for_user($tc, $this->moddb,
+                    $user, $ratingdata);
+            }
+        } else {
+            // Create students.
+            $numstudents = array_key_exists('num_students', $moduledata) ? $moduledata['num_students'] : 20;
+            for ($i = 0; $i < $numstudents; $i++) {
+                $this->students[$i] = mod_ratingallocate_generator::create_user_and_enrol($tc,
+                    $this->course);
+            }
+
+            // Assert number of choices is correct.
+            $numberofrecords = $DB->count_records(this_db\ratingallocate_choices::TABLE,
+                array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->moddb->id));
+            $tc->assertEquals(2, $numberofrecords);
+
+            // Load choices.
+            $this->choices = $choices = $ratingallocate->get_rateable_choices();
+            $choicesnummerated = array_values($choices);
+            $numchoices = count($choicesnummerated);
+
+            // Create students' preferences as array.
+            if (!array_key_exists('ratings', $moduledata)) {
+                $moduledata['ratings'] = array();
+                for ($i = 0; $i < $numstudents; $i++) {
+                    $moduledata['ratings'][$i] = array(
+                        $choicesnummerated[$i % $numchoices]->{this_db\ratingallocate_choices::TITLE} => 1
+                    );
+                }
+            }
+            $this->ratings = $moduledata['ratings'];
+
+            // Create preferences.
+            $prefersnon = array();
+            $choiceidbytitle = array();
+            foreach ($choices as $choice) {
+                $prefersnon[$choice->{this_db\ratingallocate_choices::ID}] = array(
+                    this_db\ratingallocate_ratings::CHOICEID => $choice->{this_db\ratingallocate_choices::ID},
+                    this_db\ratingallocate_ratings::RATING => 0
+                );
+                $choiceidbytitle[$choice->{this_db\ratingallocate_choices::TITLE}] = $choice->{this_db\ratingallocate_choices::ID};
+            }
+
+            // Rate for student.
+            for ($i = 0; $i < $numstudents; $i++) {
+                $rating = json_decode(json_encode($prefersnon), true);
+
+                // create user's rating according to the modules specifications
+                foreach ($this->ratings[$i] as $choicename => $preference) {
+                    $choiceid = $choiceidbytitle[$choicename];
+                    $rating[$choiceid][this_db\ratingallocate_ratings::RATING] = $preference;
+                }
+
+                // assign preferences
+                mod_ratingallocate_generator::save_rating_for_user($tc, $this->moddb,
+                    $this->students[$i], $rating);
+                if ($assertintermediateresult) {
+                    $alloc = mod_ratingallocate_generator::get_ratingallocate_for_user($tc,
+                        $this->moddb, $this->students[$i]);
+                    $savedratings = $alloc->get_rating_data_for_user($this->students[$i]->id);
+                    $savedratingarr = array();
+                    foreach ($savedratings as $savedrating) {
+                        if (!$savedrating->{this_db\ratingallocate_ratings::RATING} == 0) {
+                            $savedratingarr[$savedrating->{this_db\ratingallocate_choices::TITLE}] = $savedrating->{this_db\ratingallocate_ratings::RATING};
+                        }
+                    }
+                    $tc->assertEquals($this->ratings[$i], $savedratingarr);
+                }
             }
         }
 

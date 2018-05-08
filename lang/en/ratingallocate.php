@@ -53,11 +53,14 @@ $string['timeremaining'] = 'Time remaining';
 $string['publishdate_estimated'] = 'Estimated publication date';
 $string['rateable_choices'] = 'Rateable Choices';
 $string['rating_is_over'] = 'The rating is over.';
+$string['rating_is_over_with_allocation'] = 'The rating is over. You were allocated to \'{$a}\'.';
+$string['rating_is_over_no_allocation'] = 'The rating is over. You could not be allocated to any choice.';
 $string['ratings_saved'] = 'Your ratings have been saved.';
 $string['ratings_deleted'] = 'Your ratings have been deleted.';
 $string['strategyname'] = 'Strategy is "{$a}"';
 $string['too_early_to_rate'] = 'It is too early to rate.';
 $string['your_allocated_choice'] = 'Your Allocation';
+$string['you_are_not_allocated'] = 'You were not allocated to any choice!';
 $string['your_rating'] = 'Your Rating';
 $string['edit_rating'] = 'Edit Rating';
 $string['delete_rating'] = 'Delete Rating';
@@ -145,13 +148,20 @@ $string['show_table'] = 'Show Ratings and Allocations';
 
 $string['allocation_statistics'] = 'Allocation Statistics';
 $string['show_allocation_statistics'] = 'Show Allocation Statistics';
-$string['allocation_statistics_description'] = 'This table gives an impression of the overall satisfaction of the allocation.
+$string['allocation_statistics_description'] = 'This statistic gives an impression of the overall satisfaction of the allocation.
 It is counting the allocations according to the rating the user has given to the respective choice.
-In this case {$a->users} out of {$a->total} users got a choice they rated with "{$a->rating}".
-For {$a->unassigned} users no choice has been allocated yet.';
+<ul>
+<li>{$a->rated} out of {$a->usersinchoice} user(s) have placed their vote.</li>
+<li>{$a->users} out of {$a->total} user(s) got a choice they rated with "{$a->rating}".</li>
+<li>{$a->unassigned} user(s) could not be allocated to a choice yet.</li>
+</ul>';
 $string['allocation_statistics_description_no_alloc'] = 'This statistic gives an impression of the overall satisfaction of the allocation.
 It is counting the allocations according to the rating the user has given to the respective choice.
-There are no allocations yet. Currently {$a->unassigned} users have given their rating.';
+<ul>
+<li>Currently {$a->notrated} user(s) have not yet given a rating.</li>
+<li>{$a->rated} user(s) already placed a vote.</li>
+<li>There are no allocations yet.</li>
+</ul>';
 
 $string['rating_raw'] = '{$a}';
 // </editor-fold>
@@ -274,8 +284,10 @@ $string['strategy_tickyes_explain_mintickyes'] = 'You have to tick a minimum of 
 
 // As message provider, for the notification after allocation
 $string['messageprovider:notifyalloc'] = 'Notification of option allocation';
-$string['allocation_notification_message_subject'] = 'Notification of finished allocation for {$a}';
+$string['allocation_notification_message_subject'] = 'Allocation published for {$a}';
 $string['allocation_notification_message'] = 'Concerning the "{$a->ratingallocate}", you have been assigned to the choice "{$a->choice} ({$a->explanation})".';
+$string['no_allocation_notification_message'] = 'Concerning the "{$a->ratingallocate}", you could not be assigned to any choice.';
+$string['messageprovider:allocation'] = 'Notification about published allocation';
 
 // Logging
 $string['log_rating_saved'] = 'User rating saved';

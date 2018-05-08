@@ -14,21 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Defines the version of ratingallocate
+ * Definition of Ratingallocate messages.
  *
- * @package    mod_ratingallocate
- * @copyright 2014 T Reischmann, C Usener
- * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_ratingallocate
+ * @category  message
+ * @copyright 2018 Tobias Reischmann
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018050702;        // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2016052300;        // Requires this Moodle version
-$plugin->cron      = 300;                 // Period for cron to check this module (secs)
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v3.4-r1';
-$plugin->component = 'mod_ratingallocate';  // To check on upgrade, that module sits in correct place
+$messageproviders = array (
+    // Notify student about published allocation
+    'allocation' => array (
+        'capability'  => 'mod/ratingallocate:give_rating'
+    )
+);

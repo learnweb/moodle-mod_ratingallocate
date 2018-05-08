@@ -178,20 +178,44 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $t->data[] = $row;
         }
 
-        if (!empty($status->allocations) && $status->is_published) {
-            $row = new html_table_row();
-            $cell1 = new html_table_cell(
-                    get_string('your_allocated_choice', ratingallocate_MOD_NAME));
-            $allocation_html = '';
-            foreach ($status->allocations as $allocation) {
-                $allocation_html .= '<li>';
-                $allocation_html .= format_string($allocation->{this_db\ratingallocate_choices::TITLE});
-                $allocation_html .= '</li>';
+        $has_rating = false;
+        // Check if the user has rated at least one choice.
+        foreach ($status->own_choices as $choice) {
+            if (object_property_exists($choice, 'ratingid') && $choice->ratingid != null) {
+                $has_rating = true;
+                break;
             }
-            $allocation_html = '<ul>' . $allocation_html . '</ul>';
-            $cell2 = new html_table_cell($allocation_html);
-            $row->cells = array($cell1, $cell2);
-            $t->data[] = $row;
+        }
+
+        if ($status->is_published) {
+            if (!empty($status->allocations)) {
+                $row = new html_table_row();
+                $cell1 = new html_table_cell(
+                    get_string('your_allocated_choice', ratingallocate_MOD_NAME));
+                $allocation_html = '';
+                foreach ($status->allocations as $allocation) {
+                    $allocation_html .= html_writer::span(
+                        format_string($allocation->{this_db\ratingallocate_choices::TITLE}),
+                        'allocation tag tag-success');
+                    $allocation_html .= '<br/>' . format_string($allocation->{this_db\ratingallocate_choices::EXPLANATION});
+                }
+                $cell2 = new html_table_cell($allocation_html);
+                $row->cells = array($cell1, $cell2);
+                $t->data[] = $row;
+            } else if (!empty($status->own_choices)) {
+                // Only print warning that user is not allocated if she has any rating.
+                if ($has_rating) {
+                    $row = new html_table_row();
+                    $cell1 = new html_table_cell(
+                        get_string('your_allocated_choice', ratingallocate_MOD_NAME));
+                    $allocation_html = html_writer::span(
+                        get_string('you_are_not_allocated', ratingallocate_MOD_NAME),
+                        'allocation tag tag-danger');
+                    $cell2 = new html_table_cell($allocation_html);
+                    $row->cells = array($cell1, $cell2);
+                    $t->data[] = $row;
+                }
+            }
         }
 
         $o .= html_writer::table($t);
@@ -214,7 +238,16 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         else if ($status->accesstimestop < $time) {
             // if results already published
             if ($status->is_published == true) {
-                $this->add_notification(get_string('rating_is_over', ratingallocate_MOD_NAME), 'notifymessage');
+                if (count($status->allocations) > 0) {
+                    $this->add_notification(get_string('rating_is_over_with_allocation', ratingallocate_MOD_NAME,
+                        array_pop($status->allocations)->title), 'notifysuccess');
+                } else if ($has_rating) {
+                    $this->add_notification(get_string('rating_is_over_no_allocation', ratingallocate_MOD_NAME),
+                        'notifyproblem');
+                } else {
+                    $this->add_notification(get_string('rating_is_over', ratingallocate_MOD_NAME),
+                        'notifymessage');
+                }
             } else {
                 $this->add_notification(get_string('results_not_yet_published', ratingallocate_MOD_NAME), 'notifymessage');
             }
@@ -514,11 +547,11 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $distributiondata[$rating] = 1;
             }
         }
-        
+
         // get rating titles
         $titles = $this->get_options_titles(array_keys($distributiondata),$ratingallocate);
 
-        // Although al indizes should be numeric or null, 
+        // Although al indizes should be numeric or null,
         // SORT_STRING cares for the correct comparison of null and 0
         krsort($distributiondata, SORT_STRING);
         $allocationrow = array();
@@ -549,15 +582,22 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $output = $this->heading(get_string('allocation_statistics', ratingallocate_MOD_NAME), 2);
         $output .= $this->box_start();
+        // Get the number of users that have placed a vote.
+        $activeraters = $ratingallocate->get_number_of_active_raters();
+        $notrated = count($usersinchoice) - $activeraters;
         if (count($distributiondata) == 0) {
             $output .= $this->format_text(get_string('allocation_statistics_description_no_alloc',
                 ratingallocate_MOD_NAME,
-                array('unassigned' => count($usersinchoice) - count($memberships))));
+                array('notrated' => $notrated, 'rated' => $activeraters)));
         } else {
             $output .= $this->format_text(get_string('allocation_statistics_description', ratingallocate_MOD_NAME,
-            array('users' => $distributiondata[max(array_keys($distributiondata))], 'total' => count($memberships),
-                'rating' => $titles[max(array_keys($distributiondata))],
-                'unassigned' => count($usersinchoice) - count($memberships))));
+            array('users' => $distributiondata[max(array_keys($distributiondata))],
+                    'usersinchoice' => count($usersinchoice),
+                    'total' => count($memberships),
+                    'notrated' => $notrated,
+                    'rated' => $activeraters,
+                    'rating' => $titles[max(array_keys($distributiondata))],
+                    'unassigned' => count($usersinchoice) - count($memberships))));
             $output .= html_writer::table($allocationtable);
         }
         $output .= $this->box_end();
@@ -608,7 +648,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         }
         return $titles;
     }
-    
+
     /**
      * Formats the rating
      * @param unknown $rating
