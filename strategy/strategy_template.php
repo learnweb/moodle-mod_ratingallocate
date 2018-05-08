@@ -79,10 +79,11 @@ abstract class strategytemplate {
      * If any dynamic Settingsfields is returned, a refresh button will be included in the view.
      * Return object:
      * array{
-     * * Value[0]: Type of settingsfield (e.g. 'text', 'int')
+     * * Value[0]: Type of settingsfield (e.g. 'text', 'int', 'select')
      * * Value[1]: Label of the settingsfield
      * * Value[2]: Default value (may be null)
-     * * Value[3]: Placeholder text (may be null)
+     * * Value[3]: Placeholder text in case of 'text' or 'int' and options in case of 'select' (may be null)
+     * * Value[4]: String for the help_icon without _help suffix. (may be null)
      * }
      */
     public abstract function get_dynamic_settingfields();

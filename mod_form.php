@@ -161,7 +161,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         $attributes = array('size' => '20');
 
-        if (isset($value[3])) {
+        if ($value[0] != "select" && isset($value[3])) {
             $attributes['placeholder'] = ($value[3]);
         }
 
@@ -172,9 +172,14 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $mform->addElement('text', $stratfieldid, $value[1], $attributes);
             $mform->setType($stratfieldid, PARAM_TEXT);
             $mform->addRule($stratfieldid, null, 'numeric'); // TODO: Only validate if not disabled.
+        } else if ($value[0] == "select") {
+            $mform->addElement('select', $stratfieldid, $value[1], $value[3], $attributes);
         }
         if (isset($value[2])) {
             $mform->setDefault($stratfieldid, $value[2]);
+        }
+        if (isset($value[4])) {
+            $mform->addHelpButton($stratfieldid, $value[4], self::MOD_NAME);
         }
         $mform->disabledIf($stratfieldid, 'strategy', 'neq', $strategyid);
     }

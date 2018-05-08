@@ -230,6 +230,10 @@ $string['is_published'] = 'Published';
 
 $string['strategy_settings_label'] = 'Designation for "{$a}"';
 
+$string['strategy_settings_default'] = 'Default value for rating form';
+$string['strategy_settings_default_help'] = 'The rating form, the users are provided with, will contain a set of radio buttons for each available choice.
+This value defines the default value the radio buttons are initialized with.';
+
 /* Specific to Strategy01, YesNo */
 $string['strategy_yesno_name'] = 'Accept-Deny';
 $string['strategy_yesno_setting_crossout'] = 'Maximum number of choices the user can rate with "Deny"';

@@ -28,7 +28,6 @@
 
 namespace ratingallocate\strategy_yesno;
 
-use ratingallocate\strategy_yesno\strategy;
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
@@ -60,6 +59,7 @@ class strategy extends \strategytemplate_options {
                             $this->get_settings_default_value($id)
             );
         }
+        $output += $this->get_default_strategy_option();
         return $output;
     }
     
