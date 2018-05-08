@@ -47,6 +47,10 @@ class provider implements
     // This plugin is a core_user_data_provider.
     \core_privacy\local\request\plugin\provider,
     \core_privacy\local\request\user_preference_provider {
+
+    // This trait must be included.
+    use \core_privacy\local\legacy_polyfill;
+
     /**
      * Return the fields which contain personal data.
      *
@@ -54,7 +58,7 @@ class provider implements
      *
      * @return collection the updated collection of metadata items.
      */
-    public static function get_metadata(collection $items): collection {
+    public static function _get_metadata(collection $items) {
         $items->add_database_table('ratingallocate_ratings', [
             'choiceid' => 'privacy:metadata:ratingallocate_ratings:choiceid',
             'userid'   => 'privacy:metadata:ratingallocate_ratings:userid',
@@ -83,7 +87,7 @@ class provider implements
      *
      * @return contextlist the list of contexts containing user info for the user.
      */
-    public static function get_contexts_for_userid(int $userid): contextlist {
+    public static function _get_contexts_for_userid(int $userid) {
         // Fetch all allocations.
         $sql = "SELECT c.id
                   FROM {context} c
@@ -112,7 +116,7 @@ class provider implements
      *
      * @param approved_contextlist $contextlist a list of contexts approved for export.
      */
-    public static function export_user_data(approved_contextlist $contextlist) {
+    public static function _export_user_data(approved_contextlist $contextlist) {
         global $DB;
 
         if (empty($contextlist->count())) {
@@ -202,7 +206,7 @@ class provider implements
         }
     }
 
-    public static function export_user_preferences(int $userid) {
+    public static function _export_user_preferences(int $userid) {
         $filtertable = get_user_preferences('flextable_mod_ratingallocate_table_filter', null, $userid);
         if (null !== $filtertable) {
             $filtertabledesc = get_string('filtertabledesc', 'mod_ratingallocate');
@@ -223,7 +227,7 @@ class provider implements
      *
      * @param \context $context the context to delete in.
      */
-    public static function delete_data_for_all_users_in_context(\context $context) {
+    public static function _delete_data_for_all_users_in_context(\context $context) {
         global $DB;
 
         if (empty($context)) {
@@ -252,7 +256,7 @@ class provider implements
      *
      * @param approved_contextlist $contextlist a list of contexts approved for deletion.
      */
-    public static function delete_data_for_user(approved_contextlist $contextlist) {
+    public static function _delete_data_for_user(approved_contextlist $contextlist) {
         global $DB;
 
         if (empty($contextlist->count())) {
