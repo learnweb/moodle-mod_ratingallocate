@@ -130,7 +130,7 @@ class mod_ratingallocate_privacy_provider_testcase extends \core_privacy\tests\p
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user_() {
+    public function test_delete_data_for_user() {
         global $DB;
 
         $cm = get_coursemodule_from_instance('ratingallocate',  $this->testmodule->moddb->id);

@@ -274,7 +274,6 @@ class provider implements
             // Delete Allocations.
             $DB->delete_records('ratingallocate_allocations', ['ratingallocateid' => $instanceid, 'userid' => $userid]);
             // Delete Choices.
-            // Delete Choices.
             $DB->delete_records_select(
                 'ratingallocate_ratings',
                 "choiceid IN (SELECT id FROM {ratingallocate_choices} WHERE ratingallocateid = :instanceid) AND userid = :userid",
