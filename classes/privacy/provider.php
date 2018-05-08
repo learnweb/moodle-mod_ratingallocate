@@ -87,7 +87,7 @@ class provider implements
      *
      * @return contextlist the list of contexts containing user info for the user.
      */
-    public static function _get_contexts_for_userid(int $userid) {
+    public static function _get_contexts_for_userid($userid) {
         // Fetch all allocations.
         $sql = "SELECT c.id
                   FROM {context} c
@@ -206,7 +206,7 @@ class provider implements
         }
     }
 
-    public static function _export_user_preferences(int $userid) {
+    public static function _export_user_preferences($userid) {
         $filtertable = get_user_preferences('flextable_mod_ratingallocate_table_filter', null, $userid);
         if (null !== $filtertable) {
             $filtertabledesc = get_string('filtertabledesc', 'mod_ratingallocate');
