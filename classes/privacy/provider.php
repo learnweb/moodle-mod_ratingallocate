@@ -153,7 +153,7 @@ class provider implements
         $choiceanswers->close();
 
         foreach ($choices as $key => $value) {
-            $area = array('choices');
+            $area = array('ratings');
             $context = \context_module::instance($key);
 
             // Fetch the generic module data for the choice.
