@@ -80,7 +80,7 @@ class strategy extends \strategytemplate_options {
                 $this->get_settings_default_value($id)
             );
         }
-        $output += $this->get_default_strategy_option();
+        $output += $this->get_default_strategy_option(max(array_keys($this->get_choiceoptions())));
         return $output;
     }
 

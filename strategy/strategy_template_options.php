@@ -40,13 +40,14 @@ abstract class strategytemplate_options extends \strategytemplate {
 
     /**
      * Returns the strategy option array, which can be included within the child option classes.
+     * @param int default value, if not set.
      * @return array
      */
-    protected function get_default_strategy_option() {
+    protected function get_default_strategy_option(int $defaultvalue) {
         return ['default' => array(
             'select',
             get_string('strategy_settings_default', ratingallocate_MOD_NAME),
-            null,
+            $defaultvalue,
             $this->get_choiceoptions(),
             'strategy_settings_default'
         )];
