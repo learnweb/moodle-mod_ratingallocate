@@ -113,7 +113,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         $elementname = 'publishdate';
         $mform->addElement('date_time_selector', $elementname, get_string($elementname, self::MOD_NAME),
-                $options = array('optional' => true));
+                array('optional' => true));
         $mform->setDefault($elementname, time() + 9 * 24 * 60 * 60);
 
         $elementname = 'runalgorithmbycron';
@@ -154,10 +154,10 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      * @param string $stratfieldid id of the element to be added
      * @param array $value array with the element type and its caption 
      *        (usually returned by the strategys get settingsfields methods).
-     * @param string $curr_strategyid id of the strategy it belongs to
-     * @param string $default default value for the element
+     * @param string $strategyid id of the strategy it belongs to.
+     * @param $mform MoodleQuickForm form object the settings field should be added to.
      */
-    private function add_settings_field($stratfieldid, array $value, $strategyid, MoodleQuickForm $mform, $default = null) {
+    private function add_settings_field($stratfieldid, array $value, $strategyid, MoodleQuickForm $mform) {
 
         $attributes = array('size' => '20');
 

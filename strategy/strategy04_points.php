@@ -48,32 +48,32 @@ class strategy extends \strategytemplate {
     public function get_static_settingfields() {
         return array(
             self::MAXZERO => array( // maximale Anzahl 'kannnicht'
-                'int', 
-                get_string(self::STRATEGYID . '_setting_maxzero', ratingallocate_MOD_NAME), 
+                'int',
+                get_string(self::STRATEGYID . '_setting_maxzero', ratingallocate_MOD_NAME),
                 $this->get_settings_value(self::MAXZERO),
                 null
-            ), 
+            ),
             self::TOTALPOINTS => array( // wie viele Felder es gibt
-                'int', 
-                get_string(self::STRATEGYID . '_setting_totalpoints', ratingallocate_MOD_NAME), 
+                'int',
+                get_string(self::STRATEGYID . '_setting_totalpoints', ratingallocate_MOD_NAME),
                 $this->get_settings_value(self::TOTALPOINTS),
                 null
             )
         );
     }
-    
-    public function get_dynamic_settingfields(){
+
+    public function get_dynamic_settingfields() {
         return array();
     }
-    
-    public function get_default_settings(){
+
+    public function get_default_settings() {
         return array(
                         self::MAXZERO => 3,
                         self::TOTALPOINTS => 100
         );
     }
-    
-    protected function getValidationInfo(){
+
+    protected function getValidationInfo() {
         return array(self::MAXZERO => array(true,0),
                      self::TOTALPOINTS => array(true,1)
         );
@@ -86,10 +86,10 @@ class strategy extends \strategytemplate {
 
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
-    protected function construct_strategy($strategyoptions){
+    protected function construct_strategy($strategyoptions) {
         return new strategy($strategyoptions);
     }
-    
+
     public function definition() {
         global $USER;
         parent::definition();

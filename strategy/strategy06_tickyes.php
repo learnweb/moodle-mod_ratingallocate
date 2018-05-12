@@ -46,39 +46,39 @@ class strategy extends \strategytemplate {
 
     public function get_static_settingfields() {
         $output = array(
-            self::MINTICKYES => array('int', 
-                get_string(self::STRATEGYID . '_setting_mintickyes', ratingallocate_MOD_NAME), 
+            self::MINTICKYES => array('int',
+                get_string(self::STRATEGYID . '_setting_mintickyes', ratingallocate_MOD_NAME),
                 $this->get_settings_value(self::MINTICKYES)
             )
         );
-        
+
         $output[1] = array(
                         'text',
                         get_string('strategy_settings_label', ratingallocate_MOD_NAME, $this->get_settings_default_value(1)),
                         null,
                         $this->get_settings_default_value(1)
-                        
+
         );
         return $output;
     }
-    
-    public function get_dynamic_settingfields(){
+
+    public function get_dynamic_settingfields() {
         return array();
     }
-    
-    public function get_accept_label(){
+
+    public function get_accept_label() {
         return $this->get_settings_value(1);
     }
 
-    public function get_default_settings(){
+    public function get_default_settings() {
         return array(
                         self::MINTICKYES => 3,
                         1 => get_string(self::STRATEGYID . '_' . self::ACCEPT_LABEL, ratingallocate_MOD_NAME),
                         0 => get_string(self::STRATEGYID . '_not_' . self::ACCEPT_LABEL, ratingallocate_MOD_NAME)
         );
     }
-    
-    protected function getValidationInfo(){
+
+    protected function getValidationInfo() {
         return array(self::MINTICKYES => array(true,1)
         );
     }
@@ -95,10 +95,10 @@ class strategy extends \strategytemplate {
  */
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
-    protected function construct_strategy($strategyoptions){
+    protected function construct_strategy($strategyoptions) {
         return new strategy($strategyoptions);
     }
-    
+
     public function definition() {
         global $USER;
         parent::definition();
@@ -126,7 +126,6 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
                 '<span class="mod-ratingallocate-choice-maxno-desc">' .
                 get_string('choice_maxsize_display', ratingallocate_MOD_NAME) .
                 ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
-
 
             // Use explanation as title/label of checkbox to align with other strategies.
             $mform->addElement('advcheckbox', $ratingelem, $data->explanation, $this->get_strategy()->get_accept_label(), null, array(0, 1));
