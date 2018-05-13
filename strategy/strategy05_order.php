@@ -47,18 +47,18 @@ class strategy extends \strategytemplate {
         return array(
             self::COUNTOPTIONS => array(// wie viele Felder es gibt
                 'int',
-                get_string(self::STRATEGYID . '_setting_countoptions', ratingallocate_MOD_NAME), 
+                get_string(self::STRATEGYID . '_setting_countoptions', ratingallocate_MOD_NAME),
                 $this->get_settings_value(self::COUNTOPTIONS),
                 null
             )
         );
     }
-    
-    public function get_dynamic_settingfields(){
+
+    public function get_dynamic_settingfields() {
         return array();
     }
-    
-    public function get_default_settings(){
+
+    public function get_default_settings() {
         $default_count_options = 2;
         $output = array(
                         self::COUNTOPTIONS => $default_count_options
@@ -69,12 +69,12 @@ class strategy extends \strategytemplate {
         }
         // $rating_value_counter defines the id/value of the label (first choice has a high value)
         for ($i = 1, $rating_value_counter = $count_options; $i <= $count_options; $i++,$rating_value_counter--) {
-            $output[$rating_value_counter] =  get_string(strategy::STRATEGYID . '_no_choice', ratingallocate_MOD_NAME, $i);
+            $output[$rating_value_counter] = get_string(self::STRATEGYID . '_no_choice', ratingallocate_MOD_NAME, $i);
         }
         return $output;
     }
-    
-    protected function getValidationInfo(){
+
+    protected function getValidationInfo() {
         return array(self::COUNTOPTIONS => array(true,1)
         );
     }
@@ -91,11 +91,11 @@ class strategy extends \strategytemplate {
  * - shows a drop down menu from which the user can choose a rating
  */
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
-    
-    protected function construct_strategy($strategyoptions){
+
+    protected function construct_strategy($strategyoptions) {
         return new strategy($strategyoptions);
     }
-    
+
     public function definition() {
         global $USER;
         parent::definition();
@@ -151,7 +151,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         $select->setLabel(get_string(strategy::STRATEGYID . '_no_choice', ratingallocate_MOD_NAME, $i));
         $select->addOption(get_string(strategy::STRATEGYID . '_choice_none', ratingallocate_MOD_NAME, $i),
             '', array('disabled' => 'disabled'));
-        foreach ( $choices as $id => $name ) {
+        foreach ($choices as $id => $name) {
             $select->addOption( $name, $id );
         }
         $select->setSelected('');

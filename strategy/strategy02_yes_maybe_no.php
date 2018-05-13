@@ -29,7 +29,6 @@
 
 namespace ratingallocate\strategy_yesmaybeno;
 
-use ratingallocate\strategy_yesmaybeno\strategy;
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
@@ -43,7 +42,7 @@ class strategy extends \strategytemplate_options {
     public function get_strategyid() {
         return self::STRATEGYID;
     }
-    
+
     public function get_static_settingfields() {
         $output = array(
             self::MAXNO => array(// maximale Anzahl 'kannnicht'
@@ -53,7 +52,7 @@ class strategy extends \strategytemplate_options {
                 null
             )
         );
-        foreach($this->get_choiceoptions() as $id => $option){
+        foreach (array_keys($this->get_choiceoptions()) as $id) {
             $output[$id] = array(
                             'text',
                             get_string('strategy_settings_label', ratingallocate_MOD_NAME, $this->get_settings_default_value($id)),
@@ -61,31 +60,32 @@ class strategy extends \strategytemplate_options {
                             $this->get_settings_default_value($id)
             );
         }
+        $output += $this->get_default_strategy_option(2);
         return $output;
     }
 
-    public function get_dynamic_settingfields(){
+    public function get_dynamic_settingfields() {
         return array();
     }
 
     public function get_choiceoptions() {
         $options = array(
-            0 => $this->get_settings_value(0), 
-            3 => $this->get_settings_value(3), 
+            0 => $this->get_settings_value(0),
+            3 => $this->get_settings_value(3),
             5 => $this->get_settings_value(5)
         );
         return $options;
     }
 
-    public function get_default_settings(){
+    public function get_default_settings() {
         return array(
                         self::MAXNO => 3,
-                        0 => get_string(strategy::STRATEGYID . '_rating_no', ratingallocate_MOD_NAME),
-                        3 => get_string(strategy::STRATEGYID . '_rating_maybe', ratingallocate_MOD_NAME),
-                        5 => get_string(strategy::STRATEGYID . '_rating_yes', ratingallocate_MOD_NAME)
+                        0 => get_string(self::STRATEGYID . '_rating_no', ratingallocate_MOD_NAME),
+                        3 => get_string(self::STRATEGYID . '_rating_maybe', ratingallocate_MOD_NAME),
+                        5 => get_string(self::STRATEGYID . '_rating_yes', ratingallocate_MOD_NAME)
         );
     }
-    protected function getValidationInfo(){
+    protected function getValidationInfo() {
         return array(self::MAXNO => array(true,0));
     }
 }
@@ -94,16 +94,16 @@ class strategy extends \strategytemplate_options {
 \strategymanager::add_strategy(strategy::STRATEGYID);
 
 class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform {
-    //Already specified by parent class
+    // Already specified by parent class
 
-    protected function construct_strategy($strategyoptions){
+    protected function construct_strategy($strategyoptions) {
         return new strategy($strategyoptions);
     }
-    
+
     public function get_choiceoptions() {
         return $this->get_strategy()->get_choiceoptions();
     }
-    
+
     protected function get_max_amount_of_nos() {
         return $this->get_strategysetting(strategy::MAXNO);
     }

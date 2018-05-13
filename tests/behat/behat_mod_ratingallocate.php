@@ -332,6 +332,47 @@ class behat_mod_ratingallocate extends behat_base {
         $link->click();
     }
 
+    /**
+     * I should see the following rating form.
+     *
+     * @Then /^I should see the following rating form:$/
+     *
+     * @param TableNode $ratingdata exoected in the rating form
+     */
+    public function i_should_see_the_followin_rating_form(TableNode $ratingdata) {
+        $ratingdatehash = $ratingdata->getRowsHash();
+        // The action depends on the field type.
+        foreach ($ratingdatehash as $choice => $value) {
+            $fieldxpath = "//a[normalize-space(.)=\"$choice\"]/ancestor::fieldset/descendant::input[@type='radio' and @checked and @value=$value]";
+            try {
+                $this->find('xpath', $fieldxpath);
+            } catch (ElementNotFoundException $e) {
+                throw new ExpectationException('"' . $choice . '" choice was not rated ' . $value, $this->getSession());
+            }
+        }
+    }
+
+    /**
+     * I should see the following rating form.
+     *
+     * @When /^I set the rating form to the following values:$/
+     *
+     * @param TableNode $ratingdata values to be set in the rating form
+     */
+    public function i_set_the_rating_form_to_the_following_values(TableNode $ratingdata) {
+        $ratingdatehash = $ratingdata->getRowsHash();
+        // The action depends on the field type.
+        foreach ($ratingdatehash as $choice => $value) {
+            $fieldxpath = "//a[normalize-space(.)=\"$choice\"]/ancestor::fieldset/descendant::input[@type='radio' and @value=$value]";
+            try {
+                $option = $this->find('xpath', $fieldxpath);
+                $option->click();
+            } catch (ElementNotFoundException $e) {
+                throw new ExpectationException('Option "'.$value.'"  was not found for choice "' . $choice . '".' . $value, $this->getSession());
+            }
+        }
+    }
+
 }
 
 

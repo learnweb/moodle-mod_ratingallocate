@@ -37,6 +37,21 @@ abstract class strategytemplate_options extends \strategytemplate {
      * @return array: value_of_option => title_of_option
      */
     public abstract function get_choiceoptions();
+
+    /**
+     * Returns the strategy option array, which can be included within the child option classes.
+     * @param int $defaultvalue default value, if not set.
+     * @return array
+     */
+    protected function get_default_strategy_option($defaultvalue) {
+        return ['default' => array(
+            'select',
+            get_string('strategy_settings_default', ratingallocate_MOD_NAME),
+            $defaultvalue,
+            $this->get_choiceoptions(),
+            'strategy_settings_default'
+        )];
+    }
 }
 
 /**
@@ -92,12 +107,13 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             // Furthermore, use explanation as title/label of group.
             $mform->addGroup($radioarray, 'radioarr_' . $data->choiceid, $data->explanation, null, false);
 
-            $maxrating = max(array_keys($choiceoptions));
+            $defaultrating = $this->get_strategysetting('default');
+            $defaultrating = $defaultrating == null ? max(array_keys($choiceoptions)) : $defaultrating;
             // Try to restore previous ratings.
-            if (is_numeric($data->rating) && $data->rating >= 0 && $data->rating <= $maxrating) {
+            if (is_numeric($data->rating) && $data->rating >= 0 && $data->rating <= $defaultrating) {
                 $mform->setDefault($ratingelem, $data->rating);
             } else {
-                $mform->setDefault($ratingelem, $maxrating);
+                $mform->setDefault($ratingelem, $defaultrating);
             }
             // $mform->setType($ratingelem, PARAM_INT);
         }

@@ -44,8 +44,9 @@ class strategy extends \strategytemplate_options {
         parent::__construct($strategy_settings);
         if (isset($strategy_settings) && array_key_exists(self::COUNTLICKERT, $strategy_settings)) {
             $this->maxlickert = $strategy_settings[self::COUNTLICKERT];
-        } else
+        } else {
             $this->maxlickert = $this->get_default_settings()[self::COUNTLICKERT];
+        }
     }
 
     public function get_strategyid() {
@@ -69,10 +70,10 @@ class strategy extends \strategytemplate_options {
         );
     }
 
-    
-    public function get_dynamic_settingfields(){
+
+    public function get_dynamic_settingfields() {
         $output = array();
-        foreach($this->get_choiceoptions() as $id => $option){
+        foreach (array_keys($this->get_choiceoptions()) as $id) {
             $output[$id] = array(
                 'text',
                 get_string('strategy_settings_label', ratingallocate_MOD_NAME, $this->get_settings_default_value($id)),
@@ -80,6 +81,7 @@ class strategy extends \strategytemplate_options {
                 $this->get_settings_default_value($id)
             );
         }
+        $output += $this->get_default_strategy_option(max(array_keys($this->get_choiceoptions())));
         return $output;
     }
 
@@ -108,8 +110,8 @@ class strategy extends \strategytemplate_options {
         }
         return $defaults;
     }
-    
-    protected function getValidationInfo(){
+
+    protected function getValidationInfo() {
         return array(self::MAXNO => array(true,0),
                      self::COUNTLICKERT => array(true,2)
         );
@@ -120,12 +122,12 @@ class strategy extends \strategytemplate_options {
 \strategymanager::add_strategy(strategy::STRATEGYID);
 
 class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform {
-    //Already specified by parent class
+    // Already specified by parent class
 
-    protected function construct_strategy($strategyoptions){
+    protected function construct_strategy($strategyoptions) {
         return new strategy($strategyoptions);
     }
-    
+
     public function get_choiceoptions() {
         $params = $this->get_strategysetting(strategy::COUNTLICKERT);
         return $this->get_strategy()->get_choiceoptions($params);
