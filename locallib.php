@@ -809,8 +809,8 @@ class ratingallocate {
      */
     public function get_number_of_active_raters() {
         $sql = 'SELECT COUNT(DISTINCT ra_ratings.userid) AS number
-                FROM mdl_ratingallocate as ra INNER JOIN mdl_ratingallocate_choices as ra_choices
-                ON ra.id = ra_choices.ratingallocateid INNER JOIN mdl_ratingallocate_ratings as ra_ratings
+                FROM {ratingallocate} as ra INNER JOIN {ratingallocate_choices} as ra_choices
+                ON ra.id = ra_choices.ratingallocateid INNER JOIN {ratingallocate_ratings} as ra_ratings
                 ON ra_choices.id = ra_ratings.choiceid
                 WHERE ra.course = :courseid AND ra.id = :ratingallocateid';
         $numberofratersfromdb = $this->db->get_field_sql($sql, array(
