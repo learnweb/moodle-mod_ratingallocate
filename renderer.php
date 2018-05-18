@@ -391,7 +391,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $tableurl = new moodle_url($PAGE->url, array('action' => ACTION_SHOW_ALLOCATION_TABLE));
 
         // Button with link to display information about the allocations and ratings
-        $output .= $this->single_button($tableurl, get_string('show_distribution_table', ratingallocate_MOD_NAME));
+        $output .= $this->single_button($tableurl, get_string('show_allocation_table', ratingallocate_MOD_NAME));
 
         $tableurl = new moodle_url($PAGE->url, array('action' => ACTION_SHOW_STATISTICS));
 
@@ -615,22 +615,19 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      *
      * @return string html code representing ratings table
      */
-    public function allocation_table_for_ratingallocate($choices, $ratings, $users, $memberships, $ratingallocate) {
-
-        // get rating titles
-        $titles = $this->get_options_titles(array_map(function($rating) {return $rating->rating;},$ratings), $ratingallocate);
+    public function allocation_table_for_ratingallocate($ratingallocate) {
 
         // Create and set up the flextable for ratings and allocations.
-        $table = new mod_ratingallocate\allocations_table($this, $titles, $ratingallocate);
-        $table->setup_table($choices, false, false);
+        $table = new mod_ratingallocate\allocations_table($ratingallocate);
+        $table->setup_table();
 
         // The rest must be done through output buffering due to the way flextable works.
         ob_start();
-        $table->build_table_by_sql($ratings, $memberships);
+        $table->build_table_by_sql();
         $tableoutput = ob_get_contents();
         ob_end_clean();
 
-        $output = $this->heading(get_string('ratings_table', ratingallocate_MOD_NAME), 2);
+        $output = $this->heading(get_string('allocations_table', ratingallocate_MOD_NAME), 2);
         $output .= $this->box_start();
         $output .= $this->box($tableoutput);
         $output .= $this->box_end();
