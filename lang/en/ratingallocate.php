@@ -81,6 +81,10 @@ $string['ratings_table'] = 'Ratings and Allocations';
 $string['ratings_table_sum_allocations'] = 'Number of allocations / Maximum';
 $string['ratings_table_sum_allocations_value'] = '{$a->sum} / {$a->max}';
 $string['ratings_table_user'] = 'User';
+$string['allocations_table'] = 'Allocations Overview';
+$string['allocations_table_choice'] = 'Choice';
+$string['allocations_table_users'] = 'Users';
+$string['allocations_table_noallocation'] = 'No Allocation';
 $string['start_distribution_explanation'] = ' An algorithm will automatically try to fairly allocate the users according to their given ratings.';
 $string['distribution_table'] = 'Distribution Table';
 $string['download_problem_mps_format'] = 'Download Equation (mps/txt)';
@@ -145,7 +149,7 @@ $string['filter_show_alloc_necessary'] = 'Hide users with allocation';
 $string['update_filter'] = 'Update Filter';
 
 $string['show_table'] = 'Show Ratings and Allocations';
-
+$string['show_allocation_table'] = 'Show Allocations Overview';
 $string['allocation_statistics'] = 'Allocation Statistics';
 $string['show_allocation_statistics'] = 'Show Allocation Statistics';
 $string['allocation_statistics_description'] = 'This statistic gives an impression of the overall satisfaction of the allocation.

@@ -26,25 +26,9 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->dirroot.'/user/lib.php');
 
 class allocations_table extends \table_sql {
-
-    const CHOICE_COL = 'choice_';
-    const EXPORT_CHOICE_ALLOC_SUFFIX = 'alloc';
-    const EXPORT_CHOICE_TEXT_SUFFIX = 'text';
-
-    private $choicenames = array();
-    private $choicemax = array();
-    private $choicesum = array();
-
-    private $titles;
-
-    private $shownames;
-
-    /**
-     * @var bool if true the cells are rendered as radio buttons
-     */
-    private $writeable;
 
     /**
      * @var \ratingallocate
@@ -52,24 +36,15 @@ class allocations_table extends \table_sql {
     private $ratingallocate;
 
     /**
-     * @var \mod_ratingallocate_renderer
-     */
-    private $renderer;
-
-    /**
      * allocations_table constructor.
-     * @param \mod_ratingallocate_renderer $renderer responsible renderers
-     * @param $titles
      * @param \ratingallocate $ratingallocate
      */
-    public function __construct(\mod_ratingallocate_renderer $renderer, $titles, $ratingallocate) {
+    public function __construct($ratingallocate) {
         parent::__construct('mod_ratingallocate_allocation_table');
         global $PAGE;
         $url = $PAGE->url;
         $url->params(array("action" => ACTION_SHOW_ALLOCATION_TABLE));
         $PAGE->set_url($url);
-        $this->renderer = $renderer;
-        $this->titles   = $titles;
         $this->ratingallocate = $ratingallocate;
         if (has_capability('mod/ratingallocate:export_ratings', $ratingallocate->get_context())) {
             $download = optional_param('download', '', PARAM_ALPHA);
@@ -101,8 +76,9 @@ class allocations_table extends \table_sql {
                 $headers[] = get_string('email');
             }
         }
-        $columns[] = 'choice';
-        $headers[] = get_string('choice', ratingallocate_MOD_NAME);
+
+        $columns[] = 'choicetitle';
+        $headers[] = get_string('allocations_table_choice', ratingallocate_MOD_NAME);
 
         if (!$this->is_downloading()) {
             $columns[] = 'users';
@@ -119,68 +95,106 @@ class allocations_table extends \table_sql {
     }
 
     /**
-     * Should be called after setup_choices
-     *
-     * @param array $ratings     an array of ratings -- the data for this table
-     * @param array $allocations an array of allocations
-     * @param bool $writeable if true the cells are rendered as radio buttons
+     * Builds the data for the table. For the online version the users are aggregated for the choices to
+     * which they are allocated. For the download version no changes are necessary.
      */
-    public function build_table_by_sql($ratings, $allocations, $writeable = false) {
+    public function build_table_by_sql() {
+        $data = $this->rawdata;
 
-        $this->writeable = $writeable;
+        // Retrieve all users, who rated within the course.
+        $userwithratingids = array_map(function($x) {return $x->userid;},
+            $this->ratingallocate->get_users_with_ratings());
+        $userwithrating = \user_get_users_by_id($userwithratingids);
 
-        $users = $this->rawdata;
-
-        // Group all ratings per user to match table structure.
-        $ratingsbyuser = array();
-        foreach ($ratings as $rating) {
-            if (empty($ratingsbyuser[$rating->userid])) {
-                $ratingsbyuser[$rating->userid] = array();
+        if ($this->is_downloading()){
+            // Search for all users, who rated but were not allocated and add them to the data set.
+            foreach ($userwithrating as $userid => $user) {
+                if (!array_key_exists($userid, $data)) {
+                    $data[$userid] = $user;
+                    $data[$userid]->choicetitle = '';
+                }
             }
-            $ratingsbyuser[$rating->userid][$rating->choiceid] = $rating->rating;
+        } else {
+            // Aggregate all users allocated to a specific choice to the users column.
+            $allocations = $this->ratingallocate->get_allocations();
+
+            $users = $this->ratingallocate->get_raters_in_course();
+
+            foreach ($allocations as $allocation) {
+                if (array_key_exists($allocation->choiceid, $data)) {
+                    $userid = $allocation->userid;
+                    if (array_key_exists($userid, $users)) {
+                        if (object_property_exists($data[$allocation->choiceid], 'users')) {
+                            $data[$allocation->choiceid]->users .= ', ';
+                        } else {
+                            $data[$allocation->choiceid]->users = '';
+                        }
+
+                        $data[$allocation->choiceid]->users .= $this->get_user_link($users[$userid]);
+                        unset($userwithrating[$userid]);
+                    }
+                }
+            }
+
+            // If there are users, which rated but were not allocated, add them to a special row.
+            if (count($userwithrating) > 0) {
+                $noallocation = new \stdClass();
+                $noallocation->choicetitle = get_string(
+                    'allocations_table_noallocation',
+                    ratingallocate_MOD_NAME);
+
+                foreach ($userwithrating as $userid => $user) {
+                    if (object_property_exists($noallocation, 'users')) {
+                        $noallocation->users .= ', ';
+                    } else {
+                        $noallocation->users = '';
+                    }
+                    $noallocation->users .= $this->get_user_link($user);
+                }
+                $data []= $noallocation;
+            }
         }
 
-        // Group all memberships per user per choice.
-        $allocationsbyuser = array();
-        foreach ($allocations as $allocation) {
-            if (empty($allocationsbyuser[$allocation->userid])) {
-                $allocationsbyuser[$allocation->userid] = array();
-            }
-            $allocationsbyuser[$allocation->userid][$allocation->choiceid] = true;
-        }
-
-        // Add rating rows for each user.
-        foreach ($users as $user) {
-            $userratings        = isset($ratingsbyuser[$user->id]) ? $ratingsbyuser[$user->id] : array();
-            $userallocations    = isset($allocationsbyuser[$user->id]) ? $allocationsbyuser[$user->id] : array();
-            $this->add_user_ratings_row($user, $userratings, $userallocations);
+        // Finally, add all data to the table.
+        foreach ($data as $row) {
+            $this->add_data_keyed($this->format_row($row));
         }
 
         $this->finish_output();
     }
 
-
     /**
-     * Will be called by $this->format_row when processing the 'choice' columns
-     *
-     * @param string $column
-     * @param object $row
-     *
-     * @return string rendered choice cell
+     * Returns a link to a user profile labeled with the full name of the user.
+     * @param $user \stdClass user object.
+     * @return string HTML code representing the link to the users profile.
      */
-    public function other_cols($column, $row) {
+    private function get_user_link($user) {
+        global $COURSE;
+        $name = fullname($user);
 
+        if ($COURSE->id == SITEID) {
+            $profileurl = new \moodle_url('/user/profile.php', array('id' => $user->id));
+        } else {
+            $profileurl = new \moodle_url('/user/view.php',
+                array('id' => $user->id, 'course' => $COURSE->id));
+        }
+        return \html_writer::link($profileurl, $name);
     }
 
     /**
      * Sets up the sql statement for querying the table data.
      */
     public function init_sql() {
-        $fields = "c.*";
+        if ($this->is_downloading()) {
+            $fields = "u.*, c.title as choicetitle";
 
-        $from = "{ratingallocate_choices} c";
+            $from = "{ratingallocate_allocations} a JOIN {ratingallocate_choices} c ON a.choiceid = c.id JOIN {user} u ON a.userid = u.id";
+        } else {
+            $fields = "distinct c.*, c.title as choicetitle";
 
-        $where = "ratingallocateid = :ratingallocateid";
+            $from = "{ratingallocate_allocations} a JOIN {ratingallocate_choices} c ON a.choiceid = c.id";
+        }
+        $where = "a.ratingallocateid = :ratingallocateid";
 
         $params = array();
         $params['ratingallocateid'] = $this->ratingallocate->ratingallocate->id;

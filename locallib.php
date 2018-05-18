@@ -788,6 +788,7 @@ class ratingallocate {
 
             case ACTION_SHOW_ALLOCATION_TABLE:
                 $output .= $this->process_action_show_allocation_table();
+                $this->showinfo = false;
                 break;
 
             case ACTION_SHOW_STATISTICS:
