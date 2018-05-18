@@ -87,7 +87,8 @@ define('ACTION_START_DISTRIBUTION', 'start_distribution');
 define('ACTION_MANUAL_ALLOCATION', 'manual_allocation');
 define('ACTION_PUBLISH_ALLOCATIONS', 'publish_allocations'); // Make them displayable for the users.
 define('ACTION_SOLVE_LP_SOLVE', 'solve_lp_solve'); // Instead of only generating the mps-file, let it solve.
-define('ACTION_SHOW_ALLOC_TABLE', 'show_alloc_table');
+define('ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE', 'show_ratings_and_allocation_table');
+define('ACTION_SHOW_ALLOCATION_TABLE', 'show_allocation_table');
 define('ACTION_SHOW_STATISTICS', 'show_statistics');
 define('ACTION_ALLOCATION_TO_GROUPING', 'allocation_to_gropuping');
 
@@ -487,7 +488,7 @@ class ratingallocate {
         return $output;
     }
 
-    private function process_action_show_alloc_table() {
+    private function process_action_show_ratings_and_alloc_table() {
         $output = '';
         // Print ratings table.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
@@ -495,8 +496,8 @@ class ratingallocate {
             /* @var mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
             $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
-                    $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(),
-                    $this->get_allocations(), $this);
+                $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(),
+                $this->get_allocations(), $this);
 
             $output .= html_writer::empty_tag('br', array());
             $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array(
@@ -505,8 +506,30 @@ class ratingallocate {
                 'action' => '')), get_string('back'));
 
             // Logging.
+            $event = \mod_ratingallocate\event\ratings_and_allocation_table_viewed::create_simple(
+                context_course::instance($this->course->id), $this->ratingallocateid);
+            $event->trigger();
+        }
+        return $output;
+    }
+
+    private function process_action_show_allocation_table() {
+        $output = '';
+        // Print ratings table.
+        if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
+            global $OUTPUT;
+            /* @var mod_ratingallocate_renderer */
+            $renderer = $this->get_renderer();
+
+            $output .= $renderer->allocation_table_for_ratingallocate($this);
+
+            $output .= html_writer::empty_tag('br', array());
+            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
+                'ratingallocateid' => $this->ratingallocateid,
+                'action' => '')), get_string('back'));
+            // Logging.
             $event = \mod_ratingallocate\event\allocation_table_viewed::create_simple(
-                    context_course::instance($this->course->id), $this->ratingallocateid);
+                context_course::instance($this->course->id), $this->ratingallocateid);
             $event->trigger();
         }
         return $output;
@@ -520,7 +543,7 @@ class ratingallocate {
             /* @var mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
 
-            $output .= $renderer->distribution_table_for_ratingallocate($this);
+            $output .= $renderer->statistics_table_for_ratingallocate($this);
 
             $output .= html_writer::empty_tag('br', array());
             $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
@@ -759,8 +782,12 @@ class ratingallocate {
                 $output .= $this->process_action_manual_allocation();
                 break;
 
-            case ACTION_SHOW_ALLOC_TABLE:
-                $output .= $this->process_action_show_alloc_table();
+            case ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE:
+                $output .= $this->process_action_show_ratings_and_alloc_table();
+                break;
+
+            case ACTION_SHOW_ALLOCATION_TABLE:
+                $output .= $this->process_action_show_allocation_table();
                 break;
 
             case ACTION_SHOW_STATISTICS:

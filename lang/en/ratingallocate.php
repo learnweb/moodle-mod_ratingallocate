@@ -318,6 +318,9 @@ $string['log_ratingallocate_viewed_description'] =  'The user with id "{$a->user
 $string['log_allocation_table_viewed'] = 'Allocation table viewed';
 $string['log_allocation_table_viewed_description'] =  'The user with id "{$a->userid}" viewed the allocation table for the Fair Allocation with id "{$a->ratingallocateid}".';
 
+$string['log_ratings_and_allocation_table_viewed'] = 'Ratings and allocation table viewed';
+$string['log_ratings_and_allocation_table_viewed_description'] =  'The user with id "{$a->userid}" viewed the ratings and allocation table for the Fair Allocation with id "{$a->ratingallocateid}".';
+
 $string['log_allocation_statistics_viewed'] = 'Allocation statistics viewed';
 $string['log_allocation_statistics_viewed_description'] =  'The user with id "{$a->userid}" viewed the allocation statistics for the Fair Allocation with id "{$a->ratingallocateid}".';
 
