@@ -56,7 +56,7 @@ class ratings_and_allocations_table extends \table_sql {
     private $renderer;
 
     public function __construct(\mod_ratingallocate_renderer $renderer, $titles, $ratingallocate,
-                                $action = 'show_alloc_table', $uniqueid = 'mod_ratingallocate_table', $downloadable = true) {
+                                $action = ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE, $uniqueid = 'mod_ratingallocate_table', $downloadable = true) {
         parent::__construct($uniqueid);
         global $PAGE;
         $url = $PAGE->url;
@@ -197,7 +197,7 @@ class ratings_and_allocations_table extends \table_sql {
         }
 
         if (!$this->is_downloading()) {
-            $this->add_summary_row();
+            $this->add_summary_row();   
             $this->print_hidden_user_fields($users);
         }
 
