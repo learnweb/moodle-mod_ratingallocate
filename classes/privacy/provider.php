@@ -238,15 +238,19 @@ class provider implements
             return;
         }
 
-        $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
+        $cm = get_coursemodule_from_id('ratingallocate', $context->instanceid);
+        if (!$cm) {
+            return;
+        }
+
         // Delete Allocations.
-        $DB->delete_records('ratingallocate_allocations', ['ratingallocateid' => $instanceid]);
+        $DB->delete_records('ratingallocate_allocations', ['ratingallocateid' => $cm->instance]);
         // Delete Choices.
         $DB->delete_records_select(
             'ratingallocate_ratings',
             "choiceid IN (SELECT id FROM {ratingallocate_choices} WHERE ratingallocateid = :instanceid)",
             [
-                'instanceid' => $instanceid,
+                'instanceid' => $cm->instance,
             ]
         );
     }
