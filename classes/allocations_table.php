@@ -190,11 +190,12 @@ class allocations_table extends \table_sql {
 
             $from = "{ratingallocate_allocations} a JOIN {ratingallocate_choices} c ON a.choiceid = c.id JOIN {user} u ON a.userid = u.id";
         } else {
-            $fields = "distinct c.*, c.title as choicetitle";
+            $fields = "c.id, c.title as choicetitle";
 
-            $from = "{ratingallocate_allocations} a JOIN {ratingallocate_choices} c ON a.choiceid = c.id";
+            $from = "{ratingallocate_choices} c";
         }
-        $where = "a.ratingallocateid = :ratingallocateid";
+
+        $where = "c.ratingallocateid = :ratingallocateid";
 
         $params = array();
         $params['ratingallocateid'] = $this->ratingallocate->ratingallocate->id;
