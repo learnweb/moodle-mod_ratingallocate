@@ -137,7 +137,7 @@ class allocations_table extends \table_sql {
             }
 
             // If there are users, which rated but were not allocated, add them to a special row.
-            if (count($userwithrating) > 0) {
+            if (count($userwithrating) > 0 AND ($this->currpage + 1) * $this->pagesize >= $this->totalrows) {
                 $noallocation = new \stdClass();
                 $noallocation->choicetitle = get_string(
                     'allocations_table_noallocation',
