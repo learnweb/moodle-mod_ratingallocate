@@ -121,9 +121,9 @@ class allocations_table extends \table_sql {
             $users = $this->ratingallocate->get_raters_in_course();
 
             foreach ($allocations as $allocation) {
-                if (array_key_exists($allocation->choiceid, $data)) {
-                    $userid = $allocation->userid;
-                    if (array_key_exists($userid, $users)) {
+                $userid = $allocation->userid;
+                if (array_key_exists($userid, $users)) {
+                    if (array_key_exists($allocation->choiceid, $data)) {
                         if (object_property_exists($data[$allocation->choiceid], 'users')) {
                             $data[$allocation->choiceid]->users .= ', ';
                         } else {
@@ -131,8 +131,8 @@ class allocations_table extends \table_sql {
                         }
 
                         $data[$allocation->choiceid]->users .= $this->get_user_link($users[$userid]);
-                        unset($userwithrating[$userid]);
                     }
+                    unset($userwithrating[$userid]);
                 }
             }
 
