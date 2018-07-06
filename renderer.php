@@ -628,6 +628,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         ob_end_clean();
 
         $output = $this->heading(get_string('allocations_table', ratingallocate_MOD_NAME), 2);
+        $output .= $this->format_text(get_string('allocation_table_description',
+            ratingallocate_MOD_NAME));
         $output .= $this->box_start();
         $output .= $this->box($tableoutput);
         $output .= $this->box_end();
