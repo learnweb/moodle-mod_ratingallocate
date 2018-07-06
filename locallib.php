@@ -784,6 +784,7 @@ class ratingallocate {
 
             case ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE:
                 $output .= $this->process_action_show_ratings_and_alloc_table();
+                $this->showinfo = false;
                 break;
 
             case ACTION_SHOW_ALLOCATION_TABLE:
@@ -793,6 +794,7 @@ class ratingallocate {
 
             case ACTION_SHOW_STATISTICS:
                 $output .= $this->process_action_show_statistics();
+                $this->showinfo = false;
                 break;
 
             default:
