@@ -159,6 +159,8 @@ It is counting the allocations according to the rating the user has given to the
 <li>{$a->users} out of {$a->total} user(s) got a choice they rated with "{$a->rating}".</li>
 <li>{$a->unassigned} user(s) could not be allocated to a choice yet.</li>
 </ul>';
+$string['allocation_table_description'] = 'This statistic gives an overview over all allocations of this instance.</br>
+All users, which rated and were not allocated, are listed under \'No Allocation\'';
 $string['allocation_statistics_description_no_alloc'] = 'This statistic gives an impression of the overall satisfaction of the allocation.
 It is counting the allocations according to the rating the user has given to the respective choice.
 <ul>
