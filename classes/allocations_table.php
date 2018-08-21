@@ -136,6 +136,13 @@ class allocations_table extends \table_sql {
                 }
             }
 
+            // Enrich data with empty string for choices with no allocation.
+            foreach ($data as $row) {
+                if (!property_exists($row, 'users')) {
+                    $row->users = '';
+                }
+            }
+
             // If there are users, which rated but were not allocated, add them to a special row.
             if (count($userwithrating) > 0 AND ($this->currpage + 1) * $this->pagesize >= $this->totalrows) {
                 $noallocation = new \stdClass();
