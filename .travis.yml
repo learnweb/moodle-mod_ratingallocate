@@ -8,6 +8,9 @@ cache:
     - $HOME/.composer/cache
     - $HOME/.npm
 
+addons:
+  postgresql: "9.4"
+
 php:
   - 7.0
   - 7.1
