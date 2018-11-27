@@ -1,7 +1,7 @@
 language: php
 
 sudo: required
-dist: xenial
+dist: trusty
 
 cache:
   directories:
