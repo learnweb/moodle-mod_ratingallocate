@@ -32,7 +32,7 @@ Feature: When a student starts a rating the default values of all choices
 
   @javascript
   Scenario: The default rating is the max rating
-    And I navigate to "Edit settings" node in "Fair Allocation administration"
+    And I navigate to "Edit settings" in current page administration
     And I select "strategy_lickert" from the "strategy" singleselect
     And I press "id_submitbutton"
     And I log out
@@ -46,7 +46,7 @@ Feature: When a student starts a rating the default values of all choices
 
   @javascript
   Scenario: The default rating should be changeable to a medium rating
-    And I navigate to "Edit settings" node in "Fair Allocation administration"
+    And I navigate to "Edit settings" in current page administration
     And I select "strategy_lickert" from the "strategy" singleselect
     And I select "3" from the "strategyopt[strategy_lickert][default]" singleselect
     And I press "id_submitbutton"
@@ -61,7 +61,7 @@ Feature: When a student starts a rating the default values of all choices
 
   @javascript
   Scenario: The default rating should be changeable to the lowest rating
-    And I navigate to "Edit settings" node in "Fair Allocation administration"
+    And I navigate to "Edit settings" in current page administration
     And I select "strategy_lickert" from the "strategy" singleselect
     And I select "0" from the "strategyopt[strategy_lickert][default]" singleselect
     And I press "id_submitbutton"
@@ -76,7 +76,7 @@ Feature: When a student starts a rating the default values of all choices
 
   @javascript
   Scenario: The default rating is the max rating
-    And I navigate to "Edit settings" node in "Fair Allocation administration"
+    And I navigate to "Edit settings" in current page administration
     And I select "strategy_lickert" from the "strategy" singleselect
     And I press "id_submitbutton"
     And I log out
