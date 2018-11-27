@@ -31,6 +31,7 @@ matrix:
 env:
  global:
   - BEHAT=yes
+  - MUSTACHE_IGNORE_NAMES="email_html_body.mustache, email_html.mustache, email_text.mustache"
  matrix:
   - DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
   - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
@@ -43,6 +44,7 @@ before_install:
   - phpenv config-rm xdebug.ini
   - nvm install 8.9.4
   - cd ../..
+  - composer selfupdate
   - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^2
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 
@@ -68,6 +70,8 @@ jobs:
     - stage: develop
       php: 7.2
       env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
+      install:
+      - moodle-plugin-ci install
       script:
       - moodle-plugin-ci phpunit --coverage-clover
       - moodle-plugin-ci behat
