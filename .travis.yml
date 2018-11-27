@@ -48,6 +48,8 @@ jobs:
     - stage: static
       php: 7.1
       env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
+      install:
+      - moodle-plugin-ci install --no-init
       script:
       - moodle-plugin-ci phplint
       # - moodle-plugin-ci phpcpd
@@ -67,6 +69,9 @@ jobs:
       - moodle-plugin-ci behat
 
 # Unit tests and behat tests against full matrix.
+install:
+  - moodle-plugin-ci install
+
 script:
   - moodle-plugin-ci phpunit --coverage-clover
   - moodle-plugin-ci behat
