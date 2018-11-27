@@ -1,6 +1,6 @@
 language: php
 
-sudo: required
+sudo: false
 dist: trusty
 
 cache:
@@ -9,7 +9,12 @@ cache:
     - $HOME/.npm
 
 addons:
+  firefox: "47.0.1"
   postgresql: "9.4"
+  apt:
+    packages:
+      - oracle-java8-installer
+      - oracle-java8-set-default
 
 php:
   - 7.0
@@ -24,6 +29,9 @@ matrix:
 
 
 env:
+ global:
+  - BEHAT=yes
+ matrix:
   - DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
   - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
   - DB=pgsql MOODLE_BRANCH=master
@@ -33,20 +41,16 @@ env:
 
 before_install:
   - phpenv config-rm xdebug.ini
-  - nvm install 8.9
-  - nvm use 8.9
+  - nvm install 8.9.4
   - cd ../..
   - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^2
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
-
-install:
-  - moodle-plugin-ci install
 
 jobs:
   include:
     # Prechecks against latest Moodle stable only.
     - stage: static
-      php: 7.1
+      php: 7.2
       env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
       install:
       - moodle-plugin-ci install --no-init
@@ -62,7 +66,7 @@ jobs:
 
     # Smaller build matrix for development builds
     - stage: develop
-      php: 7.1
+      php: 7.2
       env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
       script:
       - moodle-plugin-ci phpunit --coverage-clover
