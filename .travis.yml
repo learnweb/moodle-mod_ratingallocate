@@ -1,15 +1,12 @@
 language: php
 
 sudo: required
-dist: precise
+dist: xenial
 
 cache:
   directories:
     - $HOME/.composer/cache
     - $HOME/.npm
-
-addons:
-  postgresql: "9.4"
 
 php:
   - 7.0
