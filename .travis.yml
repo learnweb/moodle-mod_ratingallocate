@@ -11,10 +11,6 @@ cache:
 addons:
   firefox: "47.0.1"
   postgresql: "9.4"
-  apt:
-    packages:
-      - oracle-java8-installer
-      - oracle-java8-set-default
 
 php:
   - 7.0
@@ -52,6 +48,11 @@ jobs:
     # Prechecks against latest Moodle stable only.
     - stage: static
       php: 7.2
+      addons:
+        apt:
+          packages:
+            - oracle-java8-installer
+            - oracle-java8-set-default
       env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
       install:
       - moodle-plugin-ci install --no-init
