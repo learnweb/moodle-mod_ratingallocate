@@ -1,6 +1,6 @@
 language: php
 
-sudo: false
+sudo: required
 dist: trusty
 
 cache:
@@ -30,7 +30,6 @@ matrix:
 
 env:
  global:
-  - BEHAT=yes
   - MUSTACHE_IGNORE_NAMES="email_html_body.mustache, email_html.mustache, email_text.mustache"
  matrix:
   - DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
@@ -45,7 +44,7 @@ before_install:
   - nvm install 8.9.4
   - cd ../..
   - composer selfupdate
-  - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^2
+  - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 
 jobs:
