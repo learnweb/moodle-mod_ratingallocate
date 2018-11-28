@@ -59,7 +59,7 @@ class strategy extends \strategytemplate_options {
                             $this->get_settings_default_value($id)
             );
         }
-        $output += $this->get_default_strategy_option(1);
+        $output += $this->get_default_strategy_option();
         return $output;
     }
 
@@ -79,7 +79,8 @@ class strategy extends \strategytemplate_options {
         return array(
                         self::MAXCROSSOUT => 3,
                         0 => get_string(self::STRATEGYID . '_rating_crossout', ratingallocate_MOD_NAME),
-                        1 => get_string(self::STRATEGYID . '_rating_choose', ratingallocate_MOD_NAME)
+                        1 => get_string(self::STRATEGYID . '_rating_choose', ratingallocate_MOD_NAME),
+                        'default' => 1,
         );
     }
 

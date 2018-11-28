@@ -60,7 +60,7 @@ class strategy extends \strategytemplate_options {
                             $this->get_settings_default_value($id)
             );
         }
-        $output += $this->get_default_strategy_option(2);
+        $output += $this->get_default_strategy_option();
         return $output;
     }
 
@@ -82,7 +82,8 @@ class strategy extends \strategytemplate_options {
                         self::MAXNO => 3,
                         0 => get_string(self::STRATEGYID . '_rating_no', ratingallocate_MOD_NAME),
                         3 => get_string(self::STRATEGYID . '_rating_maybe', ratingallocate_MOD_NAME),
-                        5 => get_string(self::STRATEGYID . '_rating_yes', ratingallocate_MOD_NAME)
+                        5 => get_string(self::STRATEGYID . '_rating_yes', ratingallocate_MOD_NAME),
+                        'default' => 3,
         );
     }
     protected function getValidationInfo() {
