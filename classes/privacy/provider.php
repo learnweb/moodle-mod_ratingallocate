@@ -30,6 +30,8 @@ use core_privacy\local\request\contextlist;
 use core_privacy\local\request\deletion_criteria;
 use core_privacy\local\request\helper;
 use core_privacy\local\request\writer;
+use core_privacy\local\request\userlist;
+use core_privacy\local\request\approved_userlist;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -41,8 +43,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 class provider implements
     // This plugin stores personal data.
-
     \core_privacy\local\metadata\provider,
+
+    // This plugin is capable of determining which users have data within it.
+    \core_privacy\local\request\core_userlist_provider,
 
     // This plugin is a core_user_data_provider.
     \core_privacy\local\request\plugin\provider,
@@ -284,5 +288,65 @@ class provider implements
                 ]
             );
         }
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!is_a($context, \context_module::class)) {
+            return;
+        }
+        $params = [
+            'instanceid'    => $context->instanceid,
+            'modulename'    => 'ratingallocate',
+        ];
+        // From ratings.
+        $sql = "SELECT ra.userid
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
+                  JOIN {ratingallocate} r ON r.id = cm.instance
+                  JOIN {ratingallocate_choices} ch ON ch.ratingallocateid = r.id
+                  JOIN {ratingallocate_ratings} ra ON ra.choiceid = ch.id
+                 WHERE cm.id = :instanceid";
+        $userlist->add_from_sql('userid', $sql, $params);
+        // From allocations.
+        $sql = "SELECT a.userid
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
+                  JOIN {ratingallocate} r ON r.id = cm.instance                  
+                  JOIN {ratingallocate_allocations} a ON a.ratingallocateid = r.id
+                 WHERE cm.id = :instanceid";
+        $userlist->add_from_sql('userid', $sql, $params);
+
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+        $cm = $DB->get_record('course_modules', ['id' => $context->instanceid]);
+        $ratingallocate = $DB->get_record('ratingallocate', ['id' => $cm->instance]);
+
+        list($userinsql, $userinparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+        $params = array_merge(['ratingallocateid' => $ratingallocate->id], $userinparams);
+
+        // Delete Allocations.
+        $DB->delete_records_select('ratingallocate_allocations',
+            "ratingallocateid = :ratingallocateid AND userid {$userinsql}", $params);
+        // Delete Ratings.
+        $DB->delete_records_select(
+            'ratingallocate_ratings',
+            "choiceid IN (SELECT id FROM {ratingallocate_choices} ".
+                    "WHERE ratingallocateid = :ratingallocateid) AND userid {$userinsql}", $params);
     }
 }
