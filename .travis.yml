@@ -1,7 +1,7 @@
 language: php
 
 sudo: required
-dist: precise
+dist: trusty
 
 cache:
   directories:
@@ -9,27 +9,15 @@ cache:
     - $HOME/.npm
 
 addons:
-  postgresql: "9.3"
+  firefox: "47.0.1"
+  postgresql: "9.4"
 
 php:
-  - 5.6
   - 7.0
   - 7.1
+  - 7.2
 
 matrix:
- exclude:
-    - env: DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
-      php: 5.6
-    - env: DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
-      php: 5.6
-    - env: DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
-      php: 5.6
-    - env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
-      php: 5.6
-    - env: DB=pgsql MOODLE_BRANCH=master
-      php: 5.6
-    - env: DB=mysqli MOODLE_BRANCH=master
-      php: 5.6
  allow_failures:
     - env: DB=pgsql MOODLE_BRANCH=master
     - env: DB=mysqli MOODLE_BRANCH=master
@@ -37,32 +25,37 @@ matrix:
 
 
 env:
-  - DB=pgsql MOODLE_BRANCH=MOODLE_33_STABLE
+ global:
+  - MUSTACHE_IGNORE_NAMES="email_html_body.mustache, email_html.mustache, email_text.mustache"
+ matrix:
   - DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
   - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
   - DB=pgsql MOODLE_BRANCH=master
-  - DB=mysqli MOODLE_BRANCH=MOODLE_33_STABLE
   - DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
   - DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
   - DB=mysqli MOODLE_BRANCH=master
 
 before_install:
   - phpenv config-rm xdebug.ini
-  - nvm install 8.9
-  - nvm use 8.9
+  - nvm install 8.9.4
   - cd ../..
-  - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^2
+  - composer selfupdate
+  - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
-
-install:
-  - moodle-plugin-ci install
 
 jobs:
   include:
     # Prechecks against latest Moodle stable only.
     - stage: static
-      php: 7.1
+      php: 7.2
+      addons:
+        apt:
+          packages:
+            - oracle-java8-installer
+            - oracle-java8-set-default
       env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
+      install:
+      - moodle-plugin-ci install --no-init
       script:
       - moodle-plugin-ci phplint
       # - moodle-plugin-ci phpcpd
@@ -75,13 +68,18 @@ jobs:
 
     # Smaller build matrix for development builds
     - stage: develop
-      php: 7.1
+      php: 7.2
       env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
+      install:
+      - moodle-plugin-ci install
       script:
       - moodle-plugin-ci phpunit --coverage-clover
       - moodle-plugin-ci behat
 
 # Unit tests and behat tests against full matrix.
+install:
+  - moodle-plugin-ci install
+
 script:
   - moodle-plugin-ci phpunit --coverage-clover
   - moodle-plugin-ci behat

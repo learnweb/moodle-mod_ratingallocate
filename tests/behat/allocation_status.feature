@@ -45,7 +45,7 @@ Feature: Students should get status information according to their rating and th
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "My Fair Allocation"
-    And I navigate to "Edit settings" node in "Fair Allocation administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | accesstimestart[day] | ##2 days ago##j## |
       | accesstimestart[month] | ##2 days ago##n## |

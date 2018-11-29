@@ -216,7 +216,7 @@ $string['select_strategy_help'] = 'Choose a rating strategy:
 * **Rank Choices** The user has to rank the available choices. How many choices need to be rated can be defined individually.
 * **Tick Accept**  The user can state for each choice whether it is acceptable for him/her.';
 $string['strategy_not_specified'] = 'You have to select a strategy.';
-$string['strategyoptions_for_strategy'] = 'Options for Strategy "{$a}"';
+$string['strategyspecificoptions'] = 'Strategy specific options';
 
 $string['err_required'] = 'You need to provide a value for this field.';
 $string['err_minimum'] = 'The minimum value for this field is {$a}.';

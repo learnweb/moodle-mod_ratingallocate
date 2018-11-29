@@ -57,7 +57,3 @@
 .path-mod-ratingallocate .mod-ratingallocate-choice-maxno {
     text-align: right;
 }
-
-.jsenabled.path-mod-ratingallocate fieldset[id^='id_strategy_strategy'] {
-    display: none;
-}

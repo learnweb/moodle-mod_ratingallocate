@@ -81,7 +81,7 @@ class strategy extends \strategytemplate_options {
                 $this->get_settings_default_value($id)
             );
         }
-        $output += $this->get_default_strategy_option(max(array_keys($this->get_choiceoptions())));
+        $output += $this->get_default_strategy_option();
         return $output;
     }
 
@@ -98,7 +98,8 @@ class strategy extends \strategytemplate_options {
         $defaults = array(
                         self::MAXNO => 3,
                         self::COUNTLICKERT => 4,
-                        0 => get_string(self::STRATEGYID . '_rating_exclude', ratingallocate_MOD_NAME, "0")
+                        0 => get_string(self::STRATEGYID . '_rating_exclude', ratingallocate_MOD_NAME, "0"),
+                        'default' => $this->maxlickert,
         );
 
         for ($i = 1; $i <= $this->maxlickert; $i++) {

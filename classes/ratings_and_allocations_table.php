@@ -445,6 +445,9 @@ class ratings_and_allocations_table extends \table_sql {
      */
     private function filter_userids($userids) {
         global $DB;
+        if (!$userids) {
+            return $userids;
+        }
         if (!$this->hidenorating && !$this->showallocnecessary) {
             return $userids;
         }

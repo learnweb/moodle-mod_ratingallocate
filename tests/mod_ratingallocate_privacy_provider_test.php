@@ -158,4 +158,103 @@ class mod_ratingallocate_privacy_provider_testcase extends \core_privacy\tests\p
         $count = $DB->count_records('ratingallocate_allocations');
         $this->assertEquals(9, $count);
     }
+
+    /**
+     * Test for provider::get_users_in_context().
+     */
+    public function test_get_users_in_context() {
+        global $DB;
+        $cm = get_coursemodule_from_instance('ratingallocate',  $this->testmodule->moddb->id);
+
+        // Before deletion, we should have 20 responses and 20 allocations.
+        $count = $DB->count_records('ratingallocate_ratings');
+        $this->assertEquals(20, $count);
+        $count = $DB->count_records('ratingallocate_allocations');
+        $this->assertEquals(10, $count);
+
+        // Get data based on context.
+        $cmcontext = context_module::instance($cm->id);
+
+        $userlist = new \core_privacy\local\request\userlist($cmcontext, 'mod_ratingallocate');
+        provider::get_users_in_context($userlist);
+
+        // There are 20 students with ratings.
+        $this->assertCount(20, $userlist, "There should be 20 students with data in the instance.");
+
+        mod_ratingallocate_generator::create_user_and_enrol($this, $this->testmodule->course);
+
+        $enrolledusers = get_enrolled_users($cmcontext);
+
+        $userlist = new \core_privacy\local\request\userlist($cmcontext, 'mod_ratingallocate');
+        provider::get_users_in_context($userlist);
+
+        // Tere are one teacher and 21 students.
+        $this->assertCount(22, $enrolledusers);
+        $this->assertCount(20, $userlist, "There should still be only 20 students with data in the instance.");
+    }
+
+    /**
+     * Test for provider::delete_for_users_in_context().
+     */
+    public function test_delete_for_users_in_context(){
+        global $DB;
+        $testmodule2 = new mod_ratingallocate_generated_module($this);
+        $testmodule2->moddb->id;
+        $cm = get_coursemodule_from_instance('ratingallocate',  $this->testmodule->moddb->id);
+
+        $params1 = array(
+            'ratingallocateid' => $this->testmodule->moddb->id
+        );
+        $params2 = array(
+            'ratingallocateid' => $testmodule2->moddb->id
+        );
+
+        // Before deletion, we should have 20 responses and 10 allocations in instance 1.
+        $count = $DB->count_records_select('ratingallocate_ratings',
+            "choiceid IN (SELECT id FROM {ratingallocate_choices} ".
+            "WHERE ratingallocateid = :ratingallocateid)", $params1);
+        $this->assertEquals(20, $count);
+        $count = $DB->count_records('ratingallocate_allocations', $params1);
+        $this->assertEquals(10, $count);
+        // Before deletion, we should have 20 responses and 10 allocations in instance 2.
+        $count = $DB->count_records_select('ratingallocate_ratings',
+            "choiceid IN (SELECT id FROM {ratingallocate_choices} ".
+            "WHERE ratingallocateid = :ratingallocateid)", $params2);
+        $this->assertEquals(20, $count);
+        $count = $DB->count_records('ratingallocate_allocations', $params2);
+        $this->assertEquals(10, $count);
+
+        // Delete data based on context.
+        $cmcontext = context_module::instance($cm->id);
+
+        $userlist = array();
+        // Select one unassigned student.
+        $userlist []= $DB->get_record_sql("SELECT ra.userid 
+            FROM {ratingallocate_choices} ch JOIN
+            {ratingallocate_ratings} ra ON ra.choiceid = ch.id LEFT JOIN 
+            {ratingallocate_allocations} a ON a.choiceid = ch.id AND ra.userid = a.userid 
+            WHERE ch.ratingallocateid = :ratingallocateid AND a.id is null limit 1", $params1)->userid;
+        // Select one assigned student.
+        $userlist []= array_pop($this->testmodule->allocations)->userid;
+
+        $approveduserlist = new \core_privacy\local\request\approved_userlist($cmcontext, 'mod_ratingallocate',
+            $userlist);
+        provider::delete_data_for_users($approveduserlist);
+
+        // Afterwards 2 ratings and 1 allocation should be missing.
+        $count = $DB->count_records_select('ratingallocate_ratings',
+            "choiceid IN (SELECT id FROM {ratingallocate_choices} ".
+            "WHERE ratingallocateid = :ratingallocateid)", $params1);
+        $this->assertEquals(18, $count);
+        $count = $DB->count_records('ratingallocate_allocations', $params1);
+        $this->assertEquals(9, $count);
+        // The second instance should not be touched.
+        $count = $DB->count_records_select('ratingallocate_ratings',
+            "choiceid IN (SELECT id FROM {ratingallocate_choices} ".
+            "WHERE ratingallocateid = :ratingallocateid)", $params2);
+        $this->assertEquals(20, $count);
+        $count = $DB->count_records('ratingallocate_allocations', $params2);
+        $this->assertEquals(10, $count);
+    }
+
 }

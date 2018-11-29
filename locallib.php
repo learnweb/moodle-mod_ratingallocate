@@ -31,7 +31,6 @@ use ratingallocate\db as this_db;
 global $CFG;
 
 require_once(dirname(__FILE__) . '/lib.php');
-require_once($CFG->libdir  . '/eventslib.php');
 require_once(dirname(__FILE__) . '/form_manual_allocation.php');
 require_once(dirname(__FILE__) . '/form_modify_choice.php');
 require_once(dirname(__FILE__) . '/renderable.php');
