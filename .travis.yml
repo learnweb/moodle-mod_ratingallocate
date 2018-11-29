@@ -25,8 +25,6 @@ matrix:
 
 
 env:
- global:
-  - MUSTACHE_IGNORE_NAMES="email_html_body.mustache, email_html.mustache, email_text.mustache"
  matrix:
   - DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
   - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
@@ -48,11 +46,11 @@ jobs:
     # Prechecks against latest Moodle stable only.
     - stage: static
       php: 7.2
-      addons:
-        apt:
-          packages:
-            - oracle-java8-installer
-            - oracle-java8-set-default
+#      addons:
+#        apt:
+#          packages:
+#            - oracle-java8-installer
+#            - oracle-java8-set-default
       env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
       install:
       - moodle-plugin-ci install --no-init
