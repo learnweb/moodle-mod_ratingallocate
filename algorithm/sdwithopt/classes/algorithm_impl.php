@@ -53,11 +53,26 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         $this->choices = $choicerecords;
         $this->ratings = $ratings;
         $this->users = $raters;
+        $this->check_feasibility();
         // Compute global ranking.
         $this->prepare_execution($raters);
 
 
         return array();
+    }
+
+    /**
+     * Runs the deferred acceptance algorithm on the current state.
+     */
+    protected function run_deferred_acceptance() {
+        // TODO.
+    }
+
+    /**
+     * Students apply at the next choice at which they were not previously rejected.
+     */
+    protected function application_by_students() {
+        // TODO.
     }
 
     /**
