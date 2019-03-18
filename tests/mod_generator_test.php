@@ -86,7 +86,8 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
                 'explanation' => 'Some explanatory text for choice 1',
                 'maxsize' => '10',
                 'minsize' => '0',
-                'active' => '1'
+                'active' => '1',
+                'optional' => '0'
             ),
             $choice_ids[1] => (object) array(
                 'title' => 'Choice 2',
@@ -95,7 +96,8 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
                 'explanation' => 'Some explanatory text for choice 2',
                 'maxsize' => '5',
                 'minsize' => '0',
-                'active' => '0'
+                'active' => '0',
+                'optional' => '0'
             )
         );
         $this->assertEquals($expected_choices, $records);
