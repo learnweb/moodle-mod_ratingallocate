@@ -28,6 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 class algorithm_impl extends \mod_ratingallocate\algorithm {
 
     /** @var $graph Flow-Graph built */
+    protected $graph;
+
     /**
      * Starts the distribution algorithm.
      * Uses the users' ratings and a minimum-cost maximum-flow algorithm
@@ -45,25 +47,25 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         }
 
         $groupcount = count($groupdata);
-        // Index of source and sink in the graph
+        // Index of source and sink in the graph.
         $source = 0;
         $sink = $groupcount + $usercount + 1;
         list($fromuserid, $touserid, $fromgroupid, $togroupid) = $this->setup_id_conversions($usercount, $ratings);
 
         $this->setup_graph($groupcount, $usercount, $fromuserid, $fromgroupid, $ratings, $groupdata, $source, $sink);
 
-        // Now that the datastructure is complete, we can start the algorithm
-        // This is an adaptation of the Ford-Fulkerson algorithm
-        // (http://en.wikipedia.org/wiki/Ford%E2%80%93Fulkerson_algorithm)
+        // Now that the datastructure is complete, we can start the algorithm.
+        // This is an adaptation of the Ford-Fulkerson algorithm.
+        // (http://en.wikipedia.org/wiki/Ford%E2%80%93Fulkerson_algorithm).
         for ($i = 1; $i <= $usercount; $i++) {
-            // Look for an augmenting path (a shortest path from the source to the sink)
+            // Look for an augmenting path (a shortest path from the source to the sink).
             $path = $this->find_shortest_path_bellmanf_koegel($source, $sink);
             // If there is no such path, it is impossible to fit any more users into groups.
             if (is_null($path)) {
-                // Stop the algorithm
+                // Stop the algorithm.
                 continue;
             }
-            // Reverse the augmenting path, thereby distributing a user into a group
+            // Reverse the augmenting path, thereby distributing a user into a group.
             $this->augment_flow($path);
         }
 
@@ -81,21 +83,21 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
      */
     public function find_shortest_path_bellmanf_koegel($from, $to) {
 
-        // Table of distances known so far
+        // Table of distances known so far.
         $dists = array();
-        // Table of predecessors (used to reconstruct the shortest path later)
+        // Table of predecessors (used to reconstruct the shortest path later).
         $preds = array();
-        // Stack of the edges we need to test next
+        // Stack of the edges we need to test next.
         $edges = $this->graph[$from];
-        // Number of nodes in the graph
+        // Number of nodes in the graph.
         $count = $this->graph['count'];
 
         // To prevent the algorithm from getting stuck in a loop with
-        // with negative weight, we stop it after $count ^ 3 iterations
+        // with negative weight, we stop it after $count ^ 3 iterations.
         $counter = 0;
         $limit = $count * $count * $count;
 
-        // Initialize dists and preds
+        // Initialize dists and preds.
         for ($i = 0; $i < $count; $i++) {
             if ($i == $from) {
                 $dists[$i] = 0;
@@ -115,7 +117,7 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
             $t = $e->to;
             $dist = $e->weight + $dists[$f];
 
-            // If this edge improves a distance update the tables and the edges stack
+            // If this edge improves a distance update the tables and the edges stack.
             if ($dist > $dists[$t]) {
                 $dists[$t] = $dist;
                 $preds[$t] = $f;
@@ -125,17 +127,17 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
             }
         }
 
-        // A valid groupdistribution graph can't contain a negative edge
+        // A valid groupdistribution graph can't contain a negative edge.
         if ($counter == $limit) {
             print_error('negative_cycle', 'ratingallocate');
         }
 
-        // If there is no path to $to, return null
+        // If there is no path to $to, return null.
         if (is_null($preds[$to])) {
             return null;
         }
 
-        // Use the preds table to reconstruct the shortest path
+        // Use the preds table to reconstruct the shortest path.
         $path = array();
         $p = $to;
         while ($p != $from) {
