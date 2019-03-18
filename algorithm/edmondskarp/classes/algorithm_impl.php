@@ -27,6 +27,9 @@ defined('MOODLE_INTERNAL') || die();
 
 class algorithm_impl extends \mod_ratingallocate\algorithm {
 
+    /** @var $graph Flow-Graph built */
+    protected $graph;
+
     public function get_name() {
         return 'edmonds_karp';
     }
