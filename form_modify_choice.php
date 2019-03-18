@@ -107,6 +107,7 @@ class modify_choice_form extends moodleform {
         if ($this->choice) {
             $mform->setDefault('title', $this->choice->title);
             $mform->setDefault('explanation', $this->choice->explanation);
+            $mform->setDefault('minsize', $this->choice->minsize);
             $mform->setDefault('maxsize', $this->choice->maxsize);
             $mform->setDefault('active', $this->choice->active);
             $mform->setDefault('choiceid', $this->choice->id);

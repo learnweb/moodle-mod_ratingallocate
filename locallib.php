@@ -1511,6 +1511,7 @@ class ratingallocate {
  * @property string explanation
  * @property int $maxsize
  * @property bool $active
+ * @property int minsize
  */
 class ratingallocate_choice {
     /** @var stdClass original db record */
