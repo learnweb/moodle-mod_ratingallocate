@@ -62,7 +62,7 @@ class solver_ford_fulkerson extends distributor {
         for ($i = 1; $i <= $usercount; $i++) {
             // Look for an augmenting path (a shortest path from the source to the sink)
             $path = $this->find_shortest_path_bellmanf_koegel($source, $sink);
-            // If ther is no such path, it is impossible to fit any more users into groups.
+            // If there is no such path, it is impossible to fit any more users into groups.
             if (is_null($path)) {
                 // Stop the algorithm
                 continue;
