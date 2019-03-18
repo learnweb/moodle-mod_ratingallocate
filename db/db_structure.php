@@ -51,6 +51,7 @@ class ratingallocate_choices {
     const EXPLANATION = 'explanation';
     const MINSIZE = 'minsize';
     const MAXSIZE = 'maxsize';
+    const OPTIONAL = 'optional';
     const ACTIVE = 'active';
 }
 class ratingallocate_ratings {

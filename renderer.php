@@ -457,6 +457,11 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $row[] = $choice->{this_db\ratingallocate_choices::EXPLANATION};
             $row[] = $choice->{this_db\ratingallocate_choices::MINSIZE};
             $row[] = $choice->{this_db\ratingallocate_choices::MAXSIZE};
+            if ($choice->{this_db\ratingallocate_choices::OPTIONAL}) {
+                $row[] = get_string('yes');
+            } else {
+                $row[] = get_string('no');
+            }
             if ($choice->{this_db\ratingallocate_choices::ACTIVE}) {
                 $row[] = get_string('yes');
             } else {
