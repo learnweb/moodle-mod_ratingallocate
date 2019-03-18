@@ -425,19 +425,19 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $table = new \flexible_table('show_ratingallocate_options');
         $table->define_baseurl($PAGE->url);
 
-        $columns = array('title', 'explanation', 'minsize', 'maxsize', 'active');
+        $columns = array('title', 'explanation', 'minsize', 'maxsize', 'optional', 'active');
         $headers = array(get_string('choice_table_title', 'mod_ratingallocate'),
                 get_string('choice_table_explanation', 'mod_ratingallocate'),
                 get_string('choice_table_minsize', 'mod_ratingallocate'),
                 get_string('choice_table_maxsize', 'mod_ratingallocate'),
-                get_string('choice_table_tools', 'mod_ratingallocate'));
+                get_string('choice_table_optional', 'mod_ratingallocate'),
+                get_string('choice_table_active', 'mod_ratingallocate'));
+
         if ($choicesmodifiably) {
-            array_push($columns, 'tools');
-            // Pushes the active header into headers table at index 3.
-            $headers = array_merge(array_splice($headers, 0, 5, false),
-            array(get_string('choice_table_active', 'mod_ratingallocate')),
-            array_splice($headers, 3, 5, false));
+            $columns[] = "tools";
+            $headers[] = get_string('choice_table_tools', 'mod_ratingallocate');
         }
+
         $table->define_columns($columns);
         $table->define_headers($headers);
         $table->set_attribute('id', 'mod_ratingallocateshowoptions');

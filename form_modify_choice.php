@@ -98,11 +98,15 @@ class modify_choice_form extends moodleform {
             $mform->addRule(array("minsize", "maxsize"), get_string('err_gte', 'ratingallocate'), "compare", "lte", "server");
         }
 
-
         $elementname = 'active';
         $mform->addElement('advcheckbox', $elementname, get_string('choice_active', ratingallocate_MOD_NAME),
             null, null, array(0, 1));
         $mform->addHelpButton($elementname, 'choice_active', ratingallocate_MOD_NAME);
+
+        $elementname = 'optional';
+        $mform->addElement('advcheckbox', $elementname, get_string('choice_optional', ratingallocate_MOD_NAME),
+                null, null, array(0, 1));
+        $mform->addHelpButton($elementname, 'choice_optional', ratingallocate_MOD_NAME);
 
         if ($this->choice) {
             $mform->setDefault('title', $this->choice->title);
@@ -111,6 +115,7 @@ class modify_choice_form extends moodleform {
             $mform->setDefault('maxsize', $this->choice->maxsize);
             $mform->setDefault('active', $this->choice->active);
             $mform->setDefault('choiceid', $this->choice->id);
+            $mform->setDefault('optional', $this->choice->optional);
         } else {
             $mform->setDefault('active', true);
         }

@@ -132,7 +132,7 @@ function xmldb_ratingallocate_upgrade($oldversion) {
 
     }
 
-    if ($oldversion < 2019031802) {
+    if ($oldversion < 2019031803) {
 
         // Define field minsize to be added to ratingallocate_choices.
         $table = new xmldb_table('ratingallocate_choices');
@@ -143,8 +143,15 @@ function xmldb_ratingallocate_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
+        $field = new xmldb_field('optional', XMLDB_TYPE_INTEGER, '4', null, null, null, '0', 'active');
+
+        // Conditionally launch add field optional.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
         // Ratingallocate savepoint reached.
-        upgrade_mod_savepoint(true, 2019031802, 'ratingallocate');
+        upgrade_mod_savepoint(true, 2019031803, 'ratingallocate');
     }
 
     return true;

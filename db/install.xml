@@ -40,6 +40,7 @@
         <FIELD NAME="maxsize" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="10" SEQUENCE="false"/>
         <FIELD NAME="minsize" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="active" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="ob man in die Wahl bewerten kann oder ob sie &quot;versteckt&quot; ist"/>
+        <FIELD NAME="optional" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="whether the choice is allowed to be cancelled"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

@@ -193,6 +193,8 @@ $string['choice_added_notification'] = 'Choice saved.';
 // <editor-fold defaultstate="collapsed" desc="Form to edit the instance(administrator)">
 $string['choice_active'] = 'Choice is active';
 $string['choice_active_help'] = 'Only active choices are displayed to the user. Inactive choices are not displayed.';
+$string['choice_optional'] = 'Optional';
+$string['choice_optional_help'] = 'Whether the choice is allowed to be cancelled';
 $string['choice_explanation'] = 'Description (optional)';
 $string['choice_maxsize'] = 'Max. number of participants';
 $string['choice_maxsize_display'] = 'Maximum number of students';
@@ -232,6 +234,7 @@ $string['choice_table_explanation'] = 'Description';
 $string['choice_table_minsize'] = 'Min. Size';
 $string['choice_table_maxsize'] = 'Max. Size';
 $string['choice_table_active'] = 'Active';
+$string['choice_table_optional'] = 'Optional';
 $string['choice_table_tools'] = 'Edit';
 // </editor-fold>
 
