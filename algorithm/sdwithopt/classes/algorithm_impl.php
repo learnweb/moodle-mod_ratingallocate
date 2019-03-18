@@ -55,7 +55,7 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
      * @param $raters
      */
     protected function prepare_execution($raters) {
-        // Compute global ranking:
+        // Compute global ranking.
         $userids = array_keys($raters);
         shuffle($userids);
         $this->globalranking = array();

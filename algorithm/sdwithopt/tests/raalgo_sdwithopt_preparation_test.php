@@ -32,10 +32,37 @@ class raalgo_sdwithopt_preparation_test extends advanced_testcase {
 
         $algorithm = new raalgo_sdwithopt\algorithm_impl_testable();
         $users = array();
-        for ($i = 0; $i < 1000; $i++) {
+        $numberofusers = 1000;
+        for ($i = 0; $i < $numberofusers; $i++) {
             $users[] = $this->getDataGenerator()->create_user();
         }
         $algorithm->prepare_execution($users);
-        $this->assertCount(1000, $algorithm->get_global_ranking());
+        $ranking = $algorithm->get_global_ranking();
+        $this->assertCount($numberofusers, $ranking);
+        for ($i = 0; $i < $numberofusers; $i++) {
+            $this->assertTrue(array_key_exists($i, $ranking));
+        }
+        // Create a second global ranking and check that they differ.
+        $algorithm->prepare_execution($users);
+        $ranking2 = $algorithm->get_global_ranking();
+        $allequal = true;
+        for ($i = 0; $i < $numberofusers; $i++) {
+            if ($ranking[$i] != $ranking2[$i]) {
+                $allequal = false;
+                break;
+            }
+        }
+        // Run a second time since there is a probability >0 that the rankings are actually equal.
+        if ($allequal) {
+            $algorithm->prepare_execution($users);
+            $ranking2 = $algorithm->get_global_ranking();
+            for ($i = 0; $i < $numberofusers; $i++) {
+                if ($ranking[$i] != $ranking2[$i]) {
+                    $allequal = false;
+                    break;
+                }
+            }
+        }
+        $this->assertFalse($allequal, 'Two large randomly generated global rankings were not different.');
     }
 }
