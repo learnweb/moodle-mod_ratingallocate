@@ -71,6 +71,26 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         foreach ($userids as $userid) {
             $this->globalranking[] = $raters[$userid];
         }
+        // Prepare waiting lists.
+        foreach ($this->choices as $choice) {
+            $choice->waitinglist = array();
+        }
+        // Prepare preference list of raters. TODO: Testfälle schreiben!
+        foreach ($this->users as $user) {
+            $ratingsofuser = array_filter($this->ratings, function ($rating) use ($user) {
+                return $user->id == $rating->userid;
+            });
+            usort($ratingsofuser, function ($a, $b) {
+                if ($a->rating == $b->rating) {
+                    return 0;
+                }
+                return ($a->rating < $b->rating) ? -1 : 1;
+            });
+            $user->preferencelist = array();
+            foreach ($ratingsofuser as $rating) {
+                $user->preferencelist[] = $rating->choiceid;
+            }
+        }
     }
 
     /**
