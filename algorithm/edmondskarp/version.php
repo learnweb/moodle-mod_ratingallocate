@@ -18,9 +18,8 @@
 /**
  * Defines the version of ratingallocate
  *
- * @package    mod_ratingallocate
- * @copyright 2014 T Reischmann, C Usener
- * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
+ * @package    raalgo_edmondskarp
+ * @copyright 2019 J Dageförde, N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,6 +27,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2019031800;        // The current module version (Date: YYYYMMDDXX)
 $plugin->requires  = 2017111300;        // Requires this Moodle version
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v3.6-r1';
-$plugin->component = 'mod_ratingallocate';  // To check on upgrade, that module sits in correct place
+$plugin->component = 'raalgo_edmondskarp';  // To check on upgrade, that module sits in correct place.
