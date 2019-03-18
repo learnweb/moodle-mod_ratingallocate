@@ -92,6 +92,7 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         }
         // Prepare preference list of raters. TODO: Testfälle schreiben!
         foreach ($this->users as $user) {
+            // TODO: Filter out ratings with 0 value.
             $ratingsofuser = array_filter($this->ratings, function ($rating) use ($user) {
                 return $user->id == $rating->userid;
             });
