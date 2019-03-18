@@ -85,7 +85,6 @@ class modify_choice_form extends moodleform {
             $mform->addRule($elementname, get_string('err_required', 'form') , 'required', null, 'server');
             $mform->addRule($elementname, get_string('err_numeric', 'form') , 'numeric', null, 'server');
             $mform->addRule($elementname, get_string('err_positivnumber', 'ratingallocate') , 'regex', '/^[1-9][0-9]*|0/', 'server');
-            $mform->addRule(array($elementname, "maxsize"), get_string('err_gte', 'ratingallocate'), "compare", "lte", "server");
         }
 
         $elementname = 'maxsize';
@@ -94,6 +93,11 @@ class modify_choice_form extends moodleform {
         $mform->addRule($elementname, get_string('err_required', 'form') , 'required', null, 'server');
         $mform->addRule($elementname, get_string('err_numeric', 'form') , 'numeric', null, 'server');
         $mform->addRule($elementname, get_string('err_positivnumber', 'ratingallocate') , 'regex', '/^[1-9][0-9]*|0/', 'server');
+
+        if (true) {
+            $mform->addRule(array("minsize", "maxsize"), get_string('err_gte', 'ratingallocate'), "compare", "lte", "server");
+        }
+
 
         $elementname = 'active';
         $mform->addElement('advcheckbox', $elementname, get_string('choice_active', ratingallocate_MOD_NAME),
