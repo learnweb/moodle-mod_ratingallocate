@@ -54,4 +54,40 @@ abstract class algorithm {
         }
         $transaction->allow_commit();
     }
+
+    /**
+     * Compute the 'satisfaction' functions that is to be maximized by adding the
+     * ratings users gave to their allocated choices
+     * @param array $ratings
+     * @param array $distribution
+     * @return integer
+     */
+    public static function compute_target_function($ratings, $distribution) {
+        $functionvalue = 0;
+        foreach ($distribution as $choiceid => $choice) {
+            // $choice ist jetzt ein array von userids
+            foreach ($choice as $userid) {
+                // jetzt das richtige Rating rausfinden
+                foreach ($ratings as $rating) {
+                    if ($rating->userid == $userid && $rating->choiceid == $choiceid) {
+                        $functionvalue += $rating->rating;
+                        continue; // aus der Such-Schleife raus und weitermachen
+                    }
+                }
+
+            }
+        }
+        return $functionvalue;
+    }
+
+    /**
+     * @param string $name Subplugin name without 'raalgo_'-prefix.
+     * @return algorithm Algorithm instance
+     */
+    public static function get_instance(string $name) {
+        $subplugins = \core_plugin_manager::get_subplugins_of_plugin('mod_ratingallocate');
+        // TODO Check whether the specified plugin is installed.
+        $classname = '\raalgo_'.$name.'\algorithm_impl';
+        return new $classname();
+    }
 }
