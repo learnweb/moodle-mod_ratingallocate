@@ -196,6 +196,7 @@ $string['choice_active_help'] = 'Only active choices are displayed to the user. 
 $string['choice_explanation'] = 'Description (optional)';
 $string['choice_maxsize'] = 'Max. number of participants';
 $string['choice_maxsize_display'] = 'Maximum number of students';
+$string['choice_minsize'] = 'Min. number of participants';
 $string['choice_title'] = 'Title';
 $string['choice_title_help'] = 'Title of the choice. *Attention* all active choices will be displayed while ordered by title.';
 $string['edit_choice'] = 'Edit choice';
@@ -221,6 +222,7 @@ $string['strategyspecificoptions'] = 'Strategy specific options';
 $string['err_required'] = 'You need to provide a value for this field.';
 $string['err_minimum'] = 'The minimum value for this field is {$a}.';
 $string['err_maximum'] = 'The maximum value for this field is {$a}.';
+$string['err_gte'] = 'The minimum number of participants is greater than the maximum number of participants.';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Form to edit choices">
 $string['show_choices_header'] = 'List of all choices';
