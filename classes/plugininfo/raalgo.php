@@ -15,6 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_ratingallocate\plugininfo;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Subplugin type raalgo (allocation algorithms).
+ * @package mod_ratingallocate\plugininfo
+ */
 class raalgo extends \core\plugininfo\base {
 
 }

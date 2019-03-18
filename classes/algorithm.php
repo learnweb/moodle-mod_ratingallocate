@@ -65,13 +65,13 @@ abstract class algorithm {
     public static function compute_target_function($ratings, $distribution) {
         $functionvalue = 0;
         foreach ($distribution as $choiceid => $choice) {
-            // $choice ist jetzt ein array von userids
+            // In $choice ist jetzt ein array von userids.
             foreach ($choice as $userid) {
-                // jetzt das richtige Rating rausfinden
+                // Jetzt das richtige Rating rausfinden.
                 foreach ($ratings as $rating) {
                     if ($rating->userid == $userid && $rating->choiceid == $choiceid) {
                         $functionvalue += $rating->rating;
-                        continue; // aus der Such-Schleife raus und weitermachen
+                        continue; // Aus der Such-Schleife raus und weitermachen.
                     }
                 }
 
