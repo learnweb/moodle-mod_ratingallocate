@@ -23,6 +23,14 @@ require_once(__DIR__ . '/../locallib.php');
 abstract class algorithm {
 
     public abstract function get_name();
+
+    /**
+     * Computes the distribution of students to choices based on the students ratings.
+     * @param $choicerecords array[] array of all choices which are ratable in this ratingallocate.
+     * @param $ratings array[] array of all relevant ratings.
+     * @param $usercount int total number of raters in course.
+     * @return array mapping of choice ids to array of user ids.
+     */
     protected abstract function compute_distribution($choicerecords, $ratings, $usercount);
 
     /**
