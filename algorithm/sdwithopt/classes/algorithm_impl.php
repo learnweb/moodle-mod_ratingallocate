@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace raalgo_sdwithopt;
+
 defined('MOODLE_INTERNAL') || die();
 
 class algorithm_impl extends \mod_ratingallocate\algorithm {
@@ -69,6 +70,29 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         $this->globalranking = array();
         foreach ($userids as $userid) {
             $this->globalranking[] = $raters[$userid];
+        }
+    }
+
+    /**
+     * Checks the feasibility of the problem.
+     * If the problem isn't feasible it is adjusted accordingly.
+     */
+    protected function check_feasibility () {
+        $sumoflowerbounds = array_reduce($this->choices, function ($sum, $choice) {
+            if (!$choice->optional) {
+                return $sum + $choice->minsize;
+            }
+            return $sum;
+        });
+        $sumofupperbounds = array_reduce($this->choices, function ($sum, $choice) {
+            return $sum + $choice->maxsize;
+        });
+        $usercount = count($this->users);
+        if ($usercount < $sumoflowerbounds) {
+            throw new \Exception("unfeasible problem");
+        }
+        if ($usercount > $sumofupperbounds) {
+            throw new \Exception("unfeasible problem");
         }
     }
 }
