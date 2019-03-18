@@ -31,6 +31,13 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         return 'sdwithopt';
     }
 
+    /**
+     * Computes the distribution of students to choices based on the students ratings.
+     * @param $choicerecords array[] array of all choices which are ratable in this ratingallocate.
+     * @param $ratings array[] array of all relevant ratings.
+     * @param $raters array[] array of all raters in course.
+     * @return array mapping of choice ids to array of user ids.
+     */
     public function compute_distribution($choicerecords, $ratings, $raters) {
 
         return array();
