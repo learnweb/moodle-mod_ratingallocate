@@ -86,13 +86,13 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         }
 
         // Step 2: relax edges repeatedly.
-        for ($i = 0; $i < $count; $i++) { // For i from 1 to size(vertices)-1:
+        for ($i = 0; $i < $count; $i++) { // For i from 1 to size(vertices)-1.
             $updatedsomething = false;
-            foreach ($this->graph as $key => $edges) { // For each edge (u, v) with weight w in edges:
+            foreach ($this->graph as $key => $edges) { // For each edge (u, v) with weight w in edges.
                 if (is_array($edges)) {
                     foreach ($edges as $key2 => $edge) {
                         /* @var $edge edge */
-                        if ($dists[$edge->from] + $edge->weight < $dists[$edge->to]) { // If weight[u] + w < weight[v]:
+                        if ($dists[$edge->from] + $edge->weight < $dists[$edge->to]) { // If weight[u] + w < weight[v].
                             $dists[$edge->to] = $dists[$edge->from] + $edge->weight; // Weight[v] := weight[u] + w.
                             $preds[$edge->to] = $edge->from; // Predecessor[v] := u.
                             $updatedsomething = true;
@@ -106,7 +106,7 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         }
 
         // Step 3: check for negative-weight cycles.
-        /*Foreach ($graph as $key => $edges) { // for each edge (u, v) with weight w in edges:
+        /* Foreach ($graph as $key => $edges) { // for each edge (u, v) with weight w in edges:
             if (is_array($edges)) {
                 foreach ($edges as $key2 => $edge) {
 
@@ -208,7 +208,8 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
      * @param $source
      * @param $sink
      */
-    protected function setup_graph($choicecount, $usercount, $fromuserid, $fromchoiceid, $ratings, $choicedata, $source, $sink, $weightmult = 1) {
+    protected function setup_graph($choicecount, $usercount, $fromuserid, $fromchoiceid, $ratings, $choicedata, $source,
+                                   $sink, $weightmult = 1) {
         // Construct the datastructures for the algorithm.
         // A directed weighted bipartite graph.
         // A source is connected to all users with unit cost.
