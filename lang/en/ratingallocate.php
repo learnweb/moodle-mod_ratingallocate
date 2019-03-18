@@ -229,6 +229,7 @@ $string['show_choices_header'] = 'List of all choices';
 $string['newchoice'] = 'Add new choice';
 $string['choice_table_title'] = 'Title';
 $string['choice_table_explanation'] = 'Description';
+$string['choice_table_minsize'] = 'Min. Size';
 $string['choice_table_maxsize'] = 'Max. Size';
 $string['choice_table_active'] = 'Active';
 $string['choice_table_tools'] = 'Edit';
