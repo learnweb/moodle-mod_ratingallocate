@@ -232,6 +232,11 @@ $string['choice_table_active'] = 'Active';
 $string['choice_table_tools'] = 'Edit';
 // </editor-fold>
 
+// <editor-fold defaultstate="collapsed" desc="Subplugin types">
+$string['subplugintype_raalgo'] = 'Allocation algorithm';
+$string['subplugintype_raalgo_plural'] = 'Allocation algorithms';
+// </editor-fold>
+
 $string['is_published'] = 'Published';
 
 $string['strategy_settings_label'] = 'Designation for "{$a}"';
