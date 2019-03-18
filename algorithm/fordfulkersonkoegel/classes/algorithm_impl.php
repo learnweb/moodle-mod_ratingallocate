@@ -18,117 +18,124 @@
  *
  * Contains the algorithm for the distribution
  *
- * @package    raalgo_edmondskarp
+ * @package    raalgo_fordfulkersonkoegel
  * @copyright  2014 M Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace raalgo_edmondskarp;
+namespace raalgo_fordfulkersonkoegel;
 defined('MOODLE_INTERNAL') || die();
 
 class algorithm_impl extends \mod_ratingallocate\algorithm {
 
     /** @var $graph Flow-Graph built */
-    protected $graph;
-
-    public function get_name() {
-        return 'edmonds_karp';
-    }
-
+    /**
+     * Starts the distribution algorithm.
+     * Uses the users' ratings and a minimum-cost maximum-flow algorithm
+     * to distribute the users fairly into the groups.
+     * (see http://en.wikipedia.org/wiki/Minimum-cost_flow_problem)
+     * After the algorithm is done, users are removed from their current
+     * groups (see clear_all_groups_in_course()) and redistributed
+     * according to the computed distriution.
+     *
+     */
     public function compute_distribution($choicerecords, $ratings, $usercount) {
-        $choicedata = array();
+        $groupdata = array();
         foreach ($choicerecords as $record) {
-            $choicedata[$record->id] = $record;
+            $groupdata[$record->id] = $record;
         }
 
-        $choicecount = count($choicedata);
-        // Index of source and sink in the graph.
+        $groupcount = count($groupdata);
+        // Index of source and sink in the graph
         $source = 0;
-        $sink = $choicecount + $usercount + 1;
+        $sink = $groupcount + $usercount + 1;
+        list($fromuserid, $touserid, $fromgroupid, $togroupid) = $this->setup_id_conversions($usercount, $ratings);
 
-        list($fromuserid, $touserid, $fromchoiceid, $tochoiceid) = $this->setup_id_conversions($usercount, $ratings);
-
-        $this->setup_graph($choicecount, $usercount, $fromuserid, $fromchoiceid, $ratings, $choicedata, $source, $sink, -1);
+        $this->setup_graph($groupcount, $usercount, $fromuserid, $fromgroupid, $ratings, $groupdata, $source, $sink);
 
         // Now that the datastructure is complete, we can start the algorithm
         // This is an adaptation of the Ford-Fulkerson algorithm
-        // with Bellman-Ford as search function (see: Edmonds-Karp in Introduction to Algorithms)
-        // http://stackoverflow.com/questions/6681075/while-loop-in-php-with-assignment-operator
-        // Look for an augmenting path (a shortest path from the source to the sink)
-        while ($path = $this->find_shortest_path_bellf($source, $sink)) { // if the function returns null, the while will stop.
-            // Reverse the augmentin path, thereby distributing a user into a group.
+        // (http://en.wikipedia.org/wiki/Ford%E2%80%93Fulkerson_algorithm)
+        for ($i = 1; $i <= $usercount; $i++) {
+            // Look for an augmenting path (a shortest path from the source to the sink)
+            $path = $this->find_shortest_path_bellmanf_koegel($source, $sink);
+            // If there is no such path, it is impossible to fit any more users into groups.
+            if (is_null($path)) {
+                // Stop the algorithm
+                continue;
+            }
+            // Reverse the augmenting path, thereby distributing a user into a group
             $this->augment_flow($path);
-            unset($path); // Clear up old path.
         }
-        return $this->extract_allocation($touserid, $tochoiceid);
+
+        return $this->extract_allocation($touserid, $togroupid);
     }
 
     /**
-     * Bellman-Ford acc. to Cormen
+     * Uses a modified Bellman-Ford algorithm to find a shortest path
+     * from $from to $to in $graph. We can't use Dijkstra here, because
+     * the graph contains edges with negative weight.
      *
      * @param $from index of starting node
      * @param $to index of end node
      * @return array with the of the nodes in the path
      */
-    private function find_shortest_path_bellf($from, $to) {
-        // Table of distances known so far.
-        $dists = array();
-        // Table of predecessors (used to reconstruct the shortest path later).
-        $preds = array();
+    public function find_shortest_path_bellmanf_koegel($from, $to) {
 
-        // Number of nodes in the graph.
+        // Table of distances known so far
+        $dists = array();
+        // Table of predecessors (used to reconstruct the shortest path later)
+        $preds = array();
+        // Stack of the edges we need to test next
+        $edges = $this->graph[$from];
+        // Number of nodes in the graph
         $count = $this->graph['count'];
 
-        // Step 1: initialize graph.
-        for ($i = 0; $i < $count; $i++) { // For each vertex v in vertices:
-            if ($i == $from) {// If v is source then weight[v] := 0.
+        // To prevent the algorithm from getting stuck in a loop with
+        // with negative weight, we stop it after $count ^ 3 iterations
+        $counter = 0;
+        $limit = $count * $count * $count;
+
+        // Initialize dists and preds
+        for ($i = 0; $i < $count; $i++) {
+            if ($i == $from) {
                 $dists[$i] = 0;
-            } else {// Else weight[v] := infinity.
-                $dists[$i] = INF;
+            } else {
+                $dists[$i] = -INF;
             }
-            $preds[$i] = null; // Predecessor[v] := null.
+            $preds[$i] = null;
         }
 
-        // Step 2: relax edges repeatedly.
-        for ($i = 0; $i < $count; $i++) { // For i from 1 to size(vertices)-1.
-            $updatedsomething = false;
-            foreach ($this->graph as $key => $edges) { // For each edge (u, v) with weight w in edges.
-                if (is_array($edges)) {
-                    foreach ($edges as $key2 => $edge) {
-                        /* @var $edge edge */
-                        if ($dists[$edge->from] + $edge->weight < $dists[$edge->to]) { // If weight[u] + w < weight[v].
-                            $dists[$edge->to] = $dists[$edge->from] + $edge->weight; // Weight[v] := weight[u] + w.
-                            $preds[$edge->to] = $edge->from; // Predecessor[v] := u.
-                            $updatedsomething = true;
-                        }
-                    }
+        while (!empty($edges) and $counter < $limit) {
+            $counter++;
+
+            /* @var e edge */
+            $e = array_pop($edges);
+
+            $f = $e->from;
+            $t = $e->to;
+            $dist = $e->weight + $dists[$f];
+
+            // If this edge improves a distance update the tables and the edges stack
+            if ($dist > $dists[$t]) {
+                $dists[$t] = $dist;
+                $preds[$t] = $f;
+                foreach ($this->graph[$t] as $newedge) {
+                    $edges[] = $newedge;
                 }
-            }
-            if (!$updatedsomething) {
-                break; // Leave.
             }
         }
 
-        // Step 3: check for negative-weight cycles.
-        /* Foreach ($graph as $key => $edges) { // for each edge (u, v) with weight w in edges:
-            if (is_array($edges)) {
-                foreach ($edges as $key2 => $edge) {
+        // A valid groupdistribution graph can't contain a negative edge
+        if ($counter == $limit) {
+            print_error('negative_cycle', 'ratingallocate');
+        }
 
-                    if ($dists[$edge->to] + $edge->weight < $dists[$edge->to]) { // if weight[u] + w < weight[v]:
-                        print_error('negative_cycle', 'ratingallocate');
-                    }
-                }
-            }
-        }*/
-
-        // If there is no path to $to, return null.
+        // If there is no path to $to, return null
         if (is_null($preds[$to])) {
             return null;
         }
 
-        // Cleanup dists to save some space.
-        unset($dists);
-
-        // Use the preds table to reconstruct the shortest path.
+        // Use the preds table to reconstruct the shortest path
         $path = array();
         $p = $to;
         while ($p != $from) {
@@ -136,7 +143,12 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
             $p = $preds[$p];
         }
         $path[] = $from;
+
         return $path;
+    }
+
+    public function get_name() {
+        return "ford-fulkerson Koegel2014";
     }
 
     /**

@@ -85,7 +85,7 @@ abstract class algorithm {
      * @return algorithm Algorithm instance
      */
     public static function get_instance(string $name) {
-        $subplugins = \core_plugin_manager::get_subplugins_of_plugin('mod_ratingallocate');
+        $subplugins = \core_plugin_manager::instance()->get_plugins_of_type('raalgo');
         // TODO Check whether the specified plugin is installed.
         $classname = '\raalgo_'.$name.'\algorithm_impl';
         return new $classname();

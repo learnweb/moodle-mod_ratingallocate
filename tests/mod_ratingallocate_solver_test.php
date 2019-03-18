@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/ratingallocate/locallib.php');
-require_once($CFG->dirroot . '/mod/ratingallocate/solver/ford-fulkerson-koegel.php');
 
 class edmonds_karp_test extends basic_testcase {
 
@@ -72,9 +71,9 @@ class edmonds_karp_test extends basic_testcase {
 
         $usercount = $ratersnum;
 
-        $solvers = array('\raalgo_edmondskarp\algorithm_impl', 'solver_ford_fulkerson');
+        $solvers = array('edmondskarp', 'fordfulkersonkoegel');
         foreach ($solvers as $solver) {
-            $solver1 = new $solver;
+            $solver1 = \mod_ratingallocate\algorithm::get_instance($solver);
             $timestart = microtime(true);
             $distribution1 = $solver1->compute_distribution($groups, $ratings, $usercount);
             $result[$solver1->get_name()]['elapsed_sec'] = (microtime(true) - $timestart);
@@ -187,7 +186,7 @@ class edmonds_karp_test extends basic_testcase {
 
         $usercount = 5;
 
-        $solver = new \raalgo_edmondskarp\algorithm_impl();
+        $solver = \mod_ratingallocate\algorithm::get_instance('edmondskarp');
         $distribution = $solver->compute_distribution($choices, $ratings, $usercount);
         $expected = array(1 => array(2, 5), 2 => array(4, 1));
         // echo "gesamtpunktzahl: " . $solver->compute_target_function($choices, $ratings, $distribution);
@@ -196,7 +195,7 @@ class edmonds_karp_test extends basic_testcase {
         $this->assertEquals($solver::compute_target_function($ratings, $distribution), 15);
 
         // test against Koegels solver
-        $solverkoe = new solver_ford_fulkerson();
+        $solverkoe = \mod_ratingallocate\algorithm::get_instance('fordfulkersonkoegel');
         $distributionkoe = $solverkoe->compute_distribution($choices, $ratings, $usercount);
         $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe), 15);
         $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe), $solver::compute_target_function($ratings, $distribution));
@@ -235,11 +234,11 @@ class edmonds_karp_test extends basic_testcase {
 
         $usercount = 2;
 
-        $solver = new \raalgo_edmondskarp\algorithm_impl();
+        $solver = \mod_ratingallocate\algorithm::get_instance('edmondskarp');
         $distribution = $solver->compute_distribution($choices, $ratings, $usercount);
         $this->assertEquals($solver::compute_target_function($ratings, $distribution), 10);
 
-        $solverkoe = new solver_ford_fulkerson();
+        $solverkoe = \mod_ratingallocate\algorithm::get_instance('fordfulkersonkoegel');
         $distributionkoe = $solverkoe->compute_distribution($choices, $ratings, $usercount);
 
         $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe), 10);
@@ -268,9 +267,9 @@ class edmonds_karp_test extends basic_testcase {
         $ratings[4]->choiceid = 2;
         $ratings[4]->rating = 4;
 
-        $this->assertEquals(distributor::compute_target_function($ratings, array(1 => array(1), 2 => array(2))), 9);
-        $this->assertEquals(distributor::compute_target_function($ratings, array(1 => array(1, 2))), 8);
-        $this->assertEquals(distributor::compute_target_function($ratings, array(1 => array(2), 2 => array(1))), 7);
+        $this->assertEquals(\mod_ratingallocate\algorithm::compute_target_function($ratings, array(1 => array(1), 2 => array(2))), 9);
+        $this->assertEquals(\mod_ratingallocate\algorithm::compute_target_function($ratings, array(1 => array(1, 2))), 8);
+        $this->assertEquals(\mod_ratingallocate\algorithm::compute_target_function($ratings, array(1 => array(2), 2 => array(1))), 7);
     }
 
     /**
