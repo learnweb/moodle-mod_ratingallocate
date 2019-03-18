@@ -14,20 +14,36 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Defines the version of ratingallocate
  *
- * @package    mod_ratingallocate
- * @copyright 2014 T Reischmann, C Usener
- * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
+ * Contains the algorithm for the distribution
+ *
+ * @package    raalgo_edmondskarp
+ * @copyright  2014 M Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace raalgo_edmondskarp;
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019031800;        // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2017111300;        // Requires this Moodle version
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v3.6-r1';
-$plugin->component = 'mod_ratingallocate';  // To check on upgrade, that module sits in correct place
+/**
+ * Represents an Edge in the graph to have fixed fields instead of array-fields
+ */
+class edge {
+    /** @var from int */
+    public $from;
+    /** @var to int */
+    public $to;
+    /** @var weight int Cost for this edge (rating of user) */
+    public $weight;
+    /** @var space int (places left for choices) */
+    public $space;
+
+    public function __construct($from, $to, $weight, $space = 0) {
+        $this->from = $from;
+        $this->to = $to;
+        $this->weight = $weight;
+        $this->space = $space;
+    }
+
+}

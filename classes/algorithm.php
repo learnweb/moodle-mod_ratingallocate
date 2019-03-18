@@ -22,6 +22,7 @@ require_once(__DIR__ . '/../locallib.php');
 
 abstract class algorithm {
 
+    public abstract function get_name();
     protected abstract function compute_distribution($choicerecords, $ratings, $usercount);
 
     /**
