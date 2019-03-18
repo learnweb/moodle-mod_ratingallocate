@@ -40,7 +40,7 @@ class mod_ratingallocate_algorithm_subplugins_testcase extends basic_testcase {
 
     public function test_default_algorithms_present() {
         $algorithms = \mod_ratingallocate\algorithm::get_available_algorithms();
-        $this->assertGreaterThan(2, count($algorithms));
+        $this->assertGreaterThanOrEqual(2, count($algorithms));
         $this->assertArrayHasKey('edmondskarp', $algorithms);
         $this->assertArrayHasKey('fordfulkersonkoegel', $algorithms);
     }
