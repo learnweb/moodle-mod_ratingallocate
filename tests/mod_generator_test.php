@@ -85,6 +85,7 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
                 'ratingallocateid' => $mod->id,
                 'explanation' => 'Some explanatory text for choice 1',
                 'maxsize' => '10',
+                'minsize' => '0',
                 'active' => '1'
             ),
             $choice_ids[1] => (object) array(
@@ -93,6 +94,7 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
                 'ratingallocateid' => $mod->id,
                 'explanation' => 'Some explanatory text for choice 2',
                 'maxsize' => '5',
+                'minsize' => '0',
                 'active' => '0'
             )
         );

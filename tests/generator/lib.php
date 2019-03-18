@@ -90,11 +90,13 @@ class mod_ratingallocate_generator extends testing_module_generator {
                 array('title' => 'Choice 1',
                     'explanation' => 'Some explanatory text for choice 1',
                     'maxsize' => '10',
-                    'active' => true),
+                    'active' => true,
+                    'minsize' => '0'),
                 array('title' => 'Choice 2',
                     'explanation' => 'Some explanatory text for choice 2',
                     'maxsize' => '5',
-                    'active' => false
+                    'active' => false,
+                    'minsize' => '0'
                 )
             );
         }
