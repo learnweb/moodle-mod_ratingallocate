@@ -882,7 +882,7 @@ class ratingallocate {
         $this->origdbrecord->algorithmstarttime = time();
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
 
-        $distributor = new solver_edmonds_karp();
+        $distributor = new raalgo_edmondskarp\algorithm_impl();
         // $distributor = new solver_ford_fulkerson();
         $timestart = microtime(true);
         $distributor->distribute_users($this);
