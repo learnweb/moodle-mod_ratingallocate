@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/ratingallocate/locallib.php');
-require_once($CFG->dirroot . '/mod/ratingallocate/solver/edmonds-karp.php');
 require_once($CFG->dirroot . '/mod/ratingallocate/solver/ford-fulkerson-koegel.php');
 
 class edmonds_karp_test extends basic_testcase {
@@ -73,7 +72,7 @@ class edmonds_karp_test extends basic_testcase {
 
         $usercount = $ratersnum;
 
-        $solvers = array('solver_edmonds_karp', 'solver_ford_fulkerson');
+        $solvers = array('\raalgo_edmondskarp\algorithm_impl', 'solver_ford_fulkerson');
         foreach ($solvers as $solver) {
             $solver1 = new $solver;
             $timestart = microtime(true);
@@ -188,7 +187,7 @@ class edmonds_karp_test extends basic_testcase {
 
         $usercount = 5;
 
-        $solver = new solver_edmonds_karp();
+        $solver = new \raalgo_edmondskarp\algorithm_impl();
         $distribution = $solver->compute_distribution($choices, $ratings, $usercount);
         $expected = array(1 => array(2, 5), 2 => array(4, 1));
         // echo "gesamtpunktzahl: " . $solver->compute_target_function($choices, $ratings, $distribution);
@@ -236,7 +235,7 @@ class edmonds_karp_test extends basic_testcase {
 
         $usercount = 2;
 
-        $solver = new solver_edmonds_karp();
+        $solver = new \raalgo_edmondskarp\algorithm_impl();
         $distribution = $solver->compute_distribution($choices, $ratings, $usercount);
         $this->assertEquals($solver::compute_target_function($ratings, $distribution), 10);
 
@@ -300,7 +299,7 @@ class edmonds_karp_test extends basic_testcase {
         $ratings[4]->rating = 2;
 
         $usercount = 2;
-        list($fromuserid, $touserid, $fromchoiceid, $tochoiceid) = solver_edmonds_karp::setup_id_conversions($usercount, $ratings);
+        list($fromuserid, $touserid, $fromchoiceid, $tochoiceid) = \raalgo_edmondskarp\algorithm_impl::setup_id_conversions($usercount, $ratings);
 
         $this->assertEquals(array(3 => 1, 2 => 2), $fromuserid);
         $this->assertEquals(array(1 => 3, 2 => 2), $touserid);
