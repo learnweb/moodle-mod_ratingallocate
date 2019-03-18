@@ -28,10 +28,10 @@ abstract class algorithm {
      * Computes the distribution of students to choices based on the students ratings.
      * @param $choicerecords array[] array of all choices which are ratable in this ratingallocate.
      * @param $ratings array[] array of all relevant ratings.
-     * @param $usercount int total number of raters in course.
+     * @param $raters array[] array of all raters in course.
      * @return array mapping of choice ids to array of user ids.
      */
-    protected abstract function compute_distribution($choicerecords, $ratings, $usercount);
+    protected abstract function compute_distribution($choicerecords, $ratings, $raters);
 
     /**
      * Entry-point for the \ratingallocate object to call a solver
@@ -46,9 +46,9 @@ abstract class algorithm {
         // Randomize the order of the enrties to prevent advantages for early entry.
         shuffle($ratings);
 
-        $usercount = count($ratingallocate->get_raters_in_course());
+        $ratersincourse = $ratingallocate->get_raters_in_course();
 
-        $distributions = $this->compute_distribution($choicerecords, $ratings, $usercount);
+        $distributions = $this->compute_distribution($choicerecords, $ratings, $ratersincourse);
 
         // Perform all allocation manipulation / inserts in one transaction.
         $transaction = $ratingallocate->db->start_delegated_transaction();

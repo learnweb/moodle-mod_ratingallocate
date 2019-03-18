@@ -34,7 +34,8 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         return 'edmonds_karp';
     }
 
-    public function compute_distribution($choicerecords, $ratings, $usercount) {
+    public function compute_distribution($choicerecords, $ratings, $raters) {
+        $usercount = count($raters);
         $choicedata = array();
         foreach ($choicerecords as $record) {
             $choicedata[$record->id] = $record;

@@ -31,7 +31,8 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         return 'sdwithopt';
     }
 
-    public function compute_distribution($choicerecords, $ratings, $usercount) {
+    public function compute_distribution($choicerecords, $ratings, $raters) {
+
         return array();
     }
 }
