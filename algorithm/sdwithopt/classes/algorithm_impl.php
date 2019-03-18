@@ -27,6 +27,9 @@ defined('MOODLE_INTERNAL') || die();
 
 class algorithm_impl extends \mod_ratingallocate\algorithm {
 
+    /** @var array */
+    protected $globalranking;
+
     public function get_name() {
         return 'sdwithopt';
     }
@@ -39,7 +42,25 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
      * @return array mapping of choice ids to array of user ids.
      */
     public function compute_distribution($choicerecords, $ratings, $raters) {
+        // minsize, maxsize, opt
+
+        // Compute global ranking.
+        $this->prepare_execution($raters);
+
 
         return array();
+    }
+
+    /**
+     * @param $raters
+     */
+    protected function prepare_execution($raters) {
+        // Compute global ranking:
+        $userids = array_keys($raters);
+        shuffle($userids);
+        $this->globalranking = array();
+        foreach ($userids as $userid) {
+            $this->globalranking[] = $raters[$userid];
+        }
     }
 }
