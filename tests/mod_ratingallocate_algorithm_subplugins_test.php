@@ -49,4 +49,12 @@ class mod_ratingallocate_algorithm_subplugins_testcase extends basic_testcase {
         $algorithm = \mod_ratingallocate\algorithm::get_instance('edmondskarp');
         $this->assertInstanceOf(\mod_ratingallocate\algorithm::class, $algorithm);
     }
+
+    public function test_algorithm_supported_features() {
+        $algorithm = \mod_ratingallocate\algorithm::get_instance('edmondskarp');
+        $supports = $algorithm->get_supported_features();
+        $this->assertContainsOnlyInstancesOf('bool', $supports);
+        $this->assertArrayHasKey('min', $supports);
+        $this->assertArrayHasKey('opt', $supports);
+    }
 }
