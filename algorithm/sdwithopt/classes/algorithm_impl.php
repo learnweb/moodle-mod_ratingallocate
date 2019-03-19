@@ -56,7 +56,7 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
      * @param $raters array[] array of all raters in course.
      * @return array mapping of choice ids to array of user ids.
      */
-    public function compute_distribution($choicerecords, $ratings, $raters) {
+    protected function compute_distribution($choicerecords, $ratings, $raters) {
         // minsize, maxsize, optional
         $this->choices = $choicerecords;
         $this->ratings = $ratings;
