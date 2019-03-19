@@ -124,7 +124,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->setDefault($elementname, 1);
 
         $headerid = 'strategy_fieldset';
-        $mform->addElement('header', $headerid, get_string('strategyspecificoptions', ratingallocate_MOD_NAME));
+        $mform->addElement('header', $headerid, get_string('strategyspecificoptions', self::MOD_NAME));
         $mform->setExpanded($headerid);
 
         foreach (\strategymanager::get_strategies() as $strategy) {
@@ -142,7 +142,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         }
 
         $headerid = 'algorithm_fieldset';
-        $mform->addElement('header', $headerid, get_string('algorithmoptions', ratingallocate_MOD_NAME));
+        $mform->addElement('header', $headerid, get_string('algorithmoptions', self::MOD_NAME));
         $mform->setExpanded($headerid);
 
         foreach(\mod_ratingallocate\algorithm::get_available_algorithms() as $key => $value){
