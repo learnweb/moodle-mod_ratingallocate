@@ -45,7 +45,7 @@ class raalgo_sdwithopt_algorithm_test extends advanced_testcase {
 
         $choice2 = new \raalgo_sdwithopt\choice();
         $choice2->id = 2000;
-        $choice2->minsize = 1;
+        $choice2->minsize = 5;
         $choice2->maxsize = 5;
         $choice2->optional = true;
         $choice2->waitinglist = [1 => 2];
@@ -89,8 +89,10 @@ class raalgo_sdwithopt_algorithm_test extends advanced_testcase {
 
         $sumofallocations = 0;
         foreach ($choices as $choice) {
-            $this->assertGreaterThanOrEqual($choice->minsize, count($allocation[$choice->id]));
-            $this->assertLessThanOrEqual($choice->maxsize, count($allocation[$choice->id]));
+            $feasibleoptional = $choice->optional && count($allocation[$choice->id]) == 0;
+            $feasiblemax = $choice->maxsize >= count($allocation[$choice->id]);
+            $feasiblemin = $choice->minsize <= count($allocation[$choice->id]);
+            $this->assertTrue($feasibleoptional || ($feasiblemax && $feasiblemin));
             $sumofallocations += count($allocation[$choice->id]);
         }
         $this->assertEquals(count($users), $sumofallocations);
