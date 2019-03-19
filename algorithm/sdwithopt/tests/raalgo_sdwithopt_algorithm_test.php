@@ -29,7 +29,6 @@ class raalgo_sdwithopt_algorithm_test extends advanced_testcase {
 
         $algorithm = new raalgo_sdwithopt\algorithm_impl_testable();
         $users = array();
-        $globalranking = array();
         for ($i = 0; $i < 10; $i++) {
             $user = new \raalgo_sdwithopt\user();
             $user->id = $i + 1;
