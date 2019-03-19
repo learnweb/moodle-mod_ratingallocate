@@ -57,7 +57,6 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         // Compute global ranking.
         $this->prepare_execution($raters);
 
-
         return array();
     }
 
@@ -65,7 +64,10 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
      * Runs the deferred acceptance algorithm on the current state.
      */
     protected function run_deferred_acceptance() {
-        // TODO.
+        do {
+            $this->application_by_students();
+            $rejectionoccured = $this->rejection_by_choices();
+        } while ($rejectionoccured);
     }
 
     /**
@@ -73,6 +75,14 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
      */
     protected function application_by_students() {
         // TODO.
+    }
+
+    /**
+     * Choices reject students based on their max size and the global ranking.
+     * @return bool true if any choice did reject a student.
+     */
+    protected function rejection_by_choices() {
+        return true;
     }
 
     /**
@@ -131,4 +141,6 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
             throw new \Exception("unfeasible problem");
         }
     }
+
+
 }
