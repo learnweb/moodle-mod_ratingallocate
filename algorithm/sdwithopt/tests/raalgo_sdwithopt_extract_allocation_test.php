@@ -76,7 +76,7 @@ class raalgo_sdwithopt_extract_allocation_test extends advanced_testcase {
         $this->assertCount(2, $allocation[1000]);
         $this->assertTrue(in_array(1, $allocation[1000]));
         $this->assertTrue(in_array(2, $allocation[1000]));
-        
+
         $this->assertCount(0, $allocation[2000]);
     }
 

@@ -27,4 +27,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2019031800;        // The current module version (Date: YYYYMMDDXX)
 $plugin->requires  = 2017111300;        // Requires this Moodle version
-$plugin->component = 'raalgo_sdwithopt';  // To check on upgrade, that module sits in correct place
+$plugin->component = 'raalgo_sdwithopt';  // To check on upgrade, that module sits in correct place.
