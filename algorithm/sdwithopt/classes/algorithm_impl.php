@@ -224,9 +224,13 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
     protected function application_by_students() {
         foreach ($this->users as $user) {
             if (!$user->currentchoice && count($user->preferencelist) > 0) {
-                $nextchoice = array_shift($user->preferencelist);
-                $user->currentchoice = $nextchoice;
-                $this->choices[$nextchoice]->waitinglist[$this->globalranking[$user->id]] = $user->id;
+                do {
+                    $nextchoice = array_shift($user->preferencelist);
+                } while ($nextchoice && !array_key_exists($nextchoice, $this->choices));
+                if ($nextchoice) {
+                    $user->currentchoice = $nextchoice;
+                    $this->choices[$nextchoice]->waitinglist[$this->globalranking[$user->id]] = $user->id;
+                }
             }
         }
     }
