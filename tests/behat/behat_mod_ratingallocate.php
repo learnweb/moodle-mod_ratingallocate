@@ -250,6 +250,39 @@ class behat_mod_ratingallocate extends behat_base {
     }
 
     /**
+     * The choice with id should be optional.
+     *
+     * @Then /^the choice with name "([^"]*)" should be optional$/
+     *
+     * @throws ExpectationException
+     * @param string $title title of the choice
+     */
+    public function the_choice_should_be_optional($title) {
+        $choice = $this->get_choice($title);
+        if (!$choice->optional) {
+            throw new ExpectationException('The choice "' . $title .
+                    '" should be optional.',
+                    $this->getSession());
+        }
+    }
+
+    /**
+     * The choice with id should not be optional.
+     *
+     * @Then /^the choice with name "([^"]*)" should not be optional$/
+     *
+     * @throws ExpectationException
+     * @param string $title title of the choice
+     */
+    public function the_choice_should_not_be_optional($title) {
+        $choice = $this->get_choice($title);
+        if ($choice->optional) {
+            throw new ExpectationException('The choice "' . $title. '" should not be optional',
+                    $this->getSession());
+        }
+    }
+
+    /**
      *
      *
      * @Then /^the choice with name "([^"]*)" should have explanation being equal to "([^"]*)"$/

@@ -74,6 +74,7 @@ Feature: Creating a new rating allocation, where new choices need to
     And I should see the choice with the title "My fourth choice"
     And I should not see the choice with the title "My fifth choice"
 
+  @wip
   Scenario: Create a new rating alloation and add an additonal new active choice.
     When I add a new choice with the values:
       | title       | My fourth choice |
@@ -81,12 +82,14 @@ Feature: Creating a new rating allocation, where new choices need to
       | maxsize     | 1337             |
       | active      | true             |
       | minsize     | 0                |
+      | optional    | true             |
     And I should see the choice with the title "My fourth choice"
     And the choice with name "My fourth choice" should have explanation being equal to "Test 4"
     And the choice with name "My fourth choice" should have maxsize being equal to 1337
     And the choice with name "My fourth choice" should be active
+    And the choice with name "My fourth choice" should be optional
 
-  @javascript
+  @javascript @wip
   Scenario: Create a new rating alloation and add an additonal new inactive choice.
     When I add a new choice with the values:
       | title       | My fourth choice |
@@ -94,10 +97,12 @@ Feature: Creating a new rating allocation, where new choices need to
       | maxsize     | 1337             |
       | active      | false            |
       | minsize     | 0                |
+      | optional    | false            |
     And I should see the choice with the title "My fourth choice"
     And the choice with name "My fourth choice" should have explanation being equal to "Test 4"
     And the choice with name "My fourth choice" should have maxsize being equal to 1337
     And the choice with name "My fourth choice" should not be active
+    And the choice with name "My fourth choice" should not be optional
 
   @javascript
   Scenario: Create a new rating alloation and add an additonal new inactive choice. Change the the choice to active.
