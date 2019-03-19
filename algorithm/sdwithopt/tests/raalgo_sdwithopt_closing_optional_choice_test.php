@@ -46,14 +46,14 @@ class raalgo_sdwithopt_closing_optional_choice_test extends advanced_testcase {
             2 => 1,
         ];
         $choice1 = new \raalgo_sdwithopt\choice();
-        $choice1->id = 1;
+        $choice1->id = 1000;
         $choice1->minsize = 1;
         $choice1->maxsize = 2;
-        $choice1->optional = false;
+        $choice1->optional = true;
         $choice1->waitinglist = [0 => 1, 1 => 2];
 
         $choice2 = new \raalgo_sdwithopt\choice();
-        $choice2->id = 1;
+        $choice2->id = 2000;
         $choice2->minsize = 1;
         $choice2->maxsize = 2;
         $choice2->optional = false;
