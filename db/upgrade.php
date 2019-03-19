@@ -142,16 +142,35 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-
         $field = new xmldb_field('optional', XMLDB_TYPE_INTEGER, '4', null, null, null, '0', 'active');
 
         // Conditionally launch add field optional.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+        upgrade_mod_savepoint(true, 2019031803, 'ratingallocate');
+    }
+
+    if ($oldversion < 2019031900) {
+        // Define field generaloption_minsize to be added to ratingallocate.
+        $table = new xmldb_table('ratingallocate');
+        $field = new xmldb_field('generaloption_minsize', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'setting');
+
+        // Conditionally launch add field generaloption_minsize.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Define field generaloption_optional to be added to ratingallocate.
+        $table = new xmldb_table('ratingallocate');
+        $field = new xmldb_field('generaloption_optional', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'generaloption_minsize');
+
+        // Conditionally launch add field generaloption_optional.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
 
         // Ratingallocate savepoint reached.
-        upgrade_mod_savepoint(true, 2019031803, 'ratingallocate');
+        upgrade_mod_savepoint(true, 2019031900, 'ratingallocate');
     }
 
     return true;
