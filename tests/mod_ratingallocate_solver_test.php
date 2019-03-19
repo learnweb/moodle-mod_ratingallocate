@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/mod/ratingallocate/locallib.php');
 
-class edmonds_karp_test extends basic_testcase {
+class edmonds_karp_test extends advanced_testcase {
 
     private function perform_race($groupsnum, $ratersnum) {
         $groupsmaxsizemin = floor($ratersnum / $groupsnum);
@@ -73,7 +73,7 @@ class edmonds_karp_test extends basic_testcase {
 
         $solvers = array('edmondskarp', 'fordfulkersonkoegel');
         foreach ($solvers as $solver) {
-            $solver1 = \mod_ratingallocate\algorithm::get_instance($solver);
+            $solver1 = \mod_ratingallocate\algorithm::get_instance($solver, null);
             $timestart = microtime(true);
             $distribution1 = $solver1->compute_distribution($groups, $ratings, $usercount);
             $result[$solver1->get_name()]['elapsed_sec'] = (microtime(true) - $timestart);
@@ -130,6 +130,7 @@ class edmonds_karp_test extends basic_testcase {
     }
 
     public function test_edmondskarp() {
+        $this->resetAfterTest();
         $choices = array();
         $choices[1] = new stdClass();
         $choices[1]->maxsize = 2;
@@ -186,7 +187,14 @@ class edmonds_karp_test extends basic_testcase {
 
         $usercount = 5;
 
-        $solver = \mod_ratingallocate\algorithm::get_instance('edmondskarp');
+        // Create minnimal dummy data.
+        $course = $this->getDataGenerator()->create_course();
+        $data = mod_ratingallocate_generator::get_default_values();
+        $data['course'] = $course;
+        $dbrec = mod_ratingallocate_generator::create_instance_with_choices($this, $data);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate($dbrec);
+
+        $solver = \mod_ratingallocate\algorithm::get_instance('edmondskarp', $ratingallocate);
         $distribution = $solver->compute_distribution($choices, $ratings, $usercount);
         $expected = array(1 => array(2, 5), 2 => array(4, 1));
         // echo "gesamtpunktzahl: " . $solver->compute_target_function($choices, $ratings, $distribution);
@@ -195,13 +203,14 @@ class edmonds_karp_test extends basic_testcase {
         $this->assertEquals($solver::compute_target_function($ratings, $distribution), 15);
 
         // test against Koegels solver
-        $solverkoe = \mod_ratingallocate\algorithm::get_instance('fordfulkersonkoegel');
+        $solverkoe = \mod_ratingallocate\algorithm::get_instance('fordfulkersonkoegel', $ratingallocate);
         $distributionkoe = $solverkoe->compute_distribution($choices, $ratings, $usercount);
         $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe), 15);
         $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe), $solver::compute_target_function($ratings, $distribution));
     }
 
     public function test_negweightcycle() {
+        $this->resetAfterTest();
         // experimental
         $choices = array();
         $choices[1] = new stdClass();
@@ -234,11 +243,18 @@ class edmonds_karp_test extends basic_testcase {
 
         $usercount = 2;
 
-        $solver = \mod_ratingallocate\algorithm::get_instance('edmondskarp');
+        // Create minnimal dummy data.
+        $course = $this->getDataGenerator()->create_course();
+        $data = mod_ratingallocate_generator::get_default_values();
+        $data['course'] = $course;
+        $dbrec = mod_ratingallocate_generator::create_instance_with_choices($this, $data);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate($dbrec);
+
+        $solver = \mod_ratingallocate\algorithm::get_instance('edmondskarp', $ratingallocate);
         $distribution = $solver->compute_distribution($choices, $ratings, $usercount);
         $this->assertEquals($solver::compute_target_function($ratings, $distribution), 10);
 
-        $solverkoe = \mod_ratingallocate\algorithm::get_instance('fordfulkersonkoegel');
+        $solverkoe = \mod_ratingallocate\algorithm::get_instance('fordfulkersonkoegel', $ratingallocate);
         $distributionkoe = $solverkoe->compute_distribution($choices, $ratings, $usercount);
 
         $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe), 10);
