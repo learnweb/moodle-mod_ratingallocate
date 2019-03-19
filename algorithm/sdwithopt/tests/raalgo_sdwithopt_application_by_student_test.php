@@ -65,9 +65,53 @@ class raalgo_sdwithopt_application_by_student_test extends advanced_testcase {
         $choices = $algorithm->get_choices();
         $users = $algorithm->get_users();
 
-        $this->assertEquals([2000], $users[1]->preferencelist);
+        $this->assertEquals([2000], $users[1]['preferencelist']);
         $this->assertEquals([], $users[2]->preferencelist);
         $this->assertEquals([1], $choices[1000]->waitinglist);
         $this->assertEquals([2], $choices[2000]->waitinglist);
+    }
+
+    public function test_application_with_existing_allocation() {
+
+        $algorithm = new raalgo_sdwithopt\algorithm_impl_testable();
+        $users = [
+            1 => [
+                'id' => 1,
+                'preferencelist' => [1000, 2000],
+            ],
+            2 => [
+                'id' => 2,
+                'preferencelist' => [2000],
+            ],
+        ];
+        $globalranking = $users;
+        $choices = [
+            1000 => [
+                'id' => 1000,
+                'minsize' => 1,
+                'maxsize' => 1,
+                'optional' => false,
+                'waitinglist' => [2],
+            ],
+            2000 => [
+                'id' => 2000,
+                'minsize' => 1,
+                'maxsize' => 1,
+                'optional' => false,
+                'waitinglist' => [],
+            ]
+        ];
+        $algorithm->set_global_ranking($globalranking);
+        $algorithm->set_users($users);
+        $algorithm->set_choices($choices);
+
+        $algorithm->application_by_students();
+        $choices = $algorithm->get_choices();
+        $users = $algorithm->get_users();
+
+        $this->assertEquals([2000], $users[1]->preferencelist);
+        $this->assertEquals([2000], $users[2]->preferencelist);
+        $this->assertEquals([1, 2], $choices[1000]->waitinglist);
+        $this->assertEquals([], $choices[2000]->waitinglist);
     }
 }
