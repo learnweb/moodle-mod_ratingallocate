@@ -74,4 +74,8 @@ class algorithm_impl_testable extends algorithm_impl {
     public function calculate_assignment_counts() {
         parent::calculate_assignment_counts();
     }
+
+    public function reduce_choices_max_size($sumcountmissingplaces) {
+        return parent::reduce_choices_max_size($sumcountmissingplaces);
+    }
 }
