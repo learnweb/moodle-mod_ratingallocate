@@ -147,9 +147,10 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         foreach(\mod_ratingallocate\algorithm::get_available_algorithms() as $key => $value){
             $features = \mod_ratingallocate\algorithm::get_instance($key)->get_supported_features();
-            $mform->addElement('radio', 'algorithm', '', $value, 1, array());
+            $mform->addElement('radio', 'algorithm', '', $value, $key, array());
             if (!$features['min']) {
-                $mform->disabledIf("algorithm[$value]" , 'generaloption_minsize', 'eq', 1);
+                // TODO: does not work for individual radiobuttons. Needs JS check.
+                $mform->disabledIf("algorithm_$key" , 'generaloption_minsize', 'checked');
             }
         }
         $mform->addRule('algorithm', get_string('err_required', 'form') , 'required', null, 'server');
