@@ -80,7 +80,24 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
             }
         } while (true);
 
-        return array();
+        return $this->extract_allocation();
+    }
+
+    /**
+     * Extracts the allocation from the current state of the system.
+     */
+    protected function extract_allocation() {
+        $result = array();
+        foreach ($this->closedchoices as $choice) {
+            $result[$choice->id] = array();
+        }
+        foreach ($this->choices as $choice) {
+            $result[$choice->id] = array();
+            foreach ($choice->waitinglist as $userid) {
+                $result[$choice->id][] = $userid;
+            }
+        }
+        return $result;
     }
 
     /**
