@@ -69,7 +69,10 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
                 break;
             }
             if ($this->sumcountmissingplaces < $this->sumcountmovableplaces) {
-                $this->reduce_max_size($this->sumcountmissingplaces);
+                $this->reduce_choices_max_size($this->sumcountmissingplaces);
+                continue;
+            } else {
+                $choice_closed = $this->close_optional_choice();
             }
         } while (true);
 
