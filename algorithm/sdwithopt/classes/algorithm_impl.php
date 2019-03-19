@@ -36,6 +36,10 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
     protected $ratings = array();
     /** @var user[] */
     protected $users = array();
+    /** @var int */
+    protected $sumcountmissingplaces;
+    /** @var int */
+    protected $sumcountmovableplaces;
 
     public function get_name() {
         return 'sdwithopt';
@@ -57,6 +61,18 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         // Compute global ranking.
         $this->prepare_execution();
 
+        do {
+            $this->run_deferred_acceptance();
+            $this->calculate_assignment_counts();
+            if ($this->sumcountmissingplaces == 0) {
+                // Found feasible solution.
+                break;
+            }
+            if ($this->sumcountmissingplaces < $this->sumcountmovableplaces) {
+                $this->reduce_max_size($this->sumcountmissingplaces);
+            }
+        } while (true);
+
         return array();
     }
 
@@ -68,6 +84,27 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
             $this->application_by_students();
             $rejectionoccured = $this->rejection_by_choices();
         } while ($rejectionoccured);
+    }
+
+    protected function calculate_assignment_counts() {
+        $this->sumcountmissingplaces = 0;
+        $this->sumcountmovableplaces = 0;
+
+        foreach ($this->choices as $choice) {
+            if (count($choice->waitinglist) < $choice->minsize) {
+                $choice->countmissingplaces = $choice->minsize - count($choice->waitinglist);
+                $choice->countmoveableassignments = 0;
+            } else {
+                $choice->countmissingplaces = 0;
+                $choice->countmoveableassignments = count($choice->waitinglist) - $choice->minsize;
+            }
+            $choice->countoptionalassignments = count($choice->waitinglist);
+            $choice->countfreeplaces = $choice->maxsize - count($choice->waitinglist);
+
+            // Fill global variables.
+            $this->sumcountmissingplaces += $choice->countmissingplaces;
+            $this->sumcountmovableplaces += $choice->countmoveableassignments;
+        }
     }
 
     /**
