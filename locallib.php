@@ -1480,6 +1480,14 @@ class ratingallocate {
         return $this->context;
     }
 
+
+    /**
+     * @return int id
+     */
+    public function get_id() {
+        return $this->ratingallocateid;
+    }
+
     /**
      * @return bool true, if all strategy settings are ok.
      */

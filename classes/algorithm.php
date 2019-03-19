@@ -111,7 +111,7 @@ abstract class algorithm {
 
         $log->set('message', $message);
         $log->set('algorithm', $this->get_subplugin_name());
-        $log->set('ratingallocateid', $this->ratingallocate);
+        $log->set('ratingallocateid', $this->ratingallocate->get_id());
         $log->save();
 
     }
