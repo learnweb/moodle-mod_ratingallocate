@@ -76,7 +76,11 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
                 $this->reduce_choices_max_size($this->sumcountmissingplaces);
                 continue;
             } else {
-                $choice_closed = $this->close_optional_choice();
+                $choicewasclosed = $this->close_optional_choice();
+                if (!$choicewasclosed) {
+                    // TODO: Add to log, that no feasible solution could be found.
+                    break;
+                }
             }
         } while (true);
 
