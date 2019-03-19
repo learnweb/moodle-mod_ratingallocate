@@ -63,7 +63,7 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
             'accesstimestop' => reset($records)->{'accesstimestop'},
             'setting' => '{"strategy_yesno":{"maxcrossout":"1"}}',
             'generaloption_minsize' => 0,
-            'generaloption_minsize' => 0,
+            'generaloption_optional' => 0,
             'strategy' => 'strategy_yesno',
             'algorithm' => 'edmondskarp',
             'publishdate' => reset($records)->{'publishdate'},
