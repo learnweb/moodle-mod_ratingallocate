@@ -36,4 +36,24 @@ class algorithm_impl_testable extends algorithm_impl {
     public function get_global_ranking() {
         return $this->globalranking;
     }
+
+    public function get_users() {
+        return $this->users;
+    }
+
+    public function get_choices() {
+        return $this->choices;
+    }
+
+    public function set_global_ranking($globalranking) {
+        $this->globalranking = $globalranking;
+    }
+
+    public function set_users($users) {
+        $this->users = $users;
+    }
+
+    public function set_choices($choices) {
+        $this->choices = $choices;
+    }
 }
