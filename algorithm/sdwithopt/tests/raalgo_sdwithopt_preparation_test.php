@@ -23,8 +23,6 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-
 class raalgo_sdwithopt_preparation_test extends advanced_testcase {
 
     public function test_preparation() {
