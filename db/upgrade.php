@@ -132,6 +132,7 @@ function xmldb_ratingallocate_upgrade($oldversion) {
 
     }
 
+
     if ($oldversion < 2019031803) {
 
         // Define field minsize to be added to ratingallocate_choices.
@@ -172,6 +173,5 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         // Ratingallocate savepoint reached.
         upgrade_mod_savepoint(true, 2019031901, 'ratingallocate');
     }
-
     return true;
 }
