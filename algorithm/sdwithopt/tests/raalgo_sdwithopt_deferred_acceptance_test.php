@@ -51,21 +51,21 @@ class raalgo_sdwithopt_deferred_acceptance_test extends advanced_testcase {
             3 => 2,
         ];
         $choice1 = new \raalgo_sdwithopt\choice();
-        $choice1->id = 1;
+        $choice1->id = 1000;
         $choice1->minsize = 1;
         $choice1->maxsize = 1;
         $choice1->optional = false;
         $choice1->waitinglist = [];
 
         $choice2 = new \raalgo_sdwithopt\choice();
-        $choice2->id = 1;
+        $choice2->id = 2000;
         $choice2->minsize = 1;
         $choice2->maxsize = 1;
         $choice2->optional = false;
         $choice2->waitinglist = [];
 
         $choice3 = new \raalgo_sdwithopt\choice();
-        $choice3->id = 1;
+        $choice3->id = 3000;
         $choice3->minsize = 1;
         $choice3->maxsize = 1;
         $choice3->optional = false;
