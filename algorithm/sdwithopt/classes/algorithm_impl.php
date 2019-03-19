@@ -120,7 +120,12 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         }
     }
 
-
+    /**
+     * Reduce randomly the maxsize of different choices, which are over min capacity level.
+     * If a place is reduced, which is not filled by the current allocation, then the counter $sumcountmissingplaces
+     * is not reduced.
+     * @param $sumcountmissingplaces int number of filled places to be reduced.
+     */
     protected function reduce_choices_max_size($sumcountmissingplaces) {
         $reduceablechoices = array_filter($this->choices, function ($choice) {
             return $choice->countmissingplaces == 0;
