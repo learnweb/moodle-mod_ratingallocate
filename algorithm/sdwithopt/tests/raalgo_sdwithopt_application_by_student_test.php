@@ -34,10 +34,12 @@ class raalgo_sdwithopt_application_by_student_test extends advanced_testcase {
             1 => (object) [
                 'id' => 1,
                 'preferencelist' => [1000, 2000],
+                'currentchoice' => null,
             ],
             2 => (object) [
                 'id' => 2,
                 'preferencelist' => [2000],
+                'currentchoice' => null,
             ],
         ];
         $globalranking = $users;
@@ -78,10 +80,12 @@ class raalgo_sdwithopt_application_by_student_test extends advanced_testcase {
             1 => (object) [
                 'id' => 1,
                 'preferencelist' => [1000, 2000],
+                'currentchoice' => null,
             ],
             2 => (object) [
                 'id' => 2,
                 'preferencelist' => [2000],
+                'currentchoice' => 1000,
             ],
         ];
         $globalranking = $users;
