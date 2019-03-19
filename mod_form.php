@@ -146,12 +146,18 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->setExpanded($headerid);
 
         $algorithms = \mod_ratingallocate\algorithm::get_available_algorithms();
+        $allfeatures = array();
         foreach ($algorithms as $key => $value) {
-            $features = \mod_ratingallocate\algorithm::get_instance($key)->get_supported_features();
+            $allfeatures[$key] = ['algorithm' => $key,
+                'supports' => \mod_ratingallocate\algorithm::get_instance($key)->get_supported_features()
+            ];
             $mform->addElement('radio', 'algorithm', '', $value, $key, array());
         }
         $mform->addRule('algorithm', get_string('err_required', 'form') , 'required', null, 'server');
         $mform->setDefault('algorithm', array_keys($algorithms)[0]);
+
+        // Enforce choices via the custom AMD module.
+        $PAGE->requires->js_call_amd('mod_ratingallocate/algorithmselection', 'init', array($allfeatures));
 
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
