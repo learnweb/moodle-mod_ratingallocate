@@ -58,4 +58,8 @@ class algorithm_impl_testable extends algorithm_impl {
     public function application_by_students() {
         parent::application_by_students();
     }
+
+    public function rejection_by_choices() {
+        return parent::rejection_by_choices();
+    }
 }
