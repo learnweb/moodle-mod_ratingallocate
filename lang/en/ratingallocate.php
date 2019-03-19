@@ -209,6 +209,8 @@ $string['deletechoice'] = 'Delete choice';
 $string['publishdate'] = 'Estimated publication date';
 $string['runalgorithmbycron'] = 'Automatic allocation after rating period';
 $string['runalgorithmbycron_help'] = 'Automatically runs the allocation algorithm after the rating period ended. However, the results have to be published manually.';
+$string['checkbox_generaloption_minsize'] = 'Choices requiring a minimum number of participants';
+$string['checkbox_generaloption_optional'] = 'Some choices are optional';
 $string['select_strategy'] = 'Rating strategy';
 $string['select_strategy_help'] = 'Choose a rating strategy:
 
@@ -220,6 +222,11 @@ $string['select_strategy_help'] = 'Choose a rating strategy:
 * **Tick Accept**  The user can state for each choice whether it is acceptable for him/her.';
 $string['strategy_not_specified'] = 'You have to select a strategy.';
 $string['strategyspecificoptions'] = 'Strategy specific options';
+
+$string['algorithmoptions'] = 'Algorithm selection';
+$string['algorithm_does_not_support_minsize'] = 'The selected algorithm does not work with the "minimum number of participants" option.';
+$string['algorithm_does_not_support_optional'] = 'The selected algorithm does not work with the "optional choices" option.';
+$string['algorithm_does_not_exist'] = 'The selected algorithm does not exist.';
 
 $string['err_required'] = 'You need to provide a value for this field.';
 $string['err_minimum'] = 'The minimum value for this field is {$a}.';

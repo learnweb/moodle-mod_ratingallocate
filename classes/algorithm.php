@@ -23,6 +23,12 @@ require_once(__DIR__ . '/../locallib.php');
 abstract class algorithm {
 
     public abstract function get_name();
+
+    /**
+     * Expected return value is an array with min and opt as key and true or false as supported or not supported.
+     * @return bool[]
+     */
+    public static abstract function get_supported_features();
     protected abstract function compute_distribution($choicerecords, $ratings, $usercount);
 
     /**

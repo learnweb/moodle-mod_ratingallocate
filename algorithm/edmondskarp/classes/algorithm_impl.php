@@ -284,4 +284,12 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
             }
         }
     }
+
+    /**
+     * Supports neither min size nor optional.
+     * @return bool[]
+     */
+    public static function get_supported_features() {
+        return ['min' => false, 'opt' => false];
+    }
 }
