@@ -66,4 +66,8 @@ class algorithm_impl_testable extends algorithm_impl {
     public function run_deferred_acceptance() {
         parent::run_deferred_acceptance();
     }
+
+    public function close_optional_choice() {
+        return parent::close_optional_choice();
+    }
 }
