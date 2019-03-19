@@ -29,7 +29,6 @@ Feature: Students should get status information according to their rating and th
       | explanation | Test           |
       | maxsize     | 1              |
       | minsize     | 0              |
-      | optional    | 0              |
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage

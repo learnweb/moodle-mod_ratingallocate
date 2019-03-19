@@ -32,6 +32,12 @@ class behat_mod_ratingallocate extends behat_base {
                 } else {
                     $this->execute('behat_mod_ratingallocate::i_uncheck_the_active_checkbox');
                 }
+            } else if($locator === 'optional') {
+                if ($value === 'true') {
+                    $this->execute('behat_mod_ratingallocate::i_check_the_optional_checkbox');
+                } else {
+                    $this->execute('behat_mod_ratingallocate::i_uncheck_the_optional_checkbox');
+                }
             } else {
                 $this->execute('behat_forms::i_set_the_field_to', array($locator, $value));
             }
@@ -187,6 +193,26 @@ class behat_mod_ratingallocate extends behat_base {
      */
     public function i_uncheck_the_active_checkbox() {
         $checkbox = $this->find_field("id_active");
+        $checkbox->uncheck();
+    }
+
+    /**
+     * Checks the optional checkbox.
+     *
+     * @Given /^I check the optional checkbox$/
+     */
+    public function i_check_the_optional_checkbox() {
+        $checkbox = $this->find_field("id_optional");
+        $checkbox->check();
+    }
+
+    /**
+     * Unchecks the optional checkbox.
+     *
+     * @Given /^I uncheck the optional checkbox$/
+     */
+    public function i_uncheck_the_optional_checkbox() {
+        $checkbox = $this->find_field("id_optional");
         $checkbox->uncheck();
     }
 

@@ -25,19 +25,16 @@ Feature: Creating a new rating allocation, where new choices need to
       | explanation | Test 1          |
       | maxsize     | 2               |
       | minsize     | 0               |
-      | optional    | 0               |
     And I add a new choice with the values:
       | title       | My second choice |
       | explanation | Test 2           |
       | maxsize     | 2                |
       | minsize     | 0                |
-      | optional    | 0                |
     And I add a new choice with the values:
       | title       | My third choice |
       | explanation | Test 3          |
       | maxsize     | 2               |
       | minsize     | 0               |
-      | optional    | 0               |
 
   Scenario: Create a new rating alloation and add an additonal new choice.
     Given I add a new choice with the values:
@@ -45,7 +42,6 @@ Feature: Creating a new rating allocation, where new choices need to
       | explanation | Test 4           |
       | maxsize     | 2                |
       | minsize     | 0                |
-      | optional    | 0                |
     Then I should see the choice with the title "My first choice"
     And I should see the choice with the title "My second choice"
     And I should see the choice with the title "My third choice"
@@ -85,7 +81,6 @@ Feature: Creating a new rating allocation, where new choices need to
       | maxsize     | 1337             |
       | active      | true             |
       | minsize     | 0                |
-      | optional    | 0                |
     And I should see the choice with the title "My fourth choice"
     And the choice with name "My fourth choice" should have explanation being equal to "Test 4"
     And the choice with name "My fourth choice" should have maxsize being equal to 1337
@@ -99,7 +94,6 @@ Feature: Creating a new rating allocation, where new choices need to
       | maxsize     | 1337             |
       | active      | false            |
       | minsize     | 0                |
-      | optional    | 0                |
     And I should see the choice with the title "My fourth choice"
     And the choice with name "My fourth choice" should have explanation being equal to "Test 4"
     And the choice with name "My fourth choice" should have maxsize being equal to 1337
@@ -113,7 +107,6 @@ Feature: Creating a new rating allocation, where new choices need to
       | maxsize     | 1231243                |
       | active      | false                  |
       | minsize     | 0                      |
-      | optional    | 0                      |
     Then I set the choice with the title "My fourth choice" to active
     And I should see "My fourth choice"
     And the choice with name "My fourth choice" should be active
@@ -125,7 +118,6 @@ Feature: Creating a new rating allocation, where new choices need to
       | maxsize     | 1231243                |
       | active      | true                   |
       | minsize     | 0                      |
-      | optional    | 0                      |
     Then I set the choice with the title "My fourth choice" to inactive
     And I should see "My fourth choice"
     And the choice with name "My fourth choice" should not be active

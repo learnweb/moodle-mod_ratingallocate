@@ -26,13 +26,11 @@ Feature: When a student starts a rating the default values of all choices
       | explanation | Test 1          |
       | maxsize     | 2               |
       | minsize     | 0               |
-      | optional    | 0               |
     And I add a new choice with the values:
       | title       | My second choice |
       | explanation | Test 1           |
       | maxsize     | 2                |
       | minsize     | 0                |
-      | optional    | 0                |
 
   @javascript
   Scenario: The default rating is the max rating

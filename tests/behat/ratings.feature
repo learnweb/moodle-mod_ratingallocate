@@ -25,19 +25,16 @@ Feature: When a student rates a rating should be saved and it should be possible
       | explanation | Test 1          |
       | maxsize     | 2               |
       | minsize     | 0               |
-      | optional    | 0               |
     And I add a new choice with the values:
       | title       | My second choice |
       | explanation | Test 2           |
       | maxsize     | 2                |
       | minsize     | 0                |
-      | optional    | 0                |
     And I add a new choice with the values:
       | title       | My third choice |
       | explanation | Test 3          |
       | maxsize     | 2               |
       | minsize     | 0               |
-      | optional    | 0               |
     And I log out
 
   @javascript
