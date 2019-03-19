@@ -47,13 +47,16 @@ class execution_log extends persistent {
     protected static function define_properties() {
         return array(
                 'ratingallocateid' => array(
-                        'type' => PARAM_INT
+                        'type' => PARAM_INT,
+                        'message' => new lang_string('error_persistent_ratingallocateid', 'mod_ratingallocate'),
                 ),
                 'algorithm' => array(
                         'type' => PARAM_ALPHANUM,
+                        'message' => new lang_string('error_persistent_algoname', 'mod_ratingallocate'),
                 ),
                 'message' => array(
                         'type' => PARAM_TEXT,
+                        'message' => new lang_string('error_persistent_message', 'mod_ratingallocate'),
                 )
         );
     }
