@@ -199,7 +199,13 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         $choicetobeclosed = array_shift($closeablechoices);
         // Remove choice from set of existing choices.
         $this->closedchoices[] = $choicetobeclosed;
-        unset($this->choices[$choicetobeclosed->id]);
+        $tempchoices = $this->choices;
+        $this->choices = array();
+        foreach ($tempchoices as $choice) {
+            if ($choice->id != $choicetobeclosed->id) {
+                $this->choices[$choice->id] = $choice;
+            }
+        }
         // Remove assignments from and to closed choice.
         $choicetobeclosed->waitinglist = [];
         foreach ($this->users as $user) {
