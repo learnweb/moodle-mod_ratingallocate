@@ -72,6 +72,8 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
 
     /**
      * Students apply at the next choice at which they were not previously rejected.
+     * The users preferencelist is shortened by the choice he/she applies to.
+     * The waitinglist is directly ordered based on the global ranking.
      */
     protected function application_by_students() {
         foreach ($this->users as $user) {

@@ -115,7 +115,7 @@ class raalgo_sdwithopt_application_by_student_test extends advanced_testcase {
 
         $this->assertEquals([2000], $users[1]->preferencelist);
         $this->assertEquals([2000], $users[2]->preferencelist);
-        $this->assertEquals([1, 2], $choices[1000]->waitinglist);
+        $this->assertEquals([1, 2], $choices[1000]->waitinglist); // Assert that method sorts the waiting list.
         $this->assertEquals([], $choices[2000]->waitinglist);
     }
 }
