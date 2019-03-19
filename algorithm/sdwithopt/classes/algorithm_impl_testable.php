@@ -70,4 +70,8 @@ class algorithm_impl_testable extends algorithm_impl {
     public function close_optional_choice() {
         return parent::close_optional_choice();
     }
+
+    public function calculate_assignment_counts() {
+        parent::calculate_assignment_counts();
+    }
 }
