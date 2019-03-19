@@ -223,6 +223,8 @@ $string['select_strategy_help'] = 'Choose a rating strategy:
 $string['strategy_not_specified'] = 'You have to select a strategy.';
 $string['strategyspecificoptions'] = 'Strategy specific options';
 
+$string['algorithmoptions'] = 'Algorithm selection';
+
 $string['err_required'] = 'You need to provide a value for this field.';
 $string['err_minimum'] = 'The minimum value for this field is {$a}.';
 $string['err_maximum'] = 'The maximum value for this field is {$a}.';
