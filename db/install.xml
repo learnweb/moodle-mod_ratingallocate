@@ -19,6 +19,7 @@
         <FIELD NAME="generaloption_minsize" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="generaloption_optional" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="strategy" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="die geawehlte Strategie"/>
+        <FIELD NAME="algorithm" TYPE="char" LENGTH="50" NOTNULL="true" DEFAULT="edmondskarp" SEQUENCE="false"/>
         <FIELD NAME="publishdate" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="published" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="shall the results of the allocation be shown"/>
         <FIELD NAME="notificationsend" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0 is default - nothing happens; -1 cron should send the messages; 1 cron has send the messages"/>

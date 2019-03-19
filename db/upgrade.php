@@ -173,5 +173,21 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         // Ratingallocate savepoint reached.
         upgrade_mod_savepoint(true, 2019031901, 'ratingallocate');
     }
+
+    if ($oldversion < 2019031916) {
+
+        // Define field algorithm to be added to ratingallocate.
+        $table = new xmldb_table('ratingallocate');
+        $field = new xmldb_field('algorithm', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, 'edmondskarp', 'strategy');
+
+        // Conditionally launch add field algorithm.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Ratingallocate savepoint reached.
+        upgrade_mod_savepoint(true, 2019031916, 'ratingallocate');
+    }
+
     return true;
 }
