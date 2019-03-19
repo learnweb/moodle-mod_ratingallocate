@@ -103,8 +103,9 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         $userids = array_keys($this->users);
         shuffle($userids);
         $this->globalranking = array();
+        $counter = 0;
         foreach ($userids as $userid) {
-            $this->globalranking[] = $this->users[$userid];
+            $this->globalranking[$userid] = $counter++;
         }
         // Prepare waiting lists.
         foreach ($this->choices as $choice) {
