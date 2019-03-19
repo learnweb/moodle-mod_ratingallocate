@@ -56,4 +56,8 @@ class algorithm_impl_testable extends algorithm_impl {
     public function set_choices($choices) {
         $this->choices = $choices;
     }
+
+    public function application_by_students() {
+        parent::application_by_students();
+    }
 }

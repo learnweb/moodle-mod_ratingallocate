@@ -27,17 +27,17 @@ global $CFG;
 
 class raalgo_sdwithopt_application_by_student_test extends advanced_testcase {
 
-    public function test_preparation() {
+    public function test_application() {
 
         $algorithm = new raalgo_sdwithopt\algorithm_impl_testable();
         $users = [
             1 => [
                 'id' => 1,
-                'preferencelist' => [],
+                'preferencelist' => [1000, 2000],
             ],
             2 => [
                 'id' => 2,
-                'preferencelist' => [],
+                'preferencelist' => [2000],
             ],
         ];
         $globalranking = $users;
@@ -57,5 +57,17 @@ class raalgo_sdwithopt_application_by_student_test extends advanced_testcase {
                 'waitinglist' => [],
             ]
         ];
+        $algorithm->set_global_ranking($globalranking);
+        $algorithm->set_users($users);
+        $algorithm->set_choices($choices);
+
+        $algorithm->application_by_students();
+        $choices = $algorithm->get_choices();
+        $users = $algorithm->get_users();
+
+        $this->assertEquals([2000], $users[1]->preferencelist);
+        $this->assertEquals([], $users[2]->preferencelist);
+        $this->assertEquals([1], $choices[1000]->waitinglist);
+        $this->assertEquals([2], $choices[2000]->waitinglist);
     }
 }
