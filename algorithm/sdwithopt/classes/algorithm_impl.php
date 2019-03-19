@@ -74,7 +74,10 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
      * Students apply at the next choice at which they were not previously rejected.
      */
     protected function application_by_students() {
-        // TODO.
+        foreach ($this->users as $user) {
+            $nextchoice = array_shift($user->preferencelist);
+            $this->choices[$nextchoice]->waitinglist[] = $user->id;
+        }
     }
 
     /**
