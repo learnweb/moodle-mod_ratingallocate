@@ -86,6 +86,10 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $this->standard_intro_elements();
 
         // -------------------------------------------------------------------------------
+        $elementname = 'minsize';
+        $mform->addElement('advcheckbox', $elementname, get_string('minsize', self::MOD_NAME));
+
+        // -------------------------------------------------------------------------------
         $elementname = 'strategy';
         // Define options for select.
         $selectoptions = array();
