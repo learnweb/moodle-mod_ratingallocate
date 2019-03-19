@@ -51,4 +51,15 @@ class algorithm_testable extends algorithm {
         return null;
     }
 
+    /**
+     * Expected return value is an array with min and opt as key and true or false as supported or not supported.
+     *
+     * @return bool[]
+     */
+    public static function get_supported_features() {
+        return array(
+                'min' => false,
+                'opt' => false
+        );
+    }
 }
