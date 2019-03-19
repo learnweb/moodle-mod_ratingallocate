@@ -40,6 +40,8 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
     protected $sumcountmissingplaces;
     /** @var int */
     protected $sumcountmovableplaces;
+    /** @var int */
+    protected $sumcountfreeplaces;
 
     public function get_name() {
         return 'sdwithopt';
@@ -89,9 +91,14 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         } while ($rejectionoccured);
     }
 
+    /**
+     * Calculate the counts of place assignments, after the deferred acceptance run.
+     * Those variables will be used to decide upon next steps to take.
+     */
     protected function calculate_assignment_counts() {
         $this->sumcountmissingplaces = 0;
         $this->sumcountmovableplaces = 0;
+        $this->sumcountfreeplaces = 0;
 
         foreach ($this->choices as $choice) {
             if (count($choice->waitinglist) < $choice->minsize) {
@@ -107,6 +114,7 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
             // Fill global variables.
             $this->sumcountmissingplaces += $choice->countmissingplaces;
             $this->sumcountmovableplaces += $choice->countmoveableassignments;
+            $this->sumcountfreeplaces += $choice->countfreeplaces;
         }
     }
 
