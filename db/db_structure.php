@@ -49,7 +49,9 @@ class ratingallocate_choices {
     const RATINGALLOCATEID = 'ratingallocateid';
     const TITLE = 'title';
     const EXPLANATION = 'explanation';
+    const MINSIZE = 'minsize';
     const MAXSIZE = 'maxsize';
+    const OPTIONAL = 'optional';
     const ACTIVE = 'active';
 }
 class ratingallocate_ratings {

@@ -78,6 +78,15 @@ class modify_choice_form extends moodleform {
         $mform->addElement('text', $elementname, get_string('choice_explanation', ratingallocate_MOD_NAME));
         $mform->setType($elementname, PARAM_TEXT);
 
+        if (true) {
+            $elementname = 'minsize';
+            $mform->addElement('text', $elementname, get_string('choice_minsize', ratingallocate_MOD_NAME));
+            $mform->setType($elementname, PARAM_TEXT);
+            $mform->addRule($elementname, get_string('err_required', 'form') , 'required', null, 'server');
+            $mform->addRule($elementname, get_string('err_numeric', 'form') , 'numeric', null, 'server');
+            $mform->addRule($elementname, get_string('err_positivnumber', 'ratingallocate') , 'regex', '/^[1-9][0-9]*|0/', 'server');
+        }
+
         $elementname = 'maxsize';
         $mform->addElement('text', $elementname, get_string('choice_maxsize', ratingallocate_MOD_NAME));
         $mform->setType($elementname, PARAM_TEXT);
@@ -85,17 +94,28 @@ class modify_choice_form extends moodleform {
         $mform->addRule($elementname, get_string('err_numeric', 'form') , 'numeric', null, 'server');
         $mform->addRule($elementname, get_string('err_positivnumber', 'ratingallocate') , 'regex', '/^[1-9][0-9]*|0/', 'server');
 
+        if (true) {
+            $mform->addRule(array("minsize", "maxsize"), get_string('err_gte', 'ratingallocate'), "compare", "lte", "server");
+        }
+
         $elementname = 'active';
         $mform->addElement('advcheckbox', $elementname, get_string('choice_active', ratingallocate_MOD_NAME),
             null, null, array(0, 1));
         $mform->addHelpButton($elementname, 'choice_active', ratingallocate_MOD_NAME);
 
+        $elementname = 'optional';
+        $mform->addElement('advcheckbox', $elementname, get_string('choice_optional', ratingallocate_MOD_NAME),
+                null, null, array(0, 1));
+        $mform->addHelpButton($elementname, 'choice_optional', ratingallocate_MOD_NAME);
+
         if ($this->choice) {
             $mform->setDefault('title', $this->choice->title);
             $mform->setDefault('explanation', $this->choice->explanation);
+            $mform->setDefault('minsize', $this->choice->minsize);
             $mform->setDefault('maxsize', $this->choice->maxsize);
             $mform->setDefault('active', $this->choice->active);
             $mform->setDefault('choiceid', $this->choice->id);
+            $mform->setDefault('optional', $this->choice->optional);
         } else {
             $mform->setDefault('active', true);
         }

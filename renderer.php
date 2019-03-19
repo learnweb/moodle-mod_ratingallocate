@@ -424,20 +424,22 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         echo $OUTPUT->single_button($starturl->out(), get_string('newchoice', 'mod_ratingallocate'), 'get');
         $table = new \flexible_table('show_ratingallocate_options');
         $table->define_baseurl($PAGE->url);
+
+        $columns = array('title', 'explanation', 'minsize', 'maxsize', 'optional', 'active');
+        $headers = array(get_string('choice_table_title', 'mod_ratingallocate'),
+                get_string('choice_table_explanation', 'mod_ratingallocate'),
+                get_string('choice_table_minsize', 'mod_ratingallocate'),
+                get_string('choice_table_maxsize', 'mod_ratingallocate'),
+                get_string('choice_table_optional', 'mod_ratingallocate'),
+                get_string('choice_table_active', 'mod_ratingallocate'));
+
         if ($choicesmodifiably) {
-            $table->define_columns(array('title', 'explanation', 'maxsize', 'active', 'tools'));
-            $table->define_headers(array(get_string('choice_table_title', 'mod_ratingallocate'),
-                get_string('choice_table_explanation', 'mod_ratingallocate'),
-                get_string('choice_table_maxsize', 'mod_ratingallocate'),
-                get_string('choice_table_active', 'mod_ratingallocate'),
-                get_string('choice_table_tools', 'mod_ratingallocate')));
-        } else {
-            $table->define_columns(array('title', 'explanation', 'maxsize', 'active'));
-            $table->define_headers(array(get_string('choice_table_title', 'mod_ratingallocate'),
-                get_string('choice_table_explanation', 'mod_ratingallocate'),
-                get_string('choice_table_maxsize', 'mod_ratingallocate'),
-                get_string('choice_table_tools', 'mod_ratingallocate')));
+            $columns[] = "tools";
+            $headers[] = get_string('choice_table_tools', 'mod_ratingallocate');
         }
+
+        $table->define_columns($columns);
+        $table->define_headers($headers);
         $table->set_attribute('id', 'mod_ratingallocateshowoptions');
         $table->set_attribute('class', 'admintable generaltable');
         $table->setup();
@@ -453,7 +455,13 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $class = '';
             $row[] = $choice->{this_db\ratingallocate_choices::TITLE};
             $row[] = $choice->{this_db\ratingallocate_choices::EXPLANATION};
+            $row[] = $choice->{this_db\ratingallocate_choices::MINSIZE};
             $row[] = $choice->{this_db\ratingallocate_choices::MAXSIZE};
+            if ($choice->{this_db\ratingallocate_choices::OPTIONAL}) {
+                $row[] = get_string('yes');
+            } else {
+                $row[] = get_string('no');
+            }
             if ($choice->{this_db\ratingallocate_choices::ACTIVE}) {
                 $row[] = get_string('yes');
             } else {
