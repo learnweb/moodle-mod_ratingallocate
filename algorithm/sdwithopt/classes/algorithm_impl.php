@@ -32,6 +32,8 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
     protected $globalranking;
     /** @var choice[] */
     protected $choices = array();
+    /** @var choice[] */
+    protected $closedchoices = array();
     /** @var array */
     protected $ratings = array();
     /** @var user[] */
@@ -151,7 +153,7 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         });
         $choicetobeclosed = array_shift($closeablechoices);
         // Remove choice from set of existing choices.
-        $this->closed_choices[] = $choicetobeclosed;
+        $this->closedchoices[] = $choicetobeclosed;
         unset($this->choices[$choicetobeclosed->id]);
         // Remove assignments from and to closed choice.
         $choicetobeclosed->waitinglist = [];
