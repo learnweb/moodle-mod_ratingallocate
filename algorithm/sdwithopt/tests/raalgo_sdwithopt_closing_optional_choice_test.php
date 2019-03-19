@@ -153,9 +153,10 @@ class raalgo_sdwithopt_closing_optional_choice_test extends advanced_testcase {
         $users = $algorithm->get_users();
 
         $this->assertEquals(3000, $users[1]->currentchoice);
-        $this->assertEquals(null, $users[2]->currentchoice);
+        $this->assertEquals(2000, $users[2]->currentchoice);
         $this->assertEquals(3000, $users[3]->currentchoice);
-        $this->assertCount(1, $choices);
+        $this->assertCount(2, $choices);
+        $this->assertArrayHasKey(2000, $choices);
         $this->assertArrayHasKey(3000, $choices);
     }
 }
