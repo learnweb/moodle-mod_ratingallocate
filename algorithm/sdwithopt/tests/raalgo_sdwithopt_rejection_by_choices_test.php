@@ -89,7 +89,7 @@ class raalgo_sdwithopt_rejection_by_choices_test extends advanced_testcase {
         $this->assertEquals(2000, $users[2]->currentchoice);
         $this->assertEquals(null, $users[3]->currentchoice);
         $this->assertEquals(2000, $users[4]->currentchoice);
-        $this->assertEquals([0 => 1], $choices[1000]->waitinglist); // Assert that method sorts the waiting list.
+        $this->assertEquals([0 => 1], $choices[1000]->waitinglist);
         $this->assertEquals([1 => 2, 2 => 4], $choices[2000]->waitinglist);
         $this->assertTrue($rejectionoccured);
     }
