@@ -187,7 +187,7 @@ class edmonds_karp_test extends advanced_testcase {
 
         $usercount = 5;
 
-        // Create minnimal dummy data.
+        // Create minimal dummy data.
         $course = $this->getDataGenerator()->create_course();
         $data = mod_ratingallocate_generator::get_default_values();
         $data['course'] = $course;

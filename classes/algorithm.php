@@ -103,7 +103,8 @@ abstract class algorithm {
         return $functionvalue;
     }
 
-    /** Inserts a message to the execution_log
+    /**
+     * Inserts a message to the execution_log
      * @param string $message
      */
     protected function append_to_log(string $message) {
