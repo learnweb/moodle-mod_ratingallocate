@@ -79,7 +79,7 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         foreach ($this->users as $user) {
             if (!$user->currentchoice) {
                 $nextchoice = array_shift($user->preferencelist);
-                $this->choices[$nextchoice]->waitinglist[] = $user->id;
+                $this->choices[$nextchoice]->waitinglist[$this->globalranking[$user->id]] = $user->id;
             }
         }
     }

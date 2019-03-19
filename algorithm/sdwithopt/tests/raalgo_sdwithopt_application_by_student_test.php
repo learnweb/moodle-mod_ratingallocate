@@ -72,8 +72,8 @@ class raalgo_sdwithopt_application_by_student_test extends advanced_testcase {
 
         $this->assertEquals([2000], $users[1]->preferencelist);
         $this->assertEquals([], $users[2]->preferencelist);
-        $this->assertEquals([1], $choices[1000]->waitinglist);
-        $this->assertEquals([2], $choices[2000]->waitinglist);
+        $this->assertEquals([0 => 1], $choices[1000]->waitinglist);
+        $this->assertEquals([1 => 2], $choices[2000]->waitinglist);
     }
 
     public function test_application_with_existing_allocation() {
@@ -101,7 +101,7 @@ class raalgo_sdwithopt_application_by_student_test extends advanced_testcase {
                 'minsize' => 1,
                 'maxsize' => 1,
                 'optional' => false,
-                'waitinglist' => [2],
+                'waitinglist' => [1 => 2],
             ],
             2000 => (object) [
                 'id' => 2000,
@@ -121,7 +121,7 @@ class raalgo_sdwithopt_application_by_student_test extends advanced_testcase {
 
         $this->assertEquals([2000], $users[1]->preferencelist);
         $this->assertEquals([2000], $users[2]->preferencelist);
-        $this->assertEquals([1, 2], $choices[1000]->waitinglist); // Assert that method sorts the waiting list.
+        $this->assertEquals([0 => 1, 1 => 2], $choices[1000]->waitinglist); // Assert that method sorts the waiting list.
         $this->assertEquals([], $choices[2000]->waitinglist);
     }
 }
