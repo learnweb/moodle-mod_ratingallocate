@@ -22,6 +22,16 @@ require_once(__DIR__ . '/../locallib.php');
 
 abstract class algorithm {
 
+    /**
+     * Get name of the subplugin, without the raalgo_ prefix.
+     * @return string
+     */
+    public abstract function get_subplugin_name();
+
+    /**
+     * @deprecated
+     * @return string
+     */
     public abstract function get_name();
 
     /**
@@ -85,6 +95,8 @@ abstract class algorithm {
         }
         return $functionvalue;
     }
+
+    protected abstract function append_to_log(string $message);
 
     /**
      * @param string $name Subplugin name without 'raalgo_'-prefix.

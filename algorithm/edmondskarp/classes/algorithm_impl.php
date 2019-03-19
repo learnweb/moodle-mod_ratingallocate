@@ -34,6 +34,10 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         return 'edmonds_karp';
     }
 
+    public function get_subplugin_name() {
+        return 'edmondskarp';
+    }
+
     public function compute_distribution($choicerecords, $ratings, $usercount) {
         $choicedata = array();
         foreach ($choicerecords as $record) {
