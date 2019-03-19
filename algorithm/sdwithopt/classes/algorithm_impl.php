@@ -118,6 +118,49 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         }
     }
 
+
+    protected function reduce_choices_max_size($sumcountmissingplaces) {
+        for ($i = 0; $i < $sumcountmissingplaces; $i++) {
+            //TODO
+        }
+    }
+
+    /**
+     * Tries to close a choice, which is optional and has less assignments,
+     * than the number of free places in other chocies.
+     * Closing sets the maxsize and minsize of the option to 0.
+     * @return bool true, if a choice has been closed.
+     */
+    protected function close_optional_choice() {
+        $sumcountfreeplaces = $this->sumcountfreeplaces;
+        // Filter for all choices, which have less assignments than free places left in other choices.
+        $closeablechoices = array_filter($this->choices, function(choice $choice) use ($sumcountfreeplaces) {
+            return $choice->optional &&
+                $choice->countoptionalassignments <= $sumcountfreeplaces - $choice->countfreeplaces;
+        });
+        if (empty($closeablechoices)) {
+            // There is no choice, which we could close!
+            return false;
+        }
+        // Sort choices in order to close the choice, which has the least assignments.
+        uasort($closeablechoices, function(choice $choicea, choice $choiceb) {
+            if ($choicea->countoptionalassignments == $choiceb->countoptionalassignments) {
+                return 0;
+            }
+            return ($choicea->countoptionalassignments < $choiceb->countoptionalassignments) ? -1 : 1;
+        });
+        $choicetobeclosed = array_pop($choicetobeclosed);
+        $choicetobeclosed->maxsize = 0;
+        $choicetobeclosed->minsize = 0;
+        $choicetobeclosed->waitinglist = [];
+        foreach ($this->users as $user) {
+            if ($user->currentchoice == $choicetobeclosed->id) {
+                $user->currentchoice = null;
+            }
+        }
+        return true;
+    }
+
     /**
      * Students apply at the next choice at which they were not previously rejected.
      * The users preferencelist is shortened by the choice he/she applies to.
@@ -210,6 +253,5 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
             throw new \Exception("unfeasible problem");
         }
     }
-
 
 }
