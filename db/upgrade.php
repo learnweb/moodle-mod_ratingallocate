@@ -132,7 +132,7 @@ function xmldb_ratingallocate_upgrade($oldversion) {
 
     }
 
-    if ($oldversion < 2019031900) {
+    if ($oldversion < 2019031901) {
         // Define field generaloption_minsize to be added to ratingallocate.
         $table = new xmldb_table('ratingallocate');
         $field = new xmldb_field('generaloption_minsize', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'setting');
@@ -152,7 +152,7 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         }
 
         // Ratingallocate savepoint reached.
-        upgrade_mod_savepoint(true, 2019031900, 'ratingallocate');
+        upgrade_mod_savepoint(true, 2019031901, 'ratingallocate');
     }
     
     return true;
