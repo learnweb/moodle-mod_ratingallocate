@@ -50,34 +50,37 @@ class raalgo_sdwithopt_deferred_acceptance_test extends advanced_testcase {
             2 => 1,
             3 => 2,
         ];
+        $choice1 = new \raalgo_sdwithopt\choice();
+        $choice1->id = 1;
+        $choice1->minsize = 1;
+        $choice1->maxsize = 1;
+        $choice1->optional = false;
+        $choice1->waitinglist = [];
+
+        $choice2 = new \raalgo_sdwithopt\choice();
+        $choice2->id = 1;
+        $choice2->minsize = 1;
+        $choice2->maxsize = 1;
+        $choice2->optional = false;
+        $choice2->waitinglist = [];
+
+        $choice3 = new \raalgo_sdwithopt\choice();
+        $choice3->id = 1;
+        $choice3->minsize = 1;
+        $choice3->maxsize = 1;
+        $choice3->optional = false;
+        $choice3->waitinglist = [];
+
         $choices = [
-            1000 => (object) [
-                'id' => 1000,
-                'minsize' => 1,
-                'maxsize' => 1,
-                'optional' => false,
-                'waitinglist' => [],
-            ],
-            2000 => (object) [
-                'id' => 2000,
-                'minsize' => 1,
-                'maxsize' => 1,
-                'optional' => false,
-                'waitinglist' => [],
-            ],
-            3000 => (object) [
-                'id' => 3000,
-                'minsize' => 1,
-                'maxsize' => 1,
-                'optional' => false,
-                'waitinglist' => [],
-            ],
+            1000 => $choice1,
+            2000 => $choice2,
+            3000 => $choice3,
         ];
         $algorithm->set_global_ranking($globalranking);
         $algorithm->set_users($users);
         $algorithm->set_choices($choices);
 
-        $rejectionoccured = $algorithm->run_deferred_acceptance();
+        $algorithm->run_deferred_acceptance();
         $this->assertEquals(1000, $users[1]->currentchoice);
         $this->assertEquals(3000, $users[2]->currentchoice);
         $this->assertEquals(2000, $users[3]->currentchoice);
