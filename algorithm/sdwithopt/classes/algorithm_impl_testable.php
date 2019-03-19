@@ -62,4 +62,8 @@ class algorithm_impl_testable extends algorithm_impl {
     public function rejection_by_choices() {
         return parent::rejection_by_choices();
     }
+
+    public function run_deferred_acceptance() {
+        parent::run_deferred_acceptance();
+    }
 }
