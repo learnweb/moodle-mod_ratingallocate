@@ -96,7 +96,18 @@ abstract class algorithm {
         return $functionvalue;
     }
 
-    protected abstract function append_to_log(string $message);
+    /** Inserts a message to the execution_log
+     * @param string $message
+     */
+    protected function append_to_log(string $message) {
+        $log = new execution_log();
+
+        $log->set('message', $message);
+        $log->set('algorithm', $this->get_subplugin_name());
+        $log->set('ratingallocateid', ??);
+        $log->save();
+
+    }
 
     /**
      * @param string $name Subplugin name without 'raalgo_'-prefix.
