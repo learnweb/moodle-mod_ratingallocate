@@ -67,6 +67,7 @@ class raalgo_sdwithopt_closing_optional_choice_test extends advanced_testcase {
         $algorithm->set_users($users);
         $algorithm->set_choices($choices);
 
+        $algorithm->calculate_assignment_counts();
         $algorithm->close_optional_choice();
         $choices = $algorithm->get_choices();
         $users = $algorithm->get_users();
