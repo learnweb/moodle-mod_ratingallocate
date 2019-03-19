@@ -83,17 +83,17 @@ class raalgo_sdwithopt_closing_optional_choice_test extends advanced_testcase {
         $user1 = new \raalgo_sdwithopt\user();
         $user1->id = 1;
         $user1->preferencelist = [1000];
-        $user1->currentchoice = 2000;
+        $user1->currentchoice = 3000;
 
         $user2 = new \raalgo_sdwithopt\user();
         $user2->id = 2;
         $user2->preferencelist = [1000];
-        $user2->currentchoice = 3000;
+        $user2->currentchoice = 2000;
 
         $user3 = new \raalgo_sdwithopt\user();
         $user3->id = 3;
         $user3->preferencelist = [3000];
-        $user3->currentchoice = 2000;
+        $user3->currentchoice = 3000;
 
         $users = [
             1 => $user1,
@@ -139,9 +139,9 @@ class raalgo_sdwithopt_closing_optional_choice_test extends advanced_testcase {
         $choices = $algorithm->get_choices();
         $users = $algorithm->get_users();
 
-        $this->assertEquals(2000, $users[1]->currentchoice);
-        $this->assertEquals(3000, $users[2]->currentchoice);
-        $this->assertEquals(3000, $users[2]->currentchoice);
+        $this->assertEquals(3000, $users[1]->currentchoice);
+        $this->assertEquals(2000, $users[2]->currentchoice);
+        $this->assertEquals(3000, $users[3]->currentchoice);
         $this->assertCount(2, $choices);
         $this->assertArrayHasKey(2000, $choices);
         $this->assertArrayHasKey(3000, $choices);
@@ -150,9 +150,9 @@ class raalgo_sdwithopt_closing_optional_choice_test extends advanced_testcase {
         $choices = $algorithm->get_choices();
         $users = $algorithm->get_users();
 
-        $this->assertEquals(null, $users[1]->currentchoice);
-        $this->assertEquals(3000, $users[2]->currentchoice);
-        $this->assertEquals(3000, $users[2]->currentchoice);
+        $this->assertEquals(3000, $users[1]->currentchoice);
+        $this->assertEquals(null, $users[2]->currentchoice);
+        $this->assertEquals(3000, $users[3]->currentchoice);
         $this->assertCount(1, $choices);
         $this->assertArrayHasKey(3000, $choices);
     }
