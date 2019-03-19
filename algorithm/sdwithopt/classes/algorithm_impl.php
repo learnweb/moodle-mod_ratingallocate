@@ -149,9 +149,11 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
             }
             return ($choicea->countoptionalassignments < $choiceb->countoptionalassignments) ? -1 : 1;
         });
-        $choicetobeclosed = array_pop($choicetobeclosed);
-        $choicetobeclosed->maxsize = 0;
-        $choicetobeclosed->minsize = 0;
+        $choicetobeclosed = array_shift($closeablechoices);
+        // Remove choice from set of existing choices.
+        $this->closed_choices[] = $choicetobeclosed;
+        unset($this->choices[$choicetobeclosed->id]);
+        // Remove assignments from and to closed choice.
         $choicetobeclosed->waitinglist = [];
         foreach ($this->users as $user) {
             if ($user->currentchoice == $choicetobeclosed->id) {
