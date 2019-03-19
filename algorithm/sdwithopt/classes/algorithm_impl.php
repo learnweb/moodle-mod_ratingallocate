@@ -77,8 +77,10 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
      */
     protected function application_by_students() {
         foreach ($this->users as $user) {
-            $nextchoice = array_shift($user->preferencelist);
-            $this->choices[$nextchoice]->waitinglist[] = $user->id;
+            if (!$user->currentchoice) {
+                $nextchoice = array_shift($user->preferencelist);
+                $this->choices[$nextchoice]->waitinglist[] = $user->id;
+            }
         }
     }
 
