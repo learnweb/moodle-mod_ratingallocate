@@ -31,25 +31,25 @@ class raalgo_sdwithopt_application_by_student_test extends advanced_testcase {
 
         $algorithm = new raalgo_sdwithopt\algorithm_impl_testable();
         $users = [
-            1 => [
+            1 => (object) [
                 'id' => 1,
                 'preferencelist' => [1000, 2000],
             ],
-            2 => [
+            2 => (object) [
                 'id' => 2,
                 'preferencelist' => [2000],
             ],
         ];
         $globalranking = $users;
         $choices = [
-            1000 => [
+            1000 => (object) [
                 'id' => 1000,
                 'minsize' => 1,
                 'maxsize' => 1,
                 'optional' => false,
                 'waitinglist' => [],
             ],
-            2000 => [
+            2000 => (object) [
                 'id' => 2000,
                 'minsize' => 1,
                 'maxsize' => 1,
@@ -65,7 +65,7 @@ class raalgo_sdwithopt_application_by_student_test extends advanced_testcase {
         $choices = $algorithm->get_choices();
         $users = $algorithm->get_users();
 
-        $this->assertEquals([2000], $users[1]['preferencelist']);
+        $this->assertEquals([2000], $users[1]->preferencelist);
         $this->assertEquals([], $users[2]->preferencelist);
         $this->assertEquals([1], $choices[1000]->waitinglist);
         $this->assertEquals([2], $choices[2000]->waitinglist);
@@ -75,25 +75,25 @@ class raalgo_sdwithopt_application_by_student_test extends advanced_testcase {
 
         $algorithm = new raalgo_sdwithopt\algorithm_impl_testable();
         $users = [
-            1 => [
+            1 => (object) [
                 'id' => 1,
                 'preferencelist' => [1000, 2000],
             ],
-            2 => [
+            2 => (object) [
                 'id' => 2,
                 'preferencelist' => [2000],
             ],
         ];
         $globalranking = $users;
         $choices = [
-            1000 => [
+            1000 => (object) [
                 'id' => 1000,
                 'minsize' => 1,
                 'maxsize' => 1,
                 'optional' => false,
                 'waitinglist' => [2],
             ],
-            2000 => [
+            2000 => (object) [
                 'id' => 2000,
                 'minsize' => 1,
                 'maxsize' => 1,
