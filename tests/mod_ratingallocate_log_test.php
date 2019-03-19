@@ -50,7 +50,7 @@ class mod_ratingallocate_log_test extends advanced_testcase {
         $dbrec = mod_ratingallocate_generator::create_instance_with_choices($this, $data);
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate($dbrec);
 
-        $algorithm = new \raalgo_edmondskarp\algorithm_impl($ratingallocate);
+        $algorithm = new \mod_ratingallocate\algorithm_testable($ratingallocate);
         $logs = array('Test Message 0', 'Test Message 1', 'Test Message 2');
         foreach ($logs as $log) {
             $algorithm->append_to_log($log);
