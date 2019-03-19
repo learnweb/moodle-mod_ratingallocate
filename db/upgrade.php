@@ -131,6 +131,29 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         }
 
     }
+
+    if ($oldversion < 2019031900) {
+        // Define field generaloption_minsize to be added to ratingallocate.
+        $table = new xmldb_table('ratingallocate');
+        $field = new xmldb_field('generaloption_minsize', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'setting');
+
+        // Conditionally launch add field generaloption_minsize.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field generaloption_optional to be added to ratingallocate.
+        $table = new xmldb_table('ratingallocate');
+        $field = new xmldb_field('generaloption_optional', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'generaloption_minsize');
+
+        // Conditionally launch add field generaloption_optional.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Ratingallocate savepoint reached.
+        upgrade_mod_savepoint(true, 2019031900, 'ratingallocate');
+    }
     
     return true;
 }
