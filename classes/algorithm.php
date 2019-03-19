@@ -85,9 +85,26 @@ abstract class algorithm {
      * @return algorithm Algorithm instance
      */
     public static function get_instance(string $name) {
-        $subplugins = \core_plugin_manager::instance()->get_plugins_of_type('raalgo');
-        // TODO Check whether the specified plugin is installed.
-        $classname = '\raalgo_'.$name.'\algorithm_impl';
-        return new $classname();
+        $possible = self::get_available_algorithms();
+        if (array_key_exists($name, $possible)) {
+            $classname = '\raalgo_' . $name . '\algorithm_impl';
+            return new $classname();
+        } else {
+            throw new \coding_exception('Tried to instantiate algorithm that is not installed or available.');
+        }
     }
+
+    /**
+     * Get the list of available algorithms
+     * @return string[] of the form Name -> Displayname
+     */
+    public static function get_available_algorithms() {
+        $algorithms = \core_plugin_manager::instance()->get_plugins_of_type('raalgo');
+        $result = array();
+        foreach($algorithms as $algo) {
+            $result[$algo->name] = $algo->displayname;
+        }
+        return $result;
+    }
+
 }
