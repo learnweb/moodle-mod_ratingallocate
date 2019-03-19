@@ -22,6 +22,13 @@ require_once(__DIR__ . '/../locallib.php');
 
 abstract class algorithm {
 
+    /** @var \ratingallocate ratingallocate */
+    private $ratingallocate;
+
+    public function __construct(\ratingallocate $ratingallocate) {
+        $this->ratingallocate = $ratingallocate;
+    }
+
     /**
      * Get name of the subplugin, without the raalgo_ prefix.
      * @return string
@@ -45,27 +52,27 @@ abstract class algorithm {
      * Entry-point for the \ratingallocate object to call a solver
      * @param \ratingallocate $ratingallocate
      */
-    public function distribute_users(\ratingallocate $ratingallocate) {
+    public function distribute_users() {
 
         // Load data from database.
-        $choicerecords = $ratingallocate->get_rateable_choices();
-        $ratings = $ratingallocate->get_ratings_for_rateable_choices();
+        $choicerecords = $this->ratingallocate->get_rateable_choices();
+        $ratings = $this->ratingallocate->get_ratings_for_rateable_choices();
 
         // Randomize the order of the enrties to prevent advantages for early entry.
         shuffle($ratings);
 
-        $usercount = count($ratingallocate->get_raters_in_course());
+        $usercount = count($this->ratingallocate->get_raters_in_course());
 
         $distributions = $this->compute_distribution($choicerecords, $ratings, $usercount);
 
         // Perform all allocation manipulation / inserts in one transaction.
-        $transaction = $ratingallocate->db->start_delegated_transaction();
+        $transaction = $this->ratingallocate->db->start_delegated_transaction();
 
-        $ratingallocate->clear_all_allocations();
+        $this->ratingallocate->clear_all_allocations();
 
         foreach ($distributions as $choiceid => $users) {
             foreach ($users as $userid) {
-                $ratingallocate->add_allocation($choiceid, $userid);
+                $this->ratingallocate->add_allocation($choiceid, $userid);
             }
         }
         $transaction->allow_commit();
@@ -104,20 +111,21 @@ abstract class algorithm {
 
         $log->set('message', $message);
         $log->set('algorithm', $this->get_subplugin_name());
-        $log->set('ratingallocateid', ??);
+        $log->set('ratingallocateid', $this->ratingallocate);
         $log->save();
 
     }
 
     /**
      * @param string $name Subplugin name without 'raalgo_'-prefix.
+     * @param \ratingallocate $ratingallocate the current ratingallocateinstance.
      * @return algorithm Algorithm instance
      */
-    public static function get_instance(string $name) {
+    public static function get_instance(string $name, \ratingallocate $ratingallocate) {
         $possible = self::get_available_algorithms();
         if (array_key_exists($name, $possible)) {
             $classname = '\raalgo_' . $name . '\algorithm_impl';
-            return new $classname();
+            return new $classname($ratingallocate);
         } else {
             throw new \coding_exception('Tried to instantiate algorithm that is not installed or available.');
         }
