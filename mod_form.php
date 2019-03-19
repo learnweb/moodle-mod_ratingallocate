@@ -38,6 +38,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     const CHOICE_PLACEHOLDER_IDENTIFIER = 'placeholder_for_choices';
     const STRATEGY_OPTIONS = 'strategyopt';
     const STRATEGY_OPTIONS_PLACEHOLDER = 'placeholder_strategyopt';
+    const ALGORITHM_OPTIONS_PLACEHOLDER = 'placeholder_algorithmopt';
     private $newchoicecounter = 0;
     private $msgerrorrequired;
 
@@ -138,6 +139,16 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                 $this->add_settings_field($fieldid, $value, $strategy, $mform);
             }
             $mform->addElement('static', self::STRATEGY_OPTIONS_PLACEHOLDER.'[' . $strategy . ']', '', '');
+        }
+
+        $headerid = 'algorithm_fieldset';
+        $mform->addElement('header', $headerid, get_string('algorithmoptions', ratingallocate_MOD_NAME));
+        $mform->setExpanded($headerid);
+
+        foreach(\mod_ratingallocate\algorithm::get_available_algorithms() as $key => $value){
+            $features = \mod_ratingallocate\algorithm::get_instance($key)->get_supported_features();
+            $mform->addElement('radio', 'yesno', '', $value, 1, array());
+            $mform->disabledIf("yesno[$value]" , 'generaloption_minsize', 'eq', NULL);
         }
 
         // Add standard elements, common to all modules.
