@@ -224,6 +224,9 @@ $string['strategy_not_specified'] = 'You have to select a strategy.';
 $string['strategyspecificoptions'] = 'Strategy specific options';
 
 $string['algorithmoptions'] = 'Algorithm selection';
+$string['algorithm_does_not_support_minsize'] = 'The selected algorithm does not work with the "minimum number of participants" option.';
+$string['algorithm_does_not_support_optional'] = 'The selected algorithm does not work with the "optional choices" option.';
+$string['algorithm_does_not_exist'] = 'The selected algorithm does not exist.';
 
 $string['err_required'] = 'You need to provide a value for this field.';
 $string['err_minimum'] = 'The minimum value for this field is {$a}.';

@@ -148,10 +148,6 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         foreach(\mod_ratingallocate\algorithm::get_available_algorithms() as $key => $value){
             $features = \mod_ratingallocate\algorithm::get_instance($key)->get_supported_features();
             $mform->addElement('radio', 'algorithm', '', $value, $key, array());
-            if (!$features['min']) {
-                // TODO: does not work for individual radiobuttons. Needs JS check.
-                $mform->disabledIf("algorithm_$key" , 'generaloption_minsize', 'checked');
-            }
         }
         $mform->addRule('algorithm', get_string('err_required', 'form') , 'required', null, 'server');
 
@@ -268,6 +264,23 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                 foreach ($settingerrors as $id => $error) {
                     $errors[$this->get_settingsfield_identifier($data['strategy'], $id)] = $error;
                 }
+            }
+        }
+
+        // User has to select an algorithm that exists.
+        if (!empty($data['algorithm'])) {
+            try {
+                $algorithm = \mod_ratingallocate\algorithm::get_instance($data['algorithm']);
+                $features = $algorithm->get_supported_features();
+                // User has to select an algorithm that complies to the selected features.
+                if ($data['generaloption_minsize'] && !$features['min']) {
+                    $errors['algorithm'] = get_string('algorithm_does_not_support_minsize', self::MOD_NAME);
+                }
+                if ($data['generaloption_optional'] && !$features['opt']) {
+                    $errors['algorithm'] = get_string('algorithm_does_not_support_optional', self::MOD_NAME);
+                }
+            } catch (coding_exception $e) {
+                $errors['algorithm'] = get_string('algorithm_does_not_exist', self::MOD_NAME);
             }
         }
         return $errors;
