@@ -146,7 +146,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->setExpanded($headerid);
 
         $algorithms = \mod_ratingallocate\algorithm::get_available_algorithms();
-        foreach($algorithms as $key => $value){
+        foreach ($algorithms as $key => $value) {
             $features = \mod_ratingallocate\algorithm::get_instance($key)->get_supported_features();
             $mform->addElement('radio', 'algorithm', '', $value, $key, array());
         }
@@ -163,7 +163,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     /**
      * Add an settings element to the form. It is enabled only if the strategy it belongs to is selected.
      * @param string $stratfieldid id of the element to be added
-     * @param array $value array with the element type and its caption 
+     * @param array $value array with the element type and its caption
      *        (usually returned by the strategys get settingsfields methods).
      * @param string $strategyid id of the strategy it belongs to.
      * @param $mform MoodleQuickForm form object the settings field should be added to.
