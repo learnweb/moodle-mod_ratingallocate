@@ -25,7 +25,7 @@ abstract class algorithm {
     /** @var \ratingallocate ratingallocate */
     private $ratingallocate;
 
-    public function __construct(\ratingallocate $ratingallocate) {
+    public function __construct($ratingallocate) {
         $this->ratingallocate = $ratingallocate;
     }
 
@@ -119,10 +119,10 @@ abstract class algorithm {
 
     /**
      * @param string $name Subplugin name without 'raalgo_'-prefix.
-     * @param \ratingallocate $ratingallocate the current ratingallocateinstance.
+     * @param \ratingallocate|null $ratingallocate the current ratingallocateinstance.
      * @return algorithm Algorithm instance
      */
-    public static function get_instance(string $name, \ratingallocate $ratingallocate) {
+    public static function get_instance(string $name, $ratingallocate) {
         $possible = self::get_available_algorithms();
         if (array_key_exists($name, $possible)) {
             $classname = '\raalgo_' . $name . '\algorithm_impl';

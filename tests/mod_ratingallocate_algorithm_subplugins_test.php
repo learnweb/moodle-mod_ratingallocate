@@ -58,7 +58,14 @@ class mod_ratingallocate_algorithm_subplugins_testcase extends advanced_testcase
     }
 
     public function test_algorithm_supported_features() {
-        $algorithm = \mod_ratingallocate\algorithm::get_instance('edmondskarp');
+        $this->resetAfterTest();
+        // Create minnimal dummy data.
+        $course = $this->getDataGenerator()->create_course();
+        $data = mod_ratingallocate_generator::get_default_values();
+        $data['course'] = $course;
+        $dbrec = mod_ratingallocate_generator::create_instance_with_choices($this, $data);
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate($dbrec);
+        $algorithm = \mod_ratingallocate\algorithm::get_instance('edmondskarp', $ratingallocate);
         $supports = $algorithm->get_supported_features();
         $this->assertArrayHasKey('min', $supports);
         $this->assertArrayHasKey('opt', $supports);
