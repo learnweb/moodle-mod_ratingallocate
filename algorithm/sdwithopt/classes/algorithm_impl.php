@@ -31,11 +31,11 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
     /** @var array */
     protected $globalranking;
     /** @var array */
-    protected $choices;
+    protected $choices = array();
     /** @var array */
-    protected $ratings;
+    protected $ratings = array();
     /** @var array */
-    protected $users;
+    protected $users = array();
 
     public function get_name() {
         return 'sdwithopt';
@@ -55,7 +55,7 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
         $this->users = $raters;
         $this->check_feasibility();
         // Compute global ranking.
-        $this->prepare_execution($raters);
+        $this->prepare_execution();
 
         return array();
     }
@@ -93,15 +93,18 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
     }
 
     /**
-     * @param $raters
+     * Initializes the datatstructures needed for the algorithm.
+     * - It creates the global ranking.
+     * - It creates empty waiting lists for choices.
+     * - It creates and fills the preferencelist for all users.
      */
-    protected function prepare_execution($raters) {
+    protected function prepare_execution() {
         // Compute global ranking.
-        $userids = array_keys($raters);
+        $userids = array_keys($this->users);
         shuffle($userids);
         $this->globalranking = array();
         foreach ($userids as $userid) {
-            $this->globalranking[] = $raters[$userid];
+            $this->globalranking[] = $this->users[$userid];
         }
         // Prepare waiting lists.
         foreach ($this->choices as $choice) {

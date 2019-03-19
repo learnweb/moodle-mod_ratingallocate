@@ -36,7 +36,8 @@ class raalgo_sdwithopt_preparation_test extends advanced_testcase {
         for ($i = 0; $i < $numberofusers; $i++) {
             $users[] = $this->getDataGenerator()->create_user();
         }
-        $algorithm->prepare_execution($users);
+        $algorithm->set_users($users);
+        $algorithm->prepare_execution();
         $ranking = $algorithm->get_global_ranking();
         $this->assertCount($numberofusers, $ranking);
         for ($i = 0; $i < $numberofusers; $i++) {

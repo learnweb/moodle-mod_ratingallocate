@@ -26,11 +26,9 @@ namespace raalgo_sdwithopt;
 defined('MOODLE_INTERNAL') || die();
 
 class algorithm_impl_testable extends algorithm_impl {
-    /**
-     * @param $raters
-     */
-    public function prepare_execution($raters) {
-        parent::prepare_execution($raters);
+
+    public function prepare_execution() {
+        parent::prepare_execution();
     }
 
     public function get_global_ranking() {
