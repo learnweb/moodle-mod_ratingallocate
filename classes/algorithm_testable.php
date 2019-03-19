@@ -36,7 +36,7 @@ class algorithm_testable extends algorithm {
      * @return string
      */
     public function get_subplugin_name() {
-        return 'algorithm_testable';
+        return 'algorithmtestable';
     }
 
     /**

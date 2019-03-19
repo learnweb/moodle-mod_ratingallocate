@@ -51,11 +51,19 @@ class mod_ratingallocate_log_test extends advanced_testcase {
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate($dbrec);
 
         $algorithm = new \mod_ratingallocate\algorithm_testable($ratingallocate);
-        $logs = array('Test Message 0', 'Test Message 1', 'Test Message 2');
+        $logs = array('Test Message 0', 'Test Message 1');
         foreach ($logs as $log) {
             $algorithm->append_to_log($log);
         }
         $entries = $DB->get_records('ratingallocate_execution_log');
-        var_dump($entries);
+        $first = array_shift($entries);
+        $second = array_shift($entries);
+
+        $this->assertEquals($first->message, 'Test Message 0');
+        $this->assertEquals($second->message, 'Test Message 1');
+        $this->assertEquals($first->ratingallocateid, $ratingallocate->get_id());
+        $this->assertEquals($second->ratingallocateid, $ratingallocate->get_id());
+        $this->assertEquals($first->algorithm, $algorithm->get_subplugin_name());
+        $this->assertEquals($second->algorithm, $algorithm->get_subplugin_name());
     }
 }
