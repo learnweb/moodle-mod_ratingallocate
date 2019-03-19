@@ -30,11 +30,11 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
 
     /** @var array */
     protected $globalranking;
-    /** @var array */
+    /** @var choice[] */
     protected $choices = array();
     /** @var array */
     protected $ratings = array();
-    /** @var array */
+    /** @var user[] */
     protected $users = array();
 
     public function get_name() {
