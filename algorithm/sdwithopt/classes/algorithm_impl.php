@@ -122,8 +122,28 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
 
 
     protected function reduce_choices_max_size($sumcountmissingplaces) {
-        for ($i = 0; $i < $sumcountmissingplaces; $i++) {
-            //TODO
+        $reduceablechoices = array_filter($this->choices, function ($choice) {
+            return $choice->countmissingplaces == 0;
+        });
+        shuffle($reduceablechoices);
+        while ($sumcountmissingplaces > 0) {
+            $reducedatleastone = false;
+            foreach ($reduceablechoices as $choice) {
+                if ($choice->maxsize <= count($choice->waitinglist)) {
+                    $sumcountmissingplaces--;
+                }
+                if ($choice->maxsize > 0 && $choice->maxsize > $choice->minsize) {
+                    $choice->maxsize--;
+                    $reducedatleastone = true;
+                }
+                if ($sumcountmissingplaces <= 0) {
+                    break(2);
+                }
+            }
+            if (!$reducedatleastone) {
+                // TODO add to log.
+                break;
+            }
         }
     }
 
