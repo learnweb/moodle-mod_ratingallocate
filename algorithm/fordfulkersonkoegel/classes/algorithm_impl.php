@@ -298,4 +298,12 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
             }
         }
     }
+
+    /**
+     * Expected return value is an array with min and opt as key and 1 or 0 as supported or not supported.
+     * @return array
+     */
+    public function get_supported_features() {
+        return ['min' => 0, 'opt' => 0];
+    }
 }
