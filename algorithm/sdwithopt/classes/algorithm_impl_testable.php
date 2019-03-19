@@ -78,4 +78,8 @@ class algorithm_impl_testable extends algorithm_impl {
     public function reduce_choices_max_size($sumcountmissingplaces) {
         return parent::reduce_choices_max_size($sumcountmissingplaces);
     }
+
+    public function extract_allocation() {
+        return parent::extract_allocation();
+    }
 }
