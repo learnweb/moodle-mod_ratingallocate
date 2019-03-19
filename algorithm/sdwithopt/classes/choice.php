@@ -39,5 +39,25 @@ class choice {
     public $optional;
     /** @var int[] */
     public $waitinglist;
+    /**
+     * Represents the count of assigned users below the minimum.
+     * @var int
+     */
+    public $countoptionalassignments;
+    /**
+     * Represents the number of users missing towards the minimum.
+     * @var int
+     */
+    public $countmissingplaces;
+    /**
+     * Represents the count of assigned users above the minimum.
+     * @var int
+     */
+    public $countmoveableassignments;
+    /**
+     * Represents the number of free places up to the maximum.
+     * @var int
+     */
+    public $countfreeplaces;
 
 }
