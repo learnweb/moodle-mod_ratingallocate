@@ -89,13 +89,15 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
      * @return bool true if any choice did reject a student.
      */
     protected function rejection_by_choices() {
+        $rejectionoccured = false;
         foreach ($this->choices as $choice) {
             while (count($choice->waitinglist) > $choice->maxsize) {
                 $userid = array_pop($choice->waitinglist);
                 $this->users[$userid]->currentchoice = null;
+                $rejectionoccured = true;
             }
         }
-        return true;
+        return $rejectionoccured;
     }
 
     /**
