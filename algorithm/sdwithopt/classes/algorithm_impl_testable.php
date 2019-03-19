@@ -82,4 +82,8 @@ class algorithm_impl_testable extends algorithm_impl {
     public function extract_allocation() {
         return parent::extract_allocation();
     }
+
+    public function compute_distribution($choicerecords, $ratings, $raters) {
+        return parent::compute_distribution($choicerecords, $ratings, $raters);
+    }
 }
