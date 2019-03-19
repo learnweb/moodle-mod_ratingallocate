@@ -92,6 +92,7 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
     protected function rejection_by_choices() {
         $rejectionoccured = false;
         foreach ($this->choices as $choice) {
+            ksort($choice->waitinglist);
             while (count($choice->waitinglist) > $choice->maxsize) {
                 $userid = array_pop($choice->waitinglist);
                 $this->users[$userid]->currentchoice = null;
