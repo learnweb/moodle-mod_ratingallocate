@@ -74,7 +74,6 @@ Feature: Creating a new rating allocation, where new choices need to
     And I should see the choice with the title "My fourth choice"
     And I should not see the choice with the title "My fifth choice"
 
-  @wip
   Scenario: Create a new rating alloation and add an additonal new active choice.
     When I add a new choice with the values:
       | title       | My fourth choice |
@@ -89,7 +88,7 @@ Feature: Creating a new rating allocation, where new choices need to
     And the choice with name "My fourth choice" should be active
     And the choice with name "My fourth choice" should be optional
 
-  @javascript @wip
+  @javascript
   Scenario: Create a new rating alloation and add an additonal new inactive choice.
     When I add a new choice with the values:
       | title       | My fourth choice |
