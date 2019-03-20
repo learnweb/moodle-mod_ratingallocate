@@ -370,3 +370,8 @@ $string['privacy:metadata:preference:flextable_manual_filter'] = 'Stores the fil
 
 $string['filtertabledesc'] = 'Describes the filters that are applied to the allocation table.';
 $string['filtermanualtabledesc'] = 'Describes the filters that are applied to the table of the manual allocation form.';
+
+// Persistent class errors.
+$string['error_persistent_ratingallocateid'] = 'The id is invalid.';
+$string['error_persistent_algoname'] = 'The algorithm name is invalid.';
+$string['error_persistent_message'] = 'The message is invalid.';

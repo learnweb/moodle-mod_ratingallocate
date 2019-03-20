@@ -30,6 +30,10 @@ class algorithm_impl extends \mod_ratingallocate\algorithm {
     /** @var $graph Flow-Graph built */
     protected $graph;
 
+    public function get_subplugin_name() {
+        return 'fordfulkersonkoegel';
+    }
+
     /**
      * Starts the distribution algorithm.
      * Uses the users' ratings and a minimum-cost maximum-flow algorithm

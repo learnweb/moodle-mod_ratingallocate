@@ -147,7 +147,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         $algorithms = \mod_ratingallocate\algorithm::get_available_algorithms();
         foreach ($algorithms as $key => $value) {
-            $features = \mod_ratingallocate\algorithm::get_instance($key)->get_supported_features();
+            $features = \mod_ratingallocate\algorithm::get_instance($key, null)->get_supported_features();
             $mform->addElement('radio', 'algorithm', '', $value, $key, array());
         }
         $mform->addRule('algorithm', get_string('err_required', 'form') , 'required', null, 'server');
@@ -272,7 +272,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         // User has to select an algorithm that exists.
         if (!empty($data['algorithm'])) {
             try {
-                $algorithm = \mod_ratingallocate\algorithm::get_instance($data['algorithm']);
+                $algorithm = \mod_ratingallocate\algorithm::get_instance($data['algorithm'], null);
                 $features = $algorithm->get_supported_features();
                 // User has to select an algorithm that complies to the selected features.
                 if ($data['generaloption_minsize'] && !$features['min']) {

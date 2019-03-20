@@ -878,10 +878,10 @@ class ratingallocate {
         $this->origdbrecord->algorithmstarttime = time();
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
 
-        $distributor = \mod_ratingallocate\algorithm::get_instance('edmondskarp');
+        $distributor = \mod_ratingallocate\algorithm::get_instance('edmondskarp', $this);
         // $distributor = new solver_ford_fulkerson();
         $timestart = microtime(true);
-        $distributor->distribute_users($this);
+        $distributor->distribute_users();
         $timeneeded = (microtime(true) - $timestart);
         // echo memory_get_peak_usage();
 
@@ -1478,6 +1478,14 @@ class ratingallocate {
      */
     public function get_context() {
         return $this->context;
+    }
+
+
+    /**
+     * @return int id
+     */
+    public function get_id() {
+        return $this->ratingallocateid;
     }
 
     /**
