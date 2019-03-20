@@ -46,6 +46,34 @@ $string['crontask'] = 'Automated allocation for Fair Allocation';
 $string['algorithmtimeout'] = 'Algorithm timeout';
 $string['configalgorithmtimeout'] = 'The time in seconds after which the algorithm is assumed to be stuck.
 The current run is terminated and marked as failed.';
+$string['edmonds_karp'] = 'Edmonds-Karp';
+$string['ford_fulkerson'] = 'Ford-Fulkerson';
+$string['lp'] = 'LP';
+$string['solver'] = 'Solver';
+$string['solver_description'] = 'Solver for distributing users into groups.';
+$string['general'] = 'General';
+$string['engine'] = 'Engine';
+$string['engine_description'] = 'Engine for optimizing linear programs.';
+$string['executor'] = 'Executor';
+$string['executor_description'] = 'Executor for executing the engine.';
+$string['scip'] = 'SCIP';
+$string['cplex'] = 'CPLEX';
+$string['local'] = 'Local';
+$string['local_description'] = 'Executor for running the selected engine locally.';
+$string['ssh'] = 'SSH';
+$string['ssh_description'] = 'Executor for connecting to a remote engine by using SSH.';
+$string['ssh_address'] = 'SSH Address';
+$string['ssh_address_description'] = 'Address of a ssh server, the executor connects to for running the selected engine.';
+$string['ssh_username'] = 'SSH username';
+$string['ssh_username_description'] = 'Username of the ssh user.';
+$string['ssh_password'] = 'SSH password';
+$string['ssh_password_description'] = 'Password of the ssh user.';
+$string['webservice'] = 'Webservice';
+$string['webservice_description'] = 'Executor for connecting to a remote engine by using HTTP or HTTPS.';
+$string['secret'] = 'Secret';
+$string['secret_description'] = 'Webservices backend secret, used for protecting it.';
+$string['uri'] = 'URI';
+$string['uri_description'] = 'URI of webservice backend.';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Rating Form for Users">
 $string['choicestatusheading'] = 'Status';

@@ -22,6 +22,19 @@ Next you can add choices, which the users will have to rate later on.
 After the rating period has finished, you can allocate the users automatically or manually. Upon publishing the results, users will be able to see which choice they have been allocated to.
 For more information please visit the [moodle wiki](https://docs.moodle.org/31/en/Ratingallocate).
 
+Configuration
+=============
+General
+---------
+You can configure ``mod/ratingallocate`` using moodles administration interface. Three different solvers are available for selection. For LP it is necessary to configure the way it will use the external LP solver by selecting an executor.
+
+
+Webservice backend
+------------
+Using the webservice executor mod_ratingallocate can use an external lp solver which is not on the same machine as the moodle instance.
+A working webserver with PHP is needed. Clone the mod_ratingallocate into the document root and take a look into ``webservice/config.php`` for configuring the executors backend. A strong secret and HTTPS are recommended.
+
+
 Moodle version
 ======================
 The plugin is continously tested with all moodle versions, which are security supported by the moodle headquarter.
@@ -30,8 +43,8 @@ In addition to all stable branches the version is also tested against the master
 
 Algorithm
 =========
-This module uses a modified Edmonds-karp algorithm to solve the minimum-cost flow problem. Augmenting paths are found using Bellman-Ford, but the user ratings are multiplied with -1 first.
-
-Worst-Case complexity is O(m^2n^2) with m,n being number of edges (#users+#choices+#ratings_users_gave) and nodes (2+#users+#choices) in the graph.
+Using the Edmonds-Karp algorithm the Worst-Case complexity is O(m^2n^2) with m,n being number of edges (#users+#choices+#ratings_users_gave) and nodes (2+#users+#choices) in the graph.
 Distributing 500 users to 21 choices takes around 11sec.
+
+Measurements for using the LP solver or Ford-Fulkerson are not available.
 

@@ -40,6 +40,7 @@ require_once(__DIR__.'/classes/algorithm_status.php');
 // Takes care of loading all the solvers.
 require_once(dirname(__FILE__) . '/solver/ford-fulkerson-koegel.php');
 require_once(dirname(__FILE__) . '/solver/edmonds-karp.php');
+require_once(dirname(__FILE__) . '/solver/lp-solver.php');
 
 // Now come all the strategies.
 require_once(dirname(__FILE__) . '/strategy/strategy01_yes_no.php');
@@ -199,7 +200,7 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             /* @var mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
-            if ($this->get_algorithm_status() === \mod_ratingallocate\algorithm_status::running) {
+            /*if ($this->get_algorithm_status() === \mod_ratingallocate\algorithm_status::running) {
                 // Don't run, if an instance is already running.
                 $renderer->add_notification(get_string('algorithm_already_running', ratingallocate_MOD_NAME));
             } else if ($this->ratingallocate->runalgorithmbycron === "1" &&
@@ -207,14 +208,14 @@ class ratingallocate {
             ) {
                 // Don't run, if the cron has not started yet, but is set as priority.
                 $renderer->add_notification(get_string('algorithm_scheduled_for_cron', ratingallocate_MOD_NAME));
-            } else {
+                } else*/ if(true) {
                 $this->origdbrecord->{this_db\ratingallocate::ALGORITHMSTATUS} = \mod_ratingallocate\algorithm_status::running;
                 $DB->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
                 // Try to get some more memory, 500 users in 10 groups take about 15mb.
                 raise_memory_limit(MEMORY_EXTRA);
                 core_php_time_limit::raise();
                 // Distribute choices.
-                $timeneeded = $this->distrubute_choices();
+                $timeneeded = $this->distribute_choices();
 
                 // Logging.
                 $event = \mod_ratingallocate\event\distribution_triggered::create_simple(
@@ -871,27 +872,50 @@ class ratingallocate {
     }
 
     /**
+     * Returns solver instance, based on $CFG
+     */
+    public function get_solver() {
+        global $CFG;
+
+        switch($CFG->ratingallocate_solver) {
+        case 'lp':
+            return new solver_lp();
+
+        case 'ford_fulkerson':
+            return new solver_ford_fulkerson();
+
+        case 'edmonds_karp':
+        default: return new solver_edmonds_karp();
+        }
+    }
+
+    /**
      * distribution of choices for each user
      * take care about max_execution_time and memory_limit
      */
-    public function distrubute_choices() {
+    public function distribute_choices() {
         require_capability('mod/ratingallocate:start_distribution', $this->context);
+
+        $distributor = $this->get_solver();
 
         // Set algorithm status to running.
         $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::running;
         $this->origdbrecord->algorithmstarttime = time();
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
 
-        $distributor = new solver_edmonds_karp();
-        // $distributor = new solver_ford_fulkerson();
-        $timestart = microtime(true);
-        $distributor->distribute_users($this);
-        $timeneeded = (microtime(true) - $timestart);
-        // echo memory_get_peak_usage();
+        try {
+            $timestart = microtime(true);
+            $distributor->distribute_users($this);
+            $timeneeded = (microtime(true) - $timestart);
 
-        // Set algorithm status to finished.
-        $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::finished;
-        $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+            // Set algorithm status to finished.
+            $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::finished;
+            $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+        }
+        catch(\exception $e) {
+            $this->set_algorithm_failed();
+            throw $e;
+        }
 
         return $timeneeded;
     }
@@ -1376,6 +1400,52 @@ class ratingallocate {
                 }
             }
         }
+        $transaction->allow_commit();
+    }
+
+    /**
+     * Returns an array of settigs for the used strategy
+     */
+    public function get_settingfields() {
+        $strategy = $this->get_strategy_class();
+        $array = $strategy->get_dynamic_settingfields();
+
+        if(empty($array))
+            $array = $strategy->get_static_settingfields();
+
+        if(empty($array))
+            $array = $strategy->get_default_settingfields();
+
+        return $array;
+    }
+
+    /**
+     * Returns an array of available choices
+     */
+    public function get_available_ratings() {
+        return array_filter($this->get_settingfields(), function($value, $key) {
+            return is_numeric($key);
+        }, ARRAY_FILTER_USE_BOTH);
+    }
+
+    /**
+     * Another internal helper to populate the database with random data
+     */
+    public function add_test_data($overwrite = true) {
+        $transaction = $this->db->start_delegated_transaction();
+        $ratings = array_keys($this->get_available_ratings());
+
+        foreach(get_enrolled_users($this->context) as $user) {
+            foreach($this->get_choices() as $choice) {
+                $rating = new stdclass();
+                $rating->userid = $user->id;
+                $rating->choiceid = $choice->id;
+                $rating->rating = $ratings[array_rand($ratings)];
+
+                $this->db->insert_record('ratingallocate_ratings', $rating);
+            }
+        }
+
         $transaction->allow_commit();
     }
 
