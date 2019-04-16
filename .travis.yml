@@ -55,7 +55,7 @@ jobs:
 #          packages:
 #            - oracle-java8-installer
 #            - oracle-java8-set-default
-      env: DB=mysqli MOODLE_BRANCH=master
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
       install:
       - moodle-plugin-ci install --no-init
       script:
@@ -71,7 +71,7 @@ jobs:
     # Smaller build matrix for development builds
     - stage: develop
       php: 7.2
-      env: DB=mysqli MOODLE_BRANCH=master
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
       install:
       - moodle-plugin-ci install
       script:
