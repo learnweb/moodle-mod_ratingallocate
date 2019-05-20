@@ -323,9 +323,8 @@ class ratingallocate {
             echo $OUTPUT->heading(get_string('show_choices_header', ratingallocate_MOD_NAME));
 
             $renderer->ratingallocate_show_choices_table($this, true);
-            echo $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
-                'ratingallocateid' => $this->ratingallocateid,
-                'action' => '')), get_string('back'));
+            echo $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
+                array('id' => $this->coursemodule->id)), get_string('back'), 'get');
             echo $renderer->render_footer();
         }
 
@@ -500,9 +499,7 @@ class ratingallocate {
 
             $output .= html_writer::empty_tag('br', array());
             $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array(
-                'id' => $this->coursemodule->id,
-                'ratingallocateid' => $this->ratingallocateid,
-                'action' => '')), get_string('back'));
+                'id' => $this->coursemodule->id)), get_string('back'), 'get');
 
             // Logging.
             $event = \mod_ratingallocate\event\ratings_and_allocation_table_viewed::create_simple(
@@ -523,9 +520,8 @@ class ratingallocate {
             $output .= $renderer->allocation_table_for_ratingallocate($this);
 
             $output .= html_writer::empty_tag('br', array());
-            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
-                'ratingallocateid' => $this->ratingallocateid,
-                'action' => '')), get_string('back'));
+            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
+                array('id' => $this->coursemodule->id)), get_string('back'), 'get');
             // Logging.
             $event = \mod_ratingallocate\event\allocation_table_viewed::create_simple(
                 context_course::instance($this->course->id), $this->ratingallocateid);
@@ -545,9 +541,8 @@ class ratingallocate {
             $output .= $renderer->statistics_table_for_ratingallocate($this);
 
             $output .= html_writer::empty_tag('br', array());
-            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id,
-                'ratingallocateid' => $this->ratingallocateid,
-                'action' => '')), get_string('back'));
+            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
+                array('id' => $this->coursemodule->id)), get_string('back'), 'get');
             // Logging.
             $event = \mod_ratingallocate\event\allocation_statistics_viewed::create_simple(
                 context_course::instance($this->course->id), $this->ratingallocateid);
@@ -678,15 +673,13 @@ class ratingallocate {
                 if ($this->is_setup_ok()) {
                     $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
                     array('id' => $this->coursemodule->id,
-                        'ratingallocateid' => $this->ratingallocateid,
                         'action' => ACTION_GIVE_RATING)),
-                    get_string('edit_rating', ratingallocate_MOD_NAME));
+                    get_string('edit_rating', ratingallocate_MOD_NAME), 'get');
 
                 $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
                     array('id' => $this->coursemodule->id,
-                        'ratingallocateid' => $this->ratingallocateid,
                         'action' => ACTION_DELETE_RATING)),
-                    get_string('delete_rating', ratingallocate_MOD_NAME));
+                    get_string('delete_rating', ratingallocate_MOD_NAME), 'get');
                 } else {
                     $renderer->add_notification(get_string('no_rating_possible', ratingallocate_MOD_NAME));
                 }
