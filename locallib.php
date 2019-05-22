@@ -37,10 +37,6 @@ require_once(dirname(__FILE__) . '/renderable.php');
 require_once($CFG->dirroot.'/group/lib.php');
 require_once(__DIR__.'/classes/algorithm_status.php');
 
-// Takes care of loading all the solvers.
-require_once(dirname(__FILE__) . '/solver/ford-fulkerson-koegel.php');
-require_once(dirname(__FILE__) . '/solver/edmonds-karp.php');
-
 // Now come all the strategies.
 require_once(dirname(__FILE__) . '/strategy/strategy01_yes_no.php');
 require_once(dirname(__FILE__) . '/strategy/strategy02_yes_maybe_no.php');
@@ -882,10 +878,10 @@ class ratingallocate {
         $this->origdbrecord->algorithmstarttime = time();
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
 
-        $distributor = new solver_edmonds_karp();
+        $distributor = \mod_ratingallocate\algorithm::get_instance('edmondskarp', $this);
         // $distributor = new solver_ford_fulkerson();
         $timestart = microtime(true);
-        $distributor->distribute_users($this);
+        $distributor->distribute_users();
         $timeneeded = (microtime(true) - $timestart);
         // echo memory_get_peak_usage();
 
@@ -1484,6 +1480,14 @@ class ratingallocate {
         return $this->context;
     }
 
+
+    /**
+     * @return int id
+     */
+    public function get_id() {
+        return $this->ratingallocateid;
+    }
+
     /**
      * @return bool true, if all strategy settings are ok.
      */
@@ -1511,6 +1515,8 @@ class ratingallocate {
  * @property string explanation
  * @property int $maxsize
  * @property bool $active
+ * @property int minsize
+ * @property bool optional
  */
 class ratingallocate_choice {
     /** @var stdClass original db record */

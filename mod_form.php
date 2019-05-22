@@ -38,6 +38,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     const CHOICE_PLACEHOLDER_IDENTIFIER = 'placeholder_for_choices';
     const STRATEGY_OPTIONS = 'strategyopt';
     const STRATEGY_OPTIONS_PLACEHOLDER = 'placeholder_strategyopt';
+    const ALGORITHM_OPTIONS_PLACEHOLDER = 'placeholder_algorithmopt';
     private $newchoicecounter = 0;
     private $msgerrorrequired;
 
@@ -86,6 +87,14 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $this->standard_intro_elements();
 
         // -------------------------------------------------------------------------------
+        // TODO hilfe!
+        // TODO darstellung nebeneinander.
+        $elementname = 'generaloption_minsize';
+        $mform->addElement('advcheckbox', $elementname, get_string('checkbox_' . $elementname, self::MOD_NAME));
+        $elementname = 'generaloption_optional';
+        $mform->addElement('advcheckbox', $elementname, get_string('checkbox_' . $elementname, self::MOD_NAME));
+
+        // -------------------------------------------------------------------------------
         $elementname = 'strategy';
         // Define options for select.
         $selectoptions = array();
@@ -115,7 +124,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->setDefault($elementname, 1);
 
         $headerid = 'strategy_fieldset';
-        $mform->addElement('header', $headerid, get_string('strategyspecificoptions', ratingallocate_MOD_NAME));
+        $mform->addElement('header', $headerid, get_string('strategyspecificoptions', self::MOD_NAME));
         $mform->setExpanded($headerid);
 
         foreach (\strategymanager::get_strategies() as $strategy) {
@@ -132,6 +141,18 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $mform->addElement('static', self::STRATEGY_OPTIONS_PLACEHOLDER.'[' . $strategy . ']', '', '');
         }
 
+        $headerid = 'algorithm_fieldset';
+        $mform->addElement('header', $headerid, get_string('algorithmoptions', self::MOD_NAME));
+        $mform->setExpanded($headerid);
+
+        $algorithms = \mod_ratingallocate\algorithm::get_available_algorithms();
+        foreach ($algorithms as $key => $value) {
+            $features = \mod_ratingallocate\algorithm::get_instance($key, null)->get_supported_features();
+            $mform->addElement('radio', 'algorithm', '', $value, $key, array());
+        }
+        $mform->addRule('algorithm', get_string('err_required', 'form') , 'required', null, 'server');
+        $mform->setDefault('algorithm', array_keys($algorithms)[0]);
+
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
 
@@ -142,7 +163,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     /**
      * Add an settings element to the form. It is enabled only if the strategy it belongs to is selected.
      * @param string $stratfieldid id of the element to be added
-     * @param array $value array with the element type and its caption 
+     * @param array $value array with the element type and its caption
      *        (usually returned by the strategys get settingsfields methods).
      * @param string $strategyid id of the strategy it belongs to.
      * @param $mform MoodleQuickForm form object the settings field should be added to.
@@ -245,6 +266,23 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                 foreach ($settingerrors as $id => $error) {
                     $errors[$this->get_settingsfield_identifier($data['strategy'], $id)] = $error;
                 }
+            }
+        }
+
+        // User has to select an algorithm that exists.
+        if (!empty($data['algorithm'])) {
+            try {
+                $algorithm = \mod_ratingallocate\algorithm::get_instance($data['algorithm'], null);
+                $features = $algorithm->get_supported_features();
+                // User has to select an algorithm that complies to the selected features.
+                if ($data['generaloption_minsize'] && !$features['min']) {
+                    $errors['algorithm'] = get_string('algorithm_does_not_support_minsize', self::MOD_NAME);
+                }
+                if ($data['generaloption_optional'] && !$features['opt']) {
+                    $errors['algorithm'] = get_string('algorithm_does_not_support_optional', self::MOD_NAME);
+                }
+            } catch (coding_exception $e) {
+                $errors['algorithm'] = get_string('algorithm_does_not_exist', self::MOD_NAME);
             }
         }
         return $errors;

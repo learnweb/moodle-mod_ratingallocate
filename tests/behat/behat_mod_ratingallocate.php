@@ -32,6 +32,12 @@ class behat_mod_ratingallocate extends behat_base {
                 } else {
                     $this->execute('behat_mod_ratingallocate::i_uncheck_the_active_checkbox');
                 }
+            } else if($locator === 'optional') {
+                if ($value === 'true') {
+                    $this->execute('behat_mod_ratingallocate::i_check_the_optional_checkbox');
+                } else {
+                    $this->execute('behat_mod_ratingallocate::i_uncheck_the_optional_checkbox');
+                }
             } else {
                 $this->execute('behat_forms::i_set_the_field_to', array($locator, $value));
             }
@@ -191,6 +197,26 @@ class behat_mod_ratingallocate extends behat_base {
     }
 
     /**
+     * Checks the optional checkbox.
+     *
+     * @Given /^I check the optional checkbox$/
+     */
+    public function i_check_the_optional_checkbox() {
+        $checkbox = $this->find_field("id_optional");
+        $checkbox->check();
+    }
+
+    /**
+     * Unchecks the optional checkbox.
+     *
+     * @Given /^I uncheck the optional checkbox$/
+     */
+    public function i_uncheck_the_optional_checkbox() {
+        $checkbox = $this->find_field("id_optional");
+        $checkbox->uncheck();
+    }
+
+    /**
      * The choice with id should be active.
      *
      * @Then /^the choice with name "([^"]*)" should be active$/
@@ -219,6 +245,39 @@ class behat_mod_ratingallocate extends behat_base {
         $choice = $this->get_choice($title);
         if ($choice->active) {
             throw new ExpectationException('The choice "' . $title. '" should not be active',
+                    $this->getSession());
+        }
+    }
+
+    /**
+     * The choice with id should be optional.
+     *
+     * @Then /^the choice with name "([^"]*)" should be optional$/
+     *
+     * @throws ExpectationException
+     * @param string $title title of the choice
+     */
+    public function the_choice_should_be_optional($title) {
+        $choice = $this->get_choice($title);
+        if (!$choice->optional) {
+            throw new ExpectationException('The choice "' . $title .
+                    '" should be optional.',
+                    $this->getSession());
+        }
+    }
+
+    /**
+     * The choice with id should not be optional.
+     *
+     * @Then /^the choice with name "([^"]*)" should not be optional$/
+     *
+     * @throws ExpectationException
+     * @param string $title title of the choice
+     */
+    public function the_choice_should_not_be_optional($title) {
+        $choice = $this->get_choice($title);
+        if ($choice->optional) {
+            throw new ExpectationException('The choice "' . $title. '" should not be optional',
                     $this->getSession());
         }
     }

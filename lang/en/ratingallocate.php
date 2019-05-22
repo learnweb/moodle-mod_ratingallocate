@@ -193,9 +193,12 @@ $string['choice_added_notification'] = 'Choice saved.';
 // <editor-fold defaultstate="collapsed" desc="Form to edit the instance(administrator)">
 $string['choice_active'] = 'Choice is active';
 $string['choice_active_help'] = 'Only active choices are displayed to the user. Inactive choices are not displayed.';
+$string['choice_optional'] = 'Optional';
+$string['choice_optional_help'] = 'Whether the choice is allowed to be cancelled';
 $string['choice_explanation'] = 'Description (optional)';
 $string['choice_maxsize'] = 'Max. number of participants';
 $string['choice_maxsize_display'] = 'Maximum number of students';
+$string['choice_minsize'] = 'Min. number of participants';
 $string['choice_title'] = 'Title';
 $string['choice_title_help'] = 'Title of the choice. *Attention* all active choices will be displayed while ordered by title.';
 $string['edit_choice'] = 'Edit choice';
@@ -206,6 +209,8 @@ $string['deletechoice'] = 'Delete choice';
 $string['publishdate'] = 'Estimated publication date';
 $string['runalgorithmbycron'] = 'Automatic allocation after rating period';
 $string['runalgorithmbycron_help'] = 'Automatically runs the allocation algorithm after the rating period ended. However, the results have to be published manually.';
+$string['checkbox_generaloption_minsize'] = 'Choices requiring a minimum number of participants';
+$string['checkbox_generaloption_optional'] = 'Some choices are optional';
 $string['select_strategy'] = 'Rating strategy';
 $string['select_strategy_help'] = 'Choose a rating strategy:
 
@@ -218,18 +223,31 @@ $string['select_strategy_help'] = 'Choose a rating strategy:
 $string['strategy_not_specified'] = 'You have to select a strategy.';
 $string['strategyspecificoptions'] = 'Strategy specific options';
 
+$string['algorithmoptions'] = 'Algorithm selection';
+$string['algorithm_does_not_support_minsize'] = 'The selected algorithm does not work with the "minimum number of participants" option.';
+$string['algorithm_does_not_support_optional'] = 'The selected algorithm does not work with the "optional choices" option.';
+$string['algorithm_does_not_exist'] = 'The selected algorithm does not exist.';
+
 $string['err_required'] = 'You need to provide a value for this field.';
 $string['err_minimum'] = 'The minimum value for this field is {$a}.';
 $string['err_maximum'] = 'The maximum value for this field is {$a}.';
+$string['err_gte'] = 'The minimum number of participants is greater than the maximum number of participants.';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Form to edit choices">
 $string['show_choices_header'] = 'List of all choices';
 $string['newchoice'] = 'Add new choice';
 $string['choice_table_title'] = 'Title';
 $string['choice_table_explanation'] = 'Description';
+$string['choice_table_minsize'] = 'Min. Size';
 $string['choice_table_maxsize'] = 'Max. Size';
 $string['choice_table_active'] = 'Active';
+$string['choice_table_optional'] = 'Optional';
 $string['choice_table_tools'] = 'Edit';
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="Subplugin types">
+$string['subplugintype_raalgo'] = 'Allocation algorithm';
+$string['subplugintype_raalgo_plural'] = 'Allocation algorithms';
 // </editor-fold>
 
 $string['is_published'] = 'Published';
@@ -352,3 +370,8 @@ $string['privacy:metadata:preference:flextable_manual_filter'] = 'Stores the fil
 
 $string['filtertabledesc'] = 'Describes the filters that are applied to the allocation table.';
 $string['filtermanualtabledesc'] = 'Describes the filters that are applied to the table of the manual allocation form.';
+
+// Persistent class errors.
+$string['error_persistent_ratingallocateid'] = 'The id is invalid.';
+$string['error_persistent_algoname'] = 'The algorithm name is invalid.';
+$string['error_persistent_message'] = 'The message is invalid.';

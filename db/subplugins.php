@@ -14,20 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
-/**
- * Defines the version of ratingallocate
- *
- * @package    mod_ratingallocate
- * @copyright 2014 T Reischmann, C Usener
- * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019031916;        // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2017111300;        // Requires this Moodle version
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v3.6-r1';
-$plugin->component = 'mod_ratingallocate';  // To check on upgrade, that module sits in correct place
+$subplugins = array(
+    'raalgo' => 'mod/ratingallocate/algorithm',
+);
