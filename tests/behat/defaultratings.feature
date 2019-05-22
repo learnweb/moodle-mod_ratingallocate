@@ -44,7 +44,7 @@ Feature: When a student starts a rating the default values of all choices
       | My first choice | 4 |
       | My second choice | 4 |
 
-  @javascript @wip
+  @javascript
   Scenario: The default rating should be changeable to a medium rating
     And I navigate to "Edit settings" in current page administration
     And I select "strategy_lickert" from the "strategy" singleselect
@@ -59,7 +59,7 @@ Feature: When a student starts a rating the default values of all choices
       | My first choice | 3 |
       | My second choice | 3 |
 
-  @javascript @wip
+  @javascript
   Scenario: The default rating should be changeable to the lowest rating
     And I navigate to "Edit settings" in current page administration
     And I select "strategy_lickert" from the "strategy" singleselect
