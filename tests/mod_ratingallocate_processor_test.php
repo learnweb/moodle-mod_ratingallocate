@@ -33,23 +33,13 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests if process_publish_allocations is not working before time runs out
-     * Assert, that the ratingallocate can not be published
-     */
-    public function test_publishing_before_accesstimestop() {
-        $ratingallocate = mod_ratingallocate_generator::get_open_ratingallocate_for_teacher($this);
-        $this->assertEquals(0, $ratingallocate->ratingallocate->published);
-        $this->call_private_ratingallocate_method($ratingallocate, 'process_publish_allocations');
-        $this->assertEquals(0, $ratingallocate->ratingallocate->published);
-    }
-    /**
      * Tests if process_publish_allocations is working after time runs out
      * Assert, that the ratingallocate can be published
      */
-    public function test_publishing_after_accesstimestop() {
+    public function test_publishing() {
         $ratingallocate = mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $ratingallocate->ratingallocate->published);
-        $this->call_private_ratingallocate_method($ratingallocate, 'process_publish_allocations');
+        $ratingallocate->publish_allocation();
         $this->assertEquals(1, $ratingallocate->ratingallocate->published);
     }
     /**
@@ -60,7 +50,7 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
         global $DB;
         $ratingallocate = mod_ratingallocate_generator::get_open_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $DB->count_records('groupings'));
-        $this->call_private_ratingallocate_method($ratingallocate, 'process_action_allocation_to_grouping');
+        $ratingallocate->synchronize_allocation_and_grouping();
         $this->assertEquals(1, $DB->count_records('groupings'));
     }
     /**
@@ -71,7 +61,7 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
         global $DB;
         $ratingallocate = mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $DB->count_records('groupings'));
-        $this->call_private_ratingallocate_method($ratingallocate, 'process_action_allocation_to_grouping');
+        $ratingallocate->synchronize_allocation_and_grouping();
         $this->assertEquals(1, $DB->count_records('groupings'));
     }
 
@@ -89,77 +79,6 @@ class mod_ratingallocate_processor_testcase extends advanced_testcase {
                 'get_open_ratingallocate_for_teacher',
                 10]
         ];
-    }
-
-    /**
-     * Tests if process_action_modify_allocation is working after and before time runs out
-     * Assert, that the number of allocations changes as expected
-     * @dataProvider modify_allocation_provider
-     */
-    public function test_modify_allocation($ratingallocatecreationmethod, $expected) {
-        global $DB;
-        $ratingallocate = forward_static_call(array('mod_ratingallocate_generator', $ratingallocatecreationmethod),
-            $this, $this->get_choice_data());
-        $choices = $DB->get_records('ratingallocate_choices');
-        $choiceid = array_keys($choices)[0];
-        $this->assertEquals(10, $DB->count_records('ratingallocate_allocations',
-            array('choiceid' => $choiceid)));
-        $this->prepare_manual_alloc_form($ratingallocate, $choiceid);
-        $this->call_private_ratingallocate_method($ratingallocate, 'process_action_manual_allocation');
-        $this->assertEquals($expected, $DB->count_records('ratingallocate_allocations',
-            array('choiceid' => $choiceid)));
-    }
-
-    /**
-     * Returns an array with 2 choices with size of 10.
-     */
-    private function get_choice_data() {
-        return array(
-            array('title' => 'Choice 1',
-                'explanation' => 'Some explanatory text for choice 1',
-                'maxsize' => '10',
-                'active' => true),
-            array('title' => 'Choice 2',
-                'explanation' => 'Some explanatory text for choice 2',
-                'maxsize' => '10',
-                'active' => true
-            )
-        );
-    }
-
-    /**
-     * Mocks the manual_alloc_form to return submitted data.
-     */
-    private function prepare_manual_alloc_form(ratingallocate $ratingallocate, $choiceid) {
-        global $DB;
-        require_once(__DIR__ .'/../form_manual_allocation.php');
-        $allocations = $DB->get_records('ratingallocate_allocations');
-        $allocdata = array();
-        $userdata = array();
-        foreach ($allocations as $id => $allocation) {
-            $allocdata[$allocation->userid] = "$choiceid";
-            $userdata[$allocation->userid] = $allocation->userid;
-        }
-
-        $data = array();
-        $data['action'] = 'manual_allocation';
-        $data['allocdata'] = $allocdata;
-        $data['userdata'] = $userdata;
-        $data['submitbutton'] = 'Save changes';
-        manual_alloc_form::mock_submit($data);
-    }
-
-    /**
-     * Enables for calling the private processing functions of the ratingallocate
-     * @param ratingallocate $ratingallocate
-     * @param string $methodname name of private or protected method
-     * @param unknown $args arguments the method should be called with
-     */
-    private function call_private_ratingallocate_method(ratingallocate $ratingallocate, $methodname, $args=[]) {
-        $class = new ReflectionClass('ratingallocate');
-        $method = $class->getMethod($methodname);
-        $method->setAccessible(true);
-        $method->invokeArgs($ratingallocate, $args);
     }
 
     /**
