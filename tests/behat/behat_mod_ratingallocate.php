@@ -12,10 +12,89 @@ require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 use Behat\Gherkin\Node\TableNode as TableNode,
 Behat\Mink\Exception\ExpectationException as ExpectationException,
 Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 
 class behat_mod_ratingallocate extends behat_base {
 
     /**
+     * Creates the specified choices.
+     *
+     * @Given /^the following choices exist:$/
+     *
+     * @throws Exception
+     * @throws PendingException
+     * @param TableNode $data
+     */
+    public function the_following_choices_exist(TableNode $data) {
+        global $DB;
+
+        foreach ($data->getColumnsHash() as $record) {
+
+            if (!isset($record['title'])) {
+                throw new coding_exception('title must be present in behat_mod_ratingallocate::the_following_choices_exist() $data');
+            }
+
+            if (!isset($record['maxsize'])) {
+                throw new coding_exception('maxsize must be present in behat_mod_ratingallocate::the_following_choices_exist() $data');
+            }
+
+            if (!isset($record['ratingallocate'])) {
+                throw new coding_exception('ratingallocate must be present in behat_mod_ratingallocate::the_following_choices_exist() $data');
+            }
+
+            $ratingallocate = $DB->get_record('ratingallocate', array('name' => $record['ratingallocate']));
+
+            $record['ratingallocateid'] = $ratingallocate->id;
+
+            $record = (object)$record;
+
+            // Add the subscription.
+            $record->id = $DB->insert_record('ratingallocate_choices', $record);
+
+        }
+    }
+
+    /**
+     * Creates the specified choices.
+     *
+     * @Given /^the following ratings exist:$/
+     *
+     * @throws Exception
+     * @throws PendingException
+     * @param TableNode $data
+     */
+    public function the_following_ratings_exist(TableNode $data) {
+        global $DB;
+
+        foreach ($data->getColumnsHash() as $record) {
+
+            if (!isset($record['choice'])) {
+                throw new coding_exception('choice must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data');
+            }
+
+            if (!isset($record['user'])) {
+                throw new coding_exception('user must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data');
+            }
+
+            if (!isset($record['rating'])) {
+                throw new coding_exception('rating must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data');
+            }
+
+            $user = $DB->get_record('user', array('username' => $record['user']));
+            $choice = $DB->get_record('ratingallocate_choices', array('title' => $record['choice']));
+
+            $record['userid'] = $user->id;
+            $record['choiceid'] = $choice->id;
+
+            $record = (object)$record;
+
+            // Add the subscription.
+            $record->id = $DB->insert_record('ratingallocate_ratings', $record);
+
+        }
+    }
+
+        /**
      * Fills the respective fields of a choice.
      *
      * @Given /^I set the values of the choice to:$/
@@ -92,6 +171,84 @@ class behat_mod_ratingallocate extends behat_base {
         $link = $this->find('xpath', $fieldxpath);
         $link->click();
         $this->execute('behat_general::i_click_on', array("Yes", "button"));
+    }
+
+    /**
+     * Ensures that a user is assigned to a choice in manual allocation view.
+     *
+     * @Then /^I should see "([^"]*)" assigned to "([^"]*)"$/
+     *
+     * @param string $firstname firstname of the user
+     * @param string $choicetitle title of the choice
+     * @throws ExpectationException
+     * @throws dml_exception
+     */
+    public function i_should_see_assigned_to($firstname, $choicetitle) {
+        global $DB;
+        $choice = $DB->get_record('ratingallocate_choices', array('title' => $choicetitle));
+        $user = $DB->get_record('user', array('firstname' => $firstname));
+
+        $fieldxpath = "//table[contains(concat(\" \", normalize-space(@class), \" \"), \" ratingallocate_ratings_table \")]";
+        $fieldxpath .= "//td//input[@id='user_{$user->id}_alloc_{$choice->id}' and @checked]";
+        try {
+            $this->find('xpath', $fieldxpath);
+        } catch (ElementNotFoundException $e) {
+            throw new ExpectationException('"' . $firstname . '" is not assigned to choice "' .
+                $choicetitle . '"', $this->getSession());
+        }
+    }
+
+    /**
+     * Ensures that a user is not assigned to a choice in manual allocation view.
+     *
+     * @Then /^I should see "([^"]*)" not assigned to "([^"]*)"$/
+     *
+     * @param string $firstname firstname of the user
+     * @param string $choicetitle title of the choice
+     * @throws ExpectationException
+     * @throws dml_exception
+     */
+    public function i_should_see_not_assigned_to($firstname, $choicetitle) {
+        global $DB;
+        $choice = $DB->get_record('ratingallocate_choices', array('title' => $choicetitle));
+        $user = $DB->get_record('user', array('firstname' => $firstname));
+
+        $fieldxpath = "//table[contains(concat(\" \", normalize-space(@class), \" \"), \" ratingallocate_ratings_table \")]";
+        $checkbox = $fieldxpath . "//td//input[@id='user_{$user->id}_alloc_{$choice->id}']";
+        $checked = $fieldxpath . "//td//input[@id='user_{$user->id}_alloc_{$choice->id}' and @checked]";
+        try {
+            $this->find('xpath', $checkbox);
+        } catch (ElementNotFoundException $e) {
+            throw new ExpectationException('"' . $firstname . '" or choice "' .
+                $choicetitle . '" could not be found in the table', $this->getSession());
+        }
+        try {
+            $this->find('xpath', $checked);
+        } catch (ElementNotFoundException $e) {
+            return;
+        }
+        throw new ExpectationException('"' . $firstname . '" is assigned to the choice "' .
+            $choicetitle . '"', $this->getSession());
+    }
+
+    /**
+     * Ensures that a user is assigned to a choice in manual allocation view.
+     *
+     * @When /^I assign "([^"]*)" to choice "([^"]*)"$/
+     *
+     * @param string $firstname firstname of the user
+     * @param string $choicetitle title of the choice
+     * @throws dml_exception
+     */
+    public function i_assign_to_choice($firstname, $choicetitle) {
+        global $DB;
+
+        $choice = $DB->get_record('ratingallocate_choices', array('title' => $choicetitle));
+        $user = $DB->get_record('user', array('firstname' => $firstname));
+
+        $fieldxpath = "//input[@name='allocdata[{$user->id}]']";
+        $elements = $this->find_all('xpath', $fieldxpath);
+        $this->getSession()->getDriver()->selectOption($fieldxpath, $choice->id);
     }
 
     /**
