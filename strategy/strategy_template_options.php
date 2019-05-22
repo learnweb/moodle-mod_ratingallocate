@@ -109,7 +109,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             $defaultrating = $this->get_strategysetting('default');
             $defaultrating = $defaultrating == null ? max(array_keys($choiceoptions)) : $defaultrating;
             // Try to restore previous ratings.
-            if (is_numeric($data->rating) && $data->rating >= 0 && $data->rating <= $defaultrating) {
+            if (is_numeric($data->rating) && $data->rating >= 0 && $data->rating <= max(array_keys($choiceoptions))) {
                 $mform->setDefault($ratingelem, $data->rating);
             } else {
                 $mform->setDefault($ratingelem, $defaultrating);
