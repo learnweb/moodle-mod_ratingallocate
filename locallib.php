@@ -194,19 +194,26 @@ class ratingallocate {
      * @throws coding_exception
      */
     private function process_action_start_distribution() {
-        global $DB;
+        global $DB, $PAGE;
         // Process form: Start distribution and call default page after finishing.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
-            /* @var mod_ratingallocate_renderer */
-            $renderer = $this->get_renderer();
+
             if ($this->get_algorithm_status() === \mod_ratingallocate\algorithm_status::running) {
                 // Don't run, if an instance is already running.
-                $renderer->add_notification(get_string('algorithm_already_running', ratingallocate_MOD_NAME));
+                redirect(new moodle_url('/mod/ratingallocate/view.php',
+                    array('id' => $this->coursemodule->id)),
+                    get_string('algorithm_already_running', ratingallocate_MOD_NAME),
+                    null,
+                    \core\output\notification::NOTIFY_INFO);
             } else if ($this->ratingallocate->runalgorithmbycron === "1" &&
                 $this->get_algorithm_status() === \mod_ratingallocate\algorithm_status::notstarted
             ) {
                 // Don't run, if the cron has not started yet, but is set as priority.
-                $renderer->add_notification(get_string('algorithm_scheduled_for_cron', ratingallocate_MOD_NAME));
+                redirect(new moodle_url('/mod/ratingallocate/view.php',
+                    array('id' => $this->coursemodule->id)),
+                    get_string('algorithm_scheduled_for_cron', ratingallocate_MOD_NAME),
+                    null,
+                    \core\output\notification::NOTIFY_INFO);
             } else {
                 $this->origdbrecord->{this_db\ratingallocate::ALGORITHMSTATUS} = \mod_ratingallocate\algorithm_status::running;
                 $DB->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
@@ -221,11 +228,15 @@ class ratingallocate {
                     context_course::instance($this->course->id), $this->ratingallocateid, $timeneeded);
                 $event->trigger();
 
-                $renderer->add_notification(get_string('distribution_saved', ratingallocate_MOD_NAME, $timeneeded),
-                    self::NOTIFY_SUCCESS);
+                redirect(new moodle_url($PAGE->url->out()),
+                    get_string('distribution_saved', ratingallocate_MOD_NAME, $timeneeded),
+                    null,
+                    \core\output\notification::NOTIFY_SUCCESS);
             }
         }
-        return $this->process_default();
+        redirect(new moodle_url('/mod/ratingallocate/view.php',
+            array('id' => $this->coursemodule->id)));
+        return;
     }
 
     private function process_action_give_rating() {
@@ -277,7 +288,6 @@ class ratingallocate {
 
     /**
      * Processes the action of a user deleting his rating.
-     * @return string rendered html
      */
     private function process_action_delete_rating() {
         /* @var mod_ratingallocate_renderer */
@@ -293,10 +303,14 @@ class ratingallocate {
                 $this->delete_ratings_of_user($USER->id);
                 $renderer->add_notification(get_string('ratings_deleted', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
 
-                return $this->process_default();
+                redirect(new moodle_url('/mod/ratingallocate/view.php',
+                    array('id' => $this->coursemodule->id)),
+                    get_string('ratings_deleted', ratingallocate_MOD_NAME),
+                    null,
+                    \core\output\notification::NOTIFY_SUCCESS);
             }
         }
-        return '';
+        redirect(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id)));
     }
 
     private function process_action_show_choices() {
@@ -331,7 +345,7 @@ class ratingallocate {
     }
 
     private function process_action_edit_choice() {
-        global $DB;
+        global $DB, $PAGE;
 
         $output = '';
         if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
@@ -372,9 +386,9 @@ class ratingallocate {
                             'ratingallocateid' => $this->ratingallocateid,
                             'action' => ACTION_EDIT_CHOICE, 'next' => true)));
                 } else {
-                    // If form was submitted using save or cancel, show the choices table.
-                    $this->process_action_show_choices();
-                    return false;
+                    // If form was submitted using save or cancel, redirect to the choices table.
+                    redirect(new moodle_url('/mod/ratingallocate/view.php',
+                        array('id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES)));
                 }
             } else {
                 $isnext = optional_param('next', false, PARAM_BOOL);
@@ -416,25 +430,26 @@ class ratingallocate {
             global $DB;
             $choiceid = optional_param('choiceid', 0, PARAM_INT);
 
-            /* @var mod_ratingallocate_renderer*/
-            $renderer = $this->get_renderer();
-
             if ($choiceid) {
                 $choice = $DB->get_record(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
                 if ($choice) {
                     $DB->delete_records(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
-                    $renderer->add_notification(get_string('choice_deleted_notification', ratingallocate_MOD_NAME,
-                    $choice->{this_db\ratingallocate_choices::TITLE}),
-                        self::NOTIFY_SUCCESS);
+                    redirect(new moodle_url('/mod/ratingallocate/view.php',
+                        array('id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES)),
+                        get_string('choice_deleted_notification', ratingallocate_MOD_NAME,
+                            $choice->{this_db\ratingallocate_choices::TITLE}),
+                        null,
+                        \core\output\notification::NOTIFY_SUCCESS);
                 } else {
-                    $renderer->add_notification(
-                        get_string('choice_deleted_notification_error', ratingallocate_MOD_NAME)
-                    );
-
+                    redirect(new moodle_url('/mod/ratingallocate/view.php',
+                        array('id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES)),
+                        get_string('choice_deleted_notification_error', ratingallocate_MOD_NAME),
+                        null,
+                        \core\output\notification::NOTIFY_ERROR);
                 }
-
             }
-            $this->process_action_show_choices();
+            redirect(new moodle_url('/mod/ratingallocate/view.php',
+                array('id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES)));
         }
     }
 
@@ -445,6 +460,8 @@ class ratingallocate {
             global $OUTPUT, $PAGE;
 
             $mform = new manual_alloc_form($PAGE->url, $this);
+            $notification = '';
+            $notificationtype = null;
 
             if (!$mform->no_submit_button_pressed() && $data = $mform->get_submitted_data()) {
                 if (!$mform->is_cancelled() ) {
@@ -453,29 +470,44 @@ class ratingallocate {
                     $status = $this->get_status();
                     if ($status === self::DISTRIBUTION_STATUS_TOO_EARLY ||
                         $status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
-                        $renderer->add_notification(
-                            get_string('modify_allocation_group_desc_'.$status, ratingallocate_MOD_NAME));
+                        $notification = get_string('modify_allocation_group_desc_'.$status, ratingallocate_MOD_NAME);
+                        $notificationtype = \core\output\notification::NOTIFY_WARNING;
                     } else {
                         $allocationdata = optional_param_array('allocdata', array(), PARAM_INT);
                         if ($userdata = optional_param_array('userdata', null, PARAM_INT)) {
                             $this->save_manual_allocation_form($allocationdata, $userdata);
-                            $renderer->add_notification(get_string('manual_allocation_saved',
-                                ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
+                            $notification = get_string('manual_allocation_saved', ratingallocate_MOD_NAME);
+                            $notificationtype = \core\output\notification::NOTIFY_SUCCESS;
                         } else {
-                            $renderer->add_notification(get_string('manual_allocation_nothing_to_be_saved',
-                                ratingallocate_MOD_NAME), self::NOTIFY_MESSAGE);
+                            $notification = get_string('manual_allocation_nothing_to_be_saved', ratingallocate_MOD_NAME);
+                            $notificationtype = \core\output\notification::NOTIFY_INFO;
                         }
                     }
                 } else {
-                    return $this->process_default();
+                    redirect(new moodle_url('/mod/ratingallocate/view.php',
+                        array('id' => $this->coursemodule->id)));
                 }
-                // If form was submitted using save or cancel, show the default page.
-                if (array_key_exists("submitbutton",$data)){
-                    return $this->process_default();
+                // If form was submitted using save or cancel, retirect to the default page.
+                if (array_key_exists("submitbutton", $data)){
+                    if ($notification) {
+                        redirect(new moodle_url('/mod/ratingallocate/view.php',
+                            array('id' => $this->coursemodule->id)), $notification, null, $notificationtype);
+
+                    } else {
+                        redirect(new moodle_url('/mod/ratingallocate/view.php',
+                            array('id' => $this->coursemodule->id)));
+                    }
                 // If the save and continue button was pressed,
-                // reinitialize the form to refresh the checked radiobuttons.
+                // redirect to the manual allocation form to refresh the checked radiobuttons.
                 } else if (array_key_exists("submitbutton2",$data)){
-                    $mform = new manual_alloc_form($PAGE->url, $this);
+                    if ($notification) {
+                        redirect(new moodle_url('/mod/ratingallocate/view.php',
+                            array('id' => $this->coursemodule->id, 'action' => ACTION_MANUAL_ALLOCATION)), $notification, null, $notificationtype);
+
+                    } else {
+                        redirect(new moodle_url('/mod/ratingallocate/view.php',
+                            array('id' => $this->coursemodule->id, 'action' => ACTION_MANUAL_ALLOCATION)));
+                    }
                 }
             }
             $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
@@ -554,112 +586,28 @@ class ratingallocate {
     private function process_publish_allocations() {
         $status = $this->get_status();
         if ($status === self::DISTRIBUTION_STATUS_READY_ALLOC_STARTED) {
-            global $USER;
 
-            $this->origdbrecord->{this_db\ratingallocate::PUBLISHED}   = true;
-            $this->origdbrecord->{this_db\ratingallocate::PUBLISHDATE} = time();
-            $this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} = -1;
-            $this->ratingallocate = new ratingallocate_db_wrapper($this->origdbrecord);
-            $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+            $this->publish_allocation();
 
-            // Create the instance.
-            $domination = new mod_ratingallocate\task\send_distribution_notification();
-
-            // Add custom data.
-            $domination->set_component('mod_ratingallocate');
-            $domination->set_custom_data(array(
-                            'ratingallocateid' => $this->ratingallocateid
-            ));
-
-            // Queue it.
-            \core\task\manager::queue_adhoc_task($domination);
-
-            // Logging.
-            $event = \mod_ratingallocate\event\allocation_published::create_simple(
-                    context_course::instance($this->course->id), $this->ratingallocateid);
-            $event->trigger();
-
-            /* @var mod_ratingallocate_renderer */
-            $renderer = $this->get_renderer();
-            $renderer->add_notification( get_string('distribution_published', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
+            redirect(new moodle_url('/mod/ratingallocate/view.php',
+                array('id' => $this->coursemodule->id)),
+                get_string('distribution_published', ratingallocate_MOD_NAME),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS);
         }
-        return $this->process_default();
+
+        redirect(new moodle_url('/mod/ratingallocate/view.php',
+            array('id' => $this->coursemodule->id)));
     }
 
     private function process_action_allocation_to_grouping() {
-        $groupingidname = ratingallocate_MOD_NAME . '_instid_' . $this->ratingallocateid;
-        // Search if there is already a grouping from us.
-        $grouping = groups_get_grouping_by_idnumber($this->course->id, $groupingidname);
-        $groupingid = null;
-        if (!$grouping) {
-            // Create grouping.
-            $data = new stdClass();
-            $data->name = get_string('groupingname', ratingallocate_MOD_NAME, $this->ratingallocate->name);
-            $data->idnumber = $groupingidname;
-            $data->courseid = $this->course->id;
-            $groupingid = groups_create_grouping($data);
-        } else {
-            $groupingid = $grouping->id;
-        }
+        $this->synchronize_allocation_and_grouping();
 
-        $groupidentifierfromchoiceid = function ($choiceid) {
-            return ratingallocate_MOD_NAME . '_c_' . $choiceid;
-        };
-
-        $choices = $this->get_choices_with_allocationcount();
-
-        // Make a new array containing only the identifiers of the choices.
-        $choiceids = array();
-        foreach ($choices as $id => $choice) {
-            $choiceids[$groupidentifierfromchoiceid($choice->id)] = array('key' => $id            );
-        }
-
-        // Dind all associated groups in this grouping.
-        $groups = groups_get_all_groups($this->course->id, 0, $groupingid);
-
-        // Loop through the groups in the grouping: if the choice does not exist anymore -> delete.
-        // Otherwise mark it.
-        foreach ($groups as $group) {
-            if (array_key_exists($group->idnumber, $choiceids)) {
-                // Group exists, mark.
-                $choiceids[$group->idnumber]['exists'] = true;
-                $choiceids[$group->idnumber]['groupid'] = $group->id;
-            } else {
-                // Delete group $group->id.
-                groups_delete_group($group->id);
-            }
-        }
-
-        // Create groups groups for new identifiers or empty group if it exists.
-        foreach ($choiceids as $groupid => $choice) {
-            if (key_exists('exists', $choice)) {
-                // Remove all members.
-                groups_delete_group_members_by_group($choice['groupid']);
-            } else {
-                $data = new stdClass();
-                $data->courseid = $this->course->id;
-                $data->name = $choices[$choice['key']]->title;
-                $data->idnumber = $groupid;
-                $createdid = groups_create_group($data);
-                groups_assign_grouping($groupingid, $createdid);
-                $choiceids[$groupid]['groupid'] = $createdid;
-            }
-        }
-
-        // Add all participants in the correct group.
-        $allocations = $this->get_allocations();
-        foreach ($allocations as $id => $allocation) {
-            $choiceid = $allocation->choiceid;
-            $userid = $allocation->userid;
-            $choiceidentifier = $groupidentifierfromchoiceid($choiceid);
-            groups_add_member($choiceids[$choiceidentifier]['groupid'], $userid);
-        }
-        // Invalidate the grouping cache for the course.
-        cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($this->course->id));
-        $renderer = $this->get_renderer();
-        $renderer->add_notification( get_string('moodlegroups_created', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
-
-        return $this->process_default();
+        redirect(new moodle_url('/mod/ratingallocate/view.php',
+            array('id' => $this->coursemodule->id)),
+            get_string('moodlegroups_created', ratingallocate_MOD_NAME),
+            null,
+            \core\output\notification::NOTIFY_SUCCESS);
     }
 
     private function process_default() {
@@ -734,7 +682,7 @@ class ratingallocate {
                 break;
 
             case ACTION_DELETE_RATING:
-                $output .= $this->process_action_delete_rating();
+                $this->process_action_delete_rating();
                 break;
 
             case ACTION_SHOW_CHOICES:
@@ -763,11 +711,11 @@ class ratingallocate {
                 return "";
 
             case ACTION_PUBLISH_ALLOCATIONS:
-                $output .= $this->process_publish_allocations();
+                $this->process_publish_allocations();
                 break;
 
             case ACTION_ALLOCATION_TO_GROUPING:
-                $output .= $this->process_action_allocation_to_grouping();
+                $this->process_action_allocation_to_grouping();
                 break;
 
             case ACTION_MANUAL_ALLOCATION:
@@ -890,6 +838,117 @@ class ratingallocate {
     }
 
     /**
+     * Creates moodle groups from the current ratingallocate allocation or synchronizes the group user assignments
+     * based on the current allocation.
+     * @throws coding_exception
+     * @throws moodle_exception
+     * @throws required_capability_exception
+     */
+    public function synchronize_allocation_and_grouping() {
+        require_capability('moodle/course:managegroups', $this->context);
+
+        $groupingidname = ratingallocate_MOD_NAME . '_instid_' . $this->ratingallocateid;
+        // Search if there is already a grouping from us.
+        $grouping = groups_get_grouping_by_idnumber($this->course->id, $groupingidname);
+        $groupingid = null;
+        if (!$grouping) {
+            // Create grouping.
+            $data = new stdClass();
+            $data->name = get_string('groupingname', ratingallocate_MOD_NAME, $this->ratingallocate->name);
+            $data->idnumber = $groupingidname;
+            $data->courseid = $this->course->id;
+            $groupingid = groups_create_grouping($data);
+        } else {
+            $groupingid = $grouping->id;
+        }
+
+        $groupidentifierfromchoiceid = function ($choiceid) {
+            return ratingallocate_MOD_NAME . '_c_' . $choiceid;
+        };
+
+        $choices = $this->get_choices_with_allocationcount();
+
+        // Make a new array containing only the identifiers of the choices.
+        $choiceids = array();
+        foreach ($choices as $id => $choice) {
+            $choiceids[$groupidentifierfromchoiceid($choice->id)] = array('key' => $id);
+        }
+
+        // Dind all associated groups in this grouping.
+        $groups = groups_get_all_groups($this->course->id, 0, $groupingid);
+
+        // Loop through the groups in the grouping: if the choice does not exist anymore -> delete.
+        // Otherwise mark it.
+        foreach ($groups as $group) {
+            if (array_key_exists($group->idnumber, $choiceids)) {
+                // Group exists, mark.
+                $choiceids[$group->idnumber]['exists'] = true;
+                $choiceids[$group->idnumber]['groupid'] = $group->id;
+            } else {
+                // Delete group $group->id.
+                groups_delete_group($group->id);
+            }
+        }
+
+        // Create groups groups for new identifiers or empty group if it exists.
+        foreach ($choiceids as $groupid => $choice) {
+            if (key_exists('exists', $choice)) {
+                // Remove all members.
+                groups_delete_group_members_by_group($choice['groupid']);
+            } else {
+                $data = new stdClass();
+                $data->courseid = $this->course->id;
+                $data->name = $choices[$choice['key']]->title;
+                $data->idnumber = $groupid;
+                $createdid = groups_create_group($data);
+                groups_assign_grouping($groupingid, $createdid);
+                $choiceids[$groupid]['groupid'] = $createdid;
+            }
+        }
+
+        // Add all participants in the correct group.
+        $allocations = $this->get_allocations();
+        foreach ($allocations as $id => $allocation) {
+            $choiceid = $allocation->choiceid;
+            $userid = $allocation->userid;
+            $choiceidentifier = $groupidentifierfromchoiceid($choiceid);
+            groups_add_member($choiceids[$choiceidentifier]['groupid'], $userid);
+        }
+        // Invalidate the grouping cache for the course.
+        cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($this->course->id));
+    }
+
+    /**
+     * Publish the allocation and schedule to send the notifications to the participants.
+     */
+    public function publish_allocation() {
+        require_capability('mod/ratingallocate:start_distribution', $this->context);
+
+        $this->origdbrecord->{this_db\ratingallocate::PUBLISHED}   = true;
+        $this->origdbrecord->{this_db\ratingallocate::PUBLISHDATE} = time();
+        $this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} = -1;
+        $this->ratingallocate = new ratingallocate_db_wrapper($this->origdbrecord);
+        $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+
+        // Create the instance.
+        $task = new mod_ratingallocate\task\send_distribution_notification();
+
+        // Add custom data.
+        $task->set_component('mod_ratingallocate');
+        $task->set_custom_data(array(
+            'ratingallocateid' => $this->ratingallocateid
+        ));
+
+        // Queue it.
+        \core\task\manager::queue_adhoc_task($task);
+
+        // Logging.
+        $event = \mod_ratingallocate\event\allocation_published::create_simple(
+            context_course::instance($this->course->id), $this->ratingallocateid);
+        $event->trigger();
+    }
+
+    /**
      * Call this function when the algorithm failed and the algorithm status has to be set to failed.
      */
     public function set_algorithm_failed() {
@@ -967,14 +1026,6 @@ class ratingallocate {
      */
     public function clear_all_allocations() {
         $this->db->delete_records('ratingallocate_allocations', array('ratingallocateid' => intval($this->ratingallocateid)));
-    }
-
-    /**
-     * Set the published to yes and allow users to see their allocation
-     * @deprecated
-     */
-    public function publish_allocation() {
-        $this->process_publish_allocations();
     }
 
     /**
