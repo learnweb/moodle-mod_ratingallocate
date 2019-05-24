@@ -418,7 +418,8 @@ class ratingallocate {
                     $active,
                     array('id' => $choiceid));
             }
-            $this->process_action_show_choices();
+            redirect(new moodle_url('/mod/ratingallocate/view.php',
+                array('id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES)));
         }
     }
 
