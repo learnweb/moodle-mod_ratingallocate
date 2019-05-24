@@ -336,7 +336,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $output .= $this->render($button);
 
         $output .= $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
-            'ratingallocateid' => $ratingallocateid,
             'action' => ACTION_MANUAL_ALLOCATION)), get_string('manual_allocation_form', ratingallocate_MOD_NAME), 'get',
             array('disabled' => !$ratingover));
 
@@ -386,17 +385,17 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $tableurl = new moodle_url($PAGE->url, array('action' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE));
 
         // Button with link to display information about the allocations and ratings
-        $output .= $this->single_button($tableurl, get_string('show_table', ratingallocate_MOD_NAME));
+        $output .= $this->single_button($tableurl, get_string('show_table', ratingallocate_MOD_NAME), 'get');
 
         $tableurl = new moodle_url($PAGE->url, array('action' => ACTION_SHOW_ALLOCATION_TABLE));
 
         // Button with link to display information about the allocations and ratings
-        $output .= $this->single_button($tableurl, get_string('show_allocation_table', ratingallocate_MOD_NAME));
+        $output .= $this->single_button($tableurl, get_string('show_allocation_table', ratingallocate_MOD_NAME), 'get');
 
         $tableurl = new moodle_url($PAGE->url, array('action' => ACTION_SHOW_STATISTICS));
 
         // Buttton with link to display statistical information about the allocations
-        $output .= $this->single_button($tableurl, get_string('show_allocation_statistics', ratingallocate_MOD_NAME));
+        $output .= $this->single_button($tableurl, get_string('show_allocation_statistics', ratingallocate_MOD_NAME), 'get');
 
         /* TODO: File not readable
         $output .= html_writer::empty_tag('br', array());
