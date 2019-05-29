@@ -62,7 +62,7 @@ class locallib_test extends advanced_testcase {
         // Create activity.
         $mod = mod_ratingallocate_generator::create_instance_with_choices($this, $moduledata, $choicedata);
         $this->assertEquals(2, $DB->count_records(this_db\ratingallocate_choices::TABLE),
-            array(this_db\ratingallocate_choices::ID => $mod->id));
+            "Failure, debug info: " . implode("," , array(this_db\ratingallocate_choices::ID => $mod->id)));
 
         $student1 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         $student2 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
