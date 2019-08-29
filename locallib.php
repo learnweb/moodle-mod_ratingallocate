@@ -1138,7 +1138,7 @@ class ratingallocate {
     public function get_users_with_ratings() {
         $sql = "SELECT DISTINCT r.userid
                 FROM {ratingallocate_choices} c
-                LEFT JOIN {ratingallocate_ratings} r
+                JOIN {ratingallocate_ratings} r
                   ON c.id = r.choiceid
                WHERE c.ratingallocateid = :ratingallocateid AND c.active = 1";
         return $this->db->get_records_sql($sql, array(
