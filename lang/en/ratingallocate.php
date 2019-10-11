@@ -274,6 +274,7 @@ $string['strategy_points_explain_max_zero'] = 'You may only assign 0 points to a
 $string['strategy_points_incorrect_totalpoints'] = 'Incorrect total number of points. The sum of all points has to be {$a}.';
 $string['strategy_points_setting_totalpoints'] = 'Total number of points the user can assign';
 $string['strategy_points_max_count_zero'] = 'You have to assign more than 0 points to at least {$a} choice(s).';
+$string['strategy_points_illegal_entry'] = 'The points that you assign to a choice must be between 0 and {$a}.';
 
 // Specific to Strategy05, Order
 $string['strategy_order_name'] = 'Rank Choices';
