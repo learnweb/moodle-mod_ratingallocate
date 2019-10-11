@@ -46,7 +46,7 @@ Feature: When a student attempts to rate choices it should be validated prior to
     And I am on "Course 1" course homepage
     And I follow "Validated Rating"
     And I press "Edit Rating"
-    And I set the rating form to the following values:
+    And I rate choices with the following points:
       | My first choice | -1 |
       | My second choice | 1 |
       | My third choice | 1 |
@@ -59,7 +59,7 @@ Feature: When a student attempts to rate choices it should be validated prior to
     And I am on "Course 1" course homepage
     And I follow "Validated Rating"
     And I press "Edit Rating"
-    And I set the rating form to the following values:
+    And I rate choices with the following points:
       | My first choice | 1 |
       | My second choice | 2 |
       | My third choice | 3 |
@@ -72,7 +72,7 @@ Feature: When a student attempts to rate choices it should be validated prior to
     And I am on "Course 1" course homepage
     And I follow "Validated Rating"
     And I press "Edit Rating"
-    And I set the rating form to the following values:
+    And I rate choices with the following points:
       | My first choice | 0 |
       | My second choice | 0 |
       | My third choice | 0 |
