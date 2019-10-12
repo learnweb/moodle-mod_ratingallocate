@@ -21,6 +21,7 @@ Feature: When a student attempts to rate choices it should be validated prior to
       | accesstimestart[day] | ##2 days ago##j## |
       | accesstimestart[month] | ##2 days ago##n## |
       | accesstimestart[year] | ##2 days ago##Y## |
+      | strategyopt[strategy_points][maxzero] | 2 |
     And I follow "Validated Rating"
     And I press "Edit Choices"
     And I add a new choice with the values:
@@ -76,6 +77,6 @@ Feature: When a student attempts to rate choices it should be validated prior to
       | My first choice | 0 |
       | My second choice | 0 |
       | My third choice | 0 |
-      | My fourth choice | 0 |
+      | My fourth choice | 100 |
     And I press "Save changes"
-    Then I should see "You have to assign more than 0 points to at least 3 choice(s)."
+    Then I should see "You may give 0 points to at most 2 choice(s)."
