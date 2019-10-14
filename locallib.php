@@ -536,7 +536,7 @@ class ratingallocate {
 
             // Logging.
             $event = \mod_ratingallocate\event\ratings_and_allocation_table_viewed::create_simple(
-                context_course::instance($this->course->id), $this->ratingallocateid);
+                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
             $event->trigger();
         }
         return $output;
