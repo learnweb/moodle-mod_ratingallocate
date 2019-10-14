@@ -578,7 +578,7 @@ class ratingallocate {
                 array('id' => $this->coursemodule->id)), get_string('back'), 'get');
             // Logging.
             $event = \mod_ratingallocate\event\allocation_statistics_viewed::create_simple(
-                context_course::instance($this->course->id), $this->ratingallocateid);
+                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
             $event->trigger();
         }
         return $output;
