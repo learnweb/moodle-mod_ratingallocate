@@ -279,7 +279,7 @@ class ratingallocate {
                 $output .= $renderer->render_ratingallocate_strategyform($mform);
                 // Logging.
                 $event = \mod_ratingallocate\event\rating_viewed::create_simple(
-                    context_course::instance($this->course->id), $this->ratingallocateid);
+                    context_module::instance($this->coursemodule->id), $this->ratingallocateid);
                 $event->trigger();
             }
         }
@@ -1173,7 +1173,7 @@ class ratingallocate {
 
             // Logging.
             $event = \mod_ratingallocate\event\rating_deleted::create_simple(
-                context_course::instance($this->course->id), $this->ratingallocateid);
+                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
             $event->trigger();
         } catch (Exception $e) {
             $transaction->rollback($e);
@@ -1230,7 +1230,7 @@ class ratingallocate {
             $transaction->allow_commit();
             // Logging.
             $event = \mod_ratingallocate\event\rating_saved::create_simple(
-                    context_course::instance($this->course->id), $this->ratingallocateid, $loggingdata);
+                    context_module::instance($this->coursemodule->id), $this->ratingallocateid, $loggingdata);
             $event->trigger();
         } catch (Exception $e) {
             $transaction->rollback($e);
