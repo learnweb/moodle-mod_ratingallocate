@@ -225,7 +225,7 @@ class ratingallocate {
 
                 // Logging.
                 $event = \mod_ratingallocate\event\distribution_triggered::create_simple(
-                    context_course::instance($this->course->id), $this->ratingallocateid, $timeneeded);
+                    context_module::instance($this->coursemodule->id), $this->ratingallocateid, $timeneeded);
                 $event->trigger();
 
                 redirect(new moodle_url($PAGE->url->out()),
@@ -279,7 +279,7 @@ class ratingallocate {
                 $output .= $renderer->render_ratingallocate_strategyform($mform);
                 // Logging.
                 $event = \mod_ratingallocate\event\rating_viewed::create_simple(
-                    context_course::instance($this->course->id), $this->ratingallocateid);
+                    context_module::instance($this->coursemodule->id), $this->ratingallocateid);
                 $event->trigger();
             }
         }
@@ -536,7 +536,7 @@ class ratingallocate {
 
             // Logging.
             $event = \mod_ratingallocate\event\ratings_and_allocation_table_viewed::create_simple(
-                context_course::instance($this->course->id), $this->ratingallocateid);
+                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
             $event->trigger();
         }
         return $output;
@@ -557,7 +557,7 @@ class ratingallocate {
                 array('id' => $this->coursemodule->id)), get_string('back'), 'get');
             // Logging.
             $event = \mod_ratingallocate\event\allocation_table_viewed::create_simple(
-                context_course::instance($this->course->id), $this->ratingallocateid);
+                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
             $event->trigger();
         }
         return $output;
@@ -578,7 +578,7 @@ class ratingallocate {
                 array('id' => $this->coursemodule->id)), get_string('back'), 'get');
             // Logging.
             $event = \mod_ratingallocate\event\allocation_statistics_viewed::create_simple(
-                context_course::instance($this->course->id), $this->ratingallocateid);
+                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
             $event->trigger();
         }
         return $output;
@@ -649,7 +649,7 @@ class ratingallocate {
 
         // Logging.
         $event = \mod_ratingallocate\event\ratingallocate_viewed::create_simple(
-                context_course::instance($this->course->id), $this->ratingallocateid);
+                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
         $event->trigger();
 
         return $output;
@@ -945,7 +945,7 @@ class ratingallocate {
 
         // Logging.
         $event = \mod_ratingallocate\event\allocation_published::create_simple(
-            context_course::instance($this->course->id), $this->ratingallocateid);
+            context_module::instance($this->coursemodule->id), $this->ratingallocateid);
         $event->trigger();
     }
 
@@ -1173,7 +1173,7 @@ class ratingallocate {
 
             // Logging.
             $event = \mod_ratingallocate\event\rating_deleted::create_simple(
-                context_course::instance($this->course->id), $this->ratingallocateid);
+                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
             $event->trigger();
         } catch (Exception $e) {
             $transaction->rollback($e);
@@ -1230,7 +1230,7 @@ class ratingallocate {
             $transaction->allow_commit();
             // Logging.
             $event = \mod_ratingallocate\event\rating_saved::create_simple(
-                    context_course::instance($this->course->id), $this->ratingallocateid, $loggingdata);
+                    context_module::instance($this->coursemodule->id), $this->ratingallocateid, $loggingdata);
             $event->trigger();
         } catch (Exception $e) {
             $transaction->rollback($e);
@@ -1302,7 +1302,7 @@ class ratingallocate {
             }
             // Logging.
             $event = \mod_ratingallocate\event\manual_allocation_saved::create_simple(
-                    context_course::instance($this->course->id), $this->ratingallocateid);
+                    context_module::instance($this->coursemodule->id), $this->ratingallocateid);
             $event->trigger();
 
             $transaction->allow_commit();

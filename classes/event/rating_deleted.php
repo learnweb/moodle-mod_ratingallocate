@@ -31,8 +31,8 @@ defined('MOODLE_INTERNAL') || die();
  **/
 class rating_deleted extends \core\event\base {
 
-    public static function create_simple($coursecontext, $ratingallocateid) {
-        return self::create(array('context' => $coursecontext, 'objectid' => $ratingallocateid));
+    public static function create_simple($modulecontext, $ratingallocateid) {
+        return self::create(array('context' => $modulecontext, 'objectid' => $ratingallocateid));
     }
     protected function init() {
         $this->data['crud'] = 'd';
