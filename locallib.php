@@ -225,7 +225,7 @@ class ratingallocate {
 
                 // Logging.
                 $event = \mod_ratingallocate\event\distribution_triggered::create_simple(
-                    context_course::instance($this->course->id), $this->ratingallocateid, $timeneeded);
+                    context_module::instance($this->coursemodule->id), $this->ratingallocateid, $timeneeded);
                 $event->trigger();
 
                 redirect(new moodle_url($PAGE->url->out()),

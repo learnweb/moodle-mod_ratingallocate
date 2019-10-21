@@ -39,9 +39,9 @@ defined('MOODLE_INTERNAL') || die();
  **/
 class distribution_triggered extends \core\event\base {
     
-    public static function create_simple($coursecontext, $ratingallocateid, $time_needed){
+    public static function create_simple($modulecontext, $ratingallocateid, $time_needed){
         $time_needed_json_valid = json_decode(json_encode($time_needed),true);
-        return self::create(array('context' => $coursecontext, 'objectid' => $ratingallocateid,
+        return self::create(array('context' => $modulecontext, 'objectid' => $ratingallocateid,
                         'other' => array('time_needed'=>$time_needed_json_valid)));
     }
     protected function init() {
