@@ -144,7 +144,7 @@ class ratings_and_allocations_table extends \table_sql {
         $this->define_headers($headers);
 
         // Set additional table settings.
-        $this->sortable(true);
+        $this->sortable(true, 'lastname');
         $this->set_attribute('class', 'ratingallocate_ratings_table');
 
         $this->initialbars(true);
