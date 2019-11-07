@@ -510,7 +510,7 @@ class behat_mod_ratingallocate extends behat_base {
     }
 
     /**
-     * I should see the following rating form.
+     * I set the rating form to the following values (only works for radio buttons).
      *
      * @When /^I set the rating form to the following values:$/
      *
@@ -526,6 +526,27 @@ class behat_mod_ratingallocate extends behat_base {
                 $option->click();
             } catch (ElementNotFoundException $e) {
                 throw new ExpectationException('Option "'.$value.'"  was not found for choice "' . $choice . '".' . $value, $this->getSession());
+            }
+        }
+    }
+
+    /**
+     * Enter points for choices
+     *
+     * @When /^I rate choices with the following points:$/
+     *
+     * @param TableNode $ratingdata values to be set in the rating form
+     */
+    public function i_rate_choices_with_the_following_points(TableNode $ratingdata) {
+        $ratingdatehash = $ratingdata->getRowsHash();
+        // The action depends on the field type.
+        foreach ($ratingdatehash as $choice => $value) {
+            $fieldxpath = "//legend[normalize-space(.)=\"$choice\"]/ancestor::fieldset/descendant::input[@type='text']";
+            try {
+                $option = $this->find('xpath', $fieldxpath);
+                $option->setValue($value);
+            } catch (ElementNotFoundException $e) {
+                throw new ExpectationException('Choice "' . $choice . '" was not found.', $this->getSession());
             }
         }
     }
