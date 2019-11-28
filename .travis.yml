@@ -15,7 +15,7 @@ addons:
 php:
   - 7.0
   - 7.1
-  - 7.2
+  - 7.3
 
 matrix:
  exclude:
@@ -24,23 +24,31 @@ matrix:
    - php: 7.0
      env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
    - php: 7.0
+     env: DB=pgsql MOODLE_BRANCH=MOODLE_38_STABLE
+   - php: 7.0
+     env: DB=mysqli MOODLE_BRANCH=MOODLE_38_STABLE
+   - php: 7.0
      env: DB=pgsql MOODLE_BRANCH=master
    - php: 7.0
      env: DB=mysqli MOODLE_BRANCH=master
+   - php: 7.3
+     env: DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
+   - php: 7.3
+     env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
  fast_finish: true
 
 
 env:
  matrix:
-  - DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
   - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
   - DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
   - DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
+  - DB=pgsql MOODLE_BRANCH=MOODLE_38_STABLE
   - DB=pgsql MOODLE_BRANCH=master
-  - DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
   - DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
   - DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
   - DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
+  - DB=mysqli MOODLE_BRANCH=MOODLE_38_STABLE
   - DB=mysqli MOODLE_BRANCH=master
 
 before_install:
@@ -55,7 +63,7 @@ jobs:
   include:
     # Prechecks against latest Moodle stable only.
     - stage: static
-      php: 7.2
+      php: 7.3
 #      addons:
 #        apt:
 #          packages:
@@ -71,12 +79,12 @@ jobs:
       # - moodle-plugin-ci codechecker
       - moodle-plugin-ci savepoints
       # - moodle-plugin-ci mustache
-      - moodle-plugin-ci grunt
+      - moodle-plugin-ci grunt || [ "$MOODLE_BRANCH" = 'master' ]
       - moodle-plugin-ci validate
 
     # Smaller build matrix for development builds
     - stage: develop
-      php: 7.2
+      php: 7.3
       env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
       install:
       - moodle-plugin-ci install
