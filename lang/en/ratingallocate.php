@@ -46,6 +46,9 @@ $string['crontask'] = 'Automated allocation for Fair Allocation';
 $string['algorithmtimeout'] = 'Algorithm timeout';
 $string['configalgorithmtimeout'] = 'The time in seconds after which the algorithm is assumed to be stuck.
 The current run is terminated and marked as failed.';
+$string['downloaduserfields'] = 'Additional user fields for download';
+$string['configdownloaduserfields'] = 'When downloading a table with users in it, these fields may be shown in addition to the users\' first and last name.';
+$string['userid'] = 'User ID';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Rating Form for Users">
 $string['choicestatusheading'] = 'Status';
