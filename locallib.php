@@ -489,7 +489,7 @@ class ratingallocate {
                         array('id' => $this->coursemodule->id)));
                 }
                 // If form was submitted using save or cancel, retirect to the default page.
-                if (array_key_exists("submitbutton", $data)){
+                if (property_exists($data, "submitbutton")){
                     if ($notification) {
                         redirect(new moodle_url('/mod/ratingallocate/view.php',
                             array('id' => $this->coursemodule->id)), $notification, null, $notificationtype);
@@ -500,7 +500,7 @@ class ratingallocate {
                     }
                 // If the save and continue button was pressed,
                 // redirect to the manual allocation form to refresh the checked radiobuttons.
-                } else if (array_key_exists("submitbutton2",$data)){
+                } else if (property_exists($data, "submitbutton2")){
                     if ($notification) {
                         redirect(new moodle_url('/mod/ratingallocate/view.php',
                             array('id' => $this->coursemodule->id, 'action' => ACTION_MANUAL_ALLOCATION)), $notification, null, $notificationtype);
