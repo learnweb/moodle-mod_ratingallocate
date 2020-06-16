@@ -149,6 +149,10 @@ class provider implements
             $choicedata = new \stdClass();
             $choicedata->choice = $choiceanswer->choice;
             $choicedata->rating = $choiceanswer->rating;
+            if (!isset($choices[$choiceanswer->cmid])) {
+                $choices[$choiceanswer->cmid] = new \stdClass();
+                $choices[$choiceanswer->cmid]->choices = [];
+            }
             $choices[$choiceanswer->cmid]->choices[] = $choicedata;
         }
         $choiceanswers->close();
@@ -187,6 +191,10 @@ class provider implements
         foreach ($alloc as $allocation) {
             $allocationdata = new \stdClass();
             $allocationdata->choice = $allocation->choice;
+            if (!isset($allocations[$allocation->cmid])) {
+                $allocations[$allocation->cmid] = new \stdClass();
+                $allocations[$allocation->cmid]->allocations = [];
+            }
             $allocations[$allocation->cmid]->allocations[] = $allocationdata;
         }
         $alloc->close();
