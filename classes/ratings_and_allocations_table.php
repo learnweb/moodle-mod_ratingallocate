@@ -110,16 +110,27 @@ class ratings_and_allocations_table extends \table_sql {
 
         if ($this->shownames) {
             if ($this->is_downloading()) {
-                $columns[] = 'id';
-                $headers[] = 'ID';
-                $columns[] = 'username';
-                $headers[] = get_string('username');
+                global $CFG;
+                $additionalfields = explode(',', $CFG->ratingallocate_download_userfields);
+                if (in_array('id', $additionalfields)) {
+                    $columns[] = 'id';
+                    $headers[] = 'ID';
+                }
+                if (in_array('username', $additionalfields)) {
+                    $columns[] = 'username';
+                    $headers[] = get_string('username');
+                }
+                if (in_array('idnumber', $additionalfields)) {
+                    $columns[] = 'idnumber';
+                    $headers[] = get_string('idnumber');
+                }
                 $columns[] = 'firstname';
                 $headers[] = get_string('firstname');
                 $columns[] = 'lastname';
                 $headers[] = get_string('lastname');
                 global $COURSE;
-                if (has_capability('moodle/course:useremail', $this->ratingallocate->get_context())) {
+                if (in_array('email', $additionalfields) &&
+                        has_capability('moodle/course:useremail', $this->ratingallocate->get_context())) {
                     $columns[] = 'email';
                     $headers[] = get_string('email');
                 }
