@@ -35,3 +35,6 @@ This module uses a modified Edmonds-karp algorithm to solve the minimum-cost flo
 Worst-Case complexity is O(m^2n^2) with m,n being number of edges (#users+#choices+#ratings_users_gave) and nodes (2+#users+#choices) in the graph.
 Distributing 500 users to 21 choices takes around 11sec.
 
+Changelog
+=========
+The changes for every release are listed here: https://github.com/learnweb/moodle-mod_ratingallocate/wiki/Changelog.
