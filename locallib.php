@@ -1224,10 +1224,12 @@ class ratingallocate {
                     array_push($loggingdata,
                         array('choiceid' => $rating->choiceid, 'rating' => $rating->rating));
                 }
-                $completion = new completion_info($this->course);
-                $completion->set_module_viewed($this->coursemodule);
             }
             $transaction->allow_commit();
+
+            $completion = new completion_info($this->course);
+            $completion->set_module_viewed($this->coursemodule);
+
             // Logging.
             $event = \mod_ratingallocate\event\rating_saved::create_simple(
                     context_module::instance($this->coursemodule->id), $this->ratingallocateid, $loggingdata);
