@@ -65,6 +65,19 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     public function definition() {
         global $CFG, $PAGE;
         $mform = $this->_form;
+        $update = $this->optional_param('update', 0, PARAM_INT);
+        if($update != 0) {
+            global $DB;
+            $courseid = $update;
+            $cm         = get_coursemodule_from_id('ratingallocate', $courseid, 0, false, MUST_EXIST);
+            $course     = get_course($cm->course);
+            $ratingallocatedb  = $DB->get_record('ratingallocate', array('id' => $cm->instance), '*', MUST_EXIST);
+            $context = context_module::instance($cm->id);
+            $ratingallocate = new ratingallocate($ratingallocatedb, $course, $cm, $context);
+            $disable_strategy = $ratingallocate->get_number_of_active_raters() > 0;
+        } else {
+            $disable_strategy = false;
+        }
 
         // Adding the "general" fieldset, where all the common settings are showed.
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -92,7 +105,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         foreach (\strategymanager::get_strategies() as $strategy) {
             $selectoptions[$strategy] = get_string($strategy . '_name', self::MOD_NAME);
         }
-        $mform->addElement('select', $elementname, get_string('select_strategy', self::MOD_NAME), $selectoptions);
+        $mform->addElement('select', $elementname, get_string('select_strategy', self::MOD_NAME), $selectoptions,
+            $disable_strategy? ['disabled' => ''] : null);
         $mform->addHelpButton($elementname, 'select_strategy', self::MOD_NAME);
         $mform->addRule('strategy', null, 'required', null, 'client');
 

@@ -98,6 +98,12 @@ $string['algorithm_already_running']='Another instance of the allocation algorit
 $string['algorithm_scheduled_for_cron']='The allocation algorithm run is scheduled for immediate execution by the cron job. Please wait a few minutes and refresh the page.';
 $string['start_distribution'] = 'Run Allocation Algorithm';
 $string['confirm_start_distribution'] = 'Running the algorithm will delete all existing allocations, if any. Are you sure to continue?';
+$string['delete_all_ratings'] = 'Delete all student ratings';
+$string['delete_all_ratings_explanation'] = 'Deletes all ratings that students have submitted so far. Use with caution.';
+$string['confirm_delete_all_ratings'] = 'Are you sure you want to delete all ratings students have submitted so far?';
+$string['error_deleting_all_insufficient_permission'] = 'You don\'t have the permission to do that';
+$string['error_deleting_all_no_rating_possible'] = 'You can\'t delete the ratings when the rating phase is already over';
+$string['success_deleting_all'] = 'Deleted all ratings';
 $string['unassigned_users'] = 'Unassigned Users';
 $string['invalid_dates'] = 'Dates are invalid. Starting date must be before ending date.';
 $string['invalid_publishdate'] = 'Publication date is invalid. Publication date must be after the end of rating.';
@@ -217,7 +223,10 @@ $string['select_strategy_help'] = 'Choose a rating strategy:
 * **Likert Scale** The user can rate each choice with a number from a defined range. The range of numbers can be defined individually (beginning with 0). A high number corresponds to a high preference.
 * **Give Points** The user can rate the choices by assigning a number of points. The maximum number of points can be defined individually. A high number of points corresponds to a high preference.
 * **Rank Choices** The user has to rank the available choices. How many choices need to be rated can be defined individually.
-* **Tick Accept**  The user can state for each choice whether it is acceptable for him/her.';
+* **Tick Accept**  The user can state for each choice whether it is acceptable for him/her.
+
+This option can\'t be changed if a student has already submitted their preference.
+';
 $string['strategy_not_specified'] = 'You have to select a strategy.';
 $string['strategyspecificoptions'] = 'Strategy specific options';
 
@@ -336,6 +345,9 @@ $string['log_allocation_statistics_viewed_description'] =  'The user with id "{$
 
 $string['log_index_viewed'] = 'User viewed all instances of Fair Allocation';
 $string['log_index_viewed_description'] =  'The user with id "{$a->userid}" viewed all instances of Fair Allocation in this course.';
+
+$string['log_all_ratings_deleted'] = 'All ratings of a Fair Allocation instance were deleted';
+$string['log_all_ratings_deleted_description'] = 'The user with id "{$a->userid}" has deleted all ratings for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 
 $string['no_id_or_m_error'] = 'You must specify a course_module ID or an instance ID';
