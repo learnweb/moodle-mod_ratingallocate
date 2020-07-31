@@ -160,16 +160,41 @@ class allocations_table extends \table_sql {
                 $noallocation->choicetitle = get_string(
                     'allocations_table_noallocation',
                     ratingallocate_MOD_NAME);
+                $enrolled_user_ids = array_map(function($x) {return $x->id;},
+                    $this->ratingallocate->get_raters_in_course());
 
                 foreach ($userwithrating as $userid => $user) {
+                    // Ignore users that were not allocated due to them unenrolling from the course.
+                    if (!in_array($userid, $enrolled_user_ids)) {
+                        continue;
+                    }
                     if (object_property_exists($noallocation, 'users')) {
                         $noallocation->users .= ', ';
                     } else {
                         $noallocation->users = '';
                     }
                     $noallocation->users .= $this->get_user_link($user);
+                    unset($userwithrating[$userid]);
                 }
                 $data []= $noallocation;
+            }
+            // If there are useres, which rated but unenrolled prior to the allocation, add them to a special row.
+            if (count($userwithrating) > 0 AND ($this->currpage + 1) * $this->pagesize >= $this->totalrows) {
+                $unenrolled = new \stdClass();
+                $unenrolled->choicetitle = get_string(
+                    'allocations_table_unenrolled',
+                    ratingallocate_MOD_NAME);
+
+                foreach ($userwithrating as $userid => $user) {
+                    if (object_property_exists($unenrolled, 'users')) {
+                        $unenrolled->users .= ', ';
+                    } else {
+                        $unenrolled->users = '';
+                    }
+                    $unenrolled->users .= $this->get_user_link($user);
+                    unset($userwithrating[$userid]);
+                }
+                $data []= $unenrolled;
             }
         }
 
