@@ -229,6 +229,7 @@ This option can\'t be changed if a student has already submitted their preferenc
 ';
 $string['strategy_not_specified'] = 'You have to select a strategy.';
 $string['strategyspecificoptions'] = 'Strategy specific options';
+$string['strategy_altered_after_preferences'] = 'Strategy cannot be changed after preferences where submitted';
 
 $string['err_required'] = 'You need to provide a value for this field.';
 $string['err_minimum'] = 'The minimum value for this field is {$a}.';
