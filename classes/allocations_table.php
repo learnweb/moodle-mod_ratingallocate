@@ -94,6 +94,7 @@ class allocations_table extends \table_sql {
         if (!$this->is_downloading()) {
             $columns[] = 'users';
             $headers[] = get_string('allocations_table_users', ratingallocate_MOD_NAME);
+            $this->no_sorting('users');
         }
 
         $this->define_columns($columns);
