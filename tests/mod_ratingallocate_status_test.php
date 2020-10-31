@@ -27,7 +27,7 @@ require_once(__DIR__ . '/../locallib.php');
  */
 class mod_ratingallocate_status_testcase extends advanced_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
             global $PAGE;
             $PAGE->set_url('/');
             $this->resetAfterTest();

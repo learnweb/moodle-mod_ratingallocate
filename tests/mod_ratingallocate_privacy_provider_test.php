@@ -43,7 +43,7 @@ class mod_ratingallocate_privacy_provider_testcase extends \core_privacy\tests\p
     /**
      * {@inheritdoc}
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest();
         $this->testmodule = new mod_ratingallocate_generated_module($this);
     }
