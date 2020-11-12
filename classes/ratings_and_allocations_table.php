@@ -208,7 +208,7 @@ class ratings_and_allocations_table extends \table_sql {
         }
 
         if (!$this->is_downloading()) {
-            $this->add_summary_row();   
+            $this->add_summary_row();
             $this->print_hidden_user_fields($users);
         }
 
@@ -501,7 +501,7 @@ class ratings_and_allocations_table extends \table_sql {
         $userids = $this->filter_userids($userids);
 
         $sortfields = $this->get_sort_columns();
-        $fields = "u.*, u.firstname as firstname, u.lastname as lastname";
+        $fields = "u.*";
         if ($userids) {
             $where = "u.id in (".implode(",", $userids).")";
         } else {
