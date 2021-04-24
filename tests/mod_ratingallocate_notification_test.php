@@ -129,7 +129,7 @@ class mod_ratingallocate_notification_testcase extends advanced_testcase {
         foreach ($messages as $message) {
             if ($message->useridto == $userid) {
                 $messageexists = true;
-                $this->assertContains($needle, $message->fullmessage);
+                $this->assertStringContainsString($needle, $message->fullmessage);
             }
         }
         $this->assertTrue($messageexists, 'Message for userid '. $userid . 'could not be found.' );
