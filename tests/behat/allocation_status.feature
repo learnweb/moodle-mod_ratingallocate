@@ -47,12 +47,8 @@ Feature: Students should get status information according to their rating and th
     And I follow "My Fair Allocation"
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
-      | accesstimestart[day] | ##2 days ago##j## |
-      | accesstimestart[month] | ##2 days ago##n## |
-      | accesstimestart[year] | ##2 days ago##Y## |
-      | accesstimestop[day] | ##yesterday##j## |
-      | accesstimestop[month] | ##yesterday##n## |
-      | accesstimestop[year] | ##yesterday##Y## |
+      | Rating begins at | ##2 days ago## |
+      | Rating ends at | ##yesterday## |
     And I press "id_submitbutton"
     And I run the scheduled task "mod_ratingallocate\task\cron_task"
     And I am on "Course 1" course homepage

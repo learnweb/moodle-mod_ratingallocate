@@ -18,9 +18,7 @@ Feature: When a student attempts to rate choices it should be validated prior to
     And I add a "Fair Allocation" to section "1" and I fill the form with:
       | id_name | Validated Rating |
       | strategy    | strategy_points |
-      | accesstimestart[day] | ##2 days ago##j## |
-      | accesstimestart[month] | ##2 days ago##n## |
-      | accesstimestart[year] | ##2 days ago##Y## |
+      | Rating begins at | ##2 days ago## |
       | strategyopt[strategy_points][maxzero] | 2 |
     And I follow "Validated Rating"
     And I press "Edit Choices"
