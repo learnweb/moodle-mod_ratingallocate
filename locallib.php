@@ -680,6 +680,7 @@ class ratingallocate {
 
             case ACTION_GIVE_RATING:
                 $output .= $this->process_action_give_rating();
+                $this->showinfo = false;
                 break;
 
             case ACTION_DELETE_RATING:
