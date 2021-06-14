@@ -136,28 +136,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 get_string('last_algorithm_run_status_' . $status->algorithmstatus, ratingallocate_MOD_NAME));
         }
 
-        //print available choices if no choice form is displayed
-        if(!empty($status->available_choices)) {
-        $row = new html_table_row();
-            $cell1 = new html_table_cell(get_string('rateable_choices', ratingallocate_MOD_NAME));
-
-            $choices_html = '';
-            foreach ($status->available_choices as $choice) {
-                $choices_html .= '<li>';
-                $choices_html .= format_string($choice->title);
-                $choices_html .= '</li>';
-            }
-
-            $cell2 = new html_table_cell('<ul>' . $choices_html . '</ul>');
-//             $cell2->attributes = array('class' => 'submissionnotgraded');
-            $row->cells = array(
-                            $cell1,
-                            $cell2
-            );
-            $t->data[] = $row;
-        }
-
-        //print own choices if no choice form is displayed
+        // Print own choices or full list of available choices.
         if(!empty($status->own_choices) && $status->show_user_info && $accesstimestart < $time) {
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('your_rating', ratingallocate_MOD_NAME));
@@ -174,6 +153,24 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $row->cells = array(
                             $cell1,
                             $cell2
+            );
+            $t->data[] = $row;
+        } else if (!empty($status->available_choices)) { // Print available choices.
+            $row = new html_table_row();
+            $cell1 = new html_table_cell(get_string('rateable_choices', ratingallocate_MOD_NAME));
+
+            $choices_html = '';
+            foreach ($status->available_choices as $choice) {
+                $choices_html .= '<li>';
+                $choices_html .= format_string($choice->title);
+                $choices_html .= '</li>';
+            }
+
+            $cell2 = new html_table_cell('<ul>' . $choices_html . '</ul>');
+//          $cell2->attributes = array('class' => 'submissionnotgraded');
+            $row->cells = array(
+                $cell1,
+                $cell2
             );
             $t->data[] = $row;
         }
