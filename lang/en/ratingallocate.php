@@ -356,3 +356,10 @@ $string['privacy:metadata:preference:flextable_manual_filter'] = 'Stores the fil
 
 $string['filtertabledesc'] = 'Describes the filters that are applied to the allocation table.';
 $string['filtermanualtabledesc'] = 'Describes the filters that are applied to the table of the manual allocation form.';
+
+$string['choicepagesize'] = 'Choice page size';
+$string['choicepagesize_desc'] = 'Maximum number of choices to display when a user is rating.';
+$string['submitprevious'] = 'Save and show previous page';
+$string['submitnext'] = 'Save and show next page';
+$string['showingperpage'] = 'Showing {$a} items per page';
+$string['showingperpagechange'] = 'Change ...';

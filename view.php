@@ -34,7 +34,7 @@ require_once(dirname(__FILE__).'/solver/ford-fulkerson-koegel.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $n  = optional_param('m', 0, PARAM_INT);  // ratingallocate instance ID - it should be named as the first character of the module
-
+$action = optional_param('action', '', PARAM_TEXT);
 
 if ($id) {
     $cm         = get_coursemodule_from_id('ratingallocate', $id, 0, false, MUST_EXIST);
@@ -53,7 +53,7 @@ require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 $PAGE->set_title($cm->name);
 $PAGE->set_context($context);
-$PAGE->set_url('/mod/ratingallocate/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/ratingallocate/view.php', array('id' => $cm->id, 'action' => $action));
 
 require_capability('mod/ratingallocate:view', $context);
 
