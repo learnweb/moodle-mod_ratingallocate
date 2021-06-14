@@ -26,4 +26,8 @@ if ($ADMIN->fulltree) {
             'idnumber'    => new lang_string('idnumber'),
             'email'       => new lang_string('email'),
         ]));
+
+    $settings->add(new admin_setting_configtext('ratingallocate/choicepagesizedefault',
+        get_string('choicepagesize', 'ratingallocate'),
+        get_string('choicepagesize_desc', 'ratingallocate'), '15', PARAM_INT));
 }

@@ -255,27 +255,38 @@ class ratingallocate {
                 $renderer->add_notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
             } else if ($status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
                 // Rating is possible...
-
+                $viewurl = new moodle_url('/mod/ratingallocate/view.php', ['id' => $this->coursemodule->id]);
+                $giveratingurl = new moodle_url('/mod/ratingallocate/view.php',
+                    ['id' => $this->coursemodule->id, 'action' => 'give_rating']);
                 // Suche das richtige Formular nach Strategie.
                 $strategyform = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
 
                 /* @var $mform moodleform */
                 $mform = new $strategyform($PAGE->url->out(), $this);
                 $mform->add_action_buttons();
-
                 if ( $mform->is_cancelled() ) {
                     // Return to view.
-                    redirect("$CFG->wwwroot/mod/ratingallocate/view.php?id=".$this->coursemodule->id);
-                    return "";
+                    redirect($viewurl);
                 } else if ($mform->is_submitted() && $mform->is_validated() && $data = $mform->get_data() ) {
                     // Save submitted data and call default page.
                     $this->save_ratings_to_db($USER->id, $data->data);
                     $renderer->add_notification(get_string('ratings_saved', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
-                    return $this->process_default();
+
+                    if (!empty($data->submitnext)) {
+                        $giveratingurl->param('page', $data->page + 1);
+                        $giveratingurl->param('perpage', $this->get_perpage());
+                        redirect($giveratingurl);
+                    } else if (!empty($data->submitprevious) && !empty($data->page)) {
+                        $giveratingurl->param('page', $data->page - 1);
+                        $giveratingurl->param('perpage', $this->get_perpage());
+                        redirect($giveratingurl);
+                    } else {
+                        redirect($viewurl);
+                    }
                 }
 
                 $mform->definition_after_data();
-
+                $output .= $renderer->perpage_selector($this->get_perpage());
                 $output .= $renderer->render_ratingallocate_strategyform($mform);
                 // Logging.
                 $event = \mod_ratingallocate\event\rating_viewed::create_simple(
@@ -1117,21 +1128,47 @@ class ratingallocate {
     /**
      * Returns all ratings from the user with id $userid.
      * @param int $userid
+     * @param int $page - null = all,
      * @return array
      */
-    public function get_rating_data_for_user($userid) {
+    public function get_rating_data_for_user($userid, $page = null) {
         $sql = "SELECT c.id as choiceid, c.title, c.explanation, c.ratingallocateid, c.maxsize, r.rating, r.id AS ratingid, r.userid
                 FROM {ratingallocate_choices} c
            LEFT JOIN {ratingallocate_ratings} r
                   ON c.id = r.choiceid and r.userid = :userid
                WHERE c.ratingallocateid = :ratingallocateid AND c.active = 1
                ORDER by c.title";
+        if ($page === null) {
+            $limitfrom = 0;
+            $limitnum = 0;
+        } else {
+            $limitnum = $this->get_perpage();
+            $limitfrom = $page * $limitnum;
+        }
         return $this->db->get_records_sql($sql, array(
                     'ratingallocateid' => $this->ratingallocateid,
                     'userid' => $userid
-        ));
+        ), $limitfrom, $limitnum);
     }
 
+    /**
+     * Helper function to get total count of available choices for a rating allocation.
+     */
+    public function get_choice_count() {
+        return $this->db->count_records('ratingallocate_choices',
+            ['ratingallocateid' => $this->ratingallocateid, 'active' => 1]);
+    }
+
+    /**
+     * Helper function to get number of choices to display per page.
+     */
+    public function get_perpage() {
+        $default = get_config('ratingallocate', 'choicepagesizedefault');
+        if (empty($default)) {
+            $default = 20;
+        }
+        return optional_param('perpage', $default, PARAM_INT);
+    }
     /**
      * Returns all ids of users who handed in a rating to any choice of the instance.
      * @return array of userids
