@@ -748,4 +748,27 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $row->cells = array($cell1, $cell2);
         $table->data[] = $row;
     }
+
+    /**
+     * Renders a perpage selector for choice listings
+     *
+     * The scripts using this have to define the $PAGE->url prior to calling this
+     * and deal with eventually submitted value themselves.
+     *
+     * @return string HTML
+     */
+    public function perpage_selector($current = 20) {
+
+        $options = array();
+        foreach (array(10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 1000) as $option) {
+            if ($option != $current) {
+                $options[$option] = $option;
+            }
+        }
+        $select = new single_select($this->page->url, 'perpage', $options, '', array('' => get_string('showingperpagechange', 'mod_ratingallocate')));
+        $select->label = get_string('showingperpage', 'mod_ratingallocate', $current);
+        $select->method = 'post';
+
+        return $this->output->container($this->output->render($select), 'perpagewidget');
+    }
 }
