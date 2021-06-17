@@ -363,7 +363,7 @@ class ratingallocate {
             $data = new stdClass();
             $options = array('subdirs' => false, 'maxfiles' => -1, 'accepted_types' => '*', 'return_types' => FILE_INTERNAL);
             file_prepare_standard_filemanager($data, 'attachments', $options, $this->context,
-                'ratingallocate', 'choice_attachment', $choiceid);
+                'mod_ratingallocate', 'choice_attachment', $choiceid);
 
             $mform = new modify_choice_form(new moodle_url('/mod/ratingallocate/view.php',
                 array('id' => $this->coursemodule->id,
@@ -382,7 +382,7 @@ class ratingallocate {
                         $this->save_modify_choice_form($data);
 
                         $data = file_postupdate_standard_filemanager($data, 'attachments', $options, $this->context,
-                            'ratingallocate', 'choice_attachment', $data->choiceid);
+                            'mod_ratingallocate', 'choice_attachment', $data->choiceid);
                         $renderer->add_notification(get_string("choice_added_notification", ratingallocate_MOD_NAME),
                         self::NOTIFY_SUCCESS);
 
@@ -1568,7 +1568,7 @@ class ratingallocate {
      * @return array of file objects.
      */
     public function get_file_attachments_for_choice($choiceid) {
-        $areafiles = get_file_storage()->get_area_files($this->context->id, "ratingallocate", "choice_attachment", $choiceid);
+        $areafiles = get_file_storage()->get_area_files($this->context->id, 'mod_ratingallocate', 'choice_attachment', $choiceid);
         $files = array();
         foreach ($areafiles as $f) {
             if ($f->is_directory()) {
