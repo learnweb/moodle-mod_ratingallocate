@@ -451,7 +451,12 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $row = array();
             $class = '';
             $row[] = $choice->{this_db\ratingallocate_choices::TITLE};
-            $row[] = $choice->{this_db\ratingallocate_choices::EXPLANATION};
+            $explanation = $choice->{this_db\ratingallocate_choices::EXPLANATION};
+            $attachments = $ratingallocate->get_file_attachments_for_choice($choice->id);
+            if ($attachments) {
+                $explanation .= $this->render_attachments($attachments);
+            }
+            $row[] = $explanation;
             $row[] = $choice->{this_db\ratingallocate_choices::MAXSIZE};
             if ($choice->{this_db\ratingallocate_choices::ACTIVE}) {
                 $row[] = get_string('yes');
@@ -470,6 +475,39 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         }
 
         $table->finish_output();
+    }
+
+    /**
+     * Render file attachments for a certain choice entry
+     * @param array $files array of file attachments
+     * @return string HTML for the attachments
+     */
+    private function render_attachments($files) {
+        $entries = array();
+        foreach ($files as $f) {
+            $filename = $f->get_filename();
+            $url = moodle_url::make_pluginfile_url(
+                $f->get_contextid(),
+                $f->get_component(),
+                $f->get_filearea(),
+                $f->get_itemid(),
+                $f->get_filepath(),
+                $f->get_filename(),
+                false);
+            $a = array(
+                'href' => $url,
+                'title' => $filename,
+            );
+
+            $entry = html_writer::empty_tag('br');
+            $entry .= html_writer::start_tag('a', $a);
+            $entry .= $this->output->image_icon('t/right', $filename, 'moodle', array('title' => 'Download file'));
+            $entry .= $filename;
+            $entry .= html_writer::end_tag('a');
+            $entries[] = $entry;
+        }
+        return implode($entries);
+
     }
 
     /**

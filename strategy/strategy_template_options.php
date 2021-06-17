@@ -106,6 +106,13 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             // Furthermore, use explanation as title/label of group.
             $mform->addGroup($radioarray, 'radioarr_' . $data->choiceid, $data->explanation, null, false);
 
+            $attachments = $this->ratingallocate->get_file_attachments_for_choice($data->choiceid);
+            $entries = array();
+            foreach ($attachments as $f) {
+                $entries[] = '<br/>* ' . $f->get_filename();
+            }
+            $mform->addElement('static', 'file', implode($entries));
+
             $defaultrating = $this->get_strategysetting('default');
             $defaultrating = $defaultrating == null ? max(array_keys($choiceoptions)) : $defaultrating;
             // Try to restore previous ratings.
