@@ -35,6 +35,7 @@ require_once(dirname(__FILE__) . '/form_manual_allocation.php');
 require_once(dirname(__FILE__) . '/form_modify_choice.php');
 require_once(dirname(__FILE__) . '/renderable.php');
 require_once($CFG->dirroot.'/group/lib.php');
+require_once($CFG->dirroot . '/repository/lib.php');
 require_once(__DIR__.'/classes/algorithm_status.php');
 
 // Takes care of loading all the solvers.
@@ -345,7 +346,7 @@ class ratingallocate {
     }
 
     private function process_action_edit_choice() {
-        global $DB, $PAGE;
+        global $DB, $PAGE, $USER;
 
         $output = '';
         if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
@@ -358,21 +359,33 @@ class ratingallocate {
             } else {
                 $choice = null;
             }
+
+            $data = new stdClass();
+            $options = array('subdirs' => false, 'maxfiles' => -1, 'accepted_types' => '*', 'return_types' => FILE_INTERNAL);
+            file_prepare_standard_filemanager($data, 'attachments', $options, $this->context,
+                'ratingallocate', 'choice_attachment', $choiceid);
+
             $mform = new modify_choice_form(new moodle_url('/mod/ratingallocate/view.php',
-            array('id' => $this->coursemodule->id,
-                'ratingallocateid' => $this->ratingallocateid,
-                'action' => ACTION_EDIT_CHOICE)),
-            $this, $choice);
+                array('id' => $this->coursemodule->id,
+                    'ratingallocateid' => $this->ratingallocateid,
+                    'action' => ACTION_EDIT_CHOICE,
+                )),
+                $this, $choice, array('attachment_data' => $data));
 
             /* @var mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
 
             if ($mform->is_submitted() && $data = $mform->get_submitted_data()) {
+
                 if (!$mform->is_cancelled()) {
                     if ($mform->is_validated()) {
                         $this->save_modify_choice_form($data);
+
+                        $data = file_postupdate_standard_filemanager($data, 'attachments', $options, $this->context,
+                            'ratingallocate', 'choice_attachment', $data->choiceid);
                         $renderer->add_notification(get_string("choice_added_notification", ratingallocate_MOD_NAME),
-                            self::NOTIFY_SUCCESS);
+                        self::NOTIFY_SUCCESS);
+
                     } else {
                         $output .= $OUTPUT->heading(get_string('edit_choice', ratingallocate_MOD_NAME), 2);
                         $output .= $mform->to_html();
@@ -1331,7 +1344,8 @@ class ratingallocate {
                 $choice->id = $data->choiceid;
                 $DB->update_record(this_db\ratingallocate_choices::TABLE, $choice->dbrecord);
             } else {
-                $DB->insert_record(this_db\ratingallocate_choices::TABLE, $choice->dbrecord);
+                // Update choiceid for pass through to file attachments.
+                $data->choiceid = $DB->insert_record(this_db\ratingallocate_choices::TABLE, $choice->dbrecord);
             }
 
             // Logging.
@@ -1545,6 +1559,24 @@ class ratingallocate {
             }
         }
         return true;
+    }
+
+
+    /**
+     * @param int choiceid
+     * @return array of file objects.
+     */
+    public function get_file_attachments_for_choice($choiceid) {
+        $areafiles = get_file_storage()->get_area_files($this->context->id, "ratingallocate", "choice_attachment", $choiceid);
+        $files = array();
+        foreach ($areafiles as $f) {
+            if ($f->is_directory()) {
+                // Skip directories.
+                continue;
+            }
+            $files[] = $f;
+        }
+        return $files;
     }
 
 }
