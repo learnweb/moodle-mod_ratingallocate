@@ -346,7 +346,7 @@ class ratingallocate {
     }
 
     private function process_action_edit_choice() {
-        global $DB, $PAGE, $USER;
+        global $DB, $PAGE;
 
         $output = '';
         if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
