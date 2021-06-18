@@ -136,6 +136,10 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             } else {
                 $mform->setDefault($ratingelem, 1);
             }
+
+            // Render any file attachments.
+            $attachments = $this->ratingallocate->get_file_attachments_for_choice($data->choiceid);
+            $mform->addElement('static', 'file', $this->ratingallocate->get_renderer()->render_attachments($attachments));
         }
     }
 
