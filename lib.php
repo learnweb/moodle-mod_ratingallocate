@@ -314,7 +314,7 @@ function ratingallocate_pluginfile($course, $cm, $context, $filearea, array $arg
     }
 
     $fs = get_file_storage();
-    $file = $fs->get_file($context->id, 'ratingallocate', $filearea, $itemid, $filepath, $filename);
+    $file = $fs->get_file($context->id, 'mod_ratingallocate', $filearea, $itemid, $filepath, $filename);
     if (!$file) {
         return false; // The file does not exist.
     }

@@ -474,7 +474,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      * @param array $files array of file attachments
      * @return string HTML for the attachments
      */
-    private function render_attachments($files) {
+    public function render_attachments($files) {
         $entries = array();
         foreach ($files as $f) {
             $filename = $f->get_filename();

@@ -136,6 +136,10 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
                 get_string('choice_maxsize_display', ratingallocate_MOD_NAME) .
                 ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
             $mform->addElement('static', 'description_'.$data->choiceid, $data->title, $data->explanation);
+
+            // Render any file attachments.
+            $attachments = $this->ratingallocate->get_file_attachments_for_choice($data->choiceid);
+            $mform->addElement('static', 'file', $this->ratingallocate->get_renderer()->render_attachments($attachments));
         }
     }
 

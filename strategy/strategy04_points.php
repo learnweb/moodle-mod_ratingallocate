@@ -123,6 +123,10 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             $mform->addElement('text', $ratingelem, $data->explanation );
             $mform->setType($ratingelem, PARAM_INT);
 
+            // Render any file attachments.
+            $attachments = $this->ratingallocate->get_file_attachments_for_choice($data->choiceid);
+            $mform->addElement('static', 'file', $this->ratingallocate->get_renderer()->render_attachments($attachments));
+
             // try to restore previous ratings
             if (is_numeric($data->rating) && $data->rating >= 0) {
                 $mform->setDefault($ratingelem, $data->rating);
