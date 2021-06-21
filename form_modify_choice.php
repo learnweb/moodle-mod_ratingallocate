@@ -53,6 +53,11 @@ class modify_choice_form extends moodleform {
         $this->ratingallocate = $ratingallocate;
         if ($choice) {
             $this->choice = $choice;
+            // Special handling for HTML editor.
+            $this->choice->explanation = array(
+                'text' => $this->choice->explanation,
+                'format' => FORMAT_HTML,
+            );
         } else {
             $this->addnew = true;
         }
@@ -75,8 +80,11 @@ class modify_choice_form extends moodleform {
         $mform->addRule($elementname, get_string('err_required', 'form') , 'required', null, 'server');
 
         $elementname = 'explanation';
-        $mform->addElement('text', $elementname, get_string('choice_explanation', ratingallocate_MOD_NAME));
-        $mform->setType($elementname, PARAM_TEXT);
+        $editoroptions = array(
+            'enable_filemanagement' => false,
+        );
+        $mform->addElement('editor', $elementname, get_string('choice_explanation', ratingallocate_MOD_NAME), $editoroptions);
+        $mform->setType($elementname, PARAM_RAW);
 
         $elementname = 'maxsize';
         $mform->addElement('text', $elementname, get_string('choice_maxsize', ratingallocate_MOD_NAME));
