@@ -145,5 +145,38 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2021062900, 'ratingallocate');
     }
 
+    if ($oldversion < 2021062901) {
+
+        // Define table ratingallocate_group_choices to be created.
+        $table = new xmldb_table('ratingallocate_group_choices');
+
+        // Adding fields to table ratingallocate_group_choices.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('choiceid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('groupid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table ratingallocate_group_choices.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('choiceid', XMLDB_KEY_FOREIGN, ['choiceid'], 'ratingallocate_choices', ['id']);
+        $table->add_key('groupid', XMLDB_KEY_FOREIGN, ['groupid'], 'groups', ['id']);
+
+        // Conditionally launch create table for ratingallocate_group_choices.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define field usegroups to be added to ratingallocate_choices.
+        $table = new xmldb_table('ratingallocate_choices');
+        $field = new xmldb_field('usegroups', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'active');
+
+        // Conditionally launch add field usegroups.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Ratingallocate savepoint reached.
+        upgrade_mod_savepoint(true, 2021062201, 'ratingallocate');
+    }
+
     return true;
 }
