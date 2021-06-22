@@ -178,6 +178,21 @@ class ratingallocate {
         return $raters;
     }
 
+    /**
+     * Get candidate groups for restricting choices.
+     *
+     * @return array A mapping of group IDs to names.
+     */
+    public function get_group_candidates() {
+        $options = array();
+        $groupcandidates = groups_get_all_groups($this->course->id);
+        foreach ($groupcandidates as $group) {
+            $options[$group->id] = $group->name;
+        }
+
+        return $options;
+    }
+
     public function __construct($ratingallocaterecord, $course, $coursem, context_module $context) {
         global $DB;
         $this->db = & $DB;

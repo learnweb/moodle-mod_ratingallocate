@@ -26,7 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once(dirname(__FILE__) . '/locallib.php');
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Provides a form to modify a single choice
