@@ -112,6 +112,10 @@ class modify_choice_form extends moodleform {
             null, null, array(0, 1));
         $mform->addHelpButton($elementname, 'choice_usegroups', ratingallocate_MOD_NAME);
 
+        $elementname = 'groupselector';
+        $options = $this->ratingallocate->get_group_candidates();
+        $selector = $mform->addelement('searchableselector', $elementname, get_string('choice_groupselect', ratingallocate_MOD_NAME), $options);
+        $selector->setMultiple(true);
 
         if ($this->choice) {
             $mform->setDefault('title', $this->choice->title);
