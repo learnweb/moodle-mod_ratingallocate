@@ -22,10 +22,10 @@
  * @copyright  based on code by M Schulze copyright (C) 2014 M Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once(dirname(__FILE__) . '/locallib.php');
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Provides a form to modify a single choice
@@ -107,12 +107,28 @@ class modify_choice_form extends moodleform {
             null, null, array(0, 1));
         $mform->addHelpButton($elementname, 'choice_active', ratingallocate_MOD_NAME);
 
+        $elementname = 'usegroups';
+        $mform->addelement('advcheckbox', $elementname, get_string('choice_usegroups', ratingallocate_MOD_NAME),
+            null, null, array(0, 1));
+        $mform->addHelpButton($elementname, 'choice_usegroups', ratingallocate_MOD_NAME);
+
+        $elementname = 'groupselector';
+        $options = $this->ratingallocate->get_group_selections();
+        $selector = $mform->addelement('searchableselector', $elementname,
+            get_string('choice_groupselect', ratingallocate_MOD_NAME), $options);
+        $selector->setMultiple(true);
+        $mform->hideIf('groupselector', 'usegroups');
+
         if ($this->choice) {
             $mform->setDefault('title', $this->choice->title);
             $mform->setDefault('explanation', $this->choice->explanation);
             $mform->setDefault('maxsize', $this->choice->maxsize);
             $mform->setDefault('active', $this->choice->active);
+            $mform->setDefault('usegroups', $this->choice->usegroups);
             $mform->setDefault('choiceid', $this->choice->id);
+            // Populate groupselector with IDs of any currently selected groups.
+            $choicegroups = $this->ratingallocate->get_choice_groups($this->choice->id);
+            $mform->setDefault('groupselector', array_keys($choicegroups));
         } else {
             $mform->setDefault('active', true);
         }

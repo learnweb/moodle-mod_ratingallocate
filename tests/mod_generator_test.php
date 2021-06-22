@@ -36,7 +36,7 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course();
-        
+
         // There should not be any module for that course first
         $this->assertFalse(
                 $DB->record_exists('ratingallocate', array('course' => $course->id
@@ -85,6 +85,7 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
                 'ratingallocateid' => $mod->id,
                 'explanation' => 'Some explanatory text for choice 1',
                 'maxsize' => '10',
+                'usegroups' => '0',
                 'active' => '1'
             ),
             $choice_ids[1] => (object) array(
@@ -93,6 +94,7 @@ class mod_ratingallocate_generator_testcase extends advanced_testcase {
                 'ratingallocateid' => $mod->id,
                 'explanation' => 'Some explanatory text for choice 2',
                 'maxsize' => '5',
+                'usegroups' => '0',
                 'active' => '0'
             )
         );

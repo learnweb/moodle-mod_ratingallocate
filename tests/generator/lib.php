@@ -56,12 +56,13 @@ class mod_ratingallocate_generator extends testing_module_generator {
         if ($choicedata === null) {
             $choicedata = self::get_default_choice_data();
         }
+
         $instance = $tc->getDataGenerator()->create_module(ratingallocate_MOD_NAME, $moduledata, $options);
         // Load Ratingallocate Object.
         $ratingallocate = self::get_ratingallocate($instance);
 
         // Create Choices.
-        for ($i = 0; $i < 2; $i++) {
+        for ($i = 0; $i < count($choicedata); $i++) {
             $record = $choicedata[$i];
             $record[this_db\ratingallocate_choices::RATINGALLOCATEID] = $instance->id;
             $ratingallocate->save_modify_choice_form((object) $record);
