@@ -1596,6 +1596,7 @@ class ratingallocate {
  * @property string explanation
  * @property int $maxsize
  * @property bool $active
+ * @property bool $usegroups
  */
 class ratingallocate_choice {
     /** @var stdClass original db record */
@@ -1623,7 +1624,41 @@ class ratingallocate_choice {
     }
 
 }
+/**
+ * Kapselt eine Instanz von ratingallocate_group_choices.
+ * (Encapsulating an instance of ratingallocate_group_choices.)
+ *
+ * @property int $id
+ * @property int $choiceid
+ * @property int $groupid
+ */
+class ratingallocate_group_choices {
+    /** @var stdClass original db record */
+    public $dbrecord;
 
+    /**
+     * Emulates the functionality as if there were explicit records by passing them to the original db record.
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function __get($name) {
+        return $this->dbrecord->{$name};
+    }
+
+    /**
+     * Emulates the functionality as if there were explicit records by passing them to the original db record.
+     *
+     * @param string $name
+     */
+    public function __set($name, $value) {
+        $this->dbrecord->{$name} = $value;
+    }
+
+    public function __construct($record) {
+        $this->dbrecord = $record;
+    }
+}
 /**
  * Remove all users (or one user) from one group, invented by MxS by copying from group/lib.php
  * because it didn't exist there

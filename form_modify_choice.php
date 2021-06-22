@@ -107,11 +107,18 @@ class modify_choice_form extends moodleform {
             null, null, array(0, 1));
         $mform->addHelpButton($elementname, 'choice_active', ratingallocate_MOD_NAME);
 
+        $elementname = 'usegroups';
+        $mform->addelement('advcheckbox', $elementname, get_string('choice_usegroups', ratingallocate_MOD_NAME),
+            null, null, array(0, 1));
+        $mform->addHelpButton($elementname, 'choice_usegroups', ratingallocate_MOD_NAME);
+
+
         if ($this->choice) {
             $mform->setDefault('title', $this->choice->title);
             $mform->setDefault('explanation', $this->choice->explanation);
             $mform->setDefault('maxsize', $this->choice->maxsize);
             $mform->setDefault('active', $this->choice->active);
+            $mform->setDefault('usegroups', $this->choice->usegroups);
             $mform->setDefault('choiceid', $this->choice->id);
         } else {
             $mform->setDefault('active', true);
