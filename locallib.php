@@ -178,21 +178,6 @@ class ratingallocate {
         return $raters;
     }
 
-    /**
-     * Get candidate groups for restricting choices.
-     *
-     * @return array A mapping of group IDs to names.
-     */
-    public function get_group_candidates() {
-        $options = array();
-        $groupcandidates = groups_get_all_groups($this->course->id);
-        foreach ($groupcandidates as $group) {
-            $options[$group->id] = $group->name;
-        }
-
-        return $options;
-    }
-
     public function __construct($ratingallocaterecord, $course, $coursem, context_module $context) {
         global $DB;
         $this->db = & $DB;
@@ -394,11 +379,14 @@ class ratingallocate {
 
                 if (!$mform->is_cancelled()) {
                     if ($mform->is_validated()) {
+                        $this->update_choice_groups($data->choiceid, $data->groupselector);
+
                         // Processing for editor element (FORMAT_HTML is assumed).
                         // Note: No file management implemented at this point.
                         if (is_array($data->explanation)) {
                             $data->explanation = $data->explanation['text'];
                         }
+
                         $this->save_modify_choice_form($data);
 
                         $data = file_postupdate_standard_filemanager($data, 'attachments', $options, $this->context,
@@ -1564,6 +1552,88 @@ class ratingallocate {
      */
     public function get_context() {
         return $this->context;
+    }
+
+    /**
+     * Get candidate groups for a selection list.
+     *
+     * @param array $grouplist (optional) A list of group records to build mappings from.
+     *
+     * @return array A mapping of group IDs to names.
+     */
+    public function get_group_selections($grouplist=null) {
+        $options = array();
+
+        if (!$grouplist) {
+            $grouplist = groups_get_all_groups($this->course->id);
+        }
+
+        foreach ($grouplist as $group) {
+            $options[$group->id] = $group->name;
+        }
+
+        return $options;
+    }
+
+    /**
+     * Returns the groups associated with a ratingallocate choice.
+     *
+     * @param int $choiceid
+     *
+     * @return array A list of group records.
+     */
+    public function get_choice_groups($choiceid) {
+        global $DB;
+
+        $sql = 'SELECT g.*
+        FROM {ratingallocate_group_choices} gc
+        JOIN {groups} g ON gc.groupid=g.id
+        WHERE choiceid=:choiceid;';
+
+        $records = $DB->get_records_sql($sql, array('choiceid' => $choiceid));
+        $results = array();
+
+        foreach ($records as $record) {
+            $results[$record->id] = $record;
+        }
+
+        return $results;
+    }
+
+    /**
+     * Update group set for a choice item.
+     *
+     * @param int $choiceid A ratingallocate_choice.
+     * @param array $groupids An array of group IDs to be associated with the choice item.
+     *
+     * @return null
+     */
+    private function update_choice_groups($choiceid, $groupids) {
+        global $DB;
+
+        // Check group IDs against existing choices.
+        $oldgroups = $this->get_choice_groups($choiceid);
+        $oldids = array_keys($oldgroups);
+
+        // Diff gives us all IDs in the first list, but not in the second.
+        $removals = array_values(array_diff($oldids, $groupids));
+        $additions = array_values(array_diff($groupids, $oldids));
+
+        // Add records for new choice group entries.
+        foreach ($additions as $gid) {
+            $record = new stdClass();
+            $record->choiceid = $choiceid;
+            $record->groupid = $gid;
+            $DB->insert_record('ratingallocate_group_choices', $record);
+        }
+
+        // Remove records for obsolete choice group entries.
+        foreach ($removals as $gid) {
+            $DB->delete_records('ratingallocate_group_choices', array(
+                'choiceid' => $choiceid,
+                'groupid' => $gid,
+            ));
+        }
     }
 
     /**
