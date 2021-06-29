@@ -379,7 +379,9 @@ class ratingallocate {
 
                 if (!$mform->is_cancelled()) {
                     if ($mform->is_validated()) {
-                        $this->update_choice_groups($data->choiceid, $data->groupselector);
+                        if($data->usegroups) {
+                            $this->update_choice_groups($data->choiceid, $data->groupselector);
+                        }
 
                         // Processing for editor element (FORMAT_HTML is assumed).
                         // Note: No file management implemented at this point.
