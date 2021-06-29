@@ -370,6 +370,11 @@ class ratingallocate {
             if ($mform->is_submitted() && $data = $mform->get_submitted_data()) {
                 if (!$mform->is_cancelled()) {
                     if ($mform->is_validated()) {
+                        // Processing for editor element (FORMAT_HTML is assumed).
+                        // Note: No file management implemented at this point.
+                        if (is_array($data->explanation)) {
+                            $data->explanation = $data->explanation['text'];
+                        }
                         $this->save_modify_choice_form($data);
                         $renderer->add_notification(get_string("choice_added_notification", ratingallocate_MOD_NAME),
                             self::NOTIFY_SUCCESS);

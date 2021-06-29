@@ -131,6 +131,19 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         }
 
     }
-    
+
+    if ($oldversion < 2021062900) {
+
+        // Changing type of field explanation on table ratingallocate_choices to text.
+        $table = new xmldb_table('ratingallocate_choices');
+        $field = new xmldb_field('explanation', XMLDB_TYPE_TEXT, null, null, null, null, null, 'title');
+
+        // Launch change of type for field explanation.
+        $dbman->change_field_type($table, $field);
+
+        // Ratingallocate savepoint reached.
+        upgrade_mod_savepoint(true, 2021062900, 'ratingallocate');
+    }
+
     return true;
 }

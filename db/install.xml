@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/ratingallocate/db" VERSION="20141118" COMMENT="XMLDB file for Moodle mod/ratingallocate"
+<XMLDB PATH="mod/ratingallocate/db" VERSION="20210629" COMMENT="XMLDB file for Moodle mod/ratingallocate"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -36,7 +36,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="ratingallocateid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="reference to the instance of ratingallocate it belongs to"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="explanation" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="explanation" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="maxsize" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="10" SEQUENCE="false"/>
         <FIELD NAME="active" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="ob man in die Wahl bewerten kann oder ob sie &quot;versteckt&quot; ist"/>
       </FIELDS>
