@@ -1143,7 +1143,7 @@ class ratingallocate {
      * @return array
      */
     public function get_rating_data_for_user($userid) {
-        $sql = "SELECT c.id as choiceid, c.title, c.explanation, c.ratingallocateid, c.maxsize, r.rating, r.id AS ratingid, r.userid
+        $sql = "SELECT c.id as choiceid, c.title, c.explanation, c.ratingallocateid, c.maxsize, c.usegroups, r.rating, r.id AS ratingid, r.userid
                 FROM {ratingallocate_choices} c
            LEFT JOIN {ratingallocate_ratings} r
                   ON c.id = r.choiceid and r.userid = :userid
@@ -1272,6 +1272,38 @@ class ratingallocate {
             array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->ratingallocateid,
                 this_db\ratingallocate_choices::ACTIVE => true,
             ), this_db\ratingallocate_choices::TITLE);
+    }
+
+    /**
+     * Filters a list of choice data objects according to a user's group membership.
+     *
+     * @param array $choices An array of objects, keyed by ID. Objects must have a 'usegroups' field.
+     * @param int $userid A user ID.
+     *
+     * @return array A filtered array of choices, keyed by ID.
+     */
+    public function filter_choices_by_groups($choices, $userid) {
+
+        $filteredchoices = array();
+
+        // Index 0 for "all groups" without groupings.
+        $usergroupids = groups_get_user_groups($this->course->id, $userid)[0];
+
+        foreach ($choices as $choiceid => $choice) {
+            if ($choice->usegroups) {
+                // Check for overlap between user group and choice group IDs.
+                $choicegroups = $this->get_choice_groups($choiceid);
+                $intersection = array_intersect($usergroupids, array_keys($choicegroups));
+                // Pass if there is an intersection, block otherwise.
+                if (count($intersection)) {
+                    $filteredchoices[$choiceid] = $choice;
+                }
+            } else {
+                $filteredchoices[$choiceid] = $choice;
+            }
+        }
+
+        return $filteredchoices;
     }
 
     /**
