@@ -773,6 +773,9 @@ class ratingallocate {
             $choicestatus->publishdate = $this->ratingallocate->publishdate;
             $choicestatus->is_published = $this->ratingallocate->published;
             $choicestatus->available_choices = $this->get_rateable_choices();
+            // Filter choices to display by groups, where 'usegroups' is true.
+            $choicestatus->available_choices = $this->filter_choices_by_groups($choicestatus->available_choices, $USER->id);
+
             $strategysettings = $this->get_strategy_class()->get_static_settingfields();
             if (array_key_exists(ratingallocate\strategy_order\strategy::COUNTOPTIONS, $strategysettings)) {
                 $choicestatus->necessary_choices =
@@ -781,6 +784,8 @@ class ratingallocate {
                 $choicestatus->necessary_choices = 0;
             }
             $choicestatus->own_choices = $this->get_rating_data_for_user($USER->id);
+            // Filter choices to display by groups, where 'usegroups' is true.
+            $choicestatus->own_choices = $this->filter_choices_by_groups($choicestatus->own_choices, $USER->id);
             $choicestatus->allocations = $this->get_allocations_for_user($USER->id);
             $choicestatus->strategy = $this->get_strategy_class();
             $choicestatus->show_distribution_info = has_capability('mod/ratingallocate:start_distribution', $this->context);
@@ -1283,6 +1288,11 @@ class ratingallocate {
      * @return array A filtered array of choices, keyed by ID.
      */
     public function filter_choices_by_groups($choices, $userid) {
+
+        // See all the choices, if you have the capability to modify them.
+        if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
+            return $choices;
+        }
 
         $filteredchoices = array();
 
