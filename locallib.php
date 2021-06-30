@@ -1600,7 +1600,7 @@ class ratingallocate {
     }
 
     /**
-     * Get candidate groups for a selection list.
+     * Get candidate group selection options for a groupselector form element.
      *
      * @param array $grouplist (optional) A list of group records to build mappings from.
      *
@@ -1609,6 +1609,7 @@ class ratingallocate {
     public function get_group_selections($grouplist=null) {
         $options = array();
 
+        // Default to all relevant groups for this context.
         if (!$grouplist) {
             $grouplist = groups_get_all_groups($this->course->id);
         }
@@ -1633,7 +1634,7 @@ class ratingallocate {
         $sql = 'SELECT g.*
         FROM {ratingallocate_group_choices} gc
         JOIN {groups} g ON gc.groupid=g.id
-        WHERE choiceid=:choiceid;';
+        WHERE choiceid=:choiceid';
 
         $records = $DB->get_records_sql($sql, array('choiceid' => $choiceid));
         $results = array();
@@ -1726,7 +1727,7 @@ class ratingallocate {
  * @property string explanation
  * @property int $maxsize
  * @property bool $active
- * @property bool $usegroups
+ * @property bool $usegroups Whether to restrict the visibility of this choice to the members of specified groups.
  */
 class ratingallocate_choice {
     /** @var stdClass original db record */
