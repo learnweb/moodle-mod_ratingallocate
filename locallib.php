@@ -1290,7 +1290,8 @@ class ratingallocate {
     public function filter_choices_by_groups($choices, $userid) {
 
         // See all the choices, if you have the capability to modify them.
-        if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
+        if (has_capability('mod/ratingallocate:modify_choices', $this->context)
+            || has_capability('mod/ratingallocate:export_ratings', $this->context)) {
             return $choices;
         }
 
