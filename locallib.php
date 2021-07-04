@@ -1654,7 +1654,7 @@ class ratingallocate {
      *
      * @return null
      */
-    private function update_choice_groups($choiceid, $groupids) {
+    public function update_choice_groups($choiceid, $groupids) {
         global $DB;
 
         // Check group IDs against existing choices.
