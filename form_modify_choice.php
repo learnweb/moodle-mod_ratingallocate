@@ -22,10 +22,10 @@
  * @copyright  based on code by M Schulze copyright (C) 2014 M Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once(dirname(__FILE__) . '/locallib.php');
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Provides a form to modify a single choice
@@ -53,6 +53,11 @@ class modify_choice_form extends moodleform {
         $this->ratingallocate = $ratingallocate;
         if ($choice) {
             $this->choice = $choice;
+            // Special handling for HTML editor.
+            $this->choice->explanation = array(
+                'text' => $this->choice->explanation,
+                'format' => FORMAT_HTML,
+            );
         } else {
             $this->addnew = true;
         }
@@ -75,8 +80,11 @@ class modify_choice_form extends moodleform {
         $mform->addRule($elementname, get_string('err_required', 'form') , 'required', null, 'server');
 
         $elementname = 'explanation';
-        $mform->addElement('text', $elementname, get_string('choice_explanation', ratingallocate_MOD_NAME));
-        $mform->setType($elementname, PARAM_TEXT);
+        $editoroptions = array(
+            'enable_filemanagement' => false,
+        );
+        $mform->addElement('editor', $elementname, get_string('choice_explanation', ratingallocate_MOD_NAME), $editoroptions);
+        $mform->setType($elementname, PARAM_RAW);
 
         $elementname = 'maxsize';
         $mform->addElement('text', $elementname, get_string('choice_maxsize', ratingallocate_MOD_NAME));
@@ -90,12 +98,27 @@ class modify_choice_form extends moodleform {
             null, null, array(0, 1));
         $mform->addHelpButton($elementname, 'choice_active', ratingallocate_MOD_NAME);
 
+        $elementname = 'usegroups';
+        $mform->addelement('advcheckbox', $elementname, get_string('choice_usegroups', ratingallocate_MOD_NAME),
+            null, null, array(0, 1));
+        $mform->addHelpButton($elementname, 'choice_usegroups', ratingallocate_MOD_NAME);
+
+        $elementname = 'groupselector';
+        $options = $this->ratingallocate->get_group_selections();
+        $selector = $mform->addelement('searchableselector', $elementname,
+            get_string('choice_groupselect', ratingallocate_MOD_NAME), $options);
+        $selector->setMultiple(true);
+
         if ($this->choice) {
             $mform->setDefault('title', $this->choice->title);
             $mform->setDefault('explanation', $this->choice->explanation);
             $mform->setDefault('maxsize', $this->choice->maxsize);
             $mform->setDefault('active', $this->choice->active);
+            $mform->setDefault('usegroups', $this->choice->usegroups);
             $mform->setDefault('choiceid', $this->choice->id);
+            // Populate groupselector with IDs of any currently selected groups.
+            $choicegroups = $this->ratingallocate->get_choice_groups($this->choice->id);
+            $mform->setDefault('groupselector', array_keys($choicegroups));
         } else {
             $mform->setDefault('active', true);
         }

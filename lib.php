@@ -48,8 +48,7 @@ use ratingallocate\db as this_db;
  * Returns the information on whether the module supports a feature
  *
  * @see plugin_supports() in lib/moodlelib.php
- * @param string $feature
- *        	FEATURE_xx constant for requested feature
+ * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed true if the feature is supported, null if unknown
  */
 function ratingallocate_supports($feature) {
@@ -58,11 +57,13 @@ function ratingallocate_supports($feature) {
             return true;
         case FEATURE_SHOW_DESCRIPTION :
             return true;
-         case FEATURE_BACKUP_MOODLE2:
+        case FEATURE_BACKUP_MOODLE2:
             return true;
-         case FEATURE_COMPLETION_TRACKS_VIEWS:
-             return true;
-        default :
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        case FEATURE_GROUPS:
+            return true;
+        default:
             return null;
     }
 }
@@ -202,7 +203,7 @@ function ratingallocate_print_recent_activity($course, $viewfullnames, $timestar
  * @param int $groupid check for a particular group's activity only, defaults to 0 (all groups)
  * @return void adds items into $activities and increases $index
  */
-function ratingallocate_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, 
+function ratingallocate_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid,
         $userid = 0, $groupid = 0) {
 }
 
