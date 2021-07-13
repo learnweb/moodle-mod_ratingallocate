@@ -33,6 +33,7 @@ global $CFG;
 require_once(dirname(__FILE__) . '/lib.php');
 require_once(dirname(__FILE__) . '/form_manual_allocation.php');
 require_once(dirname(__FILE__) . '/form_modify_choice.php');
+require_once(dirname(__FILE__) . '/form_upload_choices.php');
 require_once(dirname(__FILE__) . '/renderable.php');
 require_once($CFG->dirroot.'/group/lib.php');
 require_once($CFG->dirroot . '/repository/lib.php');
@@ -80,6 +81,7 @@ define('ACTION_GIVE_RATING', 'give_rating');
 define('ACTION_DELETE_RATING', 'delete_rating');
 define('ACTION_SHOW_CHOICES', 'show_choices');
 define('ACTION_EDIT_CHOICE', 'edit_choice');
+define('ACTION_UPLOAD_CHOICES', 'upload_choices');
 define('ACTION_ENABLE_CHOICE', 'enable_choice');
 define('ACTION_DISABLE_CHOICE', 'disable_choice');
 define('ACTION_DELETE_CHOICE', 'delete_choice');
@@ -427,6 +429,42 @@ class ratingallocate {
     }
 
     /**
+     * Upload one or more choices via a CSV file.
+     */
+    private function process_action_upload_choices() {
+        global $DB, $PAGE;
+
+        $output = '';
+        if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
+            global $OUTPUT;
+
+            $url = new moodle_url('/mod/ratingallocate/view.php',
+                array('id' => $this->coursemodule->id,
+                    'ratingallocateid' => $this->ratingallocateid,
+                    'action' => ACTION_UPLOAD_CHOICES,
+                )
+            );
+            $mform = new upload_choices_form($url, $this);
+            $renderer = $this->get_renderer();
+
+            if ($mform->is_submitted() && $data = $mform->get_submitted_data()) {
+                if (!$mform->is_cancelled()) {
+                    if ($mform->is_validated()) {
+                        $content = $mform->get_file_content('uploadfile');
+                        $name = $mform->get_new_filename('uploadfile');
+                        // TODO: Properly process the file content here.
+                        die();
+                    }
+                }
+            }
+
+            $output .= $OUTPUT->heading(get_string('upload_choices', 'ratingallocate'), 2);
+            $output .= $mform->to_html();
+        }
+        return $output;
+    }
+
+    /**
      * Enables or disables a choice and displays the choices list.
      * @param bool $active states if the choice should be set active or inavtive
      */
@@ -716,6 +754,15 @@ class ratingallocate {
 
             case ACTION_EDIT_CHOICE:
                 $result = $this->process_action_edit_choice();
+                if (!$result) {
+                    return "";
+                }
+                $output .= $result;
+                $this->showinfo = false;
+                break;
+
+            case ACTION_UPLOAD_CHOICES:
+                $result = $this->process_action_upload_choices();
                 if (!$result) {
                     return "";
                 }
