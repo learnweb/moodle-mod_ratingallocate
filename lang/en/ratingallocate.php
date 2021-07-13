@@ -191,6 +191,12 @@ $string['err_positivnumber'] = 'You must supply a positive number here.';
 $string['saveandnext'] = 'Save and add next';
 $string['choice_added_notification'] = 'Choice saved.';
 
+$string['upload_choices'] = 'Upload choices via CSV';
+$string['upload_choices_required_fields'] = 'Required Fields';
+$string['upload_choices_fields_desc'] = 'CSV files uploaded through this form are expected to include the following fields:<br><pre>{$a}</pre>';
+$string['csvfailed'] = 'Unable to read the raw choice data from the CSV file';
+$string['csvupload'] = 'Upload CSV';
+$string['csvupload_explanation'] = 'Bulk upload choices via a CSV file';
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Form to edit the instance(administrator)">
