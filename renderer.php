@@ -402,10 +402,13 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $starturl = new moodle_url($this->page->url, array('action' => ACTION_EDIT_CHOICE));
         echo $this->output->single_button($starturl, get_string('newchoice', 'mod_ratingallocate'), 'get');
 
-        $uploadcsvurl = new moodle_url($this->page->url, array('action' => ACTION_UPLOAD_CHOICES));
-        echo $this->output->single_button($uploadcsvurl, get_string('csvupload', 'ratingallocate'), 'get', array(
-            'tooltip' => get_string('csvupload_explanation', 'ratingallocate')
-        ));
+        // Only show CSV upload button if rating has not started.
+        if ($ratingallocate->get_status() === ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY) {
+            $uploadcsvurl = new moodle_url($this->page->url, array('action' => ACTION_UPLOAD_CHOICES));
+            echo $this->output->single_button($uploadcsvurl, get_string('csvupload', 'ratingallocate'), 'get', array(
+                'tooltip' => get_string('csvupload_explanation', 'ratingallocate')
+            ));
+        }
 
         // Set up the table.
         $table = new \flexible_table('show_ratingallocate_options');
