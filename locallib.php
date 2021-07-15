@@ -452,8 +452,33 @@ class ratingallocate {
                     if ($mform->is_validated()) {
                         $content = $mform->get_file_content('uploadfile');
                         $name = $mform->get_new_filename('uploadfile');
-                        // TODO: Properly process the file content here.
-                        die();
+                        $live = !$data->testimport;  // If testing, importer is not live.
+                        // Properly process the file content.
+                        $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this);
+                        $importstatus = $choiceimporter->import($content, $live);
+
+                        $returnurl = new moodle_url('/mod/ratingallocate/view.php',
+                        array(
+                            'id' => $this->coursemodule->id,
+                            'action' => ACTION_SHOW_CHOICES
+                        ));
+
+                        if ($importstatus->status === \mod_ratingallocate\choice_importer::IMPORT_STATUS_OK) {
+                            redirect(
+                                $returnurl,
+                                $importstatus->status_message,
+                                null,
+                                \core\output\notification::NOTIFY_INFO
+                            );
+                        } else {
+                            redirect(
+                                $returnurl,
+                                $importstatus->status_message,
+                                null,
+                                \core\output\notification::NOTIFY_WARNING
+                            );
+
+                        }
                     }
                 }
             }
@@ -496,6 +521,9 @@ class ratingallocate {
                 $choice = $DB->get_record(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
                 if ($choice) {
                     $DB->delete_records(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
+                    // Delete related group associations, if any.
+                    $DB->delete_records(this_db\ratingallocate_group_choices::TABLE, array('choiceid' => $choiceid));
+
                     redirect(new moodle_url('/mod/ratingallocate/view.php',
                         array('id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES)),
                         get_string('choice_deleted_notification', ratingallocate_MOD_NAME,
