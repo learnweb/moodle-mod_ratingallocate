@@ -191,6 +191,8 @@ $string['err_positivnumber'] = 'You must supply a positive number here.';
 $string['saveandnext'] = 'Save and add next';
 $string['choice_added_notification'] = 'Choice saved.';
 
+// </editor-fold>
+// <editor-fold defaultstate="collapsed" desc="Form to upload choices via CSV (administrator)">
 $string['upload_choices'] = 'Upload choices via CSV';
 $string['upload_choices_required_fields'] = 'Required Fields';
 $string['upload_choices_fields_desc'] = 'CSV files uploaded through this form are expected to be UTF-8 encoded, and include the following choice fields:<br/><tt>{$a}</tt>';
