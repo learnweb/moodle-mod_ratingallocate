@@ -50,16 +50,21 @@ class upload_choices_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
 
-        $requiredfields = "[title,explanation,maxsize,active,groups]"; // TODO: Get these from CSV import class.
+        $requiredfields = \mod_ratingallocate\choice_importer::print_fields();
         $elementname = 'description';
         $mform->addElement('static', $elementname, get_string('upload_choices_required_fields', 'ratingallocate'),
         get_string('upload_choices_fields_desc', 'ratingallocate', $requiredfields));
 
         $elementname = 'uploadfile';
-        $mform->addElement('filepicker', $elementname, null, array(
+        $mform->addElement('filepicker', $elementname, get_string('csvupload', 'ratingallocate'), array(
             'accepted_types' => 'text/csv'
         ));
         $mform->addRule($elementname, get_string('err_required', 'form') , 'required', null, 'server');
+
+        $elementname = 'testimport';
+        $mform->addElement('advcheckbox', $elementname, get_string('csvupload_test_upload', 'ratingallocate'),
+            null, null, array(0, 1));
+        $mform->addHelpButton($elementname, 'csvupload_test_upload', 'ratingallocate');
 
         $this->add_buttons();
     }

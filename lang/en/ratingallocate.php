@@ -193,10 +193,18 @@ $string['choice_added_notification'] = 'Choice saved.';
 
 $string['upload_choices'] = 'Upload choices via CSV';
 $string['upload_choices_required_fields'] = 'Required Fields';
-$string['upload_choices_fields_desc'] = 'CSV files uploaded through this form are expected to include the following fields:<br><pre>{$a}</pre>';
-$string['csvfailed'] = 'Unable to read the raw choice data from the CSV file';
+$string['upload_choices_fields_desc'] = 'CSV files uploaded through this form are expected to be UTF-8 encoded, and include the following choice fields:<br/><tt>{$a}</tt>';
+$string['csvempty'] = 'CSV file is empty.';
 $string['csvupload'] = 'Upload CSV';
 $string['csvupload_explanation'] = 'Bulk upload choices via a CSV file';
+$string['csvupload_missing_fields'] = 'Columns missing from CSV import: {$a}';
+$string['csvupload_missing_groups'] = 'Line {$a->row}: group(s) not available in course: [{$a->invalidgroups}]';
+$string['csvupload_live_problems'] = 'Problems found in CSV import: {$a}';
+$string['csvupload_live_success'] = 'CSV import successful. {$a->importcount} choices imported.';
+$string['csvupload_test_problems'] = 'Problems found in CSV import test: {$a}';
+$string['csvupload_test_success'] = 'CSV import test successful. {$a->importcount} choices can be imported.';
+$string['csvupload_test_upload'] = 'Test upload';
+$string['csvupload_test_upload_help'] = 'When checked: test the uploaded CSV file for data problems, but do not commit to the database.';
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Form to edit the instance(administrator)">
