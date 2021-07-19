@@ -457,28 +457,26 @@ class ratingallocate {
                         $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this);
                         $importstatus = $choiceimporter->import($content, $live);
 
-                        $returnurl = new moodle_url('/mod/ratingallocate/view.php',
-                        array(
-                            'id' => $this->coursemodule->id,
-                            'action' => ACTION_SHOW_CHOICES
-                        ));
-
-                        if ($importstatus->status === \mod_ratingallocate\choice_importer::IMPORT_STATUS_OK) {
-                            redirect(
-                                $returnurl,
-                                $importstatus->status_message,
-                                null,
-                                \core\output\notification::NOTIFY_INFO
-                            );
-                        } else {
-                            redirect(
-                                $returnurl,
-                                $importstatus->status_message,
-                                null,
-                                \core\output\notification::NOTIFY_WARNING
-                            );
-
+                        switch ($importstatus->status) {
+                            case \mod_ratingallocate\choice_importer::IMPORT_STATUS_OK:
+                                \core\notification::info($importstatus->status_message);
+                                break;
+                            case \mod_ratingallocate\choice_importer::IMPORT_STATUS_DATA_ERROR:
+                                \core\notification::warning($importstatus->status_message);
+                                $choiceimporter->issue_notifications($importstatus->errors);
+                                break;
+                            case \mod_ratingallocate\choice_importer::IMPORT_STATUS_SETUP_ERROR:
+                            default:
+                                \core\notification::error($importstatus->status_message);
+                                $choiceimporter->issue_notifications($importstatus->errors,
+                                    \core\output\notification::NOTIFY_ERROR);
                         }
+
+                        redirect(new moodle_url('/mod/ratingallocate/view.php',
+                            array(
+                                'id' => $this->coursemodule->id,
+                                'action' => ACTION_SHOW_CHOICES
+                            )));
                     }
                 }
             }
