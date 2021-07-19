@@ -70,6 +70,10 @@ class choice_importer {
         $this->ratingallocateid = $ratingallocateid;
     }
 
+    public function __destruct() {
+        $this->free_reader();
+    }
+
     /**
      * Get active CSV import reader, setting up temporary dir as necessary.
      */
@@ -105,8 +109,8 @@ class choice_importer {
      * - status: IMPORT_STATUS_xxx constants
      * - status_message: Human-readable status explanation.
      * - errors[]: Any specific error messages
-     * - rowcount: The number of rows processed.
      * - readcount: The number of rows read.
+     * - rowcount: The number of being row processed. (Once finished, should add up to readcount.)
      * - importcount: The number of rows successfully processed.
      */
     public function import($content, $live=true) {
