@@ -30,12 +30,15 @@ require_once($CFG->libdir . '/csvlib.class.php');
 class choice_importer {
     const REQUIRED_FIELDS = array("title", "explanation", "maxsize", "active", "groups");
 
-    // Everything worked as expected.
+    // The import process worked as expected.
     const IMPORT_STATUS_OK = 'csvupload_ok';
-    // Something went wrong during import setup.
+    // Something went wrong during setup; import cannot continue.
     const IMPORT_STATUS_SETUP_ERROR = 'csvupload_setuperror';
     // Partial success with data errors.
     const IMPORT_STATUS_DATA_ERROR = 'csvupload_dataerror';
+
+    // Default maximum number of warnings to show notifications for on import problems.
+    const MAX_WARNING_COUNT = 5;
 
     /**
      * @var \csv_import_reader
@@ -235,12 +238,11 @@ class choice_importer {
                 }
 
             }
-
         }
 
         $this->free_reader();
 
-        // Determine status messages.
+        // Determine main status message.
         if ($importstatus->status == self::IMPORT_STATUS_OK) {
             if ($live) {
                 $importstatus->status_message = get_string('csvupload_live_success', 'ratingallocate', $importstatus);
@@ -250,15 +252,48 @@ class choice_importer {
         } else {
             if ($live) {
                 $importstatus->status_message = get_string('csvupload_live_problems', 'ratingallocate',
-                    join(" | ", $importstatus->errors)
+                    count($importstatus->errors)
                 );
             } else {
                 $importstatus->status_message = get_string('csvupload_test_problems', 'ratingallocate',
-                    join(" | ", $importstatus->errors)
+                    count($importstatus->errors)
                 );
             }
         }
 
         return $importstatus;
+    }
+
+    /**
+     * Issue notifications from a CSV import when there are errors.
+     *
+     * A sanity measure for large broken CSVs: if there are a lot of errors, it
+     * will only notify on up to the first $max items, then say how many more
+     * remain.
+     *
+     * @param array $errors
+     * @param \core\output\notification $notificationtype Notification type to use.
+     * @param int $max Maximum number of individual notifications to send.
+     * @return void
+     */
+    public function issue_notifications($errors,
+        $notificationtype=\core\output\notification::NOTIFY_WARNING,
+        $max=self::MAX_WARNING_COUNT
+    ) {
+        $errorcount = count($errors);
+
+        if ($errorcount == 0) {
+            return;  // Exit early if nothing to do.
+        }
+
+        $notifyerrors = array_slice($errors, 0, $max);
+
+        foreach ($notifyerrors as $error) {
+            \core\notification::add($error, $notificationtype);
+        }
+        if ($errorcount > $max) {
+            $extra = get_string('csvupload_further_problems', 'ratingallocate', ($errorcount - $max));
+            \core\notification::add($extra, $notificationtype);
+        }
     }
 }

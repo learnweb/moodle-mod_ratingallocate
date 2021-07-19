@@ -198,6 +198,7 @@ $string['upload_choices_required_fields'] = 'Required Fields';
 $string['upload_choices_fields_desc'] = 'CSV files uploaded through this form are expected to be UTF-8 encoded, and include the following choice fields:<br/><tt>{$a}</tt>';
 $string['csvempty'] = 'CSV file is empty.';
 $string['csvupload'] = 'Upload CSV';
+$string['csvupload_further_problems'] = '{$a} further problems found but not displayed.';
 $string['csvupload_explanation'] = 'Bulk upload choices via a CSV file';
 $string['csvupload_missing_fields'] = 'Columns missing from CSV import: {$a}';
 $string['csvupload_missing_groups'] = 'Line {$a->row}: group(s) not available in course: [{$a->invalidgroups}]';
