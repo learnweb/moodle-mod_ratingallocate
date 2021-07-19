@@ -132,7 +132,8 @@ class choice_importer {
                 $importstatus->status = self::IMPORT_STATUS_DATA_ERROR;
                 $importstatus->errors[] = get_string('csvempty', 'ratingallocate');
             } else {
-                if (!$fieldnames = $reader->get_columns()) {
+                // Trim whitespace on headers, just in case.
+                if (!$fieldnames = array_map('trim', $reader->get_columns())) {
                     throw new moodle_exception('cannotreadtmpfile', 'error');
                 }
 
@@ -231,7 +232,7 @@ class choice_importer {
                     }
                     $transaction->dispose();
 
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     if (isset($transaction)) {
                         $transaction->rollback($e);
                     }
