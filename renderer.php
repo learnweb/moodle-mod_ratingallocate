@@ -136,44 +136,36 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 get_string('last_algorithm_run_status_' . $status->algorithmstatus, ratingallocate_MOD_NAME));
         }
 
-        //print available choices if no choice form is displayed
-        if(!empty($status->available_choices)) {
-        $row = new html_table_row();
-            $cell1 = new html_table_cell(get_string('rateable_choices', ratingallocate_MOD_NAME));
-
-            $choices_html = '';
-            foreach ($status->available_choices as $choice) {
-                $choices_html .= '<li>';
-                $choices_html .= format_string($choice->title);
-                $choices_html .= '</li>';
-            }
-
-            $cell2 = new html_table_cell('<ul>' . $choices_html . '</ul>');
-//             $cell2->attributes = array('class' => 'submissionnotgraded');
-            $row->cells = array(
-                            $cell1,
-                            $cell2
-            );
-            $t->data[] = $row;
-        }
-
-        //print own choices if no choice form is displayed
-        if(!empty($status->own_choices) && $status->show_user_info && $accesstimestart < $time) {
+        // Print own choices or full list of available choices.
+        if (!empty($status->own_choices) && $status->show_user_info && $accesstimestart < $time) {
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('your_rating', ratingallocate_MOD_NAME));
 
-            $choices_html = '';
+            $choiceshtml = array();
             foreach ($status->own_choices as $choice) {
-                $choices_html .= '<li>';
-                $choices_html .= format_string($choice->title) . ' (' . s($this->get_option_title($choice->rating, $status->strategy)) . ')';
-                $choices_html .= '</li>';
+                array_push($choiceshtml, format_string($choice->title) .
+                    ' (' . s($this->get_option_title($choice->rating, $status->strategy)) . ')');
             }
 
-            $cell2 = new html_table_cell('<ul>' . $choices_html . '</ul>');
-//             $cell2->attributes = array('class' => 'submissionnotgraded');
+            $cell2 = new html_table_cell(html_writer::alist($choiceshtml));
             $row->cells = array(
-                            $cell1,
-                            $cell2
+                $cell1,
+                $cell2
+            );
+            $t->data[] = $row;
+        } else if(!empty($status->available_choices)) {
+            $row = new html_table_row();
+            $cell1 = new html_table_cell(get_string('rateable_choices', ratingallocate_MOD_NAME));
+
+            $choiceshtml = array();
+            foreach ($status->own_choices as $choice) {
+                array_push($choiceshtml, format_string($choice->title));
+            }
+
+            $cell2 = new html_table_cell(html_writer::alist($choiceshtml));
+            $row->cells = array(
+                $cell1,
+                $cell2
             );
             $t->data[] = $row;
         }
