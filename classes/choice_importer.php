@@ -16,7 +16,8 @@
 
 /**
  * @package    mod_ratingallocate
- * @copyright  2021 David Thompson <david.thompson@catalyst.net.nz>
+ * @copyright  2021 Catalyst IT
+ * @author     David Thompson <david.thompson@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_ratingallocate;
