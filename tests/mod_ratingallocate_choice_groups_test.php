@@ -24,7 +24,8 @@ require_once(__DIR__ . '/../locallib.php');
  * @package    mod_ratingallocate
  * @category   test
  * @group      mod_ratingallocate
- * @copyright  2021 David Thompson
+ * @copyright  2021 Catalyst IT
+ * @author     David Thompson <david.thompson@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_ratingallocate_choice_group_testcase extends advanced_testcase {

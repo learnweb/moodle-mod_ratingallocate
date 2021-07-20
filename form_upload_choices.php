@@ -18,7 +18,8 @@
  * Bulk upload one or more choices for the ratingallocate instance via CSV file.
  *
  * @package    mod_ratingallocate
- * @copyright  2021 David Thompson <david.thompson@catalyst.net.nz>
+ * @copyright  2021 Catalyst IT
+ * @author     David Thompson <david.thompson@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
