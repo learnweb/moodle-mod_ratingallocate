@@ -90,7 +90,7 @@ class choice_importer {
      * Release CSV import reader in current use.
      */
     public function free_reader() {
-        if (!$this->reader) {
+        if ($this->reader) {
             $this->reader->cleanup();
             $this->reader->close();
             $this->reader = null;
