@@ -117,6 +117,7 @@ class modify_choice_form extends moodleform {
         $selector = $mform->addelement('searchableselector', $elementname,
             get_string('choice_groupselect', ratingallocate_MOD_NAME), $options);
         $selector->setMultiple(true);
+        $mform->hideIf('groupselector', 'usegroups');
 
         if ($this->choice) {
             $mform->setDefault('title', $this->choice->title);
