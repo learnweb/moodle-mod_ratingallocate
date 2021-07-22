@@ -175,7 +175,7 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         }
 
         // Ratingallocate savepoint reached.
-        upgrade_mod_savepoint(true, 2021062201, 'ratingallocate');
+        upgrade_mod_savepoint(true, 2021062901, 'ratingallocate');
     }
 
     return true;
