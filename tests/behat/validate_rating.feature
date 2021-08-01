@@ -1,4 +1,4 @@
-@mod @mod_ratingallocate
+@mod @mod_ratingallocate @javascript
 Feature: When a student attempts to rate choices it should be validated prior to changing.
 
   Background:
