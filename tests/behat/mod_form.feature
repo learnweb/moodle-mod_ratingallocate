@@ -1,4 +1,4 @@
-@mod @mod_ratingallocate
+@mod @mod_ratingallocate @javascript
 Feature: Creating a new rating allocation, where new choices need to
   be added and if necessary deleted prior to submission.
 
@@ -54,7 +54,6 @@ Feature: Creating a new rating allocation, where new choices need to
     And I should see the choice with the title "My fourth choice"
     And I should see the choice with the title "My fifth choice"
 
-  @javascript
   Scenario: Create a new rating alloation and add two additonal new choices, but delete two old and one new.
     When I add new choices with the values:
       | title            | explanation     | maxsize |
@@ -81,7 +80,6 @@ Feature: Creating a new rating allocation, where new choices need to
     And the choice with name "My fourth choice" should have maxsize being equal to 1337
     And the choice with name "My fourth choice" should be active
 
-  @javascript
   Scenario: Create a new rating alloation and add an additonal new inactive choice.
     When I add a new choice with the values:
       | title       | My fourth choice |
@@ -93,7 +91,6 @@ Feature: Creating a new rating allocation, where new choices need to
     And the choice with name "My fourth choice" should have maxsize being equal to 1337
     And the choice with name "My fourth choice" should not be active
 
-  @javascript
   Scenario: Create a new rating alloation and add an additonal new inactive choice. Change the the choice to active.
     When I add a new choice with the values:
       | title       | My fourth choice |
@@ -114,7 +111,6 @@ Feature: Creating a new rating allocation, where new choices need to
     And I should see "My fourth choice"
     And the choice with name "My fourth choice" should not be active
 
-  @javascript
   Scenario: Create a new rating alloation and check the field runalgorithmbycron. It should be saved as true.
     When I navigate to "Edit settings" in current page administration
     And I set the field "runalgorithmbycron" to "1"
@@ -122,7 +118,6 @@ Feature: Creating a new rating allocation, where new choices need to
     And I navigate to "Edit settings" in current page administration
     Then the field "runalgorithmbycron" matches value "1"
 
-  @javascript
   Scenario: Create a new rating alloation and uncheck the field runalgorithmbycron. It should be saved as false.
     When I navigate to "Edit settings" in current page administration
     And I set the field "runalgorithmbycron" to ""
@@ -130,7 +125,6 @@ Feature: Creating a new rating allocation, where new choices need to
     And I navigate to "Edit settings" in current page administration
     Then the field "runalgorithmbycron" matches value ""
 
-  @javascript
   Scenario: Create a new rating alloation and assume the default for the field runalgorithmbycron is true.
     When I navigate to "Edit settings" in current page administration
     Then the field "runalgorithmbycron" matches value "1"
