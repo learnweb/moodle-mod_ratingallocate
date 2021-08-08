@@ -195,6 +195,12 @@ abstract class ratingallocate_strategyform extends \moodleform  {
     private $strategy;
 
     /**
+     * Does this rating type allow for pagination.
+     * @var bool
+     */
+    public $allowpagination = true;
+
+    /**
      *
      * @param string $url The page url
      * @param \ratingallocate $ratingallocate The calling ratingallocate instance
@@ -273,5 +279,50 @@ abstract class ratingallocate_strategyform extends \moodleform  {
             return $this->strategyoptions[$key];
         }
         return null;
+    }
+
+    /**
+     *
+     * Use custom page action buttons when pagination in use.
+     *
+     * @param bool $cancel
+     * @param null $submitlabel
+     * @throws coding_exception
+     * @throws dml_exception
+     */
+    public function add_action_buttons($cancel = true, $submitlabel = null)  {
+        if (!$this->allowpagination) {
+            // Not using pagination - just call parent and return.
+            parent::add_action_buttons($cancel, $submitlabel);
+            return;
+        }
+        $choicecount = $this->ratingallocate->get_choice_count();
+        $pagesize = $this->ratingallocate->get_perpage();
+        $page = optional_param('page', 0, PARAM_INT); // Current page.
+        // If the number of choices is more than our pagesize.
+        if ($choicecount > $pagesize) {
+            $mform =& $this->_form;
+            $buttonarray = array();
+
+            if (!empty($page) && $choicecount > $pagesize) { // If we are not on the first page.
+                $buttonarray[] = &$mform->createElement('submit', 'submitprevious',
+                    get_string('submitprevious', 'ratingallocate'));
+            }
+
+            if ($choicecount > ($page + 1) * $pagesize) { // If we are not on the last page.
+                $buttonarray[] = &$mform->createElement('submit', 'submitnext',
+                    get_string('submitnext', 'ratingallocate'));
+            } else {
+                $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+            }
+            $buttonarray[] = &$mform->createElement('cancel');
+            $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+            $mform->closeHeaderBefore('buttonar');
+            $mform->addElement('hidden', 'perpage', $this->ratingallocate->get_perpage());
+            $mform->setType('perpage', PARAM_INT);
+        } else {
+            // Not using pagination - just call parent.
+            parent::add_action_buttons($cancel, $submitlabel);
+        }
     }
 }

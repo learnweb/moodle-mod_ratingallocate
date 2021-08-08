@@ -92,6 +92,12 @@ class strategy extends \strategytemplate {
  */
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
+    /**
+     * This rating type doesn't use pagination.
+     * @var bool
+     */
+    public $allowpagination = false;
+
     protected function construct_strategy($strategyoptions) {
         return new strategy($strategyoptions);
     }

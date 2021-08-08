@@ -286,7 +286,9 @@ class ratingallocate {
                 }
 
                 $mform->definition_after_data();
-                $output .= $renderer->perpage_selector($this->get_perpage());
+                if (!empty($mform->allowpagination)) {
+                    $output .= $renderer->perpage_selector($this->get_perpage());
+                }
                 $output .= $renderer->render_ratingallocate_strategyform($mform);
                 // Logging.
                 $event = \mod_ratingallocate\event\rating_viewed::create_simple(

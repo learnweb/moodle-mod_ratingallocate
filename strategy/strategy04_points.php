@@ -95,8 +95,8 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         parent::definition();
 
         $mform = $this->_form;
-
-        $ratingdata = $this->ratingallocate->get_rating_data_for_user($USER->id);
+        $page = optional_param('page', 0, PARAM_INT);
+        $ratingdata = $this->ratingallocate->get_rating_data_for_user($USER->id, $page);
 
         foreach ($ratingdata as $data) {
             $headerelem = 'head_ratingallocate_' . $data->choiceid;

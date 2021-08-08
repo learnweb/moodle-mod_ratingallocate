@@ -152,46 +152,6 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
         return $errors;
     }
 
-    /**
-     * Use custom page action buttons when pagination in use.
-     *
-     * @param bool $cancel
-     * @param null $submitlabel
-     * @throws coding_exception
-     * @throws dml_exception
-     */
-    public function add_action_buttons($cancel = true, $submitlabel = null)  {
-        $choicecount = $this->ratingallocate->get_choice_count();
-        $pagesize = $this->ratingallocate->get_perpage();
-        $page = optional_param('page', 0, PARAM_INT); // Current page.
-        // If the number of choices is more than our pagesize, and we are not on the last page.
-        if ($choicecount > $pagesize) {
-            $mform =& $this->_form;
-            $buttonarray = array();
-
-            if (!empty($page) && $choicecount > $pagesize) { // If we are not on the first page.
-                $buttonarray[] = &$mform->createElement('submit', 'submitprevious',
-                    get_string('submitprevious', 'ratingallocate'));
-            }
-
-
-            if ($choicecount > ($page + 1) * $pagesize) { // If we are not on the last page.
-                $buttonarray[] = &$mform->createElement('submit', 'submitnext',
-                    get_string('submitnext', 'ratingallocate'));
-            } else {
-                $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
-            }
-            $buttonarray[] = &$mform->createElement('cancel');
-            $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-            $mform->closeHeaderBefore('buttonar');
-            $mform->addElement('hidden', 'perpage', $this->ratingallocate->get_perpage());
-            $mform->setType('perpage', PARAM_INT);
-        } else {
-            // Not using pagination - just call parent.
-            parent::add_action_buttons($cancel, $submitlabel);
-        }
-    }
-
     public abstract function get_choiceoptions();
 
     protected abstract function get_max_amount_of_nos();
