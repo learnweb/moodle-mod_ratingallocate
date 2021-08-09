@@ -216,6 +216,9 @@ abstract class ratingallocate_strategyform extends \moodleform  {
             $this->strategyoptions = array();
         }
         $this->strategy = $this->construct_strategy($this->strategyoptions);
+        if (empty(get_config('ratingallocate', 'pagination'))) {
+            $this->allowpagination = false;
+        }
         parent::__construct($url);
     }
 

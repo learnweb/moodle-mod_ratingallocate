@@ -358,8 +358,10 @@ $string['filtertabledesc'] = 'Describes the filters that are applied to the allo
 $string['filtermanualtabledesc'] = 'Describes the filters that are applied to the table of the manual allocation form.';
 
 $string['choicepagesize'] = 'Choice page size';
-$string['choicepagesize_desc'] = 'Maximum number of choices to display when a user is rating.';
+$string['choicepagesize_desc'] = 'If pagination is enabled, the default number of choices to display when a user is rating.';
 $string['submitprevious'] = 'Save and show previous page';
 $string['submitnext'] = 'Save and show next page';
 $string['showingperpage'] = 'Showing {$a} items per page';
 $string['showingperpagechange'] = 'Change ...';
+$string['usepagination'] = 'Pagination';
+$string['usepagination_desc'] = 'If enabled, the list of choices available for students while voting uses pagination.';

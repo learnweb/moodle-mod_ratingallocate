@@ -1140,7 +1140,7 @@ class ratingallocate {
                   ON c.id = r.choiceid and r.userid = :userid
                WHERE c.ratingallocateid = :ratingallocateid AND c.active = 1
                ORDER by c.title";
-        if ($page === null) {
+        if ($page === null || empty(get_config('ratingallocate', 'pagination'))) {
             $limitfrom = 0;
             $limitnum = 0;
         } else {
