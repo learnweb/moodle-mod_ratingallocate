@@ -69,9 +69,6 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
         parent::definition();
         $mform = $this->_form;
         $page = optional_param('page', 0, PARAM_INT);
-        $mform->addElement('hidden', 'page', $page);
-        $mform->setType('page', PARAM_INT);
-
         $ratingdata = $this->ratingallocate->get_rating_data_for_user($USER->id, $page);
         foreach ($ratingdata as $data) {
             $headerelem = 'head_ratingallocate_' . $data->choiceid;
