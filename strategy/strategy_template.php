@@ -332,4 +332,31 @@ abstract class ratingallocate_strategyform extends \moodleform  {
             parent::add_action_buttons($cancel, $submitlabel);
         }
     }
+
+    /**
+     * Get count of non-accept choices excluding those on current page.
+     *
+     * @param $ratings
+     * @return int
+     * @throws coding_exception
+     * @throws dml_exception
+     */
+    public function get_impossibles($ratings) {
+        global $DB, $USER;
+        if (!$this->allowpagination) {
+            // Pagination not in use - all choices shown on current page.
+            return 0;
+        }
+        // Get all ratings set to 0 not in the current page.
+        list($insql, $params) = $DB->get_in_or_equal(array_keys($ratings), SQL_PARAMS_NAMED, 'param', false);
+        $params['userid'] = $USER->id;
+        $params['ratingallocateid'] = $this->ratingallocate->ratingallocate->id;
+
+        $impossibles = $DB->count_records_select('ratingallocate_ratings',
+            "userid = :userid AND rating = 0
+                       AND choiceid IN (SELECT id FROM {ratingallocate_choices}
+                                        WHERE ratingallocateid = :ratingallocateid)
+                       AND choiceid $insql", $params);
+        return $impossibles;
+    }
 }

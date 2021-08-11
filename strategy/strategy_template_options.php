@@ -122,6 +122,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
     }
 
     public function validation($data, $files) {
+        global $DB, $USER;
         $maxno = $this->get_max_amount_of_nos();
         $errors = parent::validation($data, $files);
 
@@ -129,8 +130,8 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             return $errors;
         }
 
-        $impossibles = 0;
-        $ratings = $data ['data'];
+        $ratings = $data['data'];
+        $impossibles = $this->get_impossibles($ratings);
 
         foreach ($ratings as $rating) {
             if (key_exists('rating', $rating) && $rating ['rating'] == 0) {

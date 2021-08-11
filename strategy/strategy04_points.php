@@ -148,8 +148,9 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             return $errors;
         }
 
-        $impossibles = 0;
         $ratings = $data ['data'];
+        $impossibles = $this->get_impossibles($ratings);
+
         $currentpoints = 0;
         foreach ($ratings as $cid => $rating) {
             if ($rating['rating'] < 0 || $rating['rating'] > $totalpoints) {
