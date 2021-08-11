@@ -131,7 +131,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
         }
 
         $ratings = $data['data'];
-        $impossibles = $this->get_impossibles($ratings);
+        $impossibles = $this->get_count_choices(array_keys($ratings), 0);
 
         foreach ($ratings as $rating) {
             if (key_exists('rating', $rating) && $rating ['rating'] == 0) {

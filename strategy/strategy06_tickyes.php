@@ -146,28 +146,34 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
     }
 
     public function validation($data, $files) {
+
         $errors = parent::validation($data, $files);
         $mintickyes = $this->get_strategysetting(strategy::MINTICKYES);
 
-        if (!array_key_exists('data', $data) or count($data ['data']) < 2) {
+        if (!array_key_exists('data', $data) or count($data ['data']) < 1) {
             return $errors;
         }
 
-        $checkedaccept = 0;
-        $ratings = $data ['data'];
-        foreach ($ratings as $rating) {
-            if ($rating ['rating'] == 1) {
-                $checkedaccept ++;
-            }
-        }
+        $lastpage = $this->pagination_lastpage($data);
 
-        if ($checkedaccept < $mintickyes) {
-            foreach ($ratings as $cid => $rating) {
-                if ($rating ['rating'] == 0) {
-                    $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_error_mintickyes', ratingallocate_MOD_NAME, $mintickyes);
+        if ($lastpage) {
+            $ratings = $data['data'];
+            $checkedaccept = $this->get_count_choices(array_keys($ratings), 1);
+            foreach ($ratings as $rating) {
+                if ($rating ['rating'] == 1) {
+                    $checkedaccept ++;
+                }
+            }
+
+            if ($checkedaccept < $mintickyes) {
+                foreach ($ratings as $cid => $rating) {
+                    if ($rating ['rating'] == 0) {
+                        $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_error_mintickyes', ratingallocate_MOD_NAME, $mintickyes);
+                    }
                 }
             }
         }
+
         return $errors;
     }
 

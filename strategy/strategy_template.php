@@ -334,29 +334,51 @@ abstract class ratingallocate_strategyform extends \moodleform  {
     }
 
     /**
-     * Get count of non-accept choices excluding those on current page.
+     * Get count of choices excluding those on current page.
      *
-     * @param $ratings
+     * @param array $excluding - list of choices to ignore from count - (displayed on current page)
+     * @param int $rating 0 or 1 depending on accept or deny list.
      * @return int
      * @throws coding_exception
      * @throws dml_exception
      */
-    public function get_impossibles($ratings) {
+    public function get_count_choices($excluding, $rating) {
         global $DB, $USER;
         if (!$this->allowpagination) {
             // Pagination not in use - all choices shown on current page.
             return 0;
         }
         // Get all ratings set to 0 not in the current page.
-        list($insql, $params) = $DB->get_in_or_equal(array_keys($ratings), SQL_PARAMS_NAMED, 'param', false);
+        list($insql, $params) = $DB->get_in_or_equal($excluding, SQL_PARAMS_NAMED, 'param', false);
         $params['userid'] = $USER->id;
         $params['ratingallocateid'] = $this->ratingallocate->ratingallocate->id;
+        $params['rating'] = $rating;
 
         $impossibles = $DB->count_records_select('ratingallocate_ratings',
-            "userid = :userid AND rating = 0
+            "userid = :userid AND rating = :rating
                        AND choiceid IN (SELECT id FROM {ratingallocate_choices}
                                         WHERE ratingallocateid = :ratingallocateid)
                        AND choiceid $insql", $params);
         return $impossibles;
+    }
+
+    /**
+     * Some validation should only happen on the last page when pagination is in use.
+     *
+     * @param array $data
+     * @return bool
+     * @throws coding_exception
+     */
+    public function pagination_lastpage($data) {
+        if ($this->allowpagination) {
+            $choicecount = $this->ratingallocate->get_choice_count();
+            $pagesize = $this->ratingallocate->get_perpage();
+            $page = optional_param('page', 0, PARAM_INT); // Current page.
+            // If we are not on the last page or if the submit previous button is used, don't validate minticks.
+            if ($choicecount >= ($page + 1) * $pagesize || !empty($data['submitprevious'])) {
+                return false;
+            }
+        }
+        return true;
     }
 }
