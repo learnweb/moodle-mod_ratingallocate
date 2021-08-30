@@ -446,7 +446,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $explanation = $choice->{this_db\ratingallocate_choices::EXPLANATION};
             $attachments = $ratingallocate->get_file_attachments_for_choice($choice->id);
             if ($attachments) {
-                $explanation .= $this->render_attachments($attachments);
+                $explanation .= $this->render_attachments($attachments, true);
             }
             $row[] = $explanation;
             $row[] = $choice->{this_db\ratingallocate_choices::MAXSIZE};
@@ -471,10 +471,11 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
     /**
      * Render file attachments for a certain choice entry
-     * @param array $files array of file attachments
+     * @param array $files Array of file attachments
+     * @param bool $break Insert a line break on the first file attachment
      * @return string HTML for the attachments
      */
-    public function render_attachments($files) {
+    public function render_attachments($files, $break=false) {
         $entries = array();
         foreach ($files as $f) {
             $filename = $f->get_filename();
@@ -491,7 +492,13 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 'title' => $filename,
             );
 
-            $entry = html_writer::empty_tag('br');
+            $entry = '';
+            if (!$break) {
+                // Skip first line break; update flag for any subsequent attachments.
+                $break = true;
+            } else {
+                $entry .= html_writer::empty_tag('br');
+            }
             $entry .= html_writer::start_tag('a', $a);
             $entry .= $this->output->image_icon('t/right', $filename, 'moodle', array('title' => 'Download file'));
             $entry .= $filename;
@@ -499,7 +506,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $entries[] = $entry;
         }
         return implode($entries);
-
     }
 
     /**
