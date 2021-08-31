@@ -24,19 +24,19 @@ Feature: When a student attempts to rate choices it should be validated prior to
     And I press "Edit Choices"
     And I add a new choice with the values:
       | title       | My first choice |
-      | explanation | Test 1          |
+      | Description (optional) | Test 1          |
       | maxsize     |	2	    	  |
     And I add a new choice with the values:
       | title       | My second choice |
-      | explanation | Test 2           |
+      | Description (optional) | Test 2           |
       | maxsize     |	2	    	   |
     And I add a new choice with the values:
       | title       | My third choice |
-      | explanation | Test 3  		  |
+      | Description (optional) | Test 3  		  |
       | maxsize     |	2	    	  |
     And I add a new choice with the values:
       | title       | My fourth choice |
-      | explanation | Test 4  		  |
+      | Description (optional) | Test 4  		  |
       | maxsize     |	2	    	  |
     And I log out
 

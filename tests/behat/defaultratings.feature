@@ -23,11 +23,11 @@ Feature: When a student starts a rating the default values of all choices
     And I press "Edit Choices"
     And I add a new choice with the values:
       | title       | My first choice |
-      | explanation | Test 1          |
+      | Description (optional) | Test 1          |
       | maxsize     |	2	    	  |
     And I add a new choice with the values:
       | title       | My second choice |
-      | explanation | Test 1          |
+      | Description (optional) | Test 1          |
       | maxsize     |	2	    	  |
 
   @javascript

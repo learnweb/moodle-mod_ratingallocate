@@ -22,21 +22,21 @@ Feature: Creating a new rating allocation, where new choices need to
     And I press "Edit Choices"
     And I add a new choice with the values:
       | title       | My first choice |
-      | explanation | Test 1          |
+      | Description (optional) | Test 1          |
       | maxsize     |	2	    	  |
     And I add a new choice with the values:
       | title       | My second choice |
-      | explanation | Test 2           |
+      | Description (optional) | Test 2           |
       | maxsize     |	2	    	   |
     And I add a new choice with the values:
       | title       | My third choice |
-      | explanation | Test 3  		  |
+      | Description (optional) | Test 3  		  |
       | maxsize     |	2	    	  |
 
   Scenario: Create a new rating alloation and add an additonal new choice.
     Given I add a new choice with the values:
   	| title       | My fourth choice |
-  	| explanation | Test 4           |
+  	| Description (optional) | Test 4           |
     | maxsize     |	2	    	     |
     Then I should see the choice with the title "My first choice"
     And I should see the choice with the title "My second choice"
@@ -45,7 +45,7 @@ Feature: Creating a new rating allocation, where new choices need to
 
   Scenario: Create a new rating alloation and add two additonal new choices using the add next button.
     Given I add new choices with the values:
-  	| title            | explanation     | maxsize |
+  	| title            | Description (optional)    | maxsize |
     | My fourth choice | Test 4          | 2       |
     | My fifth choice  | Test 5          | 2       |
     Then I should see the choice with the title "My first choice"
@@ -56,7 +56,7 @@ Feature: Creating a new rating allocation, where new choices need to
 
   Scenario: Create a new rating alloation and add two additonal new choices, but delete two old and one new.
     When I add new choices with the values:
-      | title            | explanation     | maxsize |
+      | title            | Description (optional)    | maxsize |
       | My fourth choice | Test 4          | 2       |
       | My fifth choice  | Test 5          | 2       |
     And I delete the choice with the title "My first choice"
@@ -72,7 +72,7 @@ Feature: Creating a new rating allocation, where new choices need to
   Scenario: Create a new rating alloation and add an additonal new active choice.
     When I add a new choice with the values:
       | title       | My fourth choice |
-      | explanation | Test 4          |
+      | Description (optional) | Test 4          |
       | maxsize     |	1337			|
       | active      | true            |
     And I should see the choice with the title "My fourth choice"
@@ -83,7 +83,7 @@ Feature: Creating a new rating allocation, where new choices need to
   Scenario: Create a new rating alloation and add an additonal new inactive choice.
     When I add a new choice with the values:
       | title       | My fourth choice |
-      | explanation | Test 4          |
+      | Description (optional) | Test 4          |
       | maxsize     |	1337			|
       | active      | false            |
     And I should see the choice with the title "My fourth choice"
@@ -94,7 +94,7 @@ Feature: Creating a new rating allocation, where new choices need to
   Scenario: Create a new rating alloation and add an additonal new inactive choice. Change the the choice to active.
     When I add a new choice with the values:
       | title       | My fourth choice |
-      | explanation | This is my discription          |
+      | Description (optional) | This is my discription          |
       | maxsize     |	1231243			|
       | active	  | false				|
     Then I set the choice with the title "My fourth choice" to active
@@ -104,7 +104,7 @@ Feature: Creating a new rating allocation, where new choices need to
   Scenario: Create a new rating alloation and add an additonal new active choice. Change the the choice to inactive.
     When I add a new choice with the values:
       | title       | My fourth choice |
-      | explanation | This is my discription          |
+      | Description (optional) | This is my discription          |
       | maxsize     |	1231243			|
       | active	  | true				|
     Then I set the choice with the title "My fourth choice" to inactive

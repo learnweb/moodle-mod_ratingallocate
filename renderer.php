@@ -189,7 +189,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                     $allocation_html .= html_writer::span(
                         format_string($allocation->{this_db\ratingallocate_choices::TITLE}),
                         'allocation tag tag-success');
-                    $allocation_html .= '<br/>' . format_string($allocation->{this_db\ratingallocate_choices::EXPLANATION});
+                    $allocation_html .= '<br/>' . format_text($allocation->{this_db\ratingallocate_choices::EXPLANATION});
                 }
                 $cell2 = new html_table_cell($allocation_html);
                 $row->cells = array($cell1, $cell2);
@@ -443,7 +443,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $row = array();
             $class = '';
             $row[] = $choice->{this_db\ratingallocate_choices::TITLE};
-            $explanation = $choice->{this_db\ratingallocate_choices::EXPLANATION};
+            $explanation = format_text($choice->{this_db\ratingallocate_choices::EXPLANATION});
             $attachments = $ratingallocate->get_file_attachments_for_choice($choice->id);
             if ($attachments) {
                 $explanation .= $this->render_attachments($attachments, true);
