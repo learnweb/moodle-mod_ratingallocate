@@ -22,15 +22,15 @@ Feature: When a student rates a rating should be saved and it should be possible
     And I press "Edit Choices"
     And I add a new choice with the values:
       | title       | My first choice |
-      | explanation | Test 1          |
+      | Description (optional) | Test 1          |
       | maxsize     |	2	    	  |
     And I add a new choice with the values:
       | title       | My second choice |
-      | explanation | Test 2           |
+      | Description (optional) | Test 2           |
       | maxsize     |	2	    	   |
     And I add a new choice with the values:
       | title       | My third choice |
-      | explanation | Test 3  		  |
+      | Description (optional) | Test 3  		  |
       | maxsize     |	2	    	  |
     And I log out
 

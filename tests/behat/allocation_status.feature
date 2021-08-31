@@ -26,7 +26,7 @@ Feature: Students should get status information according to their rating and th
     And I press "Edit Choices"
     And I add a new choice with the values:
       | title       | My only choice |
-      | explanation | Test           |
+      | Description (optional) | Test           |
       | maxsize     |	1            |
     And I log out
     And I log in as "student1"
