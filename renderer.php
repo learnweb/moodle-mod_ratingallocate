@@ -189,7 +189,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                     $allocation_html .= html_writer::span(
                         format_string($allocation->{this_db\ratingallocate_choices::TITLE}),
                         'allocation tag tag-success');
-                    $allocation_html .= '<br/>' . format_string($allocation->{this_db\ratingallocate_choices::EXPLANATION});
+                    $allocation_html .= '<br/>' . format_text($allocation->{this_db\ratingallocate_choices::EXPLANATION});
                 }
                 $cell2 = new html_table_cell($allocation_html);
                 $row->cells = array($cell1, $cell2);
@@ -443,7 +443,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $row = array();
             $class = '';
             $row[] = $choice->{this_db\ratingallocate_choices::TITLE};
-            $row[] = $choice->{this_db\ratingallocate_choices::EXPLANATION};
+            $row[] = format_text($choice->{this_db\ratingallocate_choices::EXPLANATION});
             $row[] = $choice->{this_db\ratingallocate_choices::MAXSIZE};
             if ($choice->{this_db\ratingallocate_choices::ACTIVE}) {
                 $row[] = get_string('yes');

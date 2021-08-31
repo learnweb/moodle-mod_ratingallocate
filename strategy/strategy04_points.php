@@ -120,7 +120,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
                 ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
 
             // Use explanation as title/label of group to align with other strategies.
-            $mform->addElement('text', $ratingelem, $data->explanation );
+            $mform->addElement('text', $ratingelem, format_text($data->explanation));
             $mform->setType($ratingelem, PARAM_INT);
 
             // try to restore previous ratings

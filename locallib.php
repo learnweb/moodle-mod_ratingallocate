@@ -1068,7 +1068,7 @@ class ratingallocate {
                 $notificationtext = get_string('allocation_notification_message', 'ratingallocate', array(
                     'ratingallocate' => $this->ratingallocate->name,
                     'choice' => $choices[$allocchoiceid]->title,
-                    'explanation' => $choices[$allocchoiceid]->explanation));
+                    'explanation' => format_text($choices[$allocchoiceid]->explanation)));
             } else {
                 $notificationtext = get_string('no_allocation_notification_message', 'ratingallocate', array(
                     'ratingallocate' => $this->ratingallocate->name));

@@ -104,7 +104,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
 
             // It is important to set a group name, so that later on errors can be displayed at the correct spot.
             // Furthermore, use explanation as title/label of group.
-            $mform->addGroup($radioarray, 'radioarr_' . $data->choiceid, $data->explanation, null, false);
+            $mform->addGroup($radioarray, 'radioarr_' . $data->choiceid, format_text($data->explanation), null, false);
 
             $defaultrating = $this->get_strategysetting('default');
             $defaultrating = $defaultrating == null ? max(array_keys($choiceoptions)) : $defaultrating;

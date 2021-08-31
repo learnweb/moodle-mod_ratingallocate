@@ -135,7 +135,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
                 '<span class="mod-ratingallocate-choice-maxno-desc">' .
                 get_string('choice_maxsize_display', ratingallocate_MOD_NAME) .
                 ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
-            $mform->addElement('static', 'description_'.$data->choiceid, $data->title, $data->explanation);
+            $mform->addElement('static', 'description_'.$data->choiceid, $data->title, format_text($data->explanation));
         }
     }
 
