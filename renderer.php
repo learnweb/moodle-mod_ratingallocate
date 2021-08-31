@@ -443,7 +443,12 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $row = array();
             $class = '';
             $row[] = $choice->{this_db\ratingallocate_choices::TITLE};
-            $row[] = format_text($choice->{this_db\ratingallocate_choices::EXPLANATION});
+            $explanation = format_text($choice->{this_db\ratingallocate_choices::EXPLANATION});
+            $attachments = $ratingallocate->get_file_attachments_for_choice($choice->id);
+            if ($attachments) {
+                $explanation .= $this->render_attachments($attachments, true);
+            }
+            $row[] = $explanation;
             $row[] = $choice->{this_db\ratingallocate_choices::MAXSIZE};
             if ($choice->{this_db\ratingallocate_choices::ACTIVE}) {
                 $row[] = get_string('yes');
@@ -462,6 +467,45 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         }
 
         $table->finish_output();
+    }
+
+    /**
+     * Render file attachments for a certain choice entry
+     * @param array $files Array of file attachments
+     * @param bool $break Insert a line break on the first file attachment
+     * @return string HTML for the attachments
+     */
+    public function render_attachments($files, $break=false) {
+        $entries = array();
+        foreach ($files as $f) {
+            $filename = $f->get_filename();
+            $url = moodle_url::make_pluginfile_url(
+                $f->get_contextid(),
+                $f->get_component(),
+                $f->get_filearea(),
+                $f->get_itemid(),
+                $f->get_filepath(),
+                $f->get_filename(),
+                false);
+            $a = array(
+                'href' => $url,
+                'title' => $filename,
+            );
+
+            $entry = '';
+            if (!$break) {
+                // Skip first line break; update flag for any subsequent attachments.
+                $break = true;
+            } else {
+                $entry .= html_writer::empty_tag('br');
+            }
+            $entry .= html_writer::start_tag('a', $a);
+            $entry .= $this->output->image_icon('t/right', $filename, 'moodle', array('title' => 'Download file'));
+            $entry .= $filename;
+            $entry .= html_writer::end_tag('a');
+            $entries[] = $entry;
+        }
+        return implode($entries);
     }
 
     /**

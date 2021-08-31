@@ -47,9 +47,10 @@ class modify_choice_form extends moodleform {
      * @param string $url
      * @param ratingallocate $ratingallocate
      * @param ratingallocate_choice $choice
+     * @param array $customdata
      */
     public function __construct($url, ratingallocate $ratingallocate,
-                                ratingallocate_choice $choice = null) {
+                                ratingallocate_choice $choice = null, $customdata = null) {
         $this->ratingallocate = $ratingallocate;
         if ($choice) {
             $this->choice = $choice;
@@ -61,7 +62,8 @@ class modify_choice_form extends moodleform {
         } else {
             $this->addnew = true;
         }
-        parent::__construct($url);
+
+        parent::__construct($url, $customdata);
     }
 
     /**
@@ -92,6 +94,13 @@ class modify_choice_form extends moodleform {
         $mform->addRule($elementname, get_string('err_required', 'form') , 'required', null, 'server');
         $mform->addRule($elementname, get_string('err_numeric', 'form') , 'numeric', null, 'server');
         $mform->addRule($elementname, get_string('err_positivnumber', 'ratingallocate') , 'regex', '/^[1-9][0-9]*|0/', 'server');
+
+        $elementname = 'attachments_filemanager';
+        $mform->addElement('filemanager', $elementname, get_string('uploadafile'), null, array(
+            'accepted_types' => '*',
+            'subdirs' => false,
+        ));
+        $this->set_data($this->_customdata['attachment_data']);
 
         $elementname = 'active';
         $mform->addElement('advcheckbox', $elementname, get_string('choice_active', ratingallocate_MOD_NAME),

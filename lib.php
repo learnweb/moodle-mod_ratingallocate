@@ -202,7 +202,7 @@ function ratingallocate_print_recent_activity($course, $viewfullnames, $timestar
  * @param int $groupid check for a particular group's activity only, defaults to 0 (all groups)
  * @return void adds items into $activities and increases $index
  */
-function ratingallocate_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, 
+function ratingallocate_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid,
         $userid = 0, $groupid = 0) {
 }
 
@@ -290,12 +290,37 @@ function ratingallocate_pluginfile($course, $cm, $context, $filearea, array $arg
     global $DB, $CFG;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
-        send_file_not_found();
+        return false;
+    }
+
+    if ($filearea !== 'choice_attachment') {
+        return false;
     }
 
     require_login($course, true, $cm);
 
-    send_file_not_found();
+    if (!has_capability('mod/ratingallocate:view', $context)) {
+        return false;
+    }
+
+    $itemid = array_shift($args);
+    $filename = array_pop($args);
+    if (!$args) {
+        // Empty path, use root.
+        $filepath = '/';
+    } else {
+        // Assemble filepath.
+        $filepath = '/'.implode('/', $args).'/';
+    }
+
+    $fs = get_file_storage();
+    $file = $fs->get_file($context->id, 'mod_ratingallocate', $filearea, $itemid, $filepath, $filename);
+    if (!$file) {
+        return false; // The file does not exist.
+    }
+
+    // Send the file to the browser. Cache lifetime of 1 day, no filtering.
+    send_stored_file($file, 86400, 0, $forcedownload, $options);
 }
 
 // //////////////////////////////////////////////////////////////////////////////
