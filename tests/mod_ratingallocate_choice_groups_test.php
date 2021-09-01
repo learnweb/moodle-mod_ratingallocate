@@ -90,7 +90,7 @@ class mod_ratingallocate_choice_group_testcase extends advanced_testcase {
     }
 
 
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
 
         $generator = $this->getDataGenerator();
@@ -120,7 +120,7 @@ class mod_ratingallocate_choice_group_testcase extends advanced_testcase {
     }
 
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->choicedata = null;
 
         parent::tearDown();
