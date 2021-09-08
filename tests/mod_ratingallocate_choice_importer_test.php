@@ -52,7 +52,7 @@ class mod_ratingallocate_choice_importer_testcase extends advanced_testcase {
         }
     }
 
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
 
         $generator = $this->getDataGenerator();
