@@ -28,7 +28,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @author     David Thompson <david.thompson@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_choice_group_testcase extends advanced_testcase {
+class mod_ratingallocate_choice_importer_testcase extends advanced_testcase {
 
     /**
      * Return lines of text for a sample CSV file.
