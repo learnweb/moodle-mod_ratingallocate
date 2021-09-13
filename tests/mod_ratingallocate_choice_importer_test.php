@@ -151,31 +151,32 @@ class mod_ratingallocate_choice_importer_testcase extends advanced_testcase {
         // 4: Green
         $choicegroups4 = array_keys($this->ratingallocate->get_choice_groups($keylist[3]));
         $this->assertEquals(count($choicegroups4), 1);
-        $this->assertContains($this->green->id, $choicegroups4);
+        // Convert to integers here, because later PHP versions check type more strictly.
+        $this->assertContains(intval($this->green->id), $choicegroups4);
 
         // 5: Blue
         $choicegroups5 = array_keys($this->ratingallocate->get_choice_groups($keylist[4]));
         $this->assertEquals(count($choicegroups5), 1);
-        $this->assertContains($this->blue->id, $choicegroups5);
+        $this->assertContains(intval($this->blue->id), $choicegroups5);
 
         // 6: Blue, Green
         $choicegroups6 = array_keys($this->ratingallocate->get_choice_groups($keylist[5]));
         $this->assertEquals(count($choicegroups6), 2);
-        $this->assertContains($this->blue->id, $choicegroups6);
-        $this->assertContains($this->green->id, $choicegroups6);
+        $this->assertContains(intval($this->blue->id), $choicegroups6);
+        $this->assertContains(intval($this->green->id), $choicegroups6);
 
         // 7: Blue, Green, Red
         $choicegroups7 = array_keys($this->ratingallocate->get_choice_groups($keylist[6]));
         $this->assertEquals(count($choicegroups7), 3);
-        $this->assertContains($this->blue->id, $choicegroups7);
-        $this->assertContains($this->green->id, $choicegroups7);
-        $this->assertContains($this->red->id, $choicegroups7);
+        $this->assertContains(intval($this->blue->id), $choicegroups7);
+        $this->assertContains(intval($this->green->id), $choicegroups7);
+        $this->assertContains(intval($this->red->id), $choicegroups7);
 
         // 8: Green, Red, empty values ignored
         $choicegroups8 = array_keys($this->ratingallocate->get_choice_groups($keylist[7]));
         $this->assertEquals(count($choicegroups8), 2);
-        $this->assertContains($this->green->id, $choicegroups8);
-        $this->assertContains($this->red->id, $choicegroups8);
+        $this->assertContains(intval($this->green->id), $choicegroups8);
+        $this->assertContains(intval($this->red->id), $choicegroups8);
     }
 
     public function test_bad_group() {
