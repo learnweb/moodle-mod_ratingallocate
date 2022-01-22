@@ -47,6 +47,11 @@ class ratings_and_allocations_table extends \table_sql {
     private $groupsofallchoices;
 
     /**
+     * @var array Array of all group names assigned to the choices, with choice id as key.
+     */
+    private $groupnamesofchoices;
+
+    /**
      * @var bool if true the table should show a column with the groups in this ratingallocate instance which the user belongs to.
      */
     private $showgroups;
@@ -159,16 +164,24 @@ class ratings_and_allocations_table extends \table_sql {
             if ($this->showgroups) {
                 $columns[] = 'groups';
                 $headers[] = get_string('groups');
+                // Prepare group names of choices.
+                $this->groupnamesofchoices = [];
+                foreach ($choices as $choice) {
+                    $this->groupnamesofchoices[$choice->id] = array_map(fn($group) => groups_get_group_name($group->id),
+                            $this->ratingallocate->get_choice_groups($choice->id));
+                }
             }
         }
 
         foreach ($this->choicenames as $choiceid => $choicetitle) {
             $columns[] = self::CHOICE_COL . $choiceid;
             $choice = $this->ratingallocate->get_choices()[$choiceid];
-            $choicegroups = array_map(fn($group) => groups_get_group_name($group->id), $this->ratingallocate->get_choice_groups($choiceid));
-            if (!empty($choice->usegroups) && !empty($choicegroups)) {
-                $choicetitle .= ' <br/>' . \html_writer::span('(' . implode(';', $choicegroups) . ')',
-                        'groupsinchoiceheadings');
+            if ($this->showgroups) {
+                $choicegroups = $this->groupnamesofchoices[$choiceid];
+                if (!$this->is_downloading() && !empty($choice->usegroups) && !empty($choicegroups)) {
+                    $choicetitle .= ' <br/>' . \html_writer::span('(' . implode(';', $choicegroups) . ')',
+                            'groupsinchoiceheadings');
+                }
             }
             $headers[] = $choicetitle;
             if ($this->is_downloading()) {
@@ -200,6 +213,8 @@ class ratings_and_allocations_table extends \table_sql {
         parent::setup();
 
         $this->init_sql();
+
+        $this->add_group_row();
     }
 
     /**
@@ -246,6 +261,29 @@ class ratings_and_allocations_table extends \table_sql {
         }
 
         $this->finish_output();
+    }
+
+    /**
+     * Add a row containing the group names of the groups assigned to the choices to the export table.
+     *
+     * @return void
+     */
+    private function add_group_row(): void {
+        if ($this->is_downloading()) {
+            $choices = $this->ratingallocate->get_choices();
+            $row = [];
+            foreach ($choices as $choice) {
+                $choicegroups = $this->groupnamesofchoices[$choice->id];
+                if (empty($choice->usegroups) || empty($choicegroups)) {
+                    continue;
+                }
+                $groupnames = implode(';', $this->groupnamesofchoices[$choice->id]);
+                $row[self::CHOICE_COL . $choice->id] = $groupnames;
+                $row[self::CHOICE_COL . $choice->id . self::EXPORT_CHOICE_TEXT_SUFFIX] = $groupnames;
+                $row[self::CHOICE_COL . $choice->id . self::EXPORT_CHOICE_ALLOC_SUFFIX] = $groupnames;
+            }
+            $this->add_data_keyed($row);
+        }
     }
 
     /**
