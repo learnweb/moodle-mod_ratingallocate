@@ -47,6 +47,8 @@ $string['crontask'] = 'Automated allocation for Fair Allocation';
 $string['algorithmtimeout'] = 'Algorithm timeout';
 $string['configalgorithmtimeout'] = 'The time in seconds after which the algorithm is assumed to be stuck.
 The current run is terminated and marked as failed.';
+$string['algorithmforcebackground'] = 'Force calculation as background task';
+$string['configalgorithmforcebackground'] = 'Even if triggered manually by the user the distribution will always be calculated in the background.';
 $string['downloaduserfields'] = 'Additional user fields for download';
 $string['configdownloaduserfields'] =
         'When downloading a table with users in it, these fields may be shown in addition to the users\' first and last name.';
@@ -113,6 +115,8 @@ $string['algorithm_already_running'] =
         'Another instance of the allocation algorithm is already running. Please wait a few minutes and refresh the page.';
 $string['algorithm_scheduled_for_cron'] =
         'The allocation algorithm run is scheduled for immediate execution by the cron job. Please wait a few minutes and refresh the page.';
+$string['algorithm_now_scheduled_for_cron'] =
+        'The allocation algorithm run has now been scheduled for execution by the cron job. Please wait a few minutes and refresh the page.';
 $string['start_distribution'] = 'Run Allocation Algorithm';
 $string['confirm_start_distribution'] =
         'Running the algorithm will delete all existing allocations, if any. Are you sure to continue?';
