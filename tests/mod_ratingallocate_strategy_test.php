@@ -106,6 +106,10 @@ class mod_ratingallocate_strategy_testcase extends advanced_testcase {
         $settings = array(ratingallocate\strategy_points\strategy::TOTALPOINTS => null);
         $strategy = new ratingallocate\strategy_points\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
+        //Attribute required
+        $settings = array(ratingallocate\strategy_points\strategy::MAXPERCHOICE => null);
+        $strategy = new ratingallocate\strategy_points\strategy($settings);
+        $this->assertCount(1, $strategy->validate_settings());
         //Attribute minimum error
         $settings = array(ratingallocate\strategy_points\strategy::MAXZERO => -1);
         $strategy = new ratingallocate\strategy_points\strategy($settings);
@@ -114,12 +118,20 @@ class mod_ratingallocate_strategy_testcase extends advanced_testcase {
         $settings = array(ratingallocate\strategy_points\strategy::TOTALPOINTS => 0);
         $strategy = new ratingallocate\strategy_points\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
+        //Attribute minimum error
+        $settings = array(ratingallocate\strategy_points\strategy::MAXPERCHOICE => 0);
+        $strategy = new ratingallocate\strategy_points\strategy($settings);
+        $this->assertCount(1, $strategy->validate_settings());
         //No validation error
         $settings = array(ratingallocate\strategy_points\strategy::MAXZERO => 0);
         $strategy = new ratingallocate\strategy_points\strategy($settings);
         $this->assertCount(0, $strategy->validate_settings());
         //No validation error
         $settings = array(ratingallocate\strategy_points\strategy::TOTALPOINTS => 1);
+        $strategy = new ratingallocate\strategy_points\strategy($settings);
+        $this->assertCount(0, $strategy->validate_settings());
+        //No validation error
+        $settings = array(ratingallocate\strategy_points\strategy::MAXPERCHOICE => 1);
         $strategy = new ratingallocate\strategy_points\strategy($settings);
         $this->assertCount(0, $strategy->validate_settings());
     }

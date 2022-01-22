@@ -39,6 +39,7 @@ class strategy extends \strategytemplate {
     const STRATEGYID = 'strategy_points';
     const MAXZERO = 'maxzero';
     const TOTALPOINTS = 'totalpoints';
+    const MAXPERCHOICE = 'maxperchoice';
 
 
     public function get_strategyid() {
@@ -58,6 +59,12 @@ class strategy extends \strategytemplate {
                 get_string(self::STRATEGYID . '_setting_totalpoints', ratingallocate_MOD_NAME),
                 $this->get_settings_value(self::TOTALPOINTS),
                 null
+            ),
+            self::MAXPERCHOICE => array( // wie viele Punkte man maximal pro Wahlmoeglichkeit vergeben kann
+                'int',
+                get_string(self::STRATEGYID . '_setting_maxperchoice', ratingallocate_MOD_NAME),
+                $this->get_settings_value(self::MAXPERCHOICE),
+                null
             )
         );
     }
@@ -69,13 +76,15 @@ class strategy extends \strategytemplate {
     public function get_default_settings() {
         return array(
                         self::MAXZERO => 3,
-                        self::TOTALPOINTS => 100
+                        self::TOTALPOINTS => 100,
+                        self::MAXPERCHOICE => 100
         );
     }
 
     protected function getValidationInfo() {
         return array(self::MAXZERO => array(true,0),
-                     self::TOTALPOINTS => array(true,1)
+                     self::TOTALPOINTS => array(true,1),
+                     self::MAXPERCHOICE => array(true,1)
         );
     }
 
@@ -140,12 +149,15 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         $output = get_string(strategy::STRATEGYID . '_explain_distribute_points', ratingallocate_MOD_NAME, $this->get_strategysetting(strategy::TOTALPOINTS));
         $output .= '<br />';
         $output .= get_string(strategy::STRATEGYID . '_explain_max_zero', ratingallocate_MOD_NAME, $this->get_strategysetting(strategy::MAXZERO));
+        $output .= '<br />';
+        $output .= get_string(strategy::STRATEGYID . '_explain_max_per_choice', ratingallocate_MOD_NAME, $this->get_strategysetting(strategy::MAXPERCHOICE));
         return $output;
     }
 
     public function validation($data, $files) {
         $maxcrossout = $this->get_strategysetting(strategy::MAXZERO);
         $totalpoints = $this->get_strategysetting(strategy::TOTALPOINTS);
+        $maxperchoice = $this->get_strategysetting(strategy::MAXPERCHOICE);
         $errors = parent::validation($data, $files);
 
         if (!array_key_exists('data', $data) or count($data ['data']) < 2) {
@@ -156,7 +168,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         $ratings = $data ['data'];
         $currentpoints = 0;
         foreach ($ratings as $cid => $rating) {
-            if ($rating['rating'] < 0 || $rating['rating'] > $totalpoints) {
+            if ($rating['rating'] < 0 || $rating['rating'] > $totalpoints || $rating['rating'] > $maxperchoice) {
                 $errors['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_illegal_entry', ratingallocate_MOD_NAME, $totalpoints);
             } else if ($rating ['rating'] == 0) {
                 $impossibles ++;
