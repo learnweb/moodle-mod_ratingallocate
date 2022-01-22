@@ -26,4 +26,8 @@ if ($ADMIN->fulltree) {
             'idnumber'    => new lang_string('idnumber'),
             'email'       => new lang_string('email'),
         ]));
+
+    $settings->add(new admin_setting_configcheckbox('ratingallocate_algorithm_force_background_execution',
+        new lang_string('algorithmforcebackground', 'ratingallocate'),
+        new lang_string('configalgorithmforcebackground', 'ratingallocate'), 0));
 }

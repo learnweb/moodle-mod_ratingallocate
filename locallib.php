@@ -195,7 +195,7 @@ class ratingallocate {
      * @throws coding_exception
      */
     private function process_action_start_distribution() {
-        global $DB, $PAGE;
+        global $CFG, $DB, $PAGE;
         // Process form: Start distribution and call default page after finishing.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
 
@@ -213,6 +213,21 @@ class ratingallocate {
                 redirect(new moodle_url('/mod/ratingallocate/view.php',
                     array('id' => $this->coursemodule->id)),
                     get_string('algorithm_scheduled_for_cron', ratingallocate_MOD_NAME),
+                    null,
+                    \core\output\notification::NOTIFY_INFO);
+            } else if ($CFG->ratingallocate_algorithm_force_background_execution === '1') {
+                // Force running algorithm by cron.
+                $this->ratingallocate->runalgorithmbycron = 1;
+                // Reset status to 'not started'.
+                $this->ratingallocate->algorithmstatus = \mod_ratingallocate\algorithm_status::notstarted;
+                $this->origdbrecord->{this_db\ratingallocate::RUNALGORITHMBYCRON} = '1';
+                $this->origdbrecord->{this_db\ratingallocate::ALGORITHMSTATUS} = \mod_ratingallocate\algorithm_status::notstarted;
+                // Clear all previous allocations so cron job picks up this task and calculates new allocation.
+                $this->clear_all_allocations();
+                $DB->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
+                redirect(new moodle_url('/mod/ratingallocate/view.php',
+                    array('id' => $this->coursemodule->id)),
+                    get_string('algorithm_now_scheduled_for_cron', ratingallocate_MOD_NAME),
                     null,
                     \core\output\notification::NOTIFY_INFO);
             } else {
