@@ -541,7 +541,7 @@ class behat_mod_ratingallocate extends behat_base {
         $ratingdatehash = $ratingdata->getRowsHash();
         // The action depends on the field type.
         foreach ($ratingdatehash as $choice => $value) {
-            $fieldxpath = "//legend[normalize-space(.)=\"$choice\"]/ancestor::fieldset/descendant::input[@type='text']";
+            $fieldxpath = "//*[contains(text(), '$choice')]/ancestor::fieldset/descendant::input[@type='text']";
             try {
                 $option = $this->find('xpath', $fieldxpath);
                 $option->setValue($value);
