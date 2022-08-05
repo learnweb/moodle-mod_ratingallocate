@@ -149,8 +149,6 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      */
     private function add_settings_field($stratfieldid, array $value, $strategyid, MoodleQuickForm $mform) {
 
-        $attributes = array('size' => '20');
-
         if ($value[0] != "select" && isset($value[3])) {
             $attributes['placeholder'] = ($value[3]);
         }
