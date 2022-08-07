@@ -8,6 +8,11 @@
     white-space: normal;
 }
 
+.ratingallocate_ratings_table {
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
 .ratingallocate_ratings_table tr.ratingallocate_summary,
 .ratingallocate_ratings_table span.ratingallocate_member {
     font-weight: bold;
@@ -65,4 +70,33 @@
 
 .ratingallocate_distribute_unallocated {
     margin: 1em 1em 0 0;
+}
+
+.ratingallocate_ratings_table tbody td:first-child {
+    position: sticky;
+    left: -2px;
+    background-color: #FFFFFF;
+}
+
+.ratingallocate_ratings_table tr.ratingallocate_summary td {
+    position: sticky;
+    bottom: -2px;
+    background-color: #FFFFFF;
+}
+
+.ratingallocate_ratings_table thead th {
+    background-color: #FFFFFF;
+    position: sticky;
+    top: -2px;
+    z-index: 1;
+}
+
+.ratingallocate_ratings_table thead th:first-child,
+.ratingallocate_ratings_table tr.ratingallocate_summary td:first-child {
+    left: -2px;
+    z-index: 2;
+}
+
+.ratingallocate_ratings_table_container .no-overflow {
+    max-height: 80vh;
 }
