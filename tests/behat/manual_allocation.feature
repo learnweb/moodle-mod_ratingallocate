@@ -34,8 +34,7 @@ Feature: Teachers should be able to alter the allocations manually.
 
   Scenario: As a teacher, I want to allocate a so far not allocated user.
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "My Fair Allocation"
+    And I am on the "My Fair Allocation" "ratingallocate activity" page
     And I press "Manual Allocation Form"
     Then I should see "Steve" assigned to "C1"
     And I should see "Steve" not assigned to "C2"

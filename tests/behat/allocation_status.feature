@@ -21,8 +21,7 @@ Feature: Students should get status information according to their rating and th
       | activity | course | idnumber | name | accesstimestart |
       | ratingallocate   | C1     | ra1  | My Fair Allocation | ##yesterday## |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "My Fair Allocation"
+    And I am on the "My Fair Allocation" "ratingallocate activity" page
     And I press "Edit Choices"
     And I add a new choice with the values:
       | title       | My only choice |
@@ -30,52 +29,44 @@ Feature: Students should get status information according to their rating and th
       | maxsize     |	1            |
     And I log out
     And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "My Fair Allocation"
+    And I am on the "My Fair Allocation" "ratingallocate activity" page
     And I press "Edit Rating"
     And I press "Save changes"
     And I log out
     And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "My Fair Allocation"
+    And I am on the "My Fair Allocation" "ratingallocate activity" page
     And I press "Edit Rating"
     And I click on "Deny" "radio"
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "My Fair Allocation"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "My Fair Allocation" "ratingallocate activity editing" page
     And I set the following fields to these values:
       | Rating begins at | ##2 days ago## |
       | Rating ends at | ##yesterday## |
     And I press "id_submitbutton"
     And I run the scheduled task "mod_ratingallocate\task\cron_task"
-    And I am on "Course 1" course homepage
-    And I follow "My Fair Allocation"
+    And I am on the "My Fair Allocation" "ratingallocate activity" page
     And I press "Publish Allocation"
     And I log out
 
   @javascript
   Scenario: As a user, who rated and was allocated, I should see my allocated choice.
     When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "My Fair Allocation"
+    And I am on the "My Fair Allocation" "ratingallocate activity" page
     Then I should see "My only choice" in the "//*[contains(@class, 'allocation')]" "xpath_element"
     And I should see "My only choice" in the "//*[contains(@class, 'alert-success')]" "xpath_element"
 
   @javascript
   Scenario: As a user, who rated and was not allocated, I should see a warning.
     When I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "My Fair Allocation"
+    And I am on the "My Fair Allocation" "ratingallocate activity" page
     Then I should see "You were not allocated to any choice!" in the "//*[contains(@class, 'allocation')]" "xpath_element"
     And I should see "You could not be allocated to any choice." in the "//*[contains(@class, 'alert-danger')]" "xpath_element"
 
   @javascript
   Scenario: As a user, who did not rate, I should not see my allocated choice
     When I log in as "student3"
-    And I am on "Course 1" course homepage
-    And I follow "My Fair Allocation"
+    And I am on the "My Fair Allocation" "ratingallocate activity" page
     Then I should not see "Your Allocation"
     And I should see "The rating is over." in the "//*[contains(@class, 'alert-info')]" "xpath_element"

@@ -20,7 +20,7 @@ Feature: When a student attempts to rate choices it should be validated prior to
       | strategy    | strategy_points |
       | Rating begins at | ##2 days ago## |
       | strategyopt[strategy_points][maxzero] | 2 |
-    And I follow "Validated Rating"
+    And I am on the "Validated Rating" "ratingallocate activity" page
     And I press "Edit Choices"
     And I add a new choice with the values:
       | title       | My first choice |
@@ -42,8 +42,7 @@ Feature: When a student attempts to rate choices it should be validated prior to
 
   Scenario: The user cannot enter values less than 0.
     When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Validated Rating"
+    And I am on the "Validated Rating" "ratingallocate activity" page
     And I press "Edit Rating"
     And I rate choices with the following points:
       | My first choice | -1 |
@@ -55,8 +54,7 @@ Feature: When a student attempts to rate choices it should be validated prior to
 
   Scenario: The values entered by the user must sum up to the (default) maximum.
     When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Validated Rating"
+    And I am on the "Validated Rating" "ratingallocate activity" page
     And I press "Edit Rating"
     And I rate choices with the following points:
       | My first choice | 1 |
@@ -68,8 +66,7 @@ Feature: When a student attempts to rate choices it should be validated prior to
 
   Scenario: The user may not rate more than a (default) number of choices with 0.
     When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Validated Rating"
+    And I am on the "Validated Rating" "ratingallocate activity" page
     And I press "Edit Rating"
     And I rate choices with the following points:
       | My first choice | 0 |

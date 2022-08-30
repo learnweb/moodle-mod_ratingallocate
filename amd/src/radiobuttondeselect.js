@@ -17,8 +17,6 @@
  * This class manages the deselection of radiobuttons, which is necessary for deleting allocations
  *
  * @module    mod_ratingallocate/radiobuttondeselect
- * @class     radiobuttondeselect
- * @package   mod_ratingallocate
  * @copyright 2017 Tobias Reischmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

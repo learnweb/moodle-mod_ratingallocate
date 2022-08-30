@@ -18,8 +18,7 @@ Feature: When a student starts a rating the default values of all choices
       | activity | course | idnumber | name |
       | ratingallocate   | C1     | ra1  | My Fair Allocation |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "My Fair Allocation"
+    And I am on the "My Fair Allocation" "ratingallocate activity" page
     And I press "Edit Choices"
     And I add a new choice with the values:
       | title       | My first choice |
@@ -32,13 +31,12 @@ Feature: When a student starts a rating the default values of all choices
 
   @javascript
   Scenario: The default rating is the max rating
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "My Fair Allocation" "ratingallocate activity editing" page
     And I select "strategy_lickert" from the "strategy" singleselect
     And I press "id_submitbutton"
     And I log out
     When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "My Fair Allocation"
+    And I am on the "My Fair Allocation" "ratingallocate activity" page
     And I press "Edit Rating"
     Then I should see the following rating form:
       | My first choice | 4 |
@@ -46,14 +44,13 @@ Feature: When a student starts a rating the default values of all choices
 
   @javascript
   Scenario: The default rating should be changeable to a medium rating
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "My Fair Allocation" "ratingallocate activity editing" page
     And I select "strategy_lickert" from the "strategy" singleselect
     And I select "3" from the "strategyopt[strategy_lickert][default]" singleselect
     And I press "id_submitbutton"
     And I log out
     When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "My Fair Allocation"
+    And I am on the "My Fair Allocation" "ratingallocate activity" page
     And I press "Edit Rating"
     Then I should see the following rating form:
       | My first choice | 3 |
@@ -61,14 +58,13 @@ Feature: When a student starts a rating the default values of all choices
 
   @javascript
   Scenario: The default rating should be changeable to the lowest rating
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "My Fair Allocation" "ratingallocate activity editing" page
     And I select "strategy_lickert" from the "strategy" singleselect
     And I select "0" from the "strategyopt[strategy_lickert][default]" singleselect
     And I press "id_submitbutton"
     And I log out
     When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "My Fair Allocation"
+    And I am on the "My Fair Allocation" "ratingallocate activity" page
     And I press "Edit Rating"
     Then I should see the following rating form:
       | My first choice | 0 |
@@ -76,13 +72,12 @@ Feature: When a student starts a rating the default values of all choices
 
   @javascript
   Scenario: The default rating is the max rating
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "My Fair Allocation" "ratingallocate activity editing" page
     And I select "strategy_lickert" from the "strategy" singleselect
     And I press "id_submitbutton"
     And I log out
     When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "My Fair Allocation"
+    And I am on the "My Fair Allocation" "ratingallocate activity" page
     And I press "Edit Rating"
     And I set the rating form to the following values:
       | My first choice | 2 |

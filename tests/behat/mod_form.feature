@@ -17,8 +17,8 @@ Feature: Creating a new rating allocation, where new choices need to
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Fair Allocation" to section "0" and I fill the form with:
-      | id_name | "My Fair Allocation" |
-    And I follow "My Fair Allocation"
+      | id_name | My Fair Allocation |
+    And I am on the "My Fair Allocation" "ratingallocate activity" page
     And I press "Edit Choices"
     And I add a new choice with the values:
       | title       | My first choice |
@@ -112,19 +112,19 @@ Feature: Creating a new rating allocation, where new choices need to
     And the choice with name "My fourth choice" should not be active
 
   Scenario: Create a new rating alloation and check the field runalgorithmbycron. It should be saved as true.
-    When I navigate to "Edit settings" in current page administration
+    When I am on the "My Fair Allocation" "ratingallocate activity editing" page
     And I set the field "runalgorithmbycron" to "1"
     And I press "id_submitbutton"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "My Fair Allocation" "ratingallocate activity editing" page
     Then the field "runalgorithmbycron" matches value "1"
 
   Scenario: Create a new rating alloation and uncheck the field runalgorithmbycron. It should be saved as false.
-    When I navigate to "Edit settings" in current page administration
+    When I am on the "My Fair Allocation" "ratingallocate activity editing" page
     And I set the field "runalgorithmbycron" to ""
     And I press "id_submitbutton"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "My Fair Allocation" "ratingallocate activity editing" page
     Then the field "runalgorithmbycron" matches value ""
 
   Scenario: Create a new rating alloation and assume the default for the field runalgorithmbycron is true.
-    When I navigate to "Edit settings" in current page administration
+    When I am on the "My Fair Allocation" "ratingallocate activity editing" page
     Then the field "runalgorithmbycron" matches value "1"

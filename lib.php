@@ -53,6 +53,12 @@ use ratingallocate\db as this_db;
  * @return mixed true if the feature is supported, null if unknown
  */
 function ratingallocate_supports($feature) {
+    if (defined('FEATURE_MOD_PURPOSE')) {
+        if ($feature == FEATURE_MOD_PURPOSE) {
+            return MOD_PURPOSE_ADMINISTRATION;
+        }
+    }
+
     switch ($feature) {
         case FEATURE_MOD_INTRO :
             return true;
