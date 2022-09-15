@@ -46,18 +46,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $this->page->set_heading($this->page->course->fullname);
 
         $o .= $this->output->header();
-        $heading = format_string($header->ratingallocate->name, false, array('context' => $header->context));
-        $o .= $this->output->heading($heading);
 
-        if ($header->showintro) {
-            $introtext = format_module_intro('ratingallocate', $header->ratingallocate,
-                    $header->coursemoduleid);
-            if ($introtext) {
-                $o .= $this->output->box_start('generalbox boxaligncenter', 'intro');
-                $o .= $introtext;
-                $o .= $this->output->box_end();
-            }
-        }
         if (!empty($this->notifications)) {
             $o .= $this->output->box_start('box generalbox boxaligncenter');
             foreach ($this->notifications as $elem) {
