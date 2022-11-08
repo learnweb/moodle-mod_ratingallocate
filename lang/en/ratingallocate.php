@@ -356,3 +356,12 @@ $string['privacy:metadata:preference:flextable_manual_filter'] = 'Stores the fil
 
 $string['filtertabledesc'] = 'Describes the filters that are applied to the allocation table.';
 $string['filtermanualtabledesc'] = 'Describes the filters that are applied to the table of the manual allocation form.';
+
+// Language strings for activity tracking.
+$string['votetracking'] = "Students must submit votes to complete it.";
+$string['votetrackingdesc_user'] = "Submit your preferences";
+$string['votetrackingenableddesc'] = "To complete this activity, users have to submit their preferences";
+
+$string['assignedtracking'] = "Students must be allocated to complete it.";
+$string['assignedtrackingdesc_user'] = "Wait to be assigned to a choice";
+$string['assignedtrackingdesc'] = "To complete this activity, users have to be allocated to a choice";

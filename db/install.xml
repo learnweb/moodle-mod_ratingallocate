@@ -23,6 +23,8 @@
         <FIELD NAME="runalgorithmbycron" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="0 don't run algorithm by cron; 1 run algorithm by cron"/>
         <FIELD NAME="algorithmstarttime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="only set while running"/>
         <FIELD NAME="algorithmstatus" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="-1 failure while running algorithm; 0 algorithm has not been running; 1 algorithm running; 2 algorithm finished"/>
+        <FIELD NAME="votetrackingenabled" TYPE="char" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="assignedtrackingenabled" TYPE="char" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
