@@ -42,6 +42,16 @@ class ratings_and_allocations_table extends \table_sql {
     private $shownames;
 
     /**
+     * @var array Array of all groups being used in the restriction settings of the choices of this ratingallocate instance.
+     */
+    private $groupsofallchoices;
+
+    /**
+     * @var bool if true the table should show a column with the groups in this ratingallocate instance which the user belongs to.
+     */
+    private $showgroups;
+
+    /**
      * @var bool if true the cells are rendered as radio buttons
      */
     private $writeable;
@@ -66,12 +76,18 @@ class ratings_and_allocations_table extends \table_sql {
         $this->renderer = $renderer;
         $this->titles = $titles;
         $this->ratingallocate = $ratingallocate;
+        $allgroupsofchoices = $this->ratingallocate->get_all_groups_of_choices();
+        $this->groupsofallchoices = array_map(function($groupid) {
+            return groups_get_group($groupid);
+        }, $allgroupsofchoices);
         if ($downloadable && has_capability('mod/ratingallocate:export_ratings', $ratingallocate->get_context())) {
             $download = optional_param('download', '', PARAM_ALPHA);
             $this->is_downloading($download, 'Test', 'Testsheet');
         }
 
         $this->shownames = true;
+        // We only show the group column if at least one group is being used in at least one active restriction setting of a choice.
+        $this->showgroups = !empty($allgroupsofchoices);
     }
 
     /**
@@ -138,6 +154,11 @@ class ratings_and_allocations_table extends \table_sql {
             } else {
                 $columns[] = 'fullname';
                 $headers[] = get_string('ratings_table_user', RATINGALLOCATE_MOD_NAME);
+            }
+            // We only want to add a group column, if at least one choice has an active group restriction.
+            if ($this->showgroups) {
+                $columns[] = 'groups';
+                $headers[] = get_string('groups');
             }
         }
 
@@ -229,6 +250,16 @@ class ratings_and_allocations_table extends \table_sql {
 
         if ($this->shownames) {
             $row['fullname'] = $user;
+            // We only can add groups if at least one choice has an active group restriction.
+            if ($this->showgroups) {
+                $groupsofuser = array_filter($this->groupsofallchoices, function($group) use ($user) {
+                    return groups_is_member($group->id, $user->id);
+                });
+                $groupnames = array_map(function($group) {
+                    return $group->name;
+                }, $groupsofuser);
+                $row['groups'] = implode(';', $groupnames);
+            }
         }
 
         foreach ($userratings as $choiceid => $userrating) {
@@ -271,6 +302,10 @@ class ratings_and_allocations_table extends \table_sql {
 
         if ($this->shownames) {
             $row[] = get_string('ratings_table_sum_allocations', RATINGALLOCATE_MOD_NAME);
+            if ($this->showgroups) {
+                // In case we are showing groups, the second column is the group column and needs to be skipped in summary row.
+                $row[] = '';
+            }
         }
 
         foreach ($this->choicesum as $choiceid => $sum) {
