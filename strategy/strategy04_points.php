@@ -141,7 +141,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             if (is_numeric($data->rating) && $data->rating >= 0) {
                 $mform->setDefault($ratingelem, $data->rating);
             } else {
-                $mform->setDefault($ratingelem, 1);
+                $mform->setDefault($ratingelem, 0);
             }
         }
     }
