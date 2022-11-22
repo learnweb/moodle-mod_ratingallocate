@@ -172,8 +172,9 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         $currentpoints = 0;
         foreach ($ratings as $cid => $rating) {
             if ($rating['rating'] < 0 || $rating['rating'] > $totalpoints || $rating['rating'] > $maxperchoice) {
+                $maxpoints = min($maxperchoice, $totalpoints);
                 $errors['data[' . $cid . '][rating]'] =
-                        get_string(strategy::STRATEGYID . '_illegal_entry', RATINGALLOCATE_MOD_NAME, $totalpoints);
+                        get_string(strategy::STRATEGYID . '_illegal_entry', RATINGALLOCATE_MOD_NAME, $maxpoints);
             } else if ($rating['rating'] == 0) {
                 $impossibles++;
             }
