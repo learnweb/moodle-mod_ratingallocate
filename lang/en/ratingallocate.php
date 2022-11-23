@@ -88,6 +88,7 @@ $string['allocations_table'] = 'Allocations Overview';
 $string['allocations_table_choice'] = 'Choice';
 $string['allocations_table_users'] = 'Users';
 $string['allocations_table_noallocation'] = 'No Allocation';
+$string['allocations_table_unenrolled'] = 'Users that unenrolled prior to the allocation';
 $string['start_distribution_explanation'] = ' An algorithm will automatically try to fairly allocate the users according to their given ratings.';
 $string['distribution_table'] = 'Distribution Table';
 $string['download_problem_mps_format'] = 'Download Equation (mps/txt)';
