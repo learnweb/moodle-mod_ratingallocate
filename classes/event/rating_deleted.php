@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
+
 /**
  * The mod_ratingallocate rating_deleted event.
  *
@@ -21,8 +21,10 @@
  * @copyright  2017 Tobias Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace mod_ratingallocate\event;
 defined('MOODLE_INTERNAL') || die();
+
 /**
  * The mod_ratingallocate rating_deleted event class.
  *
@@ -34,6 +36,7 @@ class rating_deleted extends \core\event\base {
     public static function create_simple($modulecontext, $ratingallocateid) {
         return self::create(array('context' => $modulecontext, 'objectid' => $ratingallocateid));
     }
+
     protected function init() {
         $this->data['crud'] = 'd';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
@@ -46,7 +49,7 @@ class rating_deleted extends \core\event\base {
 
     public function get_description() {
         return get_string('log_rating_deleted_description', 'mod_ratingallocate',
-            array('userid' => $this->userid, 'ratingallocateid' => $this->objectid));
+                array('userid' => $this->userid, 'ratingallocateid' => $this->objectid));
     }
 
     public function get_url() {

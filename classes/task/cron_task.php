@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_ratingallocate\task;
+
+use ratingallocate\db as this_db;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__ . '/../../locallib.php');
+
 /**
  * A scheduled task for ratingallocate cron.
  *
@@ -21,11 +29,6 @@
  * @copyright  2015 Tobias Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_ratingallocate\task;
-use ratingallocate\db as this_db;
-
-require_once(__DIR__.'/../../locallib.php');
-
 class cron_task extends \core\task\scheduled_task {
 
     /**
@@ -44,10 +47,11 @@ class cron_task extends \core\task\scheduled_task {
         global $DB, $CFG;
 
         $currenttime = time();
-        $statement = 'SELECT R.* FROM {ratingallocate} AS R
-        LEFT JOIN {ratingallocate_allocations} AS A
-        ON R.'.this_db\ratingallocate::ID.'=A.'.this_db\ratingallocate_allocations::RATINGALLOCATEID.'
-        WHERE A.'.this_db\ratingallocate_allocations::ID.' IS NULL AND R.'.this_db\ratingallocate::ACCESSTIMESTOP.'<'.$currenttime;
+        $statement = 'SELECT R.* FROM {ratingallocate} R
+        LEFT JOIN {ratingallocate_allocations} A
+        ON R.' . this_db\ratingallocate::ID . '=A.' . this_db\ratingallocate_allocations::RATINGALLOCATEID . '
+        WHERE A.' . this_db\ratingallocate_allocations::ID . ' IS NULL AND R.' . this_db\ratingallocate::ACCESSTIMESTOP . '<' .
+                $currenttime;
         $records = $DB->get_records_sql($statement);
         $course = null;
         foreach ($records as $record) {
@@ -63,15 +67,15 @@ class cron_task extends \core\task\scheduled_task {
 
             // If last execution exeeds timeout limit assume failure of algorithm run.
             if ($ratingallocate->ratingallocate->algorithmstarttime &&
-                $currenttime >= $timetoterminate &&
-                $ratingallocate->get_algorithm_status() === \mod_ratingallocate\algorithm_status::running) {
+                    $currenttime >= $timetoterminate &&
+                    $ratingallocate->get_algorithm_status() === \mod_ratingallocate\algorithm_status::RUNNING) {
                 $ratingallocate->set_algorithm_failed();
                 return true;
             }
 
             // Only start the algorithm, if it should be run by the cron and hasn't been started somehow, yet.
             if ($ratingallocate->ratingallocate->runalgorithmbycron === "1" &&
-                $ratingallocate->get_algorithm_status() === \mod_ratingallocate\algorithm_status::notstarted) {
+                    $ratingallocate->get_algorithm_status() === \mod_ratingallocate\algorithm_status::NOTSTARTED) {
                 // Run allocation.
                 $ratingallocate->distrubute_choices();
             }

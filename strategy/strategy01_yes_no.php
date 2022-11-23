@@ -44,19 +44,19 @@ class strategy extends \strategytemplate_options {
 
     public function get_static_settingfields() {
         $output = array(
-            self::MAXCROSSOUT => array(
-                'int',
-                get_string(self::STRATEGYID . '_setting_crossout', ratingallocate_MOD_NAME),
-                $this->get_settings_value(self::MAXCROSSOUT),
-                null
-            )
+                self::MAXCROSSOUT => array(
+                        'int',
+                        get_string(self::STRATEGYID . '_setting_crossout', RATINGALLOCATE_MOD_NAME),
+                        $this->get_settings_value(self::MAXCROSSOUT),
+                        null
+                )
         );
         foreach (array_keys($this->get_choiceoptions()) as $id) {
             $output[$id] = array(
-                            'text',
-                            get_string('strategy_settings_label', ratingallocate_MOD_NAME, $this->get_settings_default_value($id)),
-                            null,
-                            $this->get_settings_default_value($id)
+                    'text',
+                    get_string('strategy_settings_label', RATINGALLOCATE_MOD_NAME, $this->get_settings_default_value($id)),
+                    null,
+                    $this->get_settings_default_value($id)
             );
         }
         $output += $this->get_default_strategy_option();
@@ -69,23 +69,23 @@ class strategy extends \strategytemplate_options {
 
     public function get_choiceoptions() {
         $options = array(
-            0 => $this->get_settings_value(0),
-            1 => $this->get_settings_value(1)
+                0 => $this->get_settings_value(0),
+                1 => $this->get_settings_value(1)
         );
         return $options;
     }
 
     public function get_default_settings() {
         return array(
-                        self::MAXCROSSOUT => 3,
-                        0 => get_string(self::STRATEGYID . '_rating_crossout', ratingallocate_MOD_NAME),
-                        1 => get_string(self::STRATEGYID . '_rating_choose', ratingallocate_MOD_NAME),
-                        'default' => 1,
+                self::MAXCROSSOUT => 3,
+                0 => get_string(self::STRATEGYID . '_rating_crossout', RATINGALLOCATE_MOD_NAME),
+                1 => get_string(self::STRATEGYID . '_rating_choose', RATINGALLOCATE_MOD_NAME),
+                'default' => 1,
         );
     }
 
-    protected function getValidationInfo() {
-        return array(self::MAXCROSSOUT => array(true,0));
+    protected function getvalidationinfo() {
+        return array(self::MAXCROSSOUT => array(true, 0));
     }
 }
 

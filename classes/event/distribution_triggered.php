@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
+
 /**
  * The mod_ratingallocate distribution_triggered event.
  *
@@ -21,8 +21,10 @@
  * @copyright  2014 Tobias Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace mod_ratingallocate\event;
 defined('MOODLE_INTERNAL') || die();
+
 /**
  * The mod_ratingallocate distribution_triggered event class.
  *
@@ -38,29 +40,30 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 class distribution_triggered extends \core\event\base {
-    
-    public static function create_simple($modulecontext, $ratingallocateid, $time_needed){
-        $time_needed_json_valid = json_decode(json_encode($time_needed),true);
+
+    public static function create_simple($modulecontext, $ratingallocateid, $timeneeded) {
+        $timeneededjsonvalid = json_decode(json_encode($timeneeded), true);
         return self::create(array('context' => $modulecontext, 'objectid' => $ratingallocateid,
-                        'other' => array('time_needed'=>$time_needed_json_valid)));
+                'other' => array('time_needed' => $timeneededjsonvalid)));
     }
+
     protected function init() {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'ratingallocate_ratings';
     }
- 
+
     public static function get_name() {
         return get_string('log_distribution_triggered', 'mod_ratingallocate');
     }
- 
+
     public function get_description() {
-        return get_string('log_distribution_triggered_description', 'mod_ratingallocate', 
-                array('userid' => $this->userid, 
-                      'ratingallocateid' => $this->objectid, 
-                      'time_needed' => $this->other['time_needed']));
+        return get_string('log_distribution_triggered_description', 'mod_ratingallocate',
+                array('userid' => $this->userid,
+                        'ratingallocateid' => $this->objectid,
+                        'time_needed' => $this->other['time_needed']));
     }
- 
+
     public function get_url() {
         return new \moodle_url('/mod/ratingallocate/view.php', array('m' => $this->objectid));
     }

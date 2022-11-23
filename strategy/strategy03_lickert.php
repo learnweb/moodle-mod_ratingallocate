@@ -40,10 +40,10 @@ class strategy extends \strategytemplate_options {
     const COUNTLICKERT = 'countlickert';
     private $maxlickert;
 
-    public function __construct(array $strategy_settings = null) {
-        parent::__construct($strategy_settings);
-        if (isset($strategy_settings) && array_key_exists(self::COUNTLICKERT, $strategy_settings)) {
-            $this->maxlickert = $strategy_settings[self::COUNTLICKERT];
+    public function __construct(array $strategysettings = null) {
+        parent::__construct($strategysettings);
+        if (isset($strategysettings) && array_key_exists(self::COUNTLICKERT, $strategysettings)) {
+            $this->maxlickert = $strategysettings[self::COUNTLICKERT];
         } else {
             $this->maxlickert = $this->get_default_settings()[self::COUNTLICKERT];
         }
@@ -55,30 +55,29 @@ class strategy extends \strategytemplate_options {
 
     public function get_static_settingfields() {
         return array(
-            self::MAXNO => array(// maximale Anzahl 'kannnicht'
-                'int',
-                get_string(self::STRATEGYID . '_setting_maxno', ratingallocate_MOD_NAME),
-                $this->get_settings_value(self::MAXNO),
-                null
-            ),
-            self::COUNTLICKERT => array(// wie viele Felder es gibt
-                'int',
-                get_string(self::STRATEGYID . '_setting_maxlickert', ratingallocate_MOD_NAME),
-                $this->get_settings_value(self::COUNTLICKERT),
-                null
-            )
+                self::MAXNO => array(// maximale Anzahl 'kannnicht'
+                        'int',
+                        get_string(self::STRATEGYID . '_setting_maxno', RATINGALLOCATE_MOD_NAME),
+                        $this->get_settings_value(self::MAXNO),
+                        null
+                ),
+                self::COUNTLICKERT => array(// wie viele Felder es gibt
+                        'int',
+                        get_string(self::STRATEGYID . '_setting_maxlickert', RATINGALLOCATE_MOD_NAME),
+                        $this->get_settings_value(self::COUNTLICKERT),
+                        null
+                )
         );
     }
-
 
     public function get_dynamic_settingfields() {
         $output = array();
         foreach (array_keys($this->get_choiceoptions()) as $id) {
             $output[$id] = array(
-                'text',
-                get_string('strategy_settings_label', ratingallocate_MOD_NAME, $this->get_settings_default_value($id)),
-                null,
-                $this->get_settings_default_value($id)
+                    'text',
+                    get_string('strategy_settings_label', RATINGALLOCATE_MOD_NAME, $this->get_settings_default_value($id)),
+                    null,
+                    $this->get_settings_default_value($id)
             );
         }
         $output += $this->get_default_strategy_option();
@@ -93,18 +92,17 @@ class strategy extends \strategytemplate_options {
         return $options;
     }
 
-
     public function get_default_settings() {
         $defaults = array(
-                        self::MAXNO => 3,
-                        self::COUNTLICKERT => 4,
-                        0 => get_string(self::STRATEGYID . '_rating_exclude', ratingallocate_MOD_NAME, "0"),
-                        'default' => $this->maxlickert,
+                self::MAXNO => 3,
+                self::COUNTLICKERT => 4,
+                0 => get_string(self::STRATEGYID . '_rating_exclude', RATINGALLOCATE_MOD_NAME, "0"),
+                'default' => $this->maxlickert,
         );
 
         for ($i = 1; $i <= $this->maxlickert; $i++) {
             if ($i == $this->maxlickert) {
-                $defaults[$i] = get_string(self::STRATEGYID . '_rating_biggestwish', ratingallocate_MOD_NAME, "$i");
+                $defaults[$i] = get_string(self::STRATEGYID . '_rating_biggestwish', RATINGALLOCATE_MOD_NAME, "$i");
             } else {
                 $defaults[$i] = $i;
             }
@@ -112,9 +110,9 @@ class strategy extends \strategytemplate_options {
         return $defaults;
     }
 
-    protected function getValidationInfo() {
-        return array(self::MAXNO => array(true,0),
-                     self::COUNTLICKERT => array(true,2)
+    protected function getvalidationinfo() {
+        return array(self::MAXNO => array(true, 0),
+                self::COUNTLICKERT => array(true, 2)
         );
     }
 }

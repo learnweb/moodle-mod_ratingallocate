@@ -17,7 +17,7 @@
 /**
  * Internal library of functions for module groupdistribution.
  *
- * Contains the algorithm for the group distribution 
+ * Contains the algorithm for the group distribution
  *
  * @package    mod_ratingallocate
  * @subpackage mod_ratingallocate originally mod_groupdistribution

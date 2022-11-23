@@ -6,31 +6,31 @@ Feature: When a student rates a rating should be saved and it should be possible
       | fullname | shortname | category | groupmode |
       | Course 1 | C1        | 0        | 1         |
     And the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
-      | student1 | Student | 1 | student1@example.com |
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | student1 | Student   | 1        | student1@example.com |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
     And the following "activities" exist:
-      | activity | course | idnumber | name |
-      | ratingallocate   | C1     | ra1  | My Fair Allocation |
+      | activity       | course | idnumber | name               |
+      | ratingallocate | C1     | ra1      | My Fair Allocation |
     And I log in as "teacher1"
     And I am on the "My Fair Allocation" "ratingallocate activity" page
     And I press "Edit Choices"
     And I add a new choice with the values:
-      | title       | My first choice |
+      | title                  | My first choice |
       | Description (optional) | Test 1          |
-      | maxsize     |	2	    	  |
+      | maxsize                | 2               |
     And I add a new choice with the values:
-      | title       | My second choice |
+      | title                  | My second choice |
       | Description (optional) | Test 2           |
-      | maxsize     |	2	    	   |
+      | maxsize                | 2                |
     And I add a new choice with the values:
-      | title       | My third choice |
-      | Description (optional) | Test 3  		  |
-      | maxsize     |	2	    	  |
+      | title                  | My third choice |
+      | Description (optional) | Test 3          |
+      | maxsize                | 2               |
     And I log out
 
   @javascript

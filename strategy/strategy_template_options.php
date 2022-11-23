@@ -36,7 +36,7 @@ abstract class strategytemplate_options extends \strategytemplate {
      * Return the different options for each choice (including titles)
      * @return array: value_of_option => title_of_option
      */
-    public abstract function get_choiceoptions();
+    abstract public function get_choiceoptions();
 
     /**
      * Returns the strategy option array, which can be included within the child option classes.
@@ -44,11 +44,11 @@ abstract class strategytemplate_options extends \strategytemplate {
      */
     protected function get_default_strategy_option() {
         return ['default' => array(
-            'select',
-            get_string('strategy_settings_default', ratingallocate_MOD_NAME),
-            $this->get_settings_value('default'),
-            $this->get_choiceoptions(),
-            'strategy_settings_default'
+                'select',
+                get_string('strategy_settings_default', RATINGALLOCATE_MOD_NAME),
+                $this->get_settings_value('default'),
+                $this->get_choiceoptions(),
+                'strategy_settings_default'
         )];
     }
 }
@@ -90,9 +90,9 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             // Show max. number of allocations.
             // TODO add setting in order to make this optional, as requested in issue #14.
             $mform->addElement('html', '<div class="mod-ratingallocate-choice-maxno">' .
-                '<span class="mod-ratingallocate-choice-maxno-desc">' .
-                get_string('choice_maxsize_display', ratingallocate_MOD_NAME) .
-                ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
+                    '<span class="mod-ratingallocate-choice-maxno-desc">' .
+                    get_string('choice_maxsize_display', RATINGALLOCATE_MOD_NAME) .
+                    ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
 
             // Options for each choice.
             $choiceoptions = $this->get_choiceoptions();
@@ -125,7 +125,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
     }
 
     public function describe_strategy() {
-        return get_string($this->get_max_nos_string_identyfier(), ratingallocate_MOD_NAME, $this->get_max_amount_of_nos());
+        return get_string($this->get_max_nos_string_identyfier(), RATINGALLOCATE_MOD_NAME, $this->get_max_amount_of_nos());
     }
 
     public function validation($data, $files) {
@@ -141,7 +141,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
 
         foreach ($ratings as $rating) {
             if (key_exists('rating', $rating) && $rating ['rating'] == 0) {
-                $impossibles ++;
+                $impossibles++;
             }
         }
 
@@ -149,17 +149,18 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             foreach ($ratings as $cid => $rating) {
                 if ($rating ['rating'] == 0) {
                     $errors ['radioarr_' . $cid] = get_string($this->get_max_nos_string_identyfier(),
-                        ratingallocate_MOD_NAME, $maxno);
+                            RATINGALLOCATE_MOD_NAME, $maxno);
                 }
             }
         }
         return $errors;
     }
 
-    public abstract function get_choiceoptions();
+    abstract public function get_choiceoptions();
 
-    protected abstract function get_max_amount_of_nos();
+    abstract protected function get_max_amount_of_nos();
+
     // TODO remove and make identifier strategy_options specific not strategy specific.
-    protected abstract function get_max_nos_string_identyfier();
+    abstract protected function get_max_nos_string_identyfier();
 
 }

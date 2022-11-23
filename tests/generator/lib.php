@@ -52,12 +52,12 @@ class mod_ratingallocate_generator extends testing_module_generator {
      * @return stdClass record from ratingallocate
      */
     public static function create_instance_with_choices(advanced_testcase $tc, $moduledata = null,
-                                                        $choicedata = null, array $options = null) {
+            $choicedata = null, array $options = null) {
         if ($choicedata === null) {
             $choicedata = self::get_default_choice_data();
         }
+        $instance = $tc->getDataGenerator()->create_module(RATINGALLOCATE_MOD_NAME, $moduledata, $options);
 
-        $instance = $tc->getDataGenerator()->create_module(ratingallocate_MOD_NAME, $moduledata, $options);
         // Load Ratingallocate Object.
         $ratingallocate = self::get_ratingallocate($instance);
 
@@ -73,34 +73,36 @@ class mod_ratingallocate_generator extends testing_module_generator {
     public static function get_default_values() {
         if (empty(self::$defaultvalue)) {
             self::$defaultvalue = array(
-                'name' => 'Rating Allocation',
-                'accesstimestart' => time() + (0 * 24 * 60 * 60),
-                'accesstimestop' => time() + (6 * 24 * 60 * 60),
-                'publishdate' => time() + (7 * 24 * 60 * 60),
-                'strategyopt' => array('strategy_yesno' => array('maxcrossout' => '1')),
-                'strategy' => 'strategy_yesno',
+                    'name' => 'Rating Allocation',
+                    'accesstimestart' => time() + (0 * 24 * 60 * 60),
+                    'accesstimestop' => time() + (6 * 24 * 60 * 60),
+                    'publishdate' => time() + (7 * 24 * 60 * 60),
+                    'strategyopt' => array('strategy_yesno' => array('maxcrossout' => '1')),
+                    'strategy' => 'strategy_yesno',
             );
         }
         return self::$defaultvalue;
     }
+
     private static $defaultvalue;
 
     public static function get_default_choice_data() {
         if (empty(self::$defaultchoicedata)) {
             self::$defaultchoicedata = array(
-                array('title' => 'Choice 1',
-                    'explanation' => 'Some explanatory text for choice 1',
-                    'maxsize' => '10',
-                    'active' => true),
-                array('title' => 'Choice 2',
-                    'explanation' => 'Some explanatory text for choice 2',
-                    'maxsize' => '5',
-                    'active' => false
-                )
+                    array('title' => 'Choice 1',
+                            'explanation' => 'Some explanatory text for choice 1',
+                            'maxsize' => '10',
+                            'active' => true),
+                    array('title' => 'Choice 2',
+                            'explanation' => 'Some explanatory text for choice 2',
+                            'maxsize' => '5',
+                            'active' => false
+                    )
             );
         }
         return self::$defaultchoicedata;
     }
+
     private static $defaultchoicedata;
 
     /**
@@ -130,6 +132,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
         $tc->assertTrue($enroled, 'trying to enrol already enroled user');
         return $user;
     }
+
     private static $teacherrole;
 
     /**
@@ -140,7 +143,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
      * @param array $rating
      */
     public static function save_rating_for_user(advanced_testcase $tc, $modratingallocate, $user,
-                                                $rating) {
+            $rating) {
         $ratingallocate = self::get_ratingallocate_for_user($tc, $modratingallocate, $user);
         $ratingallocate->save_ratings_to_db($user->id, $rating);
     }
@@ -154,7 +157,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
      * @return ratingallocate
      */
     public static function get_ratingallocate_for_user(advanced_testcase $tc, $ratingallocatedb,
-                                                       $user) {
+            $user) {
         $tc->setUser($user);
         return self::get_ratingallocate($ratingallocatedb);
     }
@@ -166,8 +169,8 @@ class mod_ratingallocate_generator extends testing_module_generator {
      * @throws coding_exception
      */
     public static function get_ratingallocate($ratingallocatedb) {
-        $cm = get_coursemodule_from_instance(ratingallocate_MOD_NAME,
-            $ratingallocatedb->{this_db\ratingallocate::ID});
+        $cm = get_coursemodule_from_instance(RATINGALLOCATE_MOD_NAME,
+                $ratingallocatedb->{this_db\ratingallocate::ID});
         $course = get_course($cm->course);
         $context = context_module::instance($cm->id);
 
@@ -175,17 +178,17 @@ class mod_ratingallocate_generator extends testing_module_generator {
     }
 
     public static function get_open_ratingallocate_for_teacher(advanced_testcase $tc, $choices = null,
-                                                               $course = null, $ratings = null) {
+            $course = null, $ratings = null) {
         return self::get_ratingallocate_for_teacher_open_in(0, $tc, $choices, $course, $ratings);
     }
 
     public static function get_closed_ratingallocate_for_teacher(advanced_testcase $tc, $choices = null,
-                                                                 $course = null, $ratings = null) {
+            $course = null, $ratings = null) {
         return self::get_ratingallocate_for_teacher_open_in(-7, $tc, $choices, $course, $ratings);
     }
 
     private static function get_ratingallocate_for_teacher_open_in($numdays, advanced_testcase $tc, $choices = null,
-                                                                   $course = null, $ratings = null) {
+            $course = null, $ratings = null) {
         $record = self::get_default_values();
         $record['accesstimestart'] = time() + ($numdays * 24 * 60 * 60);
         $record['accesstimestop'] = time() + (($numdays + 6) * 24 * 60 * 60);
@@ -195,7 +198,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
         }
         $testmodule = new mod_ratingallocate_generated_module($tc, $record, $choices, $ratings);
         return self::get_ratingallocate_for_user($tc,
-            $testmodule->moddb, $testmodule->teacher);
+                $testmodule->moddb, $testmodule->teacher);
     }
 
     public static function get_small_ratingallocate_for_filter_tests(advanced_testcase $tc, $choices = null) {
@@ -203,7 +206,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
         $record['num_students'] = 4;
         $testmodule = new mod_ratingallocate_generated_module($tc, $record, $choices);
         return self::get_ratingallocate_for_user($tc,
-            $testmodule->moddb, $testmodule->teacher);
+                $testmodule->moddb, $testmodule->teacher);
     }
 }
 
@@ -225,7 +228,7 @@ class mod_ratingallocate_generated_module {
      * @param boolean $assertintermediateresult
      */
     public function __construct(advanced_testcase $tc, $moduledata = null, $choicedata = null,
-                                $ratings = null, $assertintermediateresult = true) {
+            $ratings = null, $assertintermediateresult = true) {
         global $DB;
         $tc->resetAfterTest();
         $tc->setAdminUser();
@@ -255,7 +258,7 @@ class mod_ratingallocate_generated_module {
 
         // Load Ratingallocate object.
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($tc,
-            $this->moddb, $this->teacher);
+                $this->moddb, $this->teacher);
 
         // If rating data is provided restore it. Otherwise generate random ones.
         if ($ratings) {
@@ -274,19 +277,19 @@ class mod_ratingallocate_generated_module {
                     }
                 }
                 mod_ratingallocate_generator::save_rating_for_user($tc, $this->moddb,
-                    $user, $ratingdata);
+                        $user, $ratingdata);
             }
         } else {
             // Create students.
             $numstudents = array_key_exists('num_students', $moduledata) ? $moduledata['num_students'] : 20;
             for ($i = 0; $i < $numstudents; $i++) {
                 $this->students[$i] = mod_ratingallocate_generator::create_user_and_enrol($tc,
-                    $this->course);
+                        $this->course);
             }
 
             // Assert number of choices is correct.
             $numberofrecords = $DB->count_records(this_db\ratingallocate_choices::TABLE,
-                array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->moddb->id));
+                    array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->moddb->id));
             $tc->assertEquals(2, $numberofrecords);
 
             // Load choices.
@@ -299,7 +302,7 @@ class mod_ratingallocate_generated_module {
                 $moduledata['ratings'] = array();
                 for ($i = 0; $i < $numstudents; $i++) {
                     $moduledata['ratings'][$i] = array(
-                        $choicesnummerated[$i % $numchoices]->{this_db\ratingallocate_choices::TITLE} => 1
+                            $choicesnummerated[$i % $numchoices]->{this_db\ratingallocate_choices::TITLE} => 1
                     );
                 }
             }
@@ -310,8 +313,8 @@ class mod_ratingallocate_generated_module {
             $choiceidbytitle = array();
             foreach ($choices as $choice) {
                 $prefersnon[$choice->{this_db\ratingallocate_choices::ID}] = array(
-                    this_db\ratingallocate_ratings::CHOICEID => $choice->{this_db\ratingallocate_choices::ID},
-                    this_db\ratingallocate_ratings::RATING => 0
+                        this_db\ratingallocate_ratings::CHOICEID => $choice->{this_db\ratingallocate_choices::ID},
+                        this_db\ratingallocate_ratings::RATING => 0
                 );
                 $choiceidbytitle[$choice->{this_db\ratingallocate_choices::TITLE}] = $choice->{this_db\ratingallocate_choices::ID};
             }
@@ -328,15 +331,16 @@ class mod_ratingallocate_generated_module {
 
                 // assign preferences
                 mod_ratingallocate_generator::save_rating_for_user($tc, $this->moddb,
-                    $this->students[$i], $rating);
+                        $this->students[$i], $rating);
                 if ($assertintermediateresult) {
                     $alloc = mod_ratingallocate_generator::get_ratingallocate_for_user($tc,
-                        $this->moddb, $this->students[$i]);
+                            $this->moddb, $this->students[$i]);
                     $savedratings = $alloc->get_rating_data_for_user($this->students[$i]->id);
                     $savedratingarr = array();
                     foreach ($savedratings as $savedrating) {
                         if (!$savedrating->{this_db\ratingallocate_ratings::RATING} == 0) {
-                            $savedratingarr[$savedrating->{this_db\ratingallocate_choices::TITLE}] = $savedrating->{this_db\ratingallocate_ratings::RATING};
+                            $savedratingarr[$savedrating->{this_db\ratingallocate_choices::TITLE}] =
+                                    $savedrating->{this_db\ratingallocate_ratings::RATING};
                         }
                     }
                     $tc->assertEquals($this->ratings[$i], $savedratingarr);

@@ -26,14 +26,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 $tasks = array(
-    array(
-        'classname' => 'mod_ratingallocate\task\cron_task',
-        'blocking' => 0,
-        'minute' => '*',
-        'hour' => '*',
-        'day' => '*',
-        'month' => '*',
-        'dayofweek' => '*',
-        'faildelay' => 1,
-    )
+        array(
+                'classname' => 'mod_ratingallocate\task\cron_task',
+                'blocking' => 0,
+                'minute' => '*',
+                'hour' => '*',
+                'day' => '*',
+                'month' => '*',
+                'dayofweek' => '*',
+                'faildelay' => 1,
+        )
 );

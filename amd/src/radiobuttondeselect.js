@@ -20,7 +20,7 @@
  * @copyright 2017 Tobias Reischmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery'], function($) {
+define(['jquery'], function ($) {
 
     /**
      * @alias module:mod_ratingallocate/radiobuttondeselect
@@ -30,12 +30,12 @@ define(['jquery'], function($) {
         /**
          * Create the click events for deselecting radiobuttons.
          */
-        init: function() {
+        init: function () {
             $('.ratingallocate_checkbox_label:checked').on('click', this.deselect(this));
             $('.ratingallocate_checkbox_label:not(:checked)').on('click', this.callrefresh(this));
         },
 
-        deselect: function(that) {
+        deselect: function (that) {
             return function (event) {
                 if (event.target.checked) {
                     event.target.checked = false;
@@ -44,14 +44,14 @@ define(['jquery'], function($) {
             };
         },
 
-        refresh: function(that){
+        refresh: function (that) {
             $('.ratingallocate_checkbox_label').off('click');
             $('.ratingallocate_checkbox_label:checked').on('click', that.deselect(that));
             $('.ratingallocate_checkbox_label:not(:checked)').on('click', that.callrefresh(that));
         },
 
-        callrefresh: function(that){
-            return function() {
+        callrefresh: function (that) {
+            return function () {
                 that.refresh(that);
             };
         }

@@ -38,19 +38,18 @@ class strategy extends \strategytemplate {
     const STRATEGYID = 'strategy_order';
     const COUNTOPTIONS = 'countoptions';
 
-
     public function get_strategyid() {
         return self::STRATEGYID;
     }
 
     public function get_static_settingfields() {
         return array(
-            self::COUNTOPTIONS => array(// wie viele Felder es gibt
-                'int',
-                get_string(self::STRATEGYID . '_setting_countoptions', ratingallocate_MOD_NAME),
-                $this->get_settings_value(self::COUNTOPTIONS),
-                null
-            )
+                self::COUNTOPTIONS => array(// wie viele Felder es gibt
+                        'int',
+                        get_string(self::STRATEGYID . '_setting_countoptions', RATINGALLOCATE_MOD_NAME),
+                        $this->get_settings_value(self::COUNTOPTIONS),
+                        null
+                )
         );
     }
 
@@ -59,23 +58,23 @@ class strategy extends \strategytemplate {
     }
 
     public function get_default_settings() {
-        $default_count_options = 2;
+        $defaultcountoptions = 2;
         $output = array(
-                        self::COUNTOPTIONS => $default_count_options
+                self::COUNTOPTIONS => $defaultcountoptions
         );
-        $count_options = $this->get_settings_value(self::COUNTOPTIONS, false);
-        if (is_null($count_options)){
-            $count_options = $default_count_options;
+        $countoptions = $this->get_settings_value(self::COUNTOPTIONS, false);
+        if (is_null($countoptions)) {
+            $countoptions = $defaultcountoptions;
         }
         // $rating_value_counter defines the id/value of the label (first choice has a high value)
-        for ($i = 1, $rating_value_counter = $count_options; $i <= $count_options; $i++,$rating_value_counter--) {
-            $output[$rating_value_counter] = get_string(self::STRATEGYID . '_no_choice', ratingallocate_MOD_NAME, $i);
+        for ($i = 1, $ratingvaluecounter = $countoptions; $i <= $countoptions; $i++, $ratingvaluecounter--) {
+            $output[$ratingvaluecounter] = get_string(self::STRATEGYID . '_no_choice', RATINGALLOCATE_MOD_NAME, $i);
         }
         return $output;
     }
 
-    protected function getValidationInfo() {
-        return array(self::COUNTOPTIONS => array(true,1)
+    protected function getvalidationinfo() {
+        return array(self::COUNTOPTIONS => array(true, 1)
         );
     }
 
@@ -125,21 +124,23 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             // If there is a valid value in the databse, choose the according rating
             // from the dropdown.
             // Else use a default value.
-            if (is_numeric($data->rating) && $data->rating >= 0 && $mform->elementExists('choice[' . ($choicecounter - ($data->rating - 1)) . ']')) {
+            if (is_numeric($data->rating) && $data->rating >= 0 &&
+                    $mform->elementExists('choice[' . ($choicecounter - ($data->rating - 1)) . ']')) {
                 $mform->getElement('choice[' . ($choicecounter - ($data->rating - 1)) . ']')->setSelected($data->choiceid);
             }
         }
 
-        $mform->addElement('header', 'choice_descriptions', get_string(strategy::STRATEGYID . '_header_description', ratingallocate_MOD_NAME));
+        $mform->addElement('header', 'choice_descriptions',
+                get_string(strategy::STRATEGYID . '_header_description', RATINGALLOCATE_MOD_NAME));
 
         foreach ($ratingdata as $data) {
             // Show max. number of allocations.
             // TODO add setting in order to make this optional, as requested in issue #14.
             $mform->addElement('html', '<div class="mod-ratingallocate-choice-maxno">' .
-                '<span class="mod-ratingallocate-choice-maxno-desc">' .
-                get_string('choice_maxsize_display', ratingallocate_MOD_NAME) .
-                ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
-            $mform->addElement('static', 'description_'.$data->choiceid, $data->title, format_text($data->explanation));
+                    '<span class="mod-ratingallocate-choice-maxno-desc">' .
+                    get_string('choice_maxsize_display', RATINGALLOCATE_MOD_NAME) .
+                    ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
+            $mform->addElement('static', 'description_' . $data->choiceid, $data->title, format_text($data->explanation));
 
             // Render any file attachments.
             $attachments = $this->ratingallocate->get_file_attachments_for_choice($data->choiceid);
@@ -156,18 +157,18 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
      */
     private function fill_select($select, $i, array $choices) {
         $select->setName('choice[' . $i . ']');
-        $select->setLabel(get_string(strategy::STRATEGYID . '_no_choice', ratingallocate_MOD_NAME, $i));
-        $select->addOption(get_string(strategy::STRATEGYID . '_choice_none', ratingallocate_MOD_NAME, $i),
-            '', array('disabled' => 'disabled'));
+        $select->setLabel(get_string(strategy::STRATEGYID . '_no_choice', RATINGALLOCATE_MOD_NAME, $i));
+        $select->addOption(get_string(strategy::STRATEGYID . '_choice_none', RATINGALLOCATE_MOD_NAME, $i),
+                '', array('disabled' => 'disabled'));
         foreach ($choices as $id => $name) {
-            $select->addOption( $name, $id );
+            $select->addOption($name, $id);
         }
         $select->setSelected('');
         return $select;
     }
 
     public function describe_strategy() {
-        return get_string(strategy::STRATEGYID . '_explain_choices', ratingallocate_MOD_NAME);
+        return get_string(strategy::STRATEGYID . '_explain_choices', RATINGALLOCATE_MOD_NAME);
     }
 
     /**
@@ -207,7 +208,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
         foreach ($data['choice'] as $choiceid => $choice) {
             if (array_key_exists($choice, $usedchoices) && is_numeric($choice)) {
-                $errors['choice[' . $choiceid . ']'] = get_string(strategy::STRATEGYID . '_use_only_once', ratingallocate_MOD_NAME);
+                $errors['choice[' . $choiceid . ']'] = get_string(strategy::STRATEGYID . '_use_only_once', RATINGALLOCATE_MOD_NAME);
             }
             $usedchoices[$choice] = true;
         }
