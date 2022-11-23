@@ -288,8 +288,13 @@ class ratingallocate {
                 } else if ($mform->is_submitted() && $mform->is_validated() && $data = $mform->get_data() ) {
                     // Save submitted data and call default page.
                     $this->save_ratings_to_db($USER->id, $data->data);
-                    $renderer->add_notification(get_string('ratings_saved', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
-                    return $this->process_default();
+
+                    // Return to view.
+                    redirect(
+                        "$CFG->wwwroot/mod/ratingallocate/view.php?id=".$this->coursemodule->id,
+                        get_string('ratings_saved', ratingallocate_MOD_NAME),
+                        null, \core\output\notification::NOTIFY_SUCCESS
+                    );
                 }
 
                 $mform->definition_after_data();
