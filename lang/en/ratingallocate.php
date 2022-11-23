@@ -408,7 +408,6 @@ $string['log_index_viewed_description'] = 'The user with id "{$a->userid}" viewe
 $string['log_all_ratings_deleted'] = 'All ratings of a Fair Allocation instance were deleted';
 $string['log_all_ratings_deleted_description'] = 'The user with id "{$a->userid}" has deleted all ratings for the Fair Allocation with id "{$a->ratingallocateid}".';
 
-
 $string['no_id_or_m_error'] = 'You must specify a course_module ID or an instance ID';
 
 // Language strings for Privacy API

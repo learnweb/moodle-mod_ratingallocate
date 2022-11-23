@@ -414,6 +414,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         ));
 
         // Set up the table.
+        echo $this->output->single_button($starturl->out(), get_string('newchoice', 'mod_ratingallocate'), 'get');
         $table = new \flexible_table('show_ratingallocate_options');
         $table->define_baseurl($this->page->url);
         if ($choicesmodifiably) {
