@@ -142,7 +142,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     /**
      * Add an settings element to the form. It is enabled only if the strategy it belongs to is selected.
      * @param string $stratfieldid id of the element to be added
-     * @param array $value array with the element type and its caption 
+     * @param array $value array with the element type and its caption
      *        (usually returned by the strategys get settingsfields methods).
      * @param string $strategyid id of the strategy it belongs to.
      * @param $mform MoodleQuickForm form object the settings field should be added to.
@@ -257,6 +257,37 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      */
     private function get_settingsfield_identifier($strategy, $key) {
         return self::STRATEGY_OPTIONS . '[' . $strategy . '][' . $key . ']';
+    }
+
+    /**
+     * Add elements for setting the custom completion rules.
+     * @category completion
+     * @return array List of added element names, or names of wrapping group elements.
+     */
+    public function add_completion_rules() {
+        $mform = $this->_form;
+        $mform->addElement('checkbox', 'votetrackingenabled', ' ', get_string('votetracking', 'ratingallocate'));
+        $mform->addElement('checkbox', 'assignedtrackingenabled', ' ', get_string('assignedtracking', 'ratingallocate'));
+        return ['votetrackingenabled', 'assignedtrackingenabled'];
+    }
+
+    /**
+     * Called during validation to see whether some activity-specific completion rules are selected.
+     *
+     * @param array $data Input data not yet validated.
+     * @return bool True if one or more rules is enabled, false if none are.
+     */
+    public function completion_rule_enabled($data) {
+        return (!empty($data['votetrackingenabled'])) || (!empty($data['assignedtrackingenabled']));
+    }
+
+    function data_preprocessing(&$default_values){
+        if(empty($default_values['votetrackingenabled'])) {
+            $default_values['votetrackingenabled'] = 1;
+        }
+        if(empty($default_values['assignedtrackingenabled'])) {
+            $default_values['assignedtrackingenabled'] = 1;
+        }
     }
 
 }

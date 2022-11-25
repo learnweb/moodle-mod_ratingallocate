@@ -1190,6 +1190,11 @@ class ratingallocate {
 
             $transaction->allow_commit();
 
+            $completion = new completion_info($this->course);
+            if ($completion->is_enabled($this->coursemodule)) {
+                $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $userid);
+            }
+
             // Logging.
             $event = \mod_ratingallocate\event\rating_deleted::create_simple(
                 context_module::instance($this->coursemodule->id), $this->ratingallocateid);
@@ -1247,6 +1252,10 @@ class ratingallocate {
             $transaction->allow_commit();
 
             $completion = new completion_info($this->course);
+            if ($completion->is_enabled($this->coursemodule)) {
+                $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $userid);
+            }
+
             $completion->set_module_viewed($this->coursemodule);
 
             // Logging.
@@ -1379,6 +1388,10 @@ class ratingallocate {
             'choiceid' => $choiceid,
             'userid' => $userid
         ));
+        $completion = new completion_info($this->course);
+        if ($completion->is_enabled($this->coursemodule)) {
+            $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $userid);
+        }
         return true;
     }
 
@@ -1391,6 +1404,10 @@ class ratingallocate {
             'userid' => $userid,
             'ratingallocateid' => $this->ratingallocateid
         ));
+        $completion = new completion_info($this->course);
+        if ($completion->is_enabled($this->coursemodule)) {
+            $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $userid);
+        }
     }
 
     /**
@@ -1405,6 +1422,10 @@ class ratingallocate {
             'userid' => $userid,
             'ratingallocateid' => $this->ratingallocateid
         ));
+        $completion = new completion_info($this->course);
+        if ($completion->is_enabled($this->coursemodule)) {
+            $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $userid);
+        }
         return true;
     }
 

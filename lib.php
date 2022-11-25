@@ -68,6 +68,8 @@ function ratingallocate_supports($feature) {
             return true;
          case FEATURE_COMPLETION_TRACKS_VIEWS:
              return true;
+        case FEATURE_COMPLETION_HAS_RULES:
+            return true;
         default :
             return null;
     }
@@ -361,4 +363,110 @@ function ratingallocate_extend_navigation(navigation_node $navref, stdclass $cou
  */
 function ratingallocate_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $ratingallocatenode = null) {
 
+}
+
+/**
+ * Add a get_coursemodule_info function in case any ratingallocate type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about
+ */
+function ratingallocate_get_coursemodule_info($coursemodule) {
+    global $DB;
+
+    $dbparams = ['id' => $coursemodule->instance];
+    $fields = 'id, name, intro, introformat, votetrackingenabled, assignedtrackingenabled';
+    if (!$ratingallcoate = $DB->get_record('ratingallocate', $dbparams, $fields)) {
+        return false;
+    }
+
+    $result = new cached_cm_info();
+    $result->name = $ratingallcoate->name;
+
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $result->content = format_module_intro('ratingallocate', $ratingallcoate, $coursemodule->id, false);
+    }
+
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        $result->customdata['customcompletionrules']['votetrackingenabled'] = $ratingallcoate->votetrackingenabled;
+        $result->customdata['customcompletionrules']['assignedtrackingenabled'] = $ratingallcoate->assignedtrackingenabled;
+    }
+
+    return $result;
+}
+
+/**
+ * Obtains the automatic completion state for this ratingallocate based on any conditions
+ * in ratingallocate settings.
+ *
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not, $type if conditions not set.
+ */
+function ratingallocate_get_completion_state($course, $cm, $userid, $type) {
+    global $CFG,$DB;
+
+    // Get ratingallocate details
+    $votetrackingenabled = $DB->get_field('ratingallocate', 'votetrackingenabled', ['id' => $cm->instance], MUST_EXIST);
+    $assignedtrackingenabled = $DB->get_field('ratingallocate', 'assignedtrackingenabled', ['id' => $cm->instance], MUST_EXIST);
+
+    // If completion option is enabled, evaluate it and return true/false
+    if (!($votetrackingenabled || $assignedtrackingenabled)) {
+        // Completion option is not enabled so just return $type
+        return $type;
+    } else {
+        $sql = "SELECT COUNT(1) FROM {ratingallocate_ratings} r JOIN {ratingallocate_choices} c ON c.id = r.choiceid"
+        . " WHERE r.userid = :userid AND c.ratingallocateid = :ratingallocateid LIMIT 1";
+        $voted = $DB->get_field_sql($sql, [
+            'userid' => $userid,
+            'ratingallocateid' => $cm->instance,
+        ]);
+        $sql = "SELECT COUNT(1) FROM {ratingallocate_allocations} r WHERE r.userid = :userid AND r.ratingallocateid = :ratingallocateid LIMIT 1";
+        $assigned = $DB->get_field_sql($sql, [
+            'userid' => $userid,
+            'ratingallocateid' => $cm->instance,
+        ]);
+        return (!$votetrackingenabled || $voted) && (!$assignedtrackingenabled || $assigned);
+    }
+}
+
+/**
+ * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
+ *
+ * @param cm_info|stdClass $cm object with fields ->completion and ->customdata['customcompletionrules']
+ * @return array $descriptions the array of descriptions for the custom rules.
+ */
+function mod_ratingallocate_get_completion_active_rule_descriptions($cm) {
+    // Values will be present in cm_info, and we assume these are up to date.
+    if (empty($cm->customdata['customcompletionrules']) || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+        return [];
+    }
+
+    $descriptions = [];
+    foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
+        switch ($key) {
+            case 'votetrackingenabled':
+                if (!empty($val)) {
+                    $descriptions[] = get_string('votetrackingenableddesc', 'ratingallocate', $val);
+                }
+                break;
+            case 'assignedtrackingenabled':
+                if (!empty($val)) {
+                    $descriptions[] = get_string('assignedtrackingenableddesc', 'ratingallocate', $val);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    return $descriptions;
 }
