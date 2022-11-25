@@ -181,6 +181,7 @@ $string['choice_deleted_notification'] = 'Choice "{$a}" was deleted.';
 $string['choice_deleted_notification_error'] = 'Choice requested for deletion could not be found.';
 $string['modify_choices_group'] = 'Choices';
 $string['modify_choices'] = 'Edit Choices';
+$string['csv_import_choices'] = 'Import choices from CSV file';
 $string['modify_choices_explanation'] = 'Shows the list of all choices. Here, the choices can be hidden, altered and deleted.';
 $string['modify_choices_group_desc_too_early'] = 'Here, the choices can be specified, which should be available to the students.';
 $string['modify_choices_group_desc_rating_in_progress'] = 'The rating is in progress, you should not change the set of available choices in this step.';
@@ -356,3 +357,15 @@ $string['privacy:metadata:preference:flextable_manual_filter'] = 'Stores the fil
 
 $string['filtertabledesc'] = 'Describes the filters that are applied to the allocation table.';
 $string['filtermanualtabledesc'] = 'Describes the filters that are applied to the table of the manual allocation form.';
+
+// <editor-fold defaultstate="collapsed" desc="csv_import_messages">
+$string['csvchoices_missing_title'] = 'A choice is missing a title';
+$string['csvchoices_missaligned'] = 'CSV file does not contain enough values';
+$string['csvchoices_nonnumericsize'] = 'Size value was not numeric for an option';
+$string['import_csv_choices'] = "Import choices from CSV file";
+$string['usestandardmaxsize'] = "CSV file does not supply maxsize";
+$string['standardmaxsize'] = "Maxsize for all choices";
+$string['usestandarddescription'] = 'CSV file does not supply description';
+$string['standarddescription'] = 'Description for all choices';
+$string['csv_import_file'] = "Comma seperated value file with choices to import";
+// </editor-fold>

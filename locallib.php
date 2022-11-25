@@ -33,6 +33,7 @@ global $CFG;
 require_once(dirname(__FILE__) . '/lib.php');
 require_once(dirname(__FILE__) . '/form_manual_allocation.php');
 require_once(dirname(__FILE__) . '/form_modify_choice.php');
+require_once(dirname(__FILE__) . '/form_csv_import_choices.php');
 require_once(dirname(__FILE__) . '/renderable.php');
 require_once($CFG->dirroot.'/group/lib.php');
 require_once($CFG->dirroot . '/repository/lib.php');
@@ -79,6 +80,7 @@ class strategymanager {
 define('ACTION_GIVE_RATING', 'give_rating');
 define('ACTION_DELETE_RATING', 'delete_rating');
 define('ACTION_SHOW_CHOICES', 'show_choices');
+define('ACTION_CSV_IMPORT_CHOICES', 'csv_import_choices');
 define('ACTION_EDIT_CHOICE', 'edit_choice');
 define('ACTION_ENABLE_CHOICE', 'enable_choice');
 define('ACTION_DISABLE_CHOICE', 'disable_choice');
@@ -340,6 +342,98 @@ class ratingallocate {
             $renderer->ratingallocate_show_choices_table($this, true);
             echo $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
                 array('id' => $this->coursemodule->id)), get_string('back'), 'get');
+            echo $renderer->render_footer();
+        }
+
+    }
+
+    private function process_action_csv_import_choices() {
+
+        if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
+            global $OUTPUT, $PAGE;
+            /* @var mod_ratingallocate_renderer */
+            $renderer = $this->get_renderer();
+
+            // Notifications if no choices exist or too few in comparison to strategy settings.
+            $availablechoices = $this->get_rateable_choices();
+            $strategysettings = $this->get_strategy_class()->get_static_settingfields();
+            if (array_key_exists(ratingallocate\strategy_order\strategy::COUNTOPTIONS, $strategysettings)) {
+                $necessarychoices =
+                    $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
+            } else {
+                $necessarychoices = 0;
+            }
+            if (count($availablechoices) < $necessarychoices) {
+                $renderer->add_notification(get_string('too_few_choices_to_rate', ratingallocate_MOD_NAME, $necessarychoices));
+            }
+            echo $renderer->render_header($this->ratingallocate, $this->context, $this->coursemodule->id);
+            echo $OUTPUT->heading(get_string('show_choices_header', ratingallocate_MOD_NAME));
+
+            $starturl = new moodle_url('/mod/ratingallocate/view.php',
+                array('id' => $this->coursemodule->id,
+                    'ratingallocateid' => $this->ratingallocateid,
+                    'action' => ACTION_CSV_IMPORT_CHOICES,
+                ));
+            $mform = new csv_import_choices_form($starturl, $this, []);
+
+            if ($mform->is_cancelled()) {
+                redirect(new moodle_url('/mod/ratingallocate/view.php',
+                    array('id' => $this->coursemodule->id, 'ratingallocateid' => $this->ratingallocateid)));
+                return;
+            }
+
+            if ($mform->is_submitted() && $mform->is_validated()) {
+                $data = $mform->get_submitted_data();
+                $csvdata = $mform->get_file_content('ratingallocate_csv_choices');
+                $choices = [];
+                $csvchoices = str_replace('\n', '', explode(',', $csvdata));
+                while(count($csvchoices) > 0) {
+                    $title = array_shift($csvchoices);
+                    if (empty(trim($title))) {
+                        if (count($csvchoices) == 0) {
+                            break;
+                        } else {
+                            redirect($starturl, get_string('csvchoices_missingtitle', 'ratingallocate'));
+                            return;
+                        }
+                    }
+                    $description = "";
+                    if ($data->usestandarddescription) {
+                        $description = $data->standarddescription;
+                    } else {
+                        $description = array_shift($csvchoices);
+                        if ($description == null) {
+                            redirect($starturl, get_string('csvchoices_missaligned', 'ratingallocate'));
+                            return;
+                        }
+                    }
+                    if ($data->usestandardmaxsize) {
+                        $maxsize = $data->standardmaxsize;
+                    } else {
+                        $maxsize = array_shift($csvchoices);
+                        if (!is_numeric($maxsize)) {
+                            redirect($starturl, get_string('csvchoices_nonnumericsize', 'ratingallocate'));
+                            return;
+                        }
+                    }
+                    $choice = new stdClass();
+                    $choice->choiceid = "";
+                    $choice->title = $title;
+                    $choice->explanation = $description;
+                    $choice->maxsize = $maxsize;
+                    $choice->active = "1";
+                    array_push($choices, $choice);
+
+                }
+                foreach ($choices as $choice) {
+                    $this->save_modify_choice_form($choice);
+                }
+                redirect(new moodle_url('/mod/ratingallocate/view.php',
+                    array('id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES)));
+                return;
+            } else {
+                echo $mform->to_html();
+            }
             echo $renderer->render_footer();
         }
 
@@ -707,6 +801,10 @@ class ratingallocate {
 
             case ACTION_SHOW_CHOICES:
                 $this->process_action_show_choices();
+                return "";
+
+            case ACTION_CSV_IMPORT_CHOICES:
+                $this->process_action_csv_import_choices();
                 return "";
 
             case ACTION_EDIT_CHOICE:

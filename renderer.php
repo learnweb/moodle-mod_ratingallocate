@@ -268,6 +268,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $output .= $this->box_start();
 
         $starturl = new moodle_url($PAGE->url->out(), array('action' => ACTION_SHOW_CHOICES));
+        $csvimporturl = new moodle_url($PAGE->url->out(), array('action' => ACTION_CSV_IMPORT_CHOICES));
 
         // Get description dependent on status
         $descriptionbaseid = 'modify_choices_group_desc_';
@@ -280,7 +281,10 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $button = new single_button($starturl, get_string('modify_choices', ratingallocate_MOD_NAME), 'get');
         $button->tooltip = get_string('modify_choices_explanation', ratingallocate_MOD_NAME);
 
+        $csvimportbutton = new single_button($csvimporturl, get_string('import_csv_choices', ratingallocate_MOD_NAME), 'get');
+
         $output .= $this->render($button);
+        $output .= $this->render($csvimportbutton);
 
         $output .= $this->box_end();
         return $output;
