@@ -367,5 +367,8 @@ $string['usestandardmaxsize'] = "CSV file does not supply maxsize";
 $string['standardmaxsize'] = "Maxsize for all choices";
 $string['usestandarddescription'] = 'CSV file does not supply description';
 $string['standarddescription'] = 'Description for all choices';
+$string['usecustomseperator'] = 'CSV file uses seperator other than a comma';
+$string['customseperator'] = 'Custom seperator used by CSV file';
 $string['csv_import_file'] = "Comma seperated value file with choices to import";
+$string['whitespaceseperator'] = "Seperators of all whitespaces are currently not supported";
 // </editor-fold>

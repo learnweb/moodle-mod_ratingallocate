@@ -50,16 +50,20 @@ class csv_import_choices_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
 
+        $mform->addElement('advcheckbox', 'usecustomseperator', get_string('usecustomseperator', 'ratingallocate'), ' ');
+        $mform->addElement('text', 'customseperator', get_string('customseperator', 'ratingallocate'));
+        $mform->hideIf('customseperator', 'usecustomseperator', 'notchecked');
+
         $mform->addElement('advcheckbox', 'usestandardmaxsize', get_string('usestandardmaxsize', 'ratingallocate'), ' ');
         $mform->addElement('text', 'standardmaxsize', get_string('standardmaxsize', 'ratingallocate'));
         $mform->setType('standardmaxsize', PARAM_INT);
         $mform->addRule('standardmaxsize', get_string('err_numeric', 'form') , 'numeric', null, 'server');
-        $mform->disabledIf('standardmaxsize', 'usestandardmaxsize');
+        $mform->hideIf('standardmaxsize', 'usestandardmaxsize');
 
         $mform->addElement('advcheckbox', 'usestandarddescription', get_string('usestandarddescription', 'ratingallocate'), ' ');
         $mform->addElement('text', 'standarddescription', get_string('standarddescription', 'ratingallocate'));
         $mform->setType('standarddescription', PARAM_TEXT);
-        $mform->disabledIf('standarddescription', 'usestandarddescription');
+        $mform->hideIf('standarddescription', 'usestandarddescription');
 
         $mform->addElement('filepicker', 'ratingallocate_csv_choices', get_string('csv_import_file', 'ratingallocate'), null, array('accepted_types' => '*'));
         $mform->addRule('ratingallocate_csv_choices', get_string('err_required', 'form') , 'required', null, 'server');

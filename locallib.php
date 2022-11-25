@@ -37,6 +37,7 @@ require_once(dirname(__FILE__) . '/form_csv_import_choices.php');
 require_once(dirname(__FILE__) . '/renderable.php');
 require_once($CFG->dirroot.'/group/lib.php');
 require_once($CFG->dirroot . '/repository/lib.php');
+require_once ($CFG->dirroot . '/lib/csvlib.class.php');
 require_once(__DIR__.'/classes/algorithm_status.php');
 
 // Takes care of loading all the solvers.
@@ -366,8 +367,6 @@ class ratingallocate {
             if (count($availablechoices) < $necessarychoices) {
                 $renderer->add_notification(get_string('too_few_choices_to_rate', ratingallocate_MOD_NAME, $necessarychoices));
             }
-            echo $renderer->render_header($this->ratingallocate, $this->context, $this->coursemodule->id);
-            echo $OUTPUT->heading(get_string('show_choices_header', ratingallocate_MOD_NAME));
 
             $starturl = new moodle_url('/mod/ratingallocate/view.php',
                 array('id' => $this->coursemodule->id,
@@ -385,8 +384,19 @@ class ratingallocate {
             if ($mform->is_submitted() && $mform->is_validated()) {
                 $data = $mform->get_submitted_data();
                 $csvdata = $mform->get_file_content('ratingallocate_csv_choices');
+                if ($data->usecustomseperator) {
+                    $seperator = $data->customseperator;
+                    if (empty(trim($seperator))) {
+                        redirect($starturl, get_string('whitespaceseperator', 'ratingallocate'));
+                        return;
+                    }
+                } else {
+                    $seperator = ",";
+                }
+                $csvchoices = explode($seperator,
+                                      str_replace(["\n$seperator", "$seperator\n", "$seperator ", "\n"], "$seperator",
+                                                  str_replace(["\r\n", "\n\r", "\r"], "\n", $csvdata)));
                 $choices = [];
-                $csvchoices = str_replace('\n', '', explode(',', $csvdata));
                 while(count($csvchoices) > 0) {
                     $title = array_shift($csvchoices);
                     if (empty(trim($title))) {
@@ -402,7 +412,7 @@ class ratingallocate {
                         $description = $data->standarddescription;
                     } else {
                         $description = array_shift($csvchoices);
-                        if ($description == null) {
+                        if ($description === null) {
                             redirect($starturl, get_string('csvchoices_missaligned', 'ratingallocate'));
                             return;
                         }
@@ -432,9 +442,11 @@ class ratingallocate {
                     array('id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES)));
                 return;
             } else {
+                echo $renderer->render_header($this->ratingallocate, $this->context, $this->coursemodule->id);
+                echo $OUTPUT->heading(get_string('show_choices_header', ratingallocate_MOD_NAME));
                 echo $mform->to_html();
+                echo $renderer->render_footer();
             }
-            echo $renderer->render_footer();
         }
 
     }
