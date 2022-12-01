@@ -105,7 +105,9 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         // Filter choices to display by groups, where 'usegroups' is true.
         $ratingdata = $this->ratingallocate->filter_choices_by_groups($ratingdata, $USER->id);
 
-        $choicecounter = $this->get_strategysetting(strategy::COUNTOPTIONS);
+        // If we have less options because of group restrictions than configured for the strategy,
+        // we have to limit it, because user cannot vote for one option multiple times.
+        $choicecounter = min($this->get_strategysetting(strategy::COUNTOPTIONS), count($ratingdata));
         $choices = array();
 
         foreach ($ratingdata as $data) {
