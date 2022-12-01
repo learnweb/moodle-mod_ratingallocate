@@ -379,10 +379,6 @@ class ratingallocate {
 
                 if (!$mform->is_cancelled()) {
                     if ($mform->is_validated()) {
-                        if($data->usegroups) {
-                            $this->update_choice_groups($data->choiceid, $data->groupselector);
-                        }
-
                         // Processing for editor element (FORMAT_HTML is assumed).
                         // Note: No file management implemented at this point.
                         if (is_array($data->explanation)) {
@@ -395,6 +391,10 @@ class ratingallocate {
                             'mod_ratingallocate', 'choice_attachment', $data->choiceid);
                         $renderer->add_notification(get_string("choice_added_notification", ratingallocate_MOD_NAME),
                         self::NOTIFY_SUCCESS);
+
+                        if ($data->usegroups) {
+                            $this->update_choice_groups($data->choiceid, $data->groupselector);
+                        }
 
                     } else {
                         $output .= $OUTPUT->heading(get_string('edit_choice', ratingallocate_MOD_NAME), 2);
