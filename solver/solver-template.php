@@ -227,7 +227,7 @@ class distributor {
      */
     protected function augment_flow($path) {
         if (is_null($path) or count($path) < 2) {
-            print_error('invalid_path', 'ratingallocate');
+            throw new \moodle_exception('invalid_path', 'ratingallocate');
         }
 
         // Walk along the path, from s to t

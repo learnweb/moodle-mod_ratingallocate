@@ -114,7 +114,7 @@ class solver_edmonds_karp extends distributor {
                 foreach ($edges as $key2 => $edge) {
 
                     if ($dists[$edge->to] + $edge->weight < $dists[$edge->to]) { // if weight[u] + w < weight[v]:
-                        print_error('negative_cycle', 'ratingallocate');
+                        throw new \moodle_exception('negative_cycle', 'ratingallocate');
                     }
                 }
             }
