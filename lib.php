@@ -165,11 +165,16 @@ function ratingallocate_delete_instance($id) {
         'ratingallocateid' => $ratingallocate->id
     ));
 
-    $deleteids = $DB->get_records('ratingallocate_choices', array(
+    $deleteids = array_keys($DB->get_records('ratingallocate_choices', array(
         'ratingallocateid' => $ratingallocate->id
-            ), '', 'id');
+            ), '', 'id'));
 
-    $DB->delete_records_list('ratingallocate_ratings', 'choiceid', array_keys($deleteids));
+    list ($insql, $params) = $DB->get_in_or_equal($deleteids);
+
+    $DB->delete_records_select('ratingallocate_group_choices',
+        'choiceid ' . $insql, $params);
+
+    $DB->delete_records_list('ratingallocate_ratings', 'choiceid', $deleteids);
 
     $DB->delete_records('ratingallocate_choices', array(
         'ratingallocateid' => $ratingallocate->id
