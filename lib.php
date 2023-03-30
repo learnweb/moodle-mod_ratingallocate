@@ -67,8 +67,6 @@ function ratingallocate_supports($feature) {
             return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS:
             return true;
-        case FEATURE_GROUPS:
-            return true;
         default:
             return null;
     }
