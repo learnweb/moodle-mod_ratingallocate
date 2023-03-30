@@ -405,17 +405,19 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $table = new \flexible_table('show_ratingallocate_options');
         $table->define_baseurl($PAGE->url);
         if ($choicesmodifiably) {
-            $table->define_columns(array('title', 'explanation', 'maxsize', 'active', 'tools'));
+            $table->define_columns(array('title', 'explanation', 'maxsize', 'active', 'usegroups', 'tools'));
             $table->define_headers(array(get_string('choice_table_title', 'mod_ratingallocate'),
                 get_string('choice_table_explanation', 'mod_ratingallocate'),
                 get_string('choice_table_maxsize', 'mod_ratingallocate'),
                 get_string('choice_table_active', 'mod_ratingallocate'),
+                get_string('choice_table_usegroups', 'mod_ratingallocate'),
                 get_string('choice_table_tools', 'mod_ratingallocate')));
         } else {
-            $table->define_columns(array('title', 'explanation', 'maxsize', 'active'));
+            $table->define_columns(array('title', 'explanation', 'maxsize', 'active', 'usegroups'));
             $table->define_headers(array(get_string('choice_table_title', 'mod_ratingallocate'),
                 get_string('choice_table_explanation', 'mod_ratingallocate'),
                 get_string('choice_table_maxsize', 'mod_ratingallocate'),
+                get_string('choice_table_usegroups', 'mod_ratingallocate'),
                 get_string('choice_table_tools', 'mod_ratingallocate')));
         }
         $table->set_attribute('id', 'mod_ratingallocateshowoptions');
@@ -444,6 +446,12 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             } else {
                 $row[] = get_string('no');
             }
+            if ($choice->{this_db\ratingallocate_choices::USEGROUPS}) {
+                $row[] = get_string('yes');
+            } else {
+                $row[] = get_string('no');
+            }
+
             if ($choicesmodifiably) {
                 $row[] = $this->render_tools($idx, $choice->{this_db\ratingallocate_choices::ACTIVE},
                     $choice->{this_db\ratingallocate_choices::TITLE});

@@ -31,7 +31,7 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="ratingallocate_choices" COMMENT="Default comment for the table, please edit me">
+    <TABLE NAME="ratingallocate_choices" COMMENT="A choice option within a ratingallocation activity.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="ratingallocateid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="reference to the instance of ratingallocate it belongs to"/>
@@ -39,6 +39,7 @@
         <FIELD NAME="explanation" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="maxsize" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="10" SEQUENCE="false"/>
         <FIELD NAME="active" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="ob man in die Wahl bewerten kann oder ob sie &quot;versteckt&quot; ist"/>
+        <FIELD NAME="usegroups" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Restrict the visibility of this choice to members of specific groups? (1 = Yes, 0 = No)"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -68,6 +69,18 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="ratingallocateid" TYPE="foreign" FIELDS="ratingallocateid" REFTABLE="ratingallocate" REFFIELDS="id"/>
         <KEY NAME="choiceid" TYPE="foreign" FIELDS="choiceid" REFTABLE="ratingallocate_choices" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="ratingallocate_group_choices" COMMENT="Group restrictions on individual choice items in a rating allocation activity. When 'usegroups' in {ratingallocate_choices} is true, choices will only be shown to groups specified by entries in this table.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="choiceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Reference to a choice item."/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Reference to a group."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="choiceid" TYPE="foreign" FIELDS="choiceid" REFTABLE="ratingallocate_choices" REFFIELDS="id"/>
+        <KEY NAME="groupid" TYPE="foreign" FIELDS="groupid" REFTABLE="groups" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>

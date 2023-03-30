@@ -70,6 +70,8 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
         $mform = $this->_form;
 
         $ratingdata = $this->ratingallocate->get_rating_data_for_user($USER->id);
+        // Filter choices to display by groups, where 'usegroups' is true.
+        $ratingdata = $this->ratingallocate->filter_choices_by_groups($ratingdata, $USER->id);
 
         foreach ($ratingdata as $data) {
             $headerelem = 'head_ratingallocate_' . $data->choiceid;

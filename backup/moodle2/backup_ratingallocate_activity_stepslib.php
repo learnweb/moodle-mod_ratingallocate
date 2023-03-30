@@ -50,7 +50,13 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
         $ratingallocate_allocations = new backup_nested_element(get_tablename_for_tableClass($class) . 's');
         $ratingallocate_allocation = new backup_nested_element(get_tablename_for_tableClass($class), get_id_for_tableClass($class), get_fields_for_tableClass($class));
 
-        // Build the tree
+        $groupchoiceclass = 'ratingallocate\db\ratingallocate_group_choices';
+        $groupchoices = new backup_nested_element(get_tablename_for_tableClass($groupchoiceclass) . 's');
+        $groupchoice = new backup_nested_element(get_tablename_for_tableClass($groupchoiceclass),
+                                                 get_id_for_tableClass($groupchoiceclass),
+                                                 get_fields_for_tableClass($groupchoiceclass));
+
+        // Build the tree.
         $ratingallocate->add_child($ratingallocate_choices);
         $ratingallocate_choices->add_child($ratingallocate_choice);
 
@@ -60,9 +66,13 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
         $ratingallocate_choice->add_child($ratingallocate_allocations);
         $ratingallocate_allocations->add_child($ratingallocate_allocation);
 
+        $ratingallocate_choice->add_child($groupchoices);
+        $groupchoices->add_child($groupchoice);
+
         // Define sources
         $ratingallocate->set_source_table(get_tablename_for_tableClass('ratingallocate\db\ratingallocate'), array(this_db\ratingallocate::ID => backup::VAR_ACTIVITYID), this_db\ratingallocate_choices::ID . ' ASC');
         $ratingallocate_choice->set_source_table(get_tablename_for_tableClass('ratingallocate\db\ratingallocate_choices'), array(this_db\ratingallocate_choices::RATINGALLOCATEID => backup::VAR_PARENTID), this_db\ratingallocate_choices::ID . ' ASC');
+        $groupchoice->set_source_table(get_tablename_for_tableClass($groupchoiceclass), ['choiceid' => backup::VAR_PARENTID]);
 
         if ($userinfo) {
             $ratingallocate_rating->set_source_table(get_tablename_for_tableClass('ratingallocate\db\ratingallocate_ratings'), array(this_db\ratingallocate_ratings::CHOICEID => backup::VAR_PARENTID), this_db\ratingallocate_ratings::ID . ' ASC');
@@ -72,6 +82,7 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
         // Define id annotations
         $ratingallocate_allocation->annotate_ids('user', this_db\ratingallocate_allocations::USERID);
         $ratingallocate_rating->annotate_ids('user', this_db\ratingallocate_ratings::USERID);
+        $groupchoice->annotate_ids('group', 'groupid');
 
         // Define file annotations
         $ratingallocate->annotate_files('mod_' . ratingallocate_MOD_NAME, 'intro', null);

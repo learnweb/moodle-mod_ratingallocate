@@ -51,6 +51,13 @@ class ratingallocate_choices {
     const EXPLANATION = 'explanation';
     const MAXSIZE = 'maxsize';
     const ACTIVE = 'active';
+    const USEGROUPS = 'usegroups';
+}
+class ratingallocate_group_choices {
+    const TABLE = 'ratingallocate_group_choices';
+    const ID = 'id';
+    const CHOICEID = 'choiceid';
+    const GROUPID = 'groupid';
 }
 class ratingallocate_ratings {
     const TABLE = 'ratingallocate_ratings';

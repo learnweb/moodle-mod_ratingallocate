@@ -33,6 +33,8 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $paths[] = new restore_path_element(this_db\ratingallocate::TABLE, $ratingallocate_path );
         $choices_path = $ratingallocate_path . '/' . this_db\ratingallocate_choices::TABLE . 's/' . this_db\ratingallocate_choices::TABLE;
         $paths[] = new restore_path_element(this_db\ratingallocate_choices::TABLE, $choices_path);
+        $paths[] = new restore_path_element(this_db\ratingallocate_group_choices::TABLE,
+                                            $choices_path .'/' . this_db\ratingallocate_group_choices::TABLE .'s/' . this_db\ratingallocate_group_choices::TABLE);
         if ($userinfo) {
             $paths[] = new restore_path_element(this_db\ratingallocate_ratings::TABLE,     $choices_path .'/' . this_db\ratingallocate_ratings::TABLE .'s/' . this_db\ratingallocate_ratings::TABLE);
             $paths[] = new restore_path_element(this_db\ratingallocate_allocations::TABLE, $choices_path .'/' . this_db\ratingallocate_allocations::TABLE .'s/' . this_db\ratingallocate_allocations::TABLE);
@@ -98,6 +100,25 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
 
         $newitemid = $DB->insert_record(this_db\ratingallocate_allocations::TABLE, $data);
         $this->set_mapping(this_db\ratingallocate_allocations::TABLE, $oldid, $newitemid);
+    }
+
+    /**
+     * Process group choices restore data.
+     *
+     * @param array $data
+     * @return void
+     */
+    protected function process_ratingallocate_group_choices($data) {
+        global $DB;
+        $data = (object) $data;
+        $oldid = $data->id;
+        $data->choiceid = $this->get_new_parentid(this_db\ratingallocate_choices::TABLE);
+        if ((int) $data->groupid !== 0) {
+            $data->groupid = $this->get_mappingid('group', $data->groupid);
+        }
+
+        $newitemid = $DB->insert_record(this_db\ratingallocate_group_choices::TABLE, $data);
+        $this->set_mapping(this_db\ratingallocate_group_choices::TABLE, $oldid, $newitemid);
     }
 
     protected function after_execute() {

@@ -201,6 +201,11 @@ $string['choice_maxsize'] = 'Max. number of participants';
 $string['choice_maxsize_display'] = 'Maximum number of students';
 $string['choice_title'] = 'Title';
 $string['choice_title_help'] = 'Title of the choice. *Attention* all active choices will be displayed while ordered by title.';
+$string['choice_usegroups'] = 'Restrict visibility by groups';
+$string['choice_usegroups_help'] = '* If selected, this choice will only be visible to the members of the specified groups.
+* Disabling the restriction means that this choice will be available to anyone.
+* Enabling the restriction without specifying a single group means that this choice will be *not* available for anyone.';
+$string['choice_groupselect'] = 'Groups';
 $string['edit_choice'] = 'Edit choice';
 $string['rating_endtime'] = 'Rating ends at';
 $string['rating_begintime'] = 'Rating begins at';
@@ -232,6 +237,7 @@ $string['choice_table_title'] = 'Title';
 $string['choice_table_explanation'] = 'Description';
 $string['choice_table_maxsize'] = 'Max. Size';
 $string['choice_table_active'] = 'Active';
+$string['choice_table_usegroups'] = 'Groups';
 $string['choice_table_tools'] = 'Edit';
 // </editor-fold>
 

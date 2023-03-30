@@ -48,8 +48,7 @@ use ratingallocate\db as this_db;
  * Returns the information on whether the module supports a feature
  *
  * @see plugin_supports() in lib/moodlelib.php
- * @param string $feature
- *        	FEATURE_xx constant for requested feature
+ * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed true if the feature is supported, null if unknown
  */
 function ratingallocate_supports($feature) {
@@ -64,11 +63,11 @@ function ratingallocate_supports($feature) {
             return true;
         case FEATURE_SHOW_DESCRIPTION :
             return true;
-         case FEATURE_BACKUP_MOODLE2:
+        case FEATURE_BACKUP_MOODLE2:
             return true;
-         case FEATURE_COMPLETION_TRACKS_VIEWS:
-             return true;
-        default :
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        default:
             return null;
     }
 }
@@ -164,11 +163,16 @@ function ratingallocate_delete_instance($id) {
         'ratingallocateid' => $ratingallocate->id
     ));
 
-    $deleteids = $DB->get_records('ratingallocate_choices', array(
+    $deleteids = array_keys($DB->get_records('ratingallocate_choices', array(
         'ratingallocateid' => $ratingallocate->id
-            ), '', 'id');
+            ), '', 'id'));
 
-    $DB->delete_records_list('ratingallocate_ratings', 'choiceid', array_keys($deleteids));
+    list ($insql, $params) = $DB->get_in_or_equal($deleteids);
+
+    $DB->delete_records_select('ratingallocate_group_choices',
+        'choiceid ' . $insql, $params);
+
+    $DB->delete_records_list('ratingallocate_ratings', 'choiceid', $deleteids);
 
     $DB->delete_records('ratingallocate_choices', array(
         'ratingallocateid' => $ratingallocate->id
