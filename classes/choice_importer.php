@@ -177,7 +177,7 @@ class choice_importer {
                                 $groups = array();
 
                                 // Turn off 'usegroups' if no groups specified.
-                                if (empty($cell)) {
+                                if (empty(trim($cell))) {
                                     $recordmap->usegroups = false;
                                 } else {
                                     // For fault tolerance, trim any surrounding whitespace.
