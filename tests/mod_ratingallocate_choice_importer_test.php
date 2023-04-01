@@ -133,12 +133,16 @@ class mod_ratingallocate_choice_importer_testcase extends advanced_testcase {
         $contents[] = 'New Test Choice 6,Explain New Choice 6, 100, 1," Blue Group, Green Group"';
         $contents[] = 'New Test Choice 7,Explain New Choice 7, 100, 1,"Blue Group,Green Group,Red Group "';
         $contents[] = 'New Test Choice 8,Explain New Choice 8, 100, 1,"Green Group,Red Group,, "';
+        $contents[] = 'New Test Choice 9,Explain New Choice 9, 100, 1,Green Group ;Red Group;;; ';
+        $contents[] = 'New Test Choice 10,Explain New Choice 10, 100, 1," Green Group; Red Group; Blue Group"';
+        // Also add choices with semicolon as groups delimiter. Usually, comma and semicolon are not mixed up in the same
+        // file, but it is being supported anyway, so we can test this right here.
         $csv = join("\n", $contents) . "\n";
         $importstatus = $choiceimporter->import($csv);
         $this->assertEquals($importstatus->status, \mod_ratingallocate\choice_importer::IMPORT_STATUS_OK);
 
         $choices = $this->ratingallocate->get_choices();
-        $this->assertEquals(8, count($choices), 'Six new choices imported');
+        $this->assertEquals(10, count($choices), 'Eight new choices imported');
 
         // Get ordered list of keys of all added choices.
         ksort($choices);
@@ -177,6 +181,19 @@ class mod_ratingallocate_choice_importer_testcase extends advanced_testcase {
         $this->assertEquals(count($choicegroups8), 2);
         $this->assertContains(intval($this->green->id), $choicegroups8);
         $this->assertContains(intval($this->red->id), $choicegroups8);
+
+        // 9: Green, Red, empty values ignored
+        $choicegroups9 = array_keys($this->ratingallocate->get_choice_groups($keylist[8]));
+        $this->assertEquals(count($choicegroups9), 2);
+        $this->assertContains(intval($this->green->id), $choicegroups9);
+        $this->assertContains(intval($this->red->id), $choicegroups9);
+
+        // 10: Red, Green, Blue with whitespaces and quotation marks
+        $choicegroups10 = array_keys($this->ratingallocate->get_choice_groups($keylist[9]));
+        $this->assertEquals(count($choicegroups10), 3);
+        $this->assertContains(intval($this->green->id), $choicegroups10);
+        $this->assertContains(intval($this->red->id), $choicegroups10);
+        $this->assertContains(intval($this->blue->id), $choicegroups10);
     }
 
     public function test_bad_group() {

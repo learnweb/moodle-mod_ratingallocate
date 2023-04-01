@@ -182,7 +182,9 @@ class choice_importer {
                                 } else {
                                     // For fault tolerance, trim any surrounding whitespace.
                                     $cell = trim($cell);
-                                    $parts = explode(',', $cell);
+                                    $partsbysemicolon = explode(';', $cell);
+                                    $partsbycomma = explode(',', $cell);
+                                    $parts = count($partsbysemicolon) >= count($partsbycomma) ? $partsbysemicolon : $partsbycomma;
                                     foreach ($parts as $part) {
                                         $part = trim($part);
                                         if (!empty($part)) {
