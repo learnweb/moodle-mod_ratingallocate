@@ -195,7 +195,14 @@ $string['choice_added_notification'] = 'Choice saved.';
 // <editor-fold defaultstate="collapsed" desc="Form to upload choices via CSV (administrator)">
 $string['upload_choices'] = 'Upload choices via CSV';
 $string['upload_choices_required_fields'] = 'Required Fields';
-$string['upload_choices_fields_desc'] = 'CSV files uploaded through this form are expected to be UTF-8 encoded, and include the following choice fields:<br/><tt>{$a}</tt>';
+$string['upload_choices_fields_desc'] = 'CSV files uploaded through this form are expected to be UTF-8 encoded, and include the following choice fields:<br/><pre>{$a}</pre>
+The file is required to contain a header line. Multiple groups should be separated by a semicolon. The "active" column should contain 1 or 0 to make the choice enabled or disabled.<br/>
+Example file content:
+<pre>
+title,explanation,maxsize,active,groups
+First Choice,This is the description of the first choice,15,1,Group A;Group B;Group C
+Second Choice,This is the description of the second choice,12,0,Group A;Group D
+</pre>';
 $string['csvempty'] = 'CSV file is empty.';
 $string['csvupload'] = 'Upload CSV';
 $string['csvupload_further_problems'] = '{$a} further problems found but not displayed.';
