@@ -1153,6 +1153,7 @@ class ratingallocate {
      * @param stdClass $userfrom
      */
     public function notify_users_distribution() {
+        global $CFG;
 
         // Make sure we have not sent them yet.
         if ($this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} > 0) {
@@ -1167,7 +1168,12 @@ class ratingallocate {
 
             // Prepare the email to be sent to the user.
             $userto = get_complete_user_data('id', $userid);
-            cron_setup_user($userto);
+            if ($CFG->branch >= 402) {
+                \core\cron::setup_user($userto);
+            } else {
+                cron_setup_user($userto);
+            }
+
 
             $notificationsubject = format_string($this->course->shortname, true) . ': ' .
                 get_string('allocation_notification_message_subject', 'ratingallocate',
