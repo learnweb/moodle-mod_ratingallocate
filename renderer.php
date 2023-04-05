@@ -297,6 +297,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $status !== ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS;
 
         $starturl = new moodle_url($this->page->url, array('action' => ACTION_START_DISTRIBUTION));
+        $deleteurl = new moodle_url($this->page->url, array('id' => $coursemoduleid, 'action' => ACTION_DELETE_ALL_RATINGS));
 
         // Get description dependent on status
         $descriptionbaseid = 'modify_allocation_group_desc_';
@@ -317,6 +318,14 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $output .= $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
                 'action' => ACTION_MANUAL_ALLOCATION)), get_string('manual_allocation_form', RATINGALLOCATE_MOD_NAME), 'get',
                 array('disabled' => !$ratingover));
+
+        // Add delete all ratings button
+        $deletebutton = new single_button($deleteurl, get_string('delete_all_ratings', ratingallocate_MOD_NAME, 'get'));
+        $deletebutton->disabled = $ratingover; // Only allow deletion if new submission is possible.
+        $deletebutton->tooltip = get_string('delete_all_ratings_explanation', ratingallocate_MOD_NAME);
+        $deletebutton->add_action(new confirm_action(get_string('confirm_delete_all_ratings', ratingallocate_MOD_NAME)));
+
+        $output .= $this->render($deletebutton);
 
         $output .= $this->box_end();
         return $output;
