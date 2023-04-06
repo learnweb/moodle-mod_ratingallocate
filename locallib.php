@@ -533,10 +533,9 @@ class ratingallocate {
             if ($choiceid) {
                 $choice = $DB->get_record(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
                 if ($choice) {
+                    // Delete related group associations, if any.
                     $DB->delete_records(this_db\ratingallocate_group_choices::TABLE, ['choiceid' => $choiceid]);
                     $DB->delete_records(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
-                    // Delete related group associations, if any.
-                    $DB->delete_records(this_db\ratingallocate_group_choices::TABLE, array('choiceid' => $choiceid));
 
                     redirect(new moodle_url('/mod/ratingallocate/view.php',
                         array('id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES)),
