@@ -33,6 +33,7 @@ global $CFG;
 require_once(dirname(__FILE__) . '/lib.php');
 require_once(dirname(__FILE__) . '/form_manual_allocation.php');
 require_once(dirname(__FILE__) . '/form_modify_choice.php');
+require_once(dirname(__FILE__) . '/form_upload_choices.php');
 require_once(dirname(__FILE__) . '/renderable.php');
 require_once($CFG->dirroot.'/group/lib.php');
 require_once($CFG->dirroot . '/repository/lib.php');
@@ -80,6 +81,7 @@ define('ACTION_GIVE_RATING', 'give_rating');
 define('ACTION_DELETE_RATING', 'delete_rating');
 define('ACTION_SHOW_CHOICES', 'show_choices');
 define('ACTION_EDIT_CHOICE', 'edit_choice');
+define('ACTION_UPLOAD_CHOICES', 'upload_choices');
 define('ACTION_ENABLE_CHOICE', 'enable_choice');
 define('ACTION_DISABLE_CHOICE', 'disable_choice');
 define('ACTION_DELETE_CHOICE', 'delete_choice');
@@ -176,6 +178,21 @@ class ratingallocate {
     public function get_raters_in_course() {
         $raters = get_enrolled_users($this->context, 'mod/ratingallocate:give_rating');
         return $raters;
+    }
+
+    /**
+     * Get candidate groups for restricting choices.
+     *
+     * @return array A mapping of group IDs to names.
+     */
+    public function get_group_candidates() {
+        $options = array();
+        $groupcandidates = groups_get_all_groups($this->course->id);
+        foreach ($groupcandidates as $group) {
+            $options[$group->id] = $group->name;
+        }
+
+        return $options;
     }
 
     public function __construct($ratingallocaterecord, $course, $coursem, context_module $context) {
@@ -427,6 +444,65 @@ class ratingallocate {
     }
 
     /**
+     * Upload one or more choices via a CSV file.
+     */
+    private function process_action_upload_choices() {
+        global $DB, $PAGE;
+
+        $output = '';
+        if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
+            global $OUTPUT;
+
+            $url = new moodle_url('/mod/ratingallocate/view.php',
+                array('id' => $this->coursemodule->id,
+                    'ratingallocateid' => $this->ratingallocateid,
+                    'action' => ACTION_UPLOAD_CHOICES,
+                )
+            );
+            $mform = new upload_choices_form($url, $this);
+            $renderer = $this->get_renderer();
+
+            if ($mform->is_submitted() && $data = $mform->get_submitted_data()) {
+                if (!$mform->is_cancelled()) {
+                    if ($mform->is_validated()) {
+                        $content = $mform->get_file_content('uploadfile');
+                        $name = $mform->get_new_filename('uploadfile');
+                        $live = !$data->testimport;  // If testing, importer is not live.
+                        // Properly process the file content.
+                        $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this);
+                        $importstatus = $choiceimporter->import($content, $live);
+
+                        switch ($importstatus->status) {
+                            case \mod_ratingallocate\choice_importer::IMPORT_STATUS_OK:
+                                \core\notification::info($importstatus->status_message);
+                                break;
+                            case \mod_ratingallocate\choice_importer::IMPORT_STATUS_DATA_ERROR:
+                                \core\notification::warning($importstatus->status_message);
+                                $choiceimporter->issue_notifications($importstatus->errors);
+                                break;
+                            case \mod_ratingallocate\choice_importer::IMPORT_STATUS_SETUP_ERROR:
+                            default:
+                                \core\notification::error($importstatus->status_message);
+                                $choiceimporter->issue_notifications($importstatus->errors,
+                                    \core\output\notification::NOTIFY_ERROR);
+                        }
+
+                        redirect(new moodle_url('/mod/ratingallocate/view.php',
+                            array(
+                                'id' => $this->coursemodule->id,
+                                'action' => ACTION_SHOW_CHOICES
+                            )));
+                    }
+                }
+            }
+
+            $output .= $OUTPUT->heading(get_string('upload_choices', 'ratingallocate'), 2);
+            $output .= $mform->to_html();
+        }
+        return $output;
+    }
+
+    /**
      * Enables or disables a choice and displays the choices list.
      * @param bool $active states if the choice should be set active or inavtive
      */
@@ -457,8 +533,10 @@ class ratingallocate {
             if ($choiceid) {
                 $choice = $DB->get_record(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
                 if ($choice) {
+                    // Delete related group associations, if any.
                     $DB->delete_records(this_db\ratingallocate_group_choices::TABLE, ['choiceid' => $choiceid]);
                     $DB->delete_records(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
+
                     redirect(new moodle_url('/mod/ratingallocate/view.php',
                         array('id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES)),
                         get_string('choice_deleted_notification', ratingallocate_MOD_NAME,
@@ -717,6 +795,15 @@ class ratingallocate {
 
             case ACTION_EDIT_CHOICE:
                 $result = $this->process_action_edit_choice();
+                if (!$result) {
+                    return "";
+                }
+                $output .= $result;
+                $this->showinfo = false;
+                break;
+
+            case ACTION_UPLOAD_CHOICES:
+                $result = $this->process_action_upload_choices();
                 if (!$result) {
                     return "";
                 }
@@ -1065,6 +1152,7 @@ class ratingallocate {
      * @param stdClass $userfrom
      */
     public function notify_users_distribution() {
+        global $CFG;
 
         // Make sure we have not sent them yet.
         if ($this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} > 0) {
@@ -1079,7 +1167,12 @@ class ratingallocate {
 
             // Prepare the email to be sent to the user.
             $userto = get_complete_user_data('id', $userid);
-            cron_setup_user($userto);
+            if ($CFG->branch >= 402) {
+                \core\cron::setup_user($userto);
+            } else {
+                cron_setup_user($userto);
+            }
+
 
             $notificationsubject = format_string($this->course->shortname, true) . ': ' .
                 get_string('allocation_notification_message_subject', 'ratingallocate',
