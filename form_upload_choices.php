@@ -57,9 +57,9 @@ class upload_choices_form extends moodleform {
         get_string('upload_choices_fields_desc', 'ratingallocate', $requiredfields));
 
         $elementname = 'uploadfile';
-        $mform->addElement('filepicker', $elementname, get_string('csvupload', 'ratingallocate'), array(
-            'accepted_types' => 'text/csv'
-        ));
+        $mform->addElement('filepicker', $elementname, get_string('csvupload', 'ratingallocate'), null,
+            ['accepted_types' => 'text/csv']
+        );
         $mform->addRule($elementname, get_string('err_required', 'form') , 'required', null, 'server');
 
         $elementname = 'testimport';
