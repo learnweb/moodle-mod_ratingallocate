@@ -22,7 +22,6 @@
  * @copyright  2014 T Reischmann, M Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 namespace ratingallocate\db;
 class ratingallocate {
     const TABLE = 'ratingallocate';
@@ -44,7 +43,6 @@ class ratingallocate {
     const RUNALGORITHMBYCRON = 'runalgorithmbycron';
     const ALGORITHMSTATUS = 'algorithmstatus';
 }
-
 class ratingallocate_choices {
     const TABLE = 'ratingallocate_choices';
     const ID = 'id';
@@ -62,6 +60,20 @@ class ratingallocate_group_choices {
     const GROUPID = 'groupid';
 }
 
+class ratingallocate_choice_group {
+    const TABLE = 'ratingallocate_choice_group';
+    const ID = 'id';
+    const  GROUPID = 'groupid';
+    const CHOICEID = 'choiceid';
+}
+
+class ratingallocate_id_grouping {
+    const TABLE = 'ratingallocate_id_grouping';
+    const ID = 'id';
+    const RATINGALLOCATEID = 'ratingallocateid';
+    const GROUPINGID = 'groupingid';
+}
+
 class ratingallocate_ratings {
     const TABLE = 'ratingallocate_ratings';
     const ID = 'id';
@@ -69,7 +81,6 @@ class ratingallocate_ratings {
     const USERID = 'userid';
     const RATING = 'rating';
 }
-
 class ratingallocate_allocations {
     const TABLE = 'ratingallocate_allocations';
     const ID = 'id';
