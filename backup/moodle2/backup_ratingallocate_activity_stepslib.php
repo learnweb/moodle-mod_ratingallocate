@@ -89,7 +89,7 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
         $ratingallocatechoice->add_child($groupchoices);
         $groupchoices->add_child($groupchoice);
 
-        $ratingallocatechoices->add_child($ratingallocatechoicegroups);
+        $ratingallocatechoice->add_child($ratingallocatechoicegroups);
         $ratingallocatechoicegroups->add_child($ratingallocatechoicegroup);
 
         // Define sources

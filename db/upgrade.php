@@ -202,11 +202,12 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         $table = new xmldb_table('ratingallocate_groupings');
 
         // Adding fields to table ratingallocate_groupings.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('ratingallocateid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('groupingid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table ratingallocate_groupings.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['ratingallocateid']);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         $table->add_key('ratingallocateid', XMLDB_KEY_FOREIGN, ['ratingallocateid'], 'ratingallocate', ['id']);
         $table->add_key('groupingid', XMLDB_KEY_FOREIGN, ['groupingid'], 'groupings', ['id']);
 

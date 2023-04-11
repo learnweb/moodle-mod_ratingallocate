@@ -143,8 +143,8 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
             $data->groupid = $this->get_mappingid('group', $data->groupid);
         }
 
-        $newitemid = $DB->insert_record(this_db\ratingallocate_choice_group::TABLE, $data);
-        $this->set_mapping(this_db\ratingallocate_choice_group::TABLE, $oldid, $newitemid);
+        $newitemid = $DB->insert_record(this_db\ratingallocate_choice_groups::TABLE, $data);
+        $this->set_mapping(this_db\ratingallocate_choice_groups::TABLE, $oldid, $newitemid);
     }
 
     protected function ratingallocate_grouping($data) {
@@ -156,8 +156,8 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
             $data->groupingid = $this->get_mappingid('grouping', $data->groupingid);
         }
 
-        $newitemid = $DB->insert_record(this_db\ratingallocate_grouping::TABLE, $data);
-        $this->set_mapping(this_db\ratingallocate_grouping::TABLE, $oldid, $newitemid);
+        $newitemid = $DB->insert_record(this_db\ratingallocate_groupings::TABLE, $data);
+        $this->set_mapping(this_db\ratingallocate_groupings::TABLE, $oldid, $newitemid);
     }
 
     protected function after_execute() {
