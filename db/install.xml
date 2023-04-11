@@ -83,5 +83,29 @@
         <KEY NAME="groupid" TYPE="foreign" FIELDS="groupid" REFTABLE="groups" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="ratingallocate_choice_group" COMMENT="Maps Groups and the Allocations on which they are created with">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" />
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Reference to a group."/>
+        <FIELD NAME="choiceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Reference to a choice item."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="groupid" TYPE="foreign" FIELDS="groupid" REFTABLE="groups" REFFIELDS="id"/>
+        <KEY NAME="choiceid" TYPE="foreign" FIELDS="choiceid" REFTABLE="ratingallocate_choices" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="ratingallocate_id_grouping" COMMENT="Maps the Instance of the Allocation with the Grouping.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" />
+        <FIELD NAME="ratingallocateid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="reference to the instance of ratingallocate it belongs to"/>
+        <FIELD NAME="groupingid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Reference to the Grouping the Allocation creates"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="ratingallocateid" TYPE="foreign" FIELDS="ratingallocateid" REFTABLE="ratingallocate" REFFIELDS="id"/>
+        <KEY NAME="groupingid" TYPE="foreign" FIELDS="groupingid" REFTABLE="groupings" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
   </TABLES>
 </XMLDB>

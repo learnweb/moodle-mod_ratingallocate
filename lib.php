@@ -172,6 +172,13 @@ function ratingallocate_delete_instance($id) {
     $DB->delete_records_select('ratingallocate_group_choices',
         'choiceid ' . $insql, $params);
 
+    $DB->delete_records_select('ratingallocate_choice_group',
+        'choiceid ' . $insql, $params);
+
+    $DB->delete_records('ratingallocate_id_grouping', array(
+        'ratingallocateid' => $ratingallocate->id
+    ));
+
     $DB->delete_records_list('ratingallocate_ratings', 'choiceid', $deleteids);
 
     $DB->delete_records('ratingallocate_choices', array(

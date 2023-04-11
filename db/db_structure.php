@@ -59,6 +59,21 @@ class ratingallocate_group_choices {
     const CHOICEID = 'choiceid';
     const GROUPID = 'groupid';
 }
+
+class ratingallocate_choice_group {
+    const TABLE = 'ratingallocate_choice_group';
+    const ID = 'id';
+    const  GROUPID = 'groupid';
+    const CHOICEID = 'choiceid';
+}
+
+class ratingallocate_id_grouping {
+    const TABLE = 'ratingallocate_id_grouping';
+    const ID = 'id';
+    const RATINGALLOCATEID = 'ratingallocateid';
+    const GROUPINGID = 'groupingid';
+}
+
 class ratingallocate_ratings {
     const TABLE = 'ratingallocate_ratings';
     const ID = 'id';
