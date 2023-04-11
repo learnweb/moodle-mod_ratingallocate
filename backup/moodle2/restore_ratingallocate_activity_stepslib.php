@@ -130,6 +130,32 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $this->set_mapping(this_db\ratingallocate_group_choices::TABLE, $oldid, $newitemid);
     }
 
+    protected function process_ratingallocate_choice_group($data) {
+        global $DB;
+        $data = (object) $data;
+        $oldid = $data->id;
+        $data->choiceid = $this->get_new_parentid(this_db\ratingallocate_choices::TABLE);
+        if ((int) $data->groupid !== 0) {
+            $data->groupid = $this->get_mappingid('group', $data->groupid);
+        }
+
+        $newitemid = $DB->insert_record(this_db\ratingallocate_choice_group::TABLE, $data);
+        $this->set_mapping(this_db\ratingallocate_choice_group::TABLE, $oldid, $newitemid);
+    }
+
+    protected function ratingallocate_id_grouping($data) {
+        global $DB;
+        $data = (object) $data;
+        $oldid = $data->id;
+        $data->ratingallocateid = $this->get_new_parentid(this_db\ratingallocate::TABLE);
+        if ((int) $data->groupingid !== 0) {
+            $data->groupingid = $this->get_mappingid('grouping', $data->groupingid);
+        }
+
+        $newitemid = $DB->insert_record(this_db\ratingallocate_id_grouping::TABLE, $data);
+        $this->set_mapping(this_db\ratingallocate_id_grouping::TABLE, $oldid, $newitemid);
+    }
+
     protected function after_execute() {
         // Add ratingallocate related files
         $this->add_related_files('mod_' . RATINGALLOCATE_MOD_NAME, 'intro', null);
