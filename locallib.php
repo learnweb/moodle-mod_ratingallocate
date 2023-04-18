@@ -983,13 +983,20 @@ class ratingallocate {
             $data->name = get_string('groupingname', ratingallocate_MOD_NAME, $this->ratingallocate->name);
             $data->courseid = $this->course->id;
             $groupingid = groups_create_grouping($data);
+
+            // Insert groupingid and ratingallocateid into the table.
+            $data = new stdClass();
+            $data->groupingid = $groupingid;
+            $data->ratingallocateid = $this->ratingallocateid;
+            $this->db->insert_record(this_db\ratingallocate_id_grouping::TABLE, $data);
+
         } else {
             // If there is already a grouping for this allocation assign the corresponing id to groupingid.
             $groupingids = $this->db->get_records_select(this_db\ratingallocate_id_grouping::TABLE,
                             "ratingallocateid=$this->ratingallocateid",
                             null,
                             '',
-                            'groupingid');
+                            'id, groupingid');
             // There should only be one entry in groupingids.
             $groupingid = 0;
             foreach ($groupingids as $groupingidsentry) {
@@ -997,69 +1004,32 @@ class ratingallocate {
             }
         }
 
-        // Insert groupingid and ratingallocateid into the table.
-        $data = new stdClass();
-        $data->groupingid = $groupingid;
-        $data->ratingallocateid = $this->ratingallocateid;
-        $this->db->insert_record(this_db\ratingallocate_id_grouping::TABLE, $data);
-
-        //$groupidentifierfromchoiceid = function ($choiceid) {
-        //    return ratingallocate_MOD_NAME . '_c_' . $choiceid;
-        //};
-
         $choices = $this->get_choices_with_allocationcount();
-
-        // Make a new array containing only the identifiers of the choices.
-        //$choiceids = array();
-        /*foreach ($choices as $choice) {
-            //$choiceids[$groupidentifierfromchoiceid($choice->id)] = array('key' => $id);
-            $data = new stdClass();
-            $data->choiceid = $choice->id;
-            //$data->groupid = $groupidentifierfromchoiceid($choice->id);
-            $this->db->insert_record(this_db\ratingallocate_choice_group::TABLE, $data);
-        }*/
-
-        // Find all associated groups in this grouping.
-        //$groups = groups_get_all_groups($this->course->id, 0, $groupingid);
-
-        // Loop through the groups in the grouping: if the choice does not exist anymore -> delete.
-        // Otherwise mark it.
-        /*
-        foreach ($groups as $group) {
-
-            if (array_key_exists($group->idnumber, $choiceids)) {
-
-                // Group exists, mark.
-                $choiceids[$group->idnumber]['exists'] = true;
-                $choiceids[$group->idnumber]['groupid'] = $group->id;
-            } else {
-                // Delete group $group->id.
-                groups_delete_group($group->id);
-            }
-        }
-        */
 
         // Loop through existing choices.
         foreach ($choices as $choice) {
             if ($this->db->record_exists(this_db\ratingallocate_choices::TABLE,
-                    ['id' => $choice->id])){
+                    ['id' => $choice->id])) {
 
-                // Checks if there is already a group for this choice
+                // Checks if there is already a group for this choice.
                 if ($this->db->record_exists(this_db\ratingallocate_choice_group::TABLE,
-                    ['id' => $choice->id])){
+                    ['choiceid' => $choice->id])) {
 
-                    // Get the group from the choice_group Table
+                    // Get the group from the choice_group Table.
                     $groupids = $this->db->get_records_select(this_db\ratingallocate_choice_group::TABLE,
                         "choiceid=$choice->id",
                         null,
                         '',
-                        'groupid');
+                        'id, groupid');
                     // Only one object in groupids because there should only be one entry in the table with this choiceid.
                     foreach ($groupids as $groupid) {
                         $group = groups_get_group($groupid->groupid);
 
                         // Delete all the members from the existing group for this choice.
-                        groups_delete_group_members_by_group($group->id);
+                        if ($group) {
+                            groups_delete_group_members_by_group($group->id);
+                            groups_assign_grouping($groupingid, $group->id);
+                        }
                     }
 
                 } else {
@@ -1068,30 +1038,16 @@ class ratingallocate {
                     $data->courseid = $this->course->id;
                     $data->name = $choice->title;
                     $createdid = groups_create_group($data);
-                    groups_assign_grouping($groupingid, $createdid);
+                    if ($createdid) {
+                        groups_assign_grouping($groupingid, $createdid);
 
-                    // Insert the mapping between group and choice into the Table.
-                    $this->db->insert_record(this_db\ratingallocate_choice_group::TABLE,
-                                            ['choiceid' => $choice->id, 'groupid' => $createdid]);
+                        // Insert the mapping between group and choice into the Table.
+                        $this->db->insert_record(this_db\ratingallocate_choice_group::TABLE,
+                            ['choiceid' => $choice->id, 'groupid' => $createdid]);
+                    }
                 }
             }
         }
-
-        // Create groups groups for new identifiers or empty group if it exists.
-        /*foreach ($choiceids as $groupid => $choice) {
-            if (key_exists('exists', $choice)) {
-                // Remove all members.
-                groups_delete_group_members_by_group($choice['groupid']);
-            } else {
-                $data = new stdClass();
-                $data->courseid = $this->course->id;
-                $data->name = $choices[$choice['key']]->title;
-                $data->idnumber = $groupid;
-                $createdid = groups_create_group($data);
-                groups_assign_grouping($groupingid, $createdid);
-                $choiceids[$groupid]['groupid'] = $createdid;
-            }
-        }*/
 
         // Add all participants in the correct group.
         $allocations = $this->get_allocations();
@@ -1108,7 +1064,9 @@ class ratingallocate {
             // Only one object in groupids because there should only be one entry in the table with this choiceid.
             foreach ($groupids as $groupid) {
                 $group = groups_get_group($groupid->groupid);
-                groups_add_member($group, $userid);
+                if ($group) {
+                    groups_add_member($group, $userid);
+                }
             }
 
         }
