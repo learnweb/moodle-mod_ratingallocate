@@ -15,18 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the version of ratingallocate
+ * Definition of ratingallocate event observers.
  *
- * @package    mod_ratingallocate
- * @copyright 2014 T Reischmann, C Usener
- * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * The observers defined in this file are notified when respective events are triggered.
+ *
+ * @package   mod_ratingallocate
+ * @category  event
+ * @copyright 2023 I Hoppe
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2023041809;        // The current module version (Date: YYYYMMDDXX)
-$plugin->requires = 2020061500;         // Requires Moodle 3.9+.
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = 'v4.0-r1';
-$plugin->component = 'mod_ratingallocate';  // To check on upgrade, that module sits in correct place
+
+$handlers = array();
+
+// List of observers for group_deleted and grouping_deleted.
+
+$observers = array(
+    array(
+        'eventname' => '\core\event\group_deleted',
+        'callback'  => 'mod_ratingallocate\ratingallocate_observer::choice_group_delete',
+    ),
+    array(
+        'eventname' => '\core\event\grouping_deleted',
+        'callback'  => 'mod_ratingallocate\ratingallocate_observer::id_grouping_delete'
+    )
+);
