@@ -31,10 +31,10 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
 
     protected function define_structure() {
 
-        // To know if we are including userinfo
+        // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
 
-        // Define each element separated
+        // Define each element separated.
         $class = 'ratingallocate\db\ratingallocate';
         $ratingallocate = new backup_nested_element(get_tablename_for_tableClass($class), get_id_for_tableClass($class),
                 get_fields_for_tableClass($class));
@@ -121,10 +121,10 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
         $ratingallocatechoicegroup->annotate_ids('group', 'groupid');
         $ratingallocategrouping->annotate_ids('grouping', 'groupingid');
 
-        // Define file annotations
+        // Define file annotations.
         $ratingallocate->annotate_files('mod_' . RATINGALLOCATE_MOD_NAME, 'intro', null);
 
-        // Return the root element (ratingallocate), wrapped into standard activity structure
+        // Return the root element (ratingallocate), wrapped into standard activity structure.
         return $this->prepare_activity_structure($ratingallocate);
     }
 }
