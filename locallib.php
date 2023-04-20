@@ -698,6 +698,9 @@ class ratingallocate {
     public function get_undistributed_users(): array {
         $undistributedusers = [];
         $userswithgroups = $this->get_undistributed_users_with_groupscount();
+        if (empty($userswithgroups)) {
+            return [];
+        }
         for ($i = 1; $i <= max(array_keys($userswithgroups)); $i++) {
             if (empty($userswithgroups[$i])) {
                 continue;
@@ -995,8 +998,10 @@ class ratingallocate {
 
         // Print data and controls for teachers.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
+            $undistributeduserscount = count($this->get_undistributed_users());
             $output .= $renderer->modify_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status,
-                    (int) $this->ratingallocate->algorithmstatus, (boolean) $this->ratingallocate->runalgorithmbycron);
+                $undistributeduserscount, (int) $this->ratingallocate->algorithmstatus,
+                (boolean) $this->ratingallocate->runalgorithmbycron);
             $output .= $renderer->publish_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
             $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context);
         }
