@@ -811,7 +811,11 @@ class ratingallocate {
         $choicessortedwithgroupscount = [];
         $choicessorted = [];
         foreach (array_keys($possiblechoices) as $choiceid) {
-            $choicessortedwithgroupscount[count($this->get_choice_groups($choiceid))][] = $choiceid;
+            $choice = $DB->get_record('ratingallocate_choices', ['id' => $choiceid]);
+            // In case group restrictions are disabled for a choice that choice could still could have groups assigned.
+            // However, we need to treat them like they do not have any groups.
+            $groupscount = empty($choice->usegroups) ? 0 : count($this->get_choice_groups($choiceid));
+            $choicessortedwithgroupscount[$groupscount][] = $choiceid;
         }
         foreach ($choicessortedwithgroupscount as &$choiceswithcertaingroupcount) {
             usort($choiceswithcertaingroupcount, function($a, $b) use ($placesleft) {
