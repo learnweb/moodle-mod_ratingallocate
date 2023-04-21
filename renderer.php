@@ -399,9 +399,15 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         global $OUTPUT, $CFG, $PAGE;
         require_once($CFG->libdir . '/tablelib.php');
 
-        $starturl = new moodle_url($PAGE->url->out(), array('action' => ACTION_EDIT_CHOICE));
+        $starturl = new moodle_url($this->page->url, array('action' => ACTION_EDIT_CHOICE));
+        echo $this->output->single_button($starturl, get_string('newchoice', 'mod_ratingallocate'), 'get');
+
+        $uploadcsvurl = new moodle_url($this->page->url, array('action' => ACTION_UPLOAD_CHOICES));
+        echo $this->output->single_button($uploadcsvurl, get_string('csvupload', 'ratingallocate'), 'get', array(
+            'tooltip' => get_string('csvupload_explanation', 'ratingallocate')
+        ));
+
         // Set up the table.
-        echo $OUTPUT->single_button($starturl->out(), get_string('newchoice', 'mod_ratingallocate'), 'get');
         $table = new \flexible_table('show_ratingallocate_options');
         $table->define_baseurl($PAGE->url);
         if ($choicesmodifiably) {
