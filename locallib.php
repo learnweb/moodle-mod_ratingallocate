@@ -850,6 +850,10 @@ class ratingallocate {
      * @throws dml_exception
      */
     public function distribute_users_without_choice(string $distributionalgorithm): void {
+        // This could need some extra memory, especially because we are caching some data structures in memory while
+        // running the algorithm.
+        raise_memory_limit(MEMORY_EXTRA);
+        core_php_time_limit::raise();
 
         // This will retrieve a list of users we are trying to assign to choices, sorted from the least group membership count to
         // more group memberships. Users without group memberships will be at the end of the array.
