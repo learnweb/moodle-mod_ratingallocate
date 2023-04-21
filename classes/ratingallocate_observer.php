@@ -22,8 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
 namespace mod_ratingallocate;
+defined('MOODLE_INTERNAL') || die();
 
 class ratingallocate_observer {
 
