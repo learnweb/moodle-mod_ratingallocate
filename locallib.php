@@ -1055,13 +1055,20 @@ class ratingallocate {
                 "choiceid=$choiceid",
                 null,
                 '',
-                'groupid');
-            // Only one object in groupids because there should only be one entry in the table with this choiceid.
-            foreach ($groupids as $groupid) {
-                $group = groups_get_group($groupid->groupid);
-                if ($group) {
-                    groups_add_member($group, $userid);
-                }
+                'id, groupid');
+
+            // Get the correct key to acces the groupid in the array $groupids.
+            $groupidentries = array_keys($groupids);
+            $keyid = $groupidentries[0];
+
+            // There should only be one entry in the table with this choiceid.
+            if (count($groupidentries) > 0) {
+                throw new dml_exception('Multiple groups per choice in the Database');
+            }
+            $groupid = $groupids[$keyid]->groupid;
+            $group = groups_get_group($groupid);
+            if ($group) {
+                groups_add_member($group, $userid);
             }
 
         }
