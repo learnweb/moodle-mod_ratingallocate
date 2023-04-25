@@ -60,16 +60,15 @@ class ratingallocate_group_choices {
     const GROUPID = 'groupid';
 }
 
-class ratingallocate_choice_group {
-    const TABLE = 'ratingallocate_choice_group';
+class ratingallocate_choice_groups {
+    const TABLE = 'ratingallocate_choice_groups';
     const ID = 'id';
     const  GROUPID = 'groupid';
     const CHOICEID = 'choiceid';
 }
 
-class ratingallocate_id_grouping {
-    const TABLE = 'ratingallocate_id_grouping';
-    const ID = 'id';
+class ratingallocate_groupings {
+    const TABLE = 'ratingallocate_groupings';
     const RATINGALLOCATEID = 'ratingallocateid';
     const GROUPINGID = 'groupingid';
 }
