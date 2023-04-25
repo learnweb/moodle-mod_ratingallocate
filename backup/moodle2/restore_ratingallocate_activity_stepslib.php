@@ -35,6 +35,10 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $paths[] = new restore_path_element(this_db\ratingallocate_choices::TABLE, $choices_path);
         $paths[] = new restore_path_element(this_db\ratingallocate_group_choices::TABLE,
                                             $choices_path .'/' . this_db\ratingallocate_group_choices::TABLE .'s/' . this_db\ratingallocate_group_choices::TABLE);
+        $paths[] = new restore_path_element(this_db\ratingallocate_choice_groups::TABLE,
+                                            $choices_path .'/'. this_db\ratingallocate_choice_groups::TABLE . 's/' . this_db\ratingallocate_choice_groups::TABLE);
+        $paths[] = new restore_path_element(this_db\ratingallocate_groupings::TABLE,
+                                            $ratingallocate_path . '/' . this_db\ratingallocate_groupings::TABLE . 's/' . this_db\ratingallocate_groupings::TABLE);
         if ($userinfo) {
             $paths[] = new restore_path_element(this_db\ratingallocate_ratings::TABLE,     $choices_path .'/' . this_db\ratingallocate_ratings::TABLE .'s/' . this_db\ratingallocate_ratings::TABLE);
             $paths[] = new restore_path_element(this_db\ratingallocate_allocations::TABLE, $choices_path .'/' . this_db\ratingallocate_allocations::TABLE .'s/' . this_db\ratingallocate_allocations::TABLE);
@@ -121,7 +125,7 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $this->set_mapping(this_db\ratingallocate_group_choices::TABLE, $oldid, $newitemid);
     }
 
-    protected function process_ratingallocate_choice_group($data) {
+    protected function process_ratingallocate_choice_groups($data) {
         global $DB;
         $data = (object) $data;
         $oldid = $data->id;
@@ -130,11 +134,11 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
             $data->groupid = $this->get_mappingid('group', $data->groupid);
         }
 
-        $newitemid = $DB->insert_record(this_db\ratingallocate_choice_group::TABLE, $data);
-        $this->set_mapping(this_db\ratingallocate_choice_group::TABLE, $oldid, $newitemid);
+        $newitemid = $DB->insert_record(this_db\ratingallocate_choice_groups::TABLE, $data);
+        $this->set_mapping(this_db\ratingallocate_choice_groups::TABLE, $oldid, $newitemid);
     }
 
-    protected function ratingallocate_id_grouping($data) {
+    protected function process_ratingallocate_groupings($data) {
         global $DB;
         $data = (object) $data;
         $oldid = $data->id;
@@ -143,8 +147,8 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
             $data->groupingid = $this->get_mappingid('grouping', $data->groupingid);
         }
 
-        $newitemid = $DB->insert_record(this_db\ratingallocate_id_grouping::TABLE, $data);
-        $this->set_mapping(this_db\ratingallocate_id_grouping::TABLE, $oldid, $newitemid);
+        $newitemid = $DB->insert_record(this_db\ratingallocate_groupings::TABLE, $data);
+        $this->set_mapping(this_db\ratingallocate_groupings::TABLE, $oldid, $newitemid);
     }
 
     protected function after_execute() {

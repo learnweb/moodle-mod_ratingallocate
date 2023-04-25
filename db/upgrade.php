@@ -179,38 +179,37 @@ function xmldb_ratingallocate_upgrade($oldversion) {
 
     if ($oldversion < 2023041100) {
 
-        // Define table ratingallocate_choice_group to be created.
-        $table = new xmldb_table('ratingallocate_choice_group');
+        // Define table ratingallocate_choice_groups to be created.
+        $table = new xmldb_table('ratingallocate_choice_groups');
 
-        // Adding fields to table ratingallocate_choice_group.
+        // Adding fields to table ratingallocate_choice_groups.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('groupid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('choiceid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
-        // Adding keys to table ratingallocate_choice_group.
+        // Adding keys to table ratingallocate_choice_groups.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         $table->add_key('groupid', XMLDB_KEY_FOREIGN, ['groupid'], 'groups', ['id']);
         $table->add_key('choiceid', XMLDB_KEY_FOREIGN, ['choiceid'], 'ratingallocate_choices', ['id']);
 
-        // Conditionally launch create table for ratingallocate_choice_group.
+        // Conditionally launch create table for ratingallocate_choice_groups.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
 
-        // Define table ratingallocate_id_grouping to be created.
-        $table = new xmldb_table('ratingallocate_id_grouping');
+        // Define table ratingallocate_groupings to be created.
+        $table = new xmldb_table('ratingallocate_groupings');
 
-        // Adding fields to table ratingallocate_id_grouping.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('ratingallocateid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        // Adding fields to table ratingallocate_groupings.
+        $table->add_field('ratingallocateid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('groupingid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
-        // Adding keys to table ratingallocate_id_grouping.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        // Adding keys to table ratingallocate_groupings.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['ratingallocateid']);
         $table->add_key('ratingallocateid', XMLDB_KEY_FOREIGN, ['ratingallocateid'], 'ratingallocate', ['id']);
         $table->add_key('groupingid', XMLDB_KEY_FOREIGN, ['groupingid'], 'groupings', ['id']);
 
-        // Conditionally launch create table for ratingallocate_choice_group.
+        // Conditionally launch create table for ratingallocate_choice_groups.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
