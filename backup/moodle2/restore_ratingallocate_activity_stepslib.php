@@ -147,7 +147,7 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $this->set_mapping(this_db\ratingallocate_choice_groups::TABLE, $oldid, $newitemid);
     }
 
-    protected function ratingallocate_grouping($data) {
+    protected function process_ratingallocate_groupings($data) {
         global $DB;
         $data = (object) $data;
         $oldid = $data->id;
