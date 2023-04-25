@@ -21,26 +21,31 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function get_fields_for_tableclass($class) {
+function get_fields_for_tableClass($class) {
     $class = new ReflectionClass($class);
     $constants = $class->getConstants();
-    $keystoremove = array('ID', 'TABLE');
-    foreach ($constants as $key => $value) {
-        if (count(array_intersect(array($key), $keystoremove)) > 0) {
+    $keys_to_remove = array('ID', 'TABLE');
+    foreach($constants as $key => $value) {
+        if (count(array_intersect(array($key), $keys_to_remove)) > 0)
             unset($constants[$key]);
-        }
     }
     return array_values($constants);
 }
 
-function get_tablename_for_tableclass($class) {
+function get_tablename_for_tableClass($class) {
     $class = new ReflectionClass($class);
     $constants = $class->getConstants();
     return $constants['TABLE'];
 }
 
-function get_id_for_tableclass($class) {
+function get_id_for_tableClass($class) {
     $class = new ReflectionClass($class);
     $constants = $class->getConstants();
     return array($constants['ID']);
+}
+
+function get_ratingallocateid_for_tableClass($class) {
+    $class = new ReflectionClass($class);
+    $constants = $class->getConstants();
+    return array($constants['RATINGALLOCATEID']);
 }
