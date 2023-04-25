@@ -1180,7 +1180,6 @@ class ratingallocate {
                 cron_setup_user($userto);
             }
 
-
             $notificationsubject = format_string($this->course->shortname, true) . ': ' .
                     get_string('allocation_notification_message_subject', 'ratingallocate',
                             $this->ratingallocate->name);
@@ -1322,10 +1321,10 @@ class ratingallocate {
         try {
             foreach ($data as $id => $rdata) {
                 $rating = new stdClass ();
-                $rating->rating = $rdata ['rating'];
+                $rating->rating = $rdata['rating'];
 
                 $ratingexists = array(
-                        'choiceid' => $rdata ['choiceid'],
+                        'choiceid' => $rdata['choiceid'],
                         'userid' => $userid
                 );
                 if ($DB->record_exists('ratingallocate_ratings', $ratingexists)) {
@@ -1345,7 +1344,7 @@ class ratingallocate {
                     // Create a new rating in the table.
 
                     $rating->userid = $userid;
-                    $rating->choiceid = $rdata ['choiceid'];
+                    $rating->choiceid = $rdata['choiceid'];
                     $rating->ratingallocateid = $this->ratingallocateid;
                     $DB->insert_record('ratingallocate_ratings', $rating);
 
@@ -1617,13 +1616,13 @@ class ratingallocate {
     public function prepare_horizontal_radio_choice($radioarray, $mform) {
         $result = array();
         // Add static elements to provide a list with choices annotated with css classes.
-        $result [] =& $mform->createElement('static', 'li', null, '<ul class="horizontal choices">');
+        $result[] =& $mform->createElement('static', 'li', null, '<ul class="horizontal choices">');
         foreach ($radioarray as $id => $radio) {
-            $result [] =& $mform->createElement('static', 'static' . $id, null, '<li class="option">');
-            $result [] = $radio;
-            $result [] =& $mform->createElement('static', 'static' . $id, null, '</li>');
+            $result[] =& $mform->createElement('static', 'static' . $id, null, '<li class="option">');
+            $result[] = $radio;
+            $result[] =& $mform->createElement('static', 'static' . $id, null, '</li>');
         }
-        $result [] =& $mform->createElement('static', 'static', null, '</ul>');
+        $result[] =& $mform->createElement('static', 'static', null, '</ul>');
 
         return $result;
     }

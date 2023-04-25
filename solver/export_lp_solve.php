@@ -185,9 +185,9 @@ $ratings = $ratingallocateobj->get_ratings_for_rateable_choices();
 $ratingscells = array();
 foreach ($ratings as $rating) {
     if (!array_key_exists($rating->userid, $ratingscells)) {
-        $ratingscells [$rating->userid] = array();
+        $ratingscells[$rating->userid] = array();
     }
-    $ratingscells [$rating->userid] [$rating->choiceid] = $rating->rating;
+    $ratingscells[$rating->userid][$rating->choiceid] = $rating->rating;
 }
 
 $zielfkt = 'max '; // die zu maximierende Zielfunktion
@@ -207,7 +207,7 @@ foreach ($ratingscells as $userid => $userrating) {
 
         $nbkursakt .= ' +' . $usercoursevar;
     }
-    $nbkurs [$choiceid] = $nbkursakt;
+    $nbkurs[$choiceid] = $nbkursakt;
     $variablenerkl = substr($variablenerkl, 0, strlen($variablenerkl) - 1); // strip komma
     $variablenerkl .= ";\r\n";
     $usernb .= " = 1;\r\n";
@@ -215,7 +215,7 @@ foreach ($ratingscells as $userid => $userrating) {
 
 // Nebenbedingungen pro Kurs abschließen
 foreach ($nbkurs as $choiceid => $nbeinkurs) {
-    $nbkurs [$choiceid] .= '<=' . $choices [$choiceid]->maxsize . ";\r\n";
+    $nbkurs[$choiceid] .= '<=' . $choices[$choiceid]->maxsize . ";\r\n";
 }
 
 $zielfkt .= ";\r\n";

@@ -43,7 +43,7 @@ class mod_ratingallocate_solver_test extends basic_testcase {
         $groups = array();
 
         for ($i = 1; $i < $groupsnum; $i++) {
-            $groups [$i] = new stdClass();
+            $groups[$i] = new stdClass();
             $groups[$i]->id = $i;
             $groups[$i]->maxsize = rand($groupsmaxsizemin, $groupsmaxsizemax);
         }

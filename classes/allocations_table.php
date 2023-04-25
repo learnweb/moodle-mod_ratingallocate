@@ -173,7 +173,7 @@ class allocations_table extends \table_sql {
                     }
                     $noallocation->users .= $this->get_user_link($user);
                 }
-                $data [] = $noallocation;
+                $data[] = $noallocation;
             }
         }
 

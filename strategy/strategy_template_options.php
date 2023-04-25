@@ -99,7 +99,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
 
             $radioarray = array();
             foreach ($choiceoptions as $id => $option) {
-                $radioarray [] =& $mform->createElement('radio', $ratingelem, '', $option, $id);
+                $radioarray[] =& $mform->createElement('radio', $ratingelem, '', $option, $id);
             }
             // Adding static elements to support css.
             $radioarray = $this->ratingallocate->prepare_horizontal_radio_choice($radioarray, $mform);
@@ -132,23 +132,23 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
         $maxno = $this->get_max_amount_of_nos();
         $errors = parent::validation($data, $files);
 
-        if (!array_key_exists('data', $data) or count($data ['data']) < 2) {
+        if (!array_key_exists('data', $data) or count($data['data']) < 2) {
             return $errors;
         }
 
         $impossibles = 0;
-        $ratings = $data ['data'];
+        $ratings = $data['data'];
 
         foreach ($ratings as $rating) {
-            if (key_exists('rating', $rating) && $rating ['rating'] == 0) {
+            if (key_exists('rating', $rating) && $rating['rating'] == 0) {
                 $impossibles++;
             }
         }
 
         if ($impossibles > $maxno) {
             foreach ($ratings as $cid => $rating) {
-                if ($rating ['rating'] == 0) {
-                    $errors ['radioarr_' . $cid] = get_string($this->get_max_nos_string_identyfier(),
+                if ($rating['rating'] == 0) {
+                    $errors['radioarr_' . $cid] = get_string($this->get_max_nos_string_identyfier(),
                             RATINGALLOCATE_MOD_NAME, $maxno);
                 }
             }

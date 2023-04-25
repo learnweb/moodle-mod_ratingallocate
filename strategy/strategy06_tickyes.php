@@ -155,22 +155,22 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         $errors = parent::validation($data, $files);
         $mintickyes = $this->get_strategysetting(strategy::MINTICKYES);
 
-        if (!array_key_exists('data', $data) or count($data ['data']) < 2) {
+        if (!array_key_exists('data', $data) or count($data['data']) < 2) {
             return $errors;
         }
 
         $checkedaccept = 0;
-        $ratings = $data ['data'];
+        $ratings = $data['data'];
         foreach ($ratings as $rating) {
-            if ($rating ['rating'] == 1) {
+            if ($rating['rating'] == 1) {
                 $checkedaccept++;
             }
         }
 
         if ($checkedaccept < $mintickyes) {
             foreach ($ratings as $cid => $rating) {
-                if ($rating ['rating'] == 0) {
-                    $errors ['data[' . $cid . '][rating]'] =
+                if ($rating['rating'] == 0) {
+                    $errors['data[' . $cid . '][rating]'] =
                             get_string(strategy::STRATEGYID . '_error_mintickyes', RATINGALLOCATE_MOD_NAME, $mintickyes);
                 }
             }

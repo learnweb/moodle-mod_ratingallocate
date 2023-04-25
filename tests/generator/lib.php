@@ -269,7 +269,7 @@ class mod_ratingallocate_generated_module {
                 foreach ($rating as $singlerating) {
                     foreach ($choices as $choice) {
                         if ($choice->title == $singlerating['choice']) {
-                            $ratingdata [] = array(
+                            $ratingdata[] = array(
                                     'rating' => $singlerating['rating'],
                                     'choiceid' => $choice->id
                             );

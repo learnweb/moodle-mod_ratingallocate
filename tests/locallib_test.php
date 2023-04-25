@@ -206,7 +206,7 @@ class locallib_test extends advanced_testcase {
         $settings = array(1 => 'Ja1234'); // Test data.
         $ratings = array(0, 1, 1, 1, 1);
         $expectedresult = $settings;
-        $expectedresult [0] = 'Deny'; // Depends on language file.
+        $expectedresult[0] = 'Deny'; // Depends on language file.
 
         $record = mod_ratingallocate_generator::get_default_values();
         $record['strategyopt']['strategy_yesno'] = $settings;

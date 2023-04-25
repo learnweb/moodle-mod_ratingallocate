@@ -151,18 +151,18 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         $totalpoints = $this->get_strategysetting(strategy::TOTALPOINTS);
         $errors = parent::validation($data, $files);
 
-        if (!array_key_exists('data', $data) or count($data ['data']) < 2) {
+        if (!array_key_exists('data', $data) or count($data['data']) < 2) {
             return $errors;
         }
 
         $impossibles = 0;
-        $ratings = $data ['data'];
+        $ratings = $data['data'];
         $currentpoints = 0;
         foreach ($ratings as $cid => $rating) {
             if ($rating['rating'] < 0 || $rating['rating'] > $totalpoints) {
                 $errors['data[' . $cid . '][rating]'] =
                         get_string(strategy::STRATEGYID . '_illegal_entry', RATINGALLOCATE_MOD_NAME, $totalpoints);
-            } else if ($rating ['rating'] == 0) {
+            } else if ($rating['rating'] == 0) {
                 $impossibles++;
             }
             $currentpoints += $rating['rating'];
@@ -170,8 +170,8 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
         if ($impossibles > $maxcrossout) {
             foreach ($ratings as $cid => $rating) {
-                if ($rating ['rating'] == 0) {
-                    $errors ['data[' . $cid . '][rating]'] =
+                if ($rating['rating'] == 0) {
+                    $errors['data[' . $cid . '][rating]'] =
                             get_string(strategy::STRATEGYID . '_max_count_zero', RATINGALLOCATE_MOD_NAME, $maxcrossout);
                 }
             }
@@ -179,7 +179,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
         if ($currentpoints <> $totalpoints) {
             foreach ($ratings as $cid => $rating) {
-                $errors ['data[' . $cid . '][rating]'] =
+                $errors['data[' . $cid . '][rating]'] =
                         get_string(strategy::STRATEGYID . '_incorrect_totalpoints', RATINGALLOCATE_MOD_NAME, $totalpoints);
             }
         }

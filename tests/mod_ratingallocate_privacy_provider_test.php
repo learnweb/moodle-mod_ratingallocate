@@ -228,13 +228,13 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
 
         $userlist = array();
         // Select one unassigned student.
-        $userlist [] = $DB->get_record_sql("SELECT ra.userid
+        $userlist[] = $DB->get_record_sql("SELECT ra.userid
             FROM {ratingallocate_choices} ch JOIN
             {ratingallocate_ratings} ra ON ra.choiceid = ch.id LEFT JOIN
             {ratingallocate_allocations} a ON a.choiceid = ch.id AND ra.userid = a.userid
             WHERE ch.ratingallocateid = :ratingallocateid AND a.id is null limit 1", $params1)->userid;
         // Select one assigned student.
-        $userlist [] = array_pop($this->testmodule->allocations)->userid;
+        $userlist[] = array_pop($this->testmodule->allocations)->userid;
 
         $approveduserlist = new \core_privacy\local\request\approved_userlist($cmcontext, 'mod_ratingallocate',
                 $userlist);
