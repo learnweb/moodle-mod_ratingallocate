@@ -541,7 +541,7 @@ class ratingallocate {
                 if ($choice) {
                     // Delete related group associations, if any.
                     $DB->delete_records(this_db\ratingallocate_group_choices::TABLE, ['choiceid' => $choiceid]);
-                    $DB->delete_records(this_db\ratingallocate_choice_group::TABLE, ['choiceid' => $choiceid]);
+                    $DB->delete_records(this_db\ratingallocate_choice_groups::TABLE, ['choiceid' => $choiceid]);
                     $DB->delete_records(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
 
                     redirect(new moodle_url('/mod/ratingallocate/view.php',
@@ -977,7 +977,11 @@ class ratingallocate {
         //$groupingid = null;
 
         // Search if there is already a grouping from us.
-        if (!$this->db->record_exists(this_db\ratingallocate_id_grouping::TABLE, ['ratingallocateid' => $this->ratingallocateid])) {
+        if (!$groupingids = $this->db->get_records_select(this_db\ratingallocate_groupings::TABLE,
+            "ratingallocateid=$this->ratingallocateid",
+            null,
+            '',
+            'groupingid')) {
             // Create grouping.
             $data = new stdClass();
             $data->name = get_string('groupingname', ratingallocate_MOD_NAME, $this->ratingallocate->name);
@@ -988,20 +992,18 @@ class ratingallocate {
             $data = new stdClass();
             $data->groupingid = $groupingid;
             $data->ratingallocateid = $this->ratingallocateid;
-            $this->db->insert_record(this_db\ratingallocate_id_grouping::TABLE, $data);
+            $this->db->insert_record(this_db\ratingallocate_groupings::TABLE, $data);
 
         } else {
             // If there is already a grouping for this allocation assign the corresponing id to groupingid.
-            $groupingids = $this->db->get_records_select(this_db\ratingallocate_id_grouping::TABLE,
-                            "ratingallocateid=$this->ratingallocateid",
-                            null,
-                            '',
-                            'id, groupingid');
+            // The key of the array $groupingids is the groupingid of this grouping.
+            $groupingidentries = array_keys($groupingids);
+            $groupingid = $groupingidentries[0];
             // There should only be one entry in groupingids.
-            $groupingid = 0;
-            foreach ($groupingids as $groupingidsentry) {
-                $groupingid = $groupingidsentry->groupingid;
+            if (count($groupingidentries) > 0) {
+                throw new dml_exception('Multiple groupings for this allocation in Database');
             }
+
         }
 
         $choices = $this->get_choices_with_allocationcount();
@@ -1012,24 +1014,27 @@ class ratingallocate {
                     ['id' => $choice->id])) {
 
                 // Checks if there is already a group for this choice.
-                if ($this->db->record_exists(this_db\ratingallocate_choice_group::TABLE,
-                    ['choiceid' => $choice->id])) {
+                if ($groupids = $this->db->get_records_select(this_db\ratingallocate_choice_groups::TABLE,
+                    "choiceid=$choice->id",
+                    null,
+                    '',
+                    'id, groupid')) {
 
-                    // Get the group from the choice_group Table.
-                    $groupids = $this->db->get_records_select(this_db\ratingallocate_choice_group::TABLE,
-                        "choiceid=$choice->id",
-                        null,
-                        '',
-                        'id, groupid');
-                    // Only one object in groupids because there should only be one entry in the table with this choiceid.
-                    foreach ($groupids as $groupid) {
-                        $group = groups_get_group($groupid->groupid);
+                    // Get the correct key to acces the groupid in the array $groupids.
+                    $groupidentries = array_keys($groupids);
+                    $keyid = $groupidentries[0];
 
-                        // Delete all the members from the existing group for this choice.
-                        if ($group) {
-                            groups_delete_group_members_by_group($group->id);
-                            groups_assign_grouping($groupingid, $group->id);
-                        }
+                    // There should only be one entry in the table with this choiceid.
+                    if (count($groupidentries) > 0) {
+                        throw new dml_exception('Multiple groups per choice '. $choice->title .' in the Database');
+                    }
+                    $groupid = $groupids[$keyid]->groupid;
+                    $group = groups_get_group($groupid);
+
+                    // Delete all the members from the existing group for this choice.
+                    if ($group) {
+                        groups_delete_group_members_by_group($group->id);
+                        groups_assign_grouping($groupingid, $group->id);
                     }
 
                 } else {
@@ -1042,7 +1047,7 @@ class ratingallocate {
                         groups_assign_grouping($groupingid, $createdid);
 
                         // Insert the mapping between group and choice into the Table.
-                        $this->db->insert_record(this_db\ratingallocate_choice_group::TABLE,
+                        $this->db->insert_record(this_db\ratingallocate_choice_groups::TABLE,
                             ['choiceid' => $choice->id, 'groupid' => $createdid]);
                     }
                 }
@@ -1056,7 +1061,7 @@ class ratingallocate {
             $userid = $allocation->userid;
 
             // Get the group corresponding to the choiceid.
-            $groupids = $this->db->get_records_select(this_db\ratingallocate_choice_group::TABLE,
+            $groupids = $this->db->get_records_select(this_db\ratingallocate_choice_groups::TABLE,
                 "choiceid=$choiceid",
                 null,
                 '',

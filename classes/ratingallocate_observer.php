@@ -40,12 +40,12 @@ class ratingallocate_observer {
 
         $eventdata = $event->get_record_snapshot('groups', $event->objectid);
         if ($DB->record_exists(
-            'ratingallocate_choice_group',
+            'ratingallocate_choice_groups',
             ['groupid' => $eventdata->id])) {
 
-            // Delete the group from ratingallocate_choice_group table.
+            // Delete the group from ratingallocate_choice_groups table.
             $DB->delete_records(
-                'ratingallocate_choice_group',
+                'ratingallocate_choice_groups',
                 ['groupid' => $eventdata->id]
             );
         }
@@ -65,12 +65,12 @@ class ratingallocate_observer {
 
         $eventdata = $event->get_record_snapshot('groupings', $event->objectid);
         if ($DB->record_exists(
-            'ratingallocate_id_grouping',
+            'ratingallocate_groupings',
             ['groupingid' => $eventdata->id])) {
 
-            // Delete the grouping from the ratingallocate_id_grouping table.
+            // Delete the grouping from the ratingallocate_groupings table.
             $DB->delete_records(
-                'ratingallocate_id_grouping',
+                'ratingallocate_groupings',
                 ['groupingid' => $eventdata->id]
             );
 
