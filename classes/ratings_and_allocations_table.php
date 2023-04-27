@@ -419,7 +419,8 @@ class ratings_and_allocations_table extends \table_sql {
      */
     private function setup_filter($hidenorating = null, $showallocnecessary = null) {
         // Get the filter settings.
-        $filter = json_decode(get_user_preferences('flextable_' . $this->uniqueid . '_filter'), true);
+        $settings = get_user_preferences('flextable_' . $this->uniqueid . '_filter');
+        $filter = $settings ? json_decode($settings, true) : null;
 
         if (!$filter) {
             $filter = array(
