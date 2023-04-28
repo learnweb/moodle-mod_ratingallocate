@@ -21,8 +21,10 @@
  * @copyright  2017 Tobias Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace mod_ratingallocate\event;
 defined('MOODLE_INTERNAL') || die();
+
 /**
  * The mod_ratingallocate index_viewed event class.
  *

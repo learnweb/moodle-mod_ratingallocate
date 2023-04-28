@@ -6,27 +6,27 @@ Feature: Students should get status information according to their rating and th
       | fullname | shortname | category | groupmode |
       | Course 1 | C1        | 0        | 1         |
     And the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Theo | Teacher | teacher1@example.com |
-      | student1 | Steve |  Student | student1@example.com |
-      | student2 | Sophie | Student | student2@example.com |
-      | student3 | Steffanie | Student | student3@example.com |
+      | username | firstname | lastname | email                |
+      | teacher1 | Theo      | Teacher  | teacher1@example.com |
+      | student1 | Steve     | Student  | student1@example.com |
+      | student2 | Sophie    | Student  | student2@example.com |
+      | student3 | Steffanie | Student  | student3@example.com |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
-      | student2 | C1 | student |
-      | student3 | C1 | student |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
+      | student3 | C1     | student        |
     And the following "activities" exist:
-      | activity | course | idnumber | name | accesstimestart |
-      | ratingallocate   | C1     | ra1  | My Fair Allocation | ##yesterday## |
+      | activity       | course | idnumber | name               | accesstimestart |
+      | ratingallocate | C1     | ra1      | My Fair Allocation | ##yesterday##   |
     And I log in as "teacher1"
     And I am on the "My Fair Allocation" "ratingallocate activity" page
     And I press "Edit Choices"
     And I add a new choice with the values:
-      | title       | My only choice |
+      | title                  | My only choice |
       | Description (optional) | Test           |
-      | maxsize     |	1            |
+      | maxsize                | 1              |
     And I log out
     And I log in as "student1"
     And I am on the "My Fair Allocation" "ratingallocate activity" page
@@ -43,7 +43,7 @@ Feature: Students should get status information according to their rating and th
     And I am on the "My Fair Allocation" "ratingallocate activity editing" page
     And I set the following fields to these values:
       | Rating begins at | ##2 days ago## |
-      | Rating ends at | ##yesterday## |
+      | Rating ends at   | ##yesterday##  |
     And I press "id_submitbutton"
     And I run the scheduled task "mod_ratingallocate\task\cron_task"
     And I am on the "My Fair Allocation" "ratingallocate activity" page

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -47,9 +46,9 @@ function xmldb_ratingallocate_upgrade($oldversion) {
             $transaction = $DB->start_delegated_transaction();
             $results = $DB->get_records('ratingallocate', array('publishdate_show' => 0));
 
-            foreach ($results as $single_result) {
-                $single_result->publishdate = 0;
-                $DB->update_record('ratingallocate', $single_result);
+            foreach ($results as $singleresult) {
+                $singleresult->publishdate = 0;
+                $DB->update_record('ratingallocate', $singleresult);
             }
 
             // Define field publishdate_show to be dropped from ratingallocate.
@@ -64,7 +63,7 @@ function xmldb_ratingallocate_upgrade($oldversion) {
             // Ratingallocate savepoint reached.
             upgrade_mod_savepoint(true, 2014103000, 'ratingallocate');
             $transaction->allow_commit();
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $transaction->rollback($e);
             return false;
         }
@@ -87,45 +86,46 @@ function xmldb_ratingallocate_upgrade($oldversion) {
 
     if ($oldversion < 2015041300) {
         try {
-        $transaction = $DB->start_delegated_transaction();
+            $transaction = $DB->start_delegated_transaction();
 
-        // Define field notification_send to be added to ratingallocate.
-        $table = new xmldb_table('ratingallocate');
-        $field1 = new xmldb_field('runalgorithmbycron', XMLDB_TYPE_INTEGER, '1', null, true, null, '1', 'notificationsend');
+            // Define field notification_send to be added to ratingallocate.
+            $table = new xmldb_table('ratingallocate');
+            $field1 = new xmldb_field('runalgorithmbycron', XMLDB_TYPE_INTEGER, '1', null, true, null, '1', 'notificationsend');
 
-        // Conditionally launch add field run_algorithm_by_cron.
-        if (!$dbman->field_exists($table, $field1)) {
-            $dbman->add_field($table, $field1);
-        }
+            // Conditionally launch add field run_algorithm_by_cron.
+            if (!$dbman->field_exists($table, $field1)) {
+                $dbman->add_field($table, $field1);
+            }
 
-        $field2 = new xmldb_field('algorithmstarttime', XMLDB_TYPE_INTEGER, '10', null, false, null, null, 'runalgorithmbycron');
+            $field2 =
+                    new xmldb_field('algorithmstarttime', XMLDB_TYPE_INTEGER, '10', null, false, null, null, 'runalgorithmbycron');
 
-        // Conditionally launch add field algorithm_starttime.
-        if (!$dbman->field_exists($table, $field2)) {
-            $dbman->add_field($table, $field2);
-        }
+            // Conditionally launch add field algorithm_starttime.
+            if (!$dbman->field_exists($table, $field2)) {
+                $dbman->add_field($table, $field2);
+            }
 
-        $field3 = new xmldb_field('algorithmstatus', XMLDB_TYPE_INTEGER, '1', null, true, null, '0', 'algorithmstarttime');
+            $field3 = new xmldb_field('algorithmstatus', XMLDB_TYPE_INTEGER, '1', null, true, null, '0', 'algorithmstarttime');
 
-        // Conditionally launch add field algorithm_status.
-        if (!$dbman->field_exists($table, $field3)) {
-            $dbman->add_field($table, $field3);
-        }
+            // Conditionally launch add field algorithm_status.
+            if (!$dbman->field_exists($table, $field3)) {
+                $dbman->add_field($table, $field3);
+            }
 
-        $results = $DB->get_records('ratingallocate');
+            $results = $DB->get_records('ratingallocate');
 
-        // Set status to notstarted if the instance has no allocations; otherwise to finished.
-        foreach ($results as $single_result) {
-            $allocations = $DB->get_records('ratingallocate_allocations', array('ratingallocateid' => $single_result->id));
-            $single_result->algorithmstatus = (count($allocations) === 0 ?
-                \mod_ratingallocate\algorithm_status::notstarted : \mod_ratingallocate\algorithm_status::finished);
-            $DB->update_record('ratingallocate', $single_result);
-        }
+            // Set status to notstarted if the instance has no allocations; otherwise to finished.
+            foreach ($results as $singleresult) {
+                $allocations = $DB->get_records('ratingallocate_allocations', array('ratingallocateid' => $singleresult->id));
+                $singleresult->algorithmstatus = (count($allocations) === 0 ?
+                        \mod_ratingallocate\algorithm_status::NOTSTARTED : \mod_ratingallocate\algorithm_status::FINISHED);
+                $DB->update_record('ratingallocate', $singleresult);
+            }
 
-        // Ratingallocate savepoint reached.
-        upgrade_mod_savepoint(true, 2015041300, 'ratingallocate');
-        $transaction->allow_commit();
-        } catch(Exception $e) {
+            // Ratingallocate savepoint reached.
+            upgrade_mod_savepoint(true, 2015041300, 'ratingallocate');
+            $transaction->allow_commit();
+        } catch (Exception $e) {
             $transaction->rollback($e);
             return false;
         }

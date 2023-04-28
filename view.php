@@ -27,27 +27,25 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/locallib.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once(dirname(__FILE__) . '/locallib.php');
 
-require_once(dirname(__FILE__).'/solver/ford-fulkerson-koegel.php');
+require_once(dirname(__FILE__) . '/solver/ford-fulkerson-koegel.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
-$n  = optional_param('m', 0, PARAM_INT);  // ratingallocate instance ID - it should be named as the first character of the module
-
+$n = optional_param('m', 0, PARAM_INT);  // ratingallocate instance ID - it should be named as the first character of the module
 
 if ($id) {
-    $cm         = get_coursemodule_from_id('ratingallocate', $id, 0, false, MUST_EXIST);
-    $course     = get_course($cm->course);
-    $ratingallocate  = $DB->get_record('ratingallocate', array('id' => $cm->instance), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_id('ratingallocate', $id, 0, false, MUST_EXIST);
+    $course = get_course($cm->course);
+    $ratingallocate = $DB->get_record('ratingallocate', array('id' => $cm->instance), '*', MUST_EXIST);
 } else if ($n) {
-    $ratingallocate  = $DB->get_record('ratingallocate', array('id' => $n), '*', MUST_EXIST);
-    $course     = get_course($ratingallocate->course);
-    $cm         = get_coursemodule_from_instance('ratingallocate', $ratingallocate->id, $course->id, false, MUST_EXIST);
+    $ratingallocate = $DB->get_record('ratingallocate', array('id' => $n), '*', MUST_EXIST);
+    $course = get_course($ratingallocate->course);
+    $cm = get_coursemodule_from_instance('ratingallocate', $ratingallocate->id, $course->id, false, MUST_EXIST);
 } else {
-    print_error('no_id_or_m_error', ratingallocate_MOD_NAME);
+    print_error('no_id_or_m_error', RATINGALLOCATE_MOD_NAME);
 }
-
 
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);

@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/mod/ratingallocate/locallib.php');
 require_once($CFG->dirroot . '/mod/ratingallocate/solver/edmonds-karp.php');
 require_once($CFG->dirroot . '/mod/ratingallocate/solver/ford-fulkerson-koegel.php');
 
-class edmonds_karp_test extends basic_testcase {
+class mod_ratingallocate_solver_test extends basic_testcase {
 
     private function perform_race($groupsnum, $ratersnum) {
         $groupsmaxsizemin = floor($ratersnum / $groupsnum);
@@ -43,7 +43,7 @@ class edmonds_karp_test extends basic_testcase {
         $groups = array();
 
         for ($i = 1; $i < $groupsnum; $i++) {
-            $groups [$i] = new stdClass();
+            $groups[$i] = new stdClass();
             $groups[$i]->id = $i;
             $groups[$i]->maxsize = rand($groupsmaxsizemin, $groupsmaxsizemax);
         }
@@ -91,7 +91,8 @@ class edmonds_karp_test extends basic_testcase {
         if (!PHPUNIT_LONGTEST) {
             return; // this test takes longer than 10s
         }
-        $testparams = array(array(5, 25), array(10, 50), array(10, 100), array(20, 200)); // , array(40, 400), array(45, 600), array(85, 1000));
+        $testparams = array(array(5, 25), array(10, 50), array(10, 100),
+                array(20, 200)); // , array(40, 400), array(45, 600), array(85, 1000));
         // $testparams = array(array(10,25), array(3,25), array(29,200), array(8,200), array(64,1000), array(16,1000));
         $testergebnisse = array();
         foreach ($testparams as $testset) {
@@ -102,14 +103,15 @@ class edmonds_karp_test extends basic_testcase {
             $rundenergebnis = array();
             for ($i = 0; $i < 10; $i++) {
                 $ergebnis = $this->perform_race($paramgroups, $paramusers);
-                $this->assertEquals($ergebnis['ford-fulkerson Koegel2014']['gesamtpunktzahl'], $ergebnis['edmonds_karp']['gesamtpunktzahl']);
+                $this->assertEquals($ergebnis['ford-fulkerson Koegel2014']['gesamtpunktzahl'],
+                        $ergebnis['edmonds_karp']['gesamtpunktzahl']);
                 $rundenergebnis[] = $ergebnis;
             }
             $durchschnitt = array();
             $counter = 0;
             // Durchschnitt der Runde berechnen
             foreach ($rundenergebnis as $einzelergebnis) {
-                $counter ++;
+                $counter++;
                 foreach ($einzelergebnis as $algname => $algresult) {
                     if (!key_exists($algname, $durchschnitt)) {
                         $durchschnitt[$algname] = 0;
@@ -200,7 +202,8 @@ class edmonds_karp_test extends basic_testcase {
         $solverkoe = new solver_ford_fulkerson();
         $distributionkoe = $solverkoe->compute_distribution($choices, $ratings, $usercount);
         $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe), 15);
-        $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe), $solver::compute_target_function($ratings, $distribution));
+        $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe),
+                $solver::compute_target_function($ratings, $distribution));
     }
 
     public function test_negweightcycle() {
@@ -244,7 +247,8 @@ class edmonds_karp_test extends basic_testcase {
         $distributionkoe = $solverkoe->compute_distribution($choices, $ratings, $usercount);
 
         $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe), 10);
-        $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe), $solver::compute_target_function($ratings, $distribution));
+        $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe),
+                $solver::compute_target_function($ratings, $distribution));
     }
 
     public function test_targetfunc() {

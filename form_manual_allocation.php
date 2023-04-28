@@ -25,8 +25,9 @@
  * @copyright  based on code by M Schulze copyright (C) 2014 M Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once($CFG->dirroot . '/course/moodleform_mod.php');
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
 
 /**
  * Provides a form for manual allocations
@@ -62,7 +63,6 @@ class manual_alloc_form extends moodleform {
         $mform->addElement('hidden', self::FORM_ACTION, ACTION_MANUAL_ALLOCATION);
         $mform->setType(self::FORM_ACTION, PARAM_TEXT);
 
-
         $mform->addElement('hidden', 'courseid', $COURSE->id);
         $mform->setType('courseid', PARAM_INT);
 
@@ -72,36 +72,36 @@ class manual_alloc_form extends moodleform {
         $this->render_filter();
     }
 
-    protected function render_filter(){
-        $mform = & $this->_form;
+    protected function render_filter() {
+        $mform = &$this->_form;
 
         $mform->addElement('advcheckbox', 'hide_users_without_rating',
-            get_string('filter_hide_users_without_rating', ratingallocate_MOD_NAME),
-            null, array(0, 1));
+                get_string('filter_hide_users_without_rating', RATINGALLOCATE_MOD_NAME),
+                null, array(0, 1));
         $mform->setType('show_users_with_no_rating', PARAM_BOOL);
 
         $mform->addElement('advcheckbox', 'show_alloc_necessary',
-            get_string('filter_show_alloc_necessary', ratingallocate_MOD_NAME),
-            null, array(0, 1));
+                get_string('filter_show_alloc_necessary', RATINGALLOCATE_MOD_NAME),
+                null, array(0, 1));
         $mform->setType('show_alloc_necessary', PARAM_BOOL);
 
         $mform->addElement('submit', 'update_filter',
-            get_string('update_filter', ratingallocate_MOD_NAME));
+                get_string('update_filter', RATINGALLOCATE_MOD_NAME));
         $mform->registerNoSubmitButton('update_filter');
     }
 
-    public function definition_after_data(){
+    public function definition_after_data() {
         parent::definition_after_data();
         global $PAGE;
 
-        $mform = & $this->_form;
+        $mform = &$this->_form;
 
         $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices();
-        $different_ratings = array();
+        $differentratings = array();
         // Add actual rating data to userdata
         foreach ($ratingdata as $rating) {
             if ($rating->rating != null) {
-                $different_ratings[$rating->rating] = $rating->rating;
+                $differentratings[$rating->rating] = $rating->rating;
             }
         }
 
@@ -115,20 +115,19 @@ class manual_alloc_form extends moodleform {
 
         // Create and set up the flextable for ratings and allocations.
         $table = new mod_ratingallocate\ratings_and_allocations_table($this->ratingallocate->get_renderer(),
-            $this->ratingallocate->get_options_titles($different_ratings), $this->ratingallocate,
-            'manual_allocation', 'mod_ratingallocate_manual_allocation', false);
+                $this->ratingallocate->get_options_titles($differentratings), $this->ratingallocate,
+                'manual_allocation', 'mod_ratingallocate_manual_allocation', false);
         $table->setup_table($this->ratingallocate->get_rateable_choices(),
-            $hidenorating, $showallocnecessary);
+                $hidenorating, $showallocnecessary);
 
         $filter = $table->get_filter();
-        
+
         $mform->setDefault('hide_users_without_rating', $filter['hidenorating']);
         $mform->getElement('hide_users_without_rating')->setChecked($filter['hidenorating']);
         $mform->setDefault('show_alloc_necessary', $filter['showallocnecessary']);
         $mform->getElement('show_alloc_necessary')->setChecked($filter['showallocnecessary']);
 
         $PAGE->requires->js_call_amd('mod_ratingallocate/radiobuttondeselect', 'init');
-
 
         // The rest must be done through output buffering due to the way flextable works.
         ob_start();
@@ -137,7 +136,7 @@ class manual_alloc_form extends moodleform {
         ob_end_clean();
         $mform->addElement('html', $tableoutput);
 
-        $mform->setDefault('page', $table->get_page_start()/$table->get_page_size());
+        $mform->setDefault('page', $table->get_page_start() / $table->get_page_size());
 
         $this->add_special_action_buttons();
     }
@@ -147,12 +146,12 @@ class manual_alloc_form extends moodleform {
      *
      * @param bool $cancel show cancel button
      * @param string $submitlabel null means default, false means none, string is label text
-     * @param string $submit2label  null means default, false means none, string is label text
+     * @param string $submit2label null means default, false means none, string is label text
      * @return void
      */
     public function add_special_action_buttons() {
         $submitlabel = get_string('savechanges');
-        $submit2label = get_string('saveandcontinue', ratingallocate_MOD_NAME);
+        $submit2label = get_string('saveandcontinue', RATINGALLOCATE_MOD_NAME);
 
         $mform = $this->_form;
 

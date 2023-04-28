@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
+require_once(dirname(__FILE__) . '/locallib.php');
+
 /**
  * Offers the possibility to add or modify a choice for the ratingallocate instance.
  *
@@ -21,14 +27,6 @@
  * @copyright  2014 T Reischmann, C Usener
  * @copyright  based on code by M Schulze copyright (C) 2014 M Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-require_once($CFG->dirroot . '/course/moodleform_mod.php');
-require_once(dirname(__FILE__) . '/locallib.php');
-
-/**
- * Provides a form to modify a single choice
  */
 class modify_choice_form extends moodleform {
 
@@ -50,14 +48,14 @@ class modify_choice_form extends moodleform {
      * @param array $customdata
      */
     public function __construct($url, ratingallocate $ratingallocate,
-                                ratingallocate_choice $choice = null, $customdata = null) {
+            ratingallocate_choice $choice = null, $customdata = null) {
         $this->ratingallocate = $ratingallocate;
         if ($choice) {
             $this->choice = $choice;
             // Special handling for HTML editor.
             $this->choice->explanation = array(
-                'text' => $this->choice->explanation,
-                'format' => FORMAT_HTML,
+                    'text' => $this->choice->explanation,
+                    'format' => FORMAT_HTML,
             );
         } else {
             $this->addnew = true;
@@ -76,46 +74,46 @@ class modify_choice_form extends moodleform {
         $mform->setType('choiceid', PARAM_TEXT);
 
         $elementname = 'title';
-        $mform->addElement('text', $elementname, get_string('choice_title', ratingallocate_MOD_NAME));
+        $mform->addElement('text', $elementname, get_string('choice_title', RATINGALLOCATE_MOD_NAME));
         $mform->setType($elementname, PARAM_TEXT);
-        $mform->addHelpButton($elementname, 'choice_title', ratingallocate_MOD_NAME);
-        $mform->addRule($elementname, get_string('err_required', 'form') , 'required', null, 'server');
+        $mform->addHelpButton($elementname, 'choice_title', RATINGALLOCATE_MOD_NAME);
+        $mform->addRule($elementname, get_string('err_required', 'form'), 'required', null, 'server');
 
         $elementname = 'explanation';
         $editoroptions = array(
-            'enable_filemanagement' => false,
+                'enable_filemanagement' => false,
         );
-        $mform->addElement('editor', $elementname, get_string('choice_explanation', ratingallocate_MOD_NAME), $editoroptions);
+        $mform->addElement('editor', $elementname, get_string('choice_explanation', RATINGALLOCATE_MOD_NAME), $editoroptions);
         $mform->setType($elementname, PARAM_RAW);
 
         $elementname = 'maxsize';
-        $mform->addElement('text', $elementname, get_string('choice_maxsize', ratingallocate_MOD_NAME));
+        $mform->addElement('text', $elementname, get_string('choice_maxsize', RATINGALLOCATE_MOD_NAME));
         $mform->setType($elementname, PARAM_TEXT);
-        $mform->addRule($elementname, get_string('err_required', 'form') , 'required', null, 'server');
-        $mform->addRule($elementname, get_string('err_numeric', 'form') , 'numeric', null, 'server');
-        $mform->addRule($elementname, get_string('err_positivnumber', 'ratingallocate') , 'regex', '/^[1-9][0-9]*|0/', 'server');
+        $mform->addRule($elementname, get_string('err_required', 'form'), 'required', null, 'server');
+        $mform->addRule($elementname, get_string('err_numeric', 'form'), 'numeric', null, 'server');
+        $mform->addRule($elementname, get_string('err_positivnumber', 'ratingallocate'), 'regex', '/^[1-9][0-9]*|0/', 'server');
 
         $elementname = 'attachments_filemanager';
         $mform->addElement('filemanager', $elementname, get_string('uploadafile'), null, array(
-            'accepted_types' => '*',
-            'subdirs' => false,
+                'accepted_types' => '*',
+                'subdirs' => false,
         ));
         $this->set_data($this->_customdata['attachment_data']);
 
         $elementname = 'active';
-        $mform->addElement('advcheckbox', $elementname, get_string('choice_active', ratingallocate_MOD_NAME),
-            null, null, array(0, 1));
-        $mform->addHelpButton($elementname, 'choice_active', ratingallocate_MOD_NAME);
+        $mform->addElement('advcheckbox', $elementname, get_string('choice_active', RATINGALLOCATE_MOD_NAME),
+                null, null, array(0, 1));
+        $mform->addHelpButton($elementname, 'choice_active', RATINGALLOCATE_MOD_NAME);
 
         $elementname = 'usegroups';
-        $mform->addelement('advcheckbox', $elementname, get_string('choice_usegroups', ratingallocate_MOD_NAME),
+        $mform->addelement('advcheckbox', $elementname, get_string('choice_usegroups', RATINGALLOCATE_MOD_NAME),
             null, null, array(0, 1));
-        $mform->addHelpButton($elementname, 'choice_usegroups', ratingallocate_MOD_NAME);
+        $mform->addHelpButton($elementname, 'choice_usegroups', RATINGALLOCATE_MOD_NAME);
 
         $elementname = 'groupselector';
         $options = $this->ratingallocate->get_group_selections();
         $selector = $mform->addelement('searchableselector', $elementname,
-            get_string('choice_groupselect', ratingallocate_MOD_NAME), $options);
+            get_string('choice_groupselect', RATINGALLOCATE_MOD_NAME), $options);
         $selector->setMultiple(true);
         $mform->hideIf('groupselector', 'usegroups');
 
@@ -143,7 +141,7 @@ class modify_choice_form extends moodleform {
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         if ($this->addnew) {
             $buttonarray[] = &$mform->createElement('submit', 'submitbutton2',
-                get_string('saveandnext', ratingallocate_MOD_NAME));
+                    get_string('saveandnext', RATINGALLOCATE_MOD_NAME));
         }
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);

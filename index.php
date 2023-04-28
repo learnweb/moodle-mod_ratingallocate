@@ -26,9 +26,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/lib.php');
-require_once(dirname(__FILE__).'/locallib.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once(dirname(__FILE__) . '/lib.php');
+require_once(dirname(__FILE__) . '/locallib.php');
 
 $id = required_param('id', PARAM_INT);   // Courseid.
 
@@ -45,43 +45,42 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($coursecontext);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('modulenameplural', ratingallocate_MOD_NAME), 2);
+echo $OUTPUT->heading(get_string('modulenameplural', RATINGALLOCATE_MOD_NAME), 2);
 
 require_capability('mod/ratingallocate:view', $coursecontext);
 
 $event = \mod_ratingallocate\event\index_viewed::create_simple(
-    context_course::instance($course->id));
+        context_course::instance($course->id));
 $event->trigger();
 
-if (! $ratingallocates = get_all_instances_in_course('ratingallocate', $course, $USER->id)) {
-    notice(get_string('noratingallocates', ratingallocate_MOD_NAME),
-        new moodle_url('/course/view.php', array('id' => $course->id)));
+if (!$ratingallocates = get_all_instances_in_course('ratingallocate', $course, $USER->id)) {
+    notice(get_string('noratingallocates', RATINGALLOCATE_MOD_NAME),
+            new moodle_url('/course/view.php', array('id' => $course->id)));
 }
 
 $table = new html_table();
-$table->head  = array(
-                    get_string('name'),
-                    get_string('rating_begintime', 'mod_ratingallocate'),
-                    get_string('rating_endtime', 'mod_ratingallocate'),
-                    get_string('is_published', 'mod_ratingallocate'));
+$table->head = array(
+        get_string('name'),
+        get_string('rating_begintime', 'mod_ratingallocate'),
+        get_string('rating_endtime', 'mod_ratingallocate'),
+        get_string('is_published', 'mod_ratingallocate'));
 $table->align = array('left', 'left', 'left', 'left');
-
 
 foreach ($ratingallocates as $ratingallocate) {
     $ratingallocateinstance = $DB->get_record('ratingallocate', array('id' => $ratingallocate->id));
     if (!$ratingallocate->visible) {
         $link = html_writer::link(
-            new moodle_url('/mod/ratingallocate/view.php', array('id' => $ratingallocate->coursemodule)),
-            format_string($ratingallocate->name, true),
-            array('class' => 'dimmed'));
+                new moodle_url('/mod/ratingallocate/view.php', array('id' => $ratingallocate->coursemodule)),
+                format_string($ratingallocate->name, true),
+                array('class' => 'dimmed'));
     } else {
         $link = html_writer::link(
-            new moodle_url('/mod/ratingallocate/view.php', array('id' => $ratingallocate->coursemodule)),
-            format_string($ratingallocate->name, true));
+                new moodle_url('/mod/ratingallocate/view.php', array('id' => $ratingallocate->coursemodule)),
+                format_string($ratingallocate->name, true));
     }
     $table->data[] = array($link, userdate($ratingallocateinstance->accesstimestart),
-        userdate($ratingallocateinstance->accesstimestop),
-        $ratingallocateinstance->published == 0 ? get_string('no') : get_string('yes'));
+            userdate($ratingallocateinstance->accesstimestop),
+            $ratingallocateinstance->published == 0 ? get_string('no') : get_string('yes'));
 
 }
 

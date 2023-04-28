@@ -40,25 +40,24 @@ class strategy extends \strategytemplate {
     const MAXZERO = 'maxzero';
     const TOTALPOINTS = 'totalpoints';
 
-
     public function get_strategyid() {
         return self::STRATEGYID;
     }
 
     public function get_static_settingfields() {
         return array(
-            self::MAXZERO => array( // maximale Anzahl 'kannnicht'
-                'int',
-                get_string(self::STRATEGYID . '_setting_maxzero', ratingallocate_MOD_NAME),
-                $this->get_settings_value(self::MAXZERO),
-                null
-            ),
-            self::TOTALPOINTS => array( // wie viele Felder es gibt
-                'int',
-                get_string(self::STRATEGYID . '_setting_totalpoints', ratingallocate_MOD_NAME),
-                $this->get_settings_value(self::TOTALPOINTS),
-                null
-            )
+                self::MAXZERO => array( // maximale Anzahl 'kannnicht'
+                        'int',
+                        get_string(self::STRATEGYID . '_setting_maxzero', RATINGALLOCATE_MOD_NAME),
+                        $this->get_settings_value(self::MAXZERO),
+                        null
+                ),
+                self::TOTALPOINTS => array( // wie viele Felder es gibt
+                        'int',
+                        get_string(self::STRATEGYID . '_setting_totalpoints', RATINGALLOCATE_MOD_NAME),
+                        $this->get_settings_value(self::TOTALPOINTS),
+                        null
+                )
         );
     }
 
@@ -68,14 +67,14 @@ class strategy extends \strategytemplate {
 
     public function get_default_settings() {
         return array(
-                        self::MAXZERO => 3,
-                        self::TOTALPOINTS => 100
+                self::MAXZERO => 3,
+                self::TOTALPOINTS => 100
         );
     }
 
-    protected function getValidationInfo() {
-        return array(self::MAXZERO => array(true,0),
-                     self::TOTALPOINTS => array(true,1)
+    protected function getvalidationinfo() {
+        return array(self::MAXZERO => array(true, 0),
+                self::TOTALPOINTS => array(true, 1)
         );
     }
 
@@ -117,9 +116,9 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             // Show max. number of allocations.
             // TODO add setting in order to make this optional, as requested in issue #14.
             $mform->addElement('html', '<div class="mod-ratingallocate-choice-maxno">' .
-                '<span class="mod-ratingallocate-choice-maxno-desc">' .
-                get_string('choice_maxsize_display', ratingallocate_MOD_NAME) .
-                ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
+                    '<span class="mod-ratingallocate-choice-maxno-desc">' .
+                    get_string('choice_maxsize_display', RATINGALLOCATE_MOD_NAME) .
+                    ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
 
             // Use explanation as title/label of group to align with other strategies.
             $mform->addElement('text', $ratingelem, format_text($data->explanation));
@@ -139,9 +138,11 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
     }
 
     public function describe_strategy() {
-        $output = get_string(strategy::STRATEGYID . '_explain_distribute_points', ratingallocate_MOD_NAME, $this->get_strategysetting(strategy::TOTALPOINTS));
+        $output = get_string(strategy::STRATEGYID . '_explain_distribute_points', RATINGALLOCATE_MOD_NAME,
+                $this->get_strategysetting(strategy::TOTALPOINTS));
         $output .= '<br />';
-        $output .= get_string(strategy::STRATEGYID . '_explain_max_zero', ratingallocate_MOD_NAME, $this->get_strategysetting(strategy::MAXZERO));
+        $output .= get_string(strategy::STRATEGYID . '_explain_max_zero', RATINGALLOCATE_MOD_NAME,
+                $this->get_strategysetting(strategy::MAXZERO));
         return $output;
     }
 
@@ -150,33 +151,36 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         $totalpoints = $this->get_strategysetting(strategy::TOTALPOINTS);
         $errors = parent::validation($data, $files);
 
-        if (!array_key_exists('data', $data) or count($data ['data']) < 2) {
+        if (!array_key_exists('data', $data) or count($data['data']) < 2) {
             return $errors;
         }
 
         $impossibles = 0;
-        $ratings = $data ['data'];
+        $ratings = $data['data'];
         $currentpoints = 0;
         foreach ($ratings as $cid => $rating) {
             if ($rating['rating'] < 0 || $rating['rating'] > $totalpoints) {
-                $errors['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_illegal_entry', ratingallocate_MOD_NAME, $totalpoints);
-            } else if ($rating ['rating'] == 0) {
-                $impossibles ++;
+                $errors['data[' . $cid . '][rating]'] =
+                        get_string(strategy::STRATEGYID . '_illegal_entry', RATINGALLOCATE_MOD_NAME, $totalpoints);
+            } else if ($rating['rating'] == 0) {
+                $impossibles++;
             }
             $currentpoints += $rating['rating'];
         }
 
         if ($impossibles > $maxcrossout) {
             foreach ($ratings as $cid => $rating) {
-                if ($rating ['rating'] == 0) {
-                    $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_max_count_zero', ratingallocate_MOD_NAME, $maxcrossout);
+                if ($rating['rating'] == 0) {
+                    $errors['data[' . $cid . '][rating]'] =
+                            get_string(strategy::STRATEGYID . '_max_count_zero', RATINGALLOCATE_MOD_NAME, $maxcrossout);
                 }
             }
         }
 
         if ($currentpoints <> $totalpoints) {
             foreach ($ratings as $cid => $rating) {
-                $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_incorrect_totalpoints', ratingallocate_MOD_NAME, $totalpoints);
+                $errors['data[' . $cid . '][rating]'] =
+                        get_string(strategy::STRATEGYID . '_incorrect_totalpoints', RATINGALLOCATE_MOD_NAME, $totalpoints);
             }
         }
         return $errors;

@@ -20,13 +20,14 @@
  * @copyright  2018 T Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace mod_ratingallocate;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->libdir.'/tablelib.php');
-require_once($CFG->dirroot.'/user/lib.php');
+require_once($CFG->libdir . '/tablelib.php');
+require_once($CFG->dirroot . '/user/lib.php');
 
 class allocations_table extends \table_sql {
 
@@ -89,11 +90,11 @@ class allocations_table extends \table_sql {
         }
 
         $columns[] = 'choicetitle';
-        $headers[] = get_string('allocations_table_choice', ratingallocate_MOD_NAME);
+        $headers[] = get_string('allocations_table_choice', RATINGALLOCATE_MOD_NAME);
 
         if (!$this->is_downloading()) {
             $columns[] = 'users';
-            $headers[] = get_string('allocations_table_users', ratingallocate_MOD_NAME);
+            $headers[] = get_string('allocations_table_users', RATINGALLOCATE_MOD_NAME);
             $this->no_sorting('users');
         }
 
@@ -114,11 +115,13 @@ class allocations_table extends \table_sql {
         $data = $this->rawdata;
 
         // Retrieve all users, who rated within the course.
-        $userwithratingids = array_map(function($x) {return $x->userid;},
-            $this->ratingallocate->get_users_with_ratings());
+        $userwithratingids = array_map(function($x) {
+            return $x->userid;
+        },
+                $this->ratingallocate->get_users_with_ratings());
         $userwithrating = \user_get_users_by_id($userwithratingids);
 
-        if ($this->is_downloading()){
+        if ($this->is_downloading()) {
             // Search for all users, who rated but were not allocated and add them to the data set.
             foreach ($userwithrating as $userid => $user) {
                 if (!array_key_exists($userid, $data)) {
@@ -156,11 +159,11 @@ class allocations_table extends \table_sql {
             }
 
             // If there are users, which rated but were not allocated, add them to a special row.
-            if (count($userwithrating) > 0 AND ($this->currpage + 1) * $this->pagesize >= $this->totalrows) {
+            if (count($userwithrating) > 0 and ($this->currpage + 1) * $this->pagesize >= $this->totalrows) {
                 $noallocation = new \stdClass();
                 $noallocation->choicetitle = get_string(
-                    'allocations_table_noallocation',
-                    ratingallocate_MOD_NAME);
+                        'allocations_table_noallocation',
+                        RATINGALLOCATE_MOD_NAME);
 
                 foreach ($userwithrating as $userid => $user) {
                     if (object_property_exists($noallocation, 'users')) {
@@ -170,7 +173,7 @@ class allocations_table extends \table_sql {
                     }
                     $noallocation->users .= $this->get_user_link($user);
                 }
-                $data []= $noallocation;
+                $data[] = $noallocation;
             }
         }
 
@@ -195,7 +198,7 @@ class allocations_table extends \table_sql {
             $profileurl = new \moodle_url('/user/profile.php', array('id' => $user->id));
         } else {
             $profileurl = new \moodle_url('/user/view.php',
-                array('id' => $user->id, 'course' => $COURSE->id));
+                    array('id' => $user->id, 'course' => $COURSE->id));
         }
         return \html_writer::link($profileurl, $name);
     }
@@ -207,7 +210,8 @@ class allocations_table extends \table_sql {
         if ($this->is_downloading()) {
             $fields = "u.*, c.title as choicetitle";
 
-            $from = "{ratingallocate_allocations} a JOIN {ratingallocate_choices} c ON a.choiceid = c.id JOIN {user} u ON a.userid = u.id";
+            $from =
+                    "{ratingallocate_allocations} a JOIN {ratingallocate_choices} c ON a.choiceid = c.id JOIN {user} u ON a.userid = u.id";
         } else {
             $fields = "c.id, c.title as choicetitle";
 

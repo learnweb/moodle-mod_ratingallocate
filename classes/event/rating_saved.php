@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
+
 /**
  * The mod_ratingallocate rating_saved event.
  *
@@ -21,8 +21,10 @@
  * @copyright  2014 Tobias Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace mod_ratingallocate\event;
 defined('MOODLE_INTERNAL') || die();
+
 /**
  * The mod_ratingallocate rating_saved event class.
  *
@@ -37,27 +39,30 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 class rating_saved extends \core\event\base {
-    
-    public static function create_simple($modulecontext, $ratingallocateid, $rating){
+
+    public static function create_simple($modulecontext, $ratingallocateid, $rating) {
         // the values of other need to be encoded since the base checks for equality of a decoded encoded other instance with the original.
         // this is not given for nested arrays
-        $rating_json_valid = json_decode(json_encode($rating),true);
-        return self::create(array('context' => $modulecontext, 'objectid' => $ratingallocateid, 'other' => array('ratings'=>$rating_json_valid)));
+        $ratingjsonvalid = json_decode(json_encode($rating), true);
+        return self::create(array('context' => $modulecontext, 'objectid' => $ratingallocateid,
+                'other' => array('ratings' => $ratingjsonvalid)));
     }
+
     protected function init() {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'ratingallocate_ratings';
     }
- 
+
     public static function get_name() {
         return get_string('log_rating_saved', 'mod_ratingallocate');
     }
- 
+
     public function get_description() {
-        return get_string('log_rating_saved_description', 'mod_ratingallocate', array('userid' => $this->userid, 'ratingallocateid' => $this->objectid));
+        return get_string('log_rating_saved_description', 'mod_ratingallocate',
+                array('userid' => $this->userid, 'ratingallocateid' => $this->objectid));
     }
- 
+
     public function get_url() {
         return new \moodle_url('/mod/ratingallocate/view.php', array('m' => $this->objectid));
     }

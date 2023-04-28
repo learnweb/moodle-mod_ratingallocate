@@ -22,144 +22,139 @@
  * @group mod_ratingallocate
  * @copyright  reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */  
-class mod_ratingallocate_strategy_testcase extends advanced_testcase {
-    
-    
+ */
+class mod_ratingallocate_strategy_test extends advanced_testcase {
+
     /**
      * Test for correct validation of settings
      */
-    public function test_yes_no_validation(){
-        //Attribute required
+    public function test_yes_no_validation() {
+        // Attribute required
         $settings = array(ratingallocate\strategy_yesno\strategy::MAXCROSSOUT => null);
-        $strategy = new ratingallocate\strategy_yesno\strategy($settings);       
+        $strategy = new ratingallocate\strategy_yesno\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
-        //Attribute minimum error
+        // Attribute minimum error
         $settings = array(ratingallocate\strategy_yesno\strategy::MAXCROSSOUT => -1);
         $strategy = new ratingallocate\strategy_yesno\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
-        //No validation error
+        // No validation error
         $settings = array(ratingallocate\strategy_yesno\strategy::MAXCROSSOUT => 1);
         $strategy = new ratingallocate\strategy_yesno\strategy($settings);
         $this->assertCount(0, $strategy->validate_settings());
     }
-    
-    
+
     /**
      * Test for correct validation of settings
      */
-     public function test_yes_maybe_no_validation(){
-        //Attribute required
+    public function test_yes_maybe_no_validation() {
+        // Attribute required
         $settings = array(ratingallocate\strategy_yesmaybeno\strategy::MAXNO => null);
         $strategy = new ratingallocate\strategy_yesmaybeno\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
-        //Attribute minimum error
+        // Attribute minimum error
         $settings = array(ratingallocate\strategy_yesmaybeno\strategy::MAXNO => -1);
         $strategy = new ratingallocate\strategy_yesmaybeno\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
-        //No validation error
+        // No validation error
         $settings = array(ratingallocate\strategy_yesmaybeno\strategy::MAXNO => 1);
         $strategy = new ratingallocate\strategy_yesmaybeno\strategy($settings);
         $this->assertCount(0, $strategy->validate_settings());
     }
-    
-    
+
     /**
      * Test for correct validation of settings
      */
-     public function test_lickert_validation(){
-         //Attribute required
+    public function test_lickert_validation() {
+        // Attribute required
         $settings = array(ratingallocate\strategy_lickert\strategy::COUNTLICKERT => null);
         $strategy = new ratingallocate\strategy_lickert\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
-        //Attribute required
+        // Attribute required
         $settings = array(ratingallocate\strategy_lickert\strategy::MAXNO => null);
         $strategy = new ratingallocate\strategy_lickert\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
-        //Attribute minimum error
+        // Attribute minimum error
         $settings = array(ratingallocate\strategy_lickert\strategy::COUNTLICKERT => 1);
         $strategy = new ratingallocate\strategy_lickert\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
-        //Attribute minimum error
+        // Attribute minimum error
         $settings = array(ratingallocate\strategy_lickert\strategy::MAXNO => -1);
         $strategy = new ratingallocate\strategy_lickert\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
-        //No validation error
+        // No validation error
         $settings = array(ratingallocate\strategy_lickert\strategy::COUNTLICKERT => 3);
         $strategy = new ratingallocate\strategy_lickert\strategy($settings);
         $this->assertCount(0, $strategy->validate_settings());
-        //No validation error
+        // No validation error
         $settings = array(ratingallocate\strategy_lickert\strategy::MAXNO => 1);
         $strategy = new ratingallocate\strategy_lickert\strategy($settings);
         $this->assertCount(0, $strategy->validate_settings());
     }
-    
+
     /**
      * Test for correct validation of settings
-     */    
-    public function test_points_validation(){
-        //Attribute required
+     */
+    public function test_points_validation() {
+        // Attribute required
         $settings = array(ratingallocate\strategy_points\strategy::MAXZERO => null);
         $strategy = new ratingallocate\strategy_points\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
-        //Attribute required
+        // Attribute required
         $settings = array(ratingallocate\strategy_points\strategy::TOTALPOINTS => null);
         $strategy = new ratingallocate\strategy_points\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
-        //Attribute minimum error
+        // Attribute minimum error
         $settings = array(ratingallocate\strategy_points\strategy::MAXZERO => -1);
         $strategy = new ratingallocate\strategy_points\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
-        //Attribute minimum error
+        // Attribute minimum error
         $settings = array(ratingallocate\strategy_points\strategy::TOTALPOINTS => 0);
         $strategy = new ratingallocate\strategy_points\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
-        //No validation error
+        // No validation error
         $settings = array(ratingallocate\strategy_points\strategy::MAXZERO => 0);
         $strategy = new ratingallocate\strategy_points\strategy($settings);
         $this->assertCount(0, $strategy->validate_settings());
-        //No validation error
+        // No validation error
         $settings = array(ratingallocate\strategy_points\strategy::TOTALPOINTS => 1);
         $strategy = new ratingallocate\strategy_points\strategy($settings);
         $this->assertCount(0, $strategy->validate_settings());
     }
-    
-    
-     /**
+
+    /**
      * Test for correct validation of settings
      */
-    public function test_order_validation(){
-        //Attribute required
+    public function test_order_validation() {
+        // Attribute required
         $settings = array(ratingallocate\strategy_order\strategy::COUNTOPTIONS => null);
         $strategy = new ratingallocate\strategy_order\strategy($settings);
-        $this->assertCount(1, $strategy->validate_settings());        
-        //Attribute minimum error
+        $this->assertCount(1, $strategy->validate_settings());
+        // Attribute minimum error
         $settings = array(ratingallocate\strategy_order\strategy::COUNTOPTIONS => 0);
         $strategy = new ratingallocate\strategy_order\strategy($settings);
-        $this->assertCount(1, $strategy->validate_settings());   
-        //No validation error
+        $this->assertCount(1, $strategy->validate_settings());
+        // No validation error
         $settings = array(ratingallocate\strategy_order\strategy::COUNTOPTIONS => 1);
         $strategy = new ratingallocate\strategy_order\strategy($settings);
         $this->assertCount(0, $strategy->validate_settings());
     }
-    
-    
+
     /**
      * Test for correct validation of settings
      */
-    public function test_tickyes_validation(){
-        //Attribute required
+    public function test_tickyes_validation() {
+        // Attribute required
         $settings = array(ratingallocate\strategy_tickyes\strategy::MINTICKYES => null);
         $strategy = new ratingallocate\strategy_tickyes\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
-        //Attribute minimum error
+        // Attribute minimum error
         $settings = array(ratingallocate\strategy_tickyes\strategy::MINTICKYES => 0);
         $strategy = new ratingallocate\strategy_tickyes\strategy($settings);
         $this->assertCount(1, $strategy->validate_settings());
-        //No validation error
+        // No validation error
         $settings = array(ratingallocate\strategy_tickyes\strategy::MINTICKYES => 1);
         $strategy = new ratingallocate\strategy_tickyes\strategy($settings);
         $this->assertCount(0, $strategy->validate_settings());
-    }    
-    
+    }
+
 }

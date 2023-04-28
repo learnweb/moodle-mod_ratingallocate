@@ -46,17 +46,17 @@ class strategy extends \strategytemplate {
 
     public function get_static_settingfields() {
         $output = array(
-            self::MINTICKYES => array('int',
-                get_string(self::STRATEGYID . '_setting_mintickyes', ratingallocate_MOD_NAME),
-                $this->get_settings_value(self::MINTICKYES)
-            )
+                self::MINTICKYES => array('int',
+                        get_string(self::STRATEGYID . '_setting_mintickyes', RATINGALLOCATE_MOD_NAME),
+                        $this->get_settings_value(self::MINTICKYES)
+                )
         );
 
         $output[1] = array(
-                        'text',
-                        get_string('strategy_settings_label', ratingallocate_MOD_NAME, $this->get_settings_default_value(1)),
-                        null,
-                        $this->get_settings_default_value(1)
+                'text',
+                get_string('strategy_settings_label', RATINGALLOCATE_MOD_NAME, $this->get_settings_default_value(1)),
+                null,
+                $this->get_settings_default_value(1)
 
         );
         return $output;
@@ -72,14 +72,14 @@ class strategy extends \strategytemplate {
 
     public function get_default_settings() {
         return array(
-                        self::MINTICKYES => 3,
-                        1 => get_string(self::STRATEGYID . '_' . self::ACCEPT_LABEL, ratingallocate_MOD_NAME),
-                        0 => get_string(self::STRATEGYID . '_not_' . self::ACCEPT_LABEL, ratingallocate_MOD_NAME)
+                self::MINTICKYES => 3,
+                1 => get_string(self::STRATEGYID . '_' . self::ACCEPT_LABEL, RATINGALLOCATE_MOD_NAME),
+                0 => get_string(self::STRATEGYID . '_not_' . self::ACCEPT_LABEL, RATINGALLOCATE_MOD_NAME)
         );
     }
 
-    protected function getValidationInfo() {
-        return array(self::MINTICKYES => array(true,1)
+    protected function getvalidationinfo() {
+        return array(self::MINTICKYES => array(true, 1)
         );
     }
 }
@@ -125,12 +125,13 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             // Show max. number of allocations.
             // TODO add setting in order to make this optional, as requested in issue #14.
             $mform->addElement('html', '<div class="mod-ratingallocate-choice-maxno">' .
-                '<span class="mod-ratingallocate-choice-maxno-desc">' .
-                get_string('choice_maxsize_display', ratingallocate_MOD_NAME) .
-                ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
+                    '<span class="mod-ratingallocate-choice-maxno-desc">' .
+                    get_string('choice_maxsize_display', RATINGALLOCATE_MOD_NAME) .
+                    ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
 
             // Use explanation as title/label of checkbox to align with other strategies.
-            $mform->addElement('advcheckbox', $ratingelem, format_text($data->explanation), $this->get_strategy()->get_accept_label(), null, array(0, 1));
+            $mform->addElement('advcheckbox', $ratingelem, format_text($data->explanation),
+                    $this->get_strategy()->get_accept_label(), null, array(0, 1));
             $mform->setType($ratingelem, PARAM_INT);
 
             if (is_numeric($data->rating) && $data->rating >= 0) {
@@ -146,29 +147,31 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
     }
 
     public function describe_strategy() {
-        return get_string(strategy::STRATEGYID . '_explain_mintickyes', ratingallocate_MOD_NAME, $this->get_strategysetting(strategy::MINTICKYES));
+        return get_string(strategy::STRATEGYID . '_explain_mintickyes', RATINGALLOCATE_MOD_NAME,
+                $this->get_strategysetting(strategy::MINTICKYES));
     }
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         $mintickyes = $this->get_strategysetting(strategy::MINTICKYES);
 
-        if (!array_key_exists('data', $data) or count($data ['data']) < 2) {
+        if (!array_key_exists('data', $data) or count($data['data']) < 2) {
             return $errors;
         }
 
         $checkedaccept = 0;
-        $ratings = $data ['data'];
+        $ratings = $data['data'];
         foreach ($ratings as $rating) {
-            if ($rating ['rating'] == 1) {
-                $checkedaccept ++;
+            if ($rating['rating'] == 1) {
+                $checkedaccept++;
             }
         }
 
         if ($checkedaccept < $mintickyes) {
             foreach ($ratings as $cid => $rating) {
-                if ($rating ['rating'] == 0) {
-                    $errors ['data[' . $cid . '][rating]'] = get_string(strategy::STRATEGYID . '_error_mintickyes', ratingallocate_MOD_NAME, $mintickyes);
+                if ($rating['rating'] == 0) {
+                    $errors['data[' . $cid . '][rating]'] =
+                            get_string(strategy::STRATEGYID . '_error_mintickyes', RATINGALLOCATE_MOD_NAME, $mintickyes);
                 }
             }
         }

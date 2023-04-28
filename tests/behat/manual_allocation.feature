@@ -6,20 +6,20 @@ Feature: Teachers should be able to alter the allocations manually.
       | fullname | shortname | category | groupmode |
       | Course 1 | C1        | 0        | 1         |
     And the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Theo | Teacher | teacher1@example.com |
-      | student1 | Steve |  Student | student1@example.com |
-      | student2 | Sophie | Student | student2@example.com |
-      | student3 | Stefanie | Student | student3@example.com |
+      | username | firstname | lastname | email                |
+      | teacher1 | Theo      | Teacher  | teacher1@example.com |
+      | student1 | Steve     | Student  | student1@example.com |
+      | student2 | Sophie    | Student  | student2@example.com |
+      | student3 | Stefanie  | Student  | student3@example.com |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
-      | student2 | C1 | student |
-      | student3 | C1 | student |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
+      | student3 | C1     | student        |
     And the following "activities" exist:
-      | activity | course | idnumber | name | accesstimestart | accesstimestop |
-      | ratingallocate   | C1     | ra1  | My Fair Allocation | ##yesterday## | ##yesterday## |
+      | activity       | course | idnumber | name               | accesstimestart | accesstimestop |
+      | ratingallocate | C1     | ra1      | My Fair Allocation | ##yesterday##   | ##yesterday##  |
     And the following choices exist:
       | title | explanation | maxsize | ratingallocate     |
       | C1    | Test        | 1       | My Fair Allocation |

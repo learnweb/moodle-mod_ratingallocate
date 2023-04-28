@@ -9,7 +9,7 @@ name: Releasing in the Plugins directory
 
 on:
   release:
-    types: [published]
+    types: [ published ]
 
 defaults:
   run:

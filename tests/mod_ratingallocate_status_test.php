@@ -14,8 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once(__DIR__ . '/generator/lib.php');
 require_once(__DIR__ . '/../locallib.php');
+
 /**
  * Tests the method get_status()
  *
@@ -25,12 +28,12 @@ require_once(__DIR__ . '/../locallib.php');
  * @copyright  reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_status_testcase extends advanced_testcase {
+class mod_ratingallocate_status_test extends advanced_testcase {
 
     public function setUp(): void {
-            global $PAGE;
-            $PAGE->set_url('/');
-            $this->resetAfterTest();
+        global $PAGE;
+        $PAGE->set_url('/');
+        $this->resetAfterTest();
     }
 
     /**
@@ -38,30 +41,30 @@ class mod_ratingallocate_status_testcase extends advanced_testcase {
      */
     public function ratingallocate_provider() {
         return [
-            'Rating phase is not started.' => [
-                3, 6, false, false, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
-            'Rating phase is not started, but some allocations exist.' => [
-                3, 6, false, true, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
-            'Rating phase is not started, but allocation is published.' => [
-                3, 6, true, false, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
-            'Rating phase is not started, but allocations exist and are published.' => [
-                3, 6, true, true, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
-            'The rating phase is running' => [
-                -1, 6, false, false, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
-            'The rating phase is running, but allocations exist.' => [
-                -1, 6, false, true, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
-            'The rating phase is running, but allocation is published.' => [
-                -1, 6, true, false, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
-            'The rating phase is running, but allocations exist and are published.' => [
-                -1, 6, true, true, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
-            'The rating phase is running.' => [
-                -7, -6, false, false, ratingallocate::DISTRIBUTION_STATUS_READY],
-            'The rating phase is running and some allocations exist.' => [
-                -7, -6, false, true, ratingallocate::DISTRIBUTION_STATUS_READY_ALLOC_STARTED],
-            'The rating phase is running and allocation is published.' => [
-                -7, -6, true, false, ratingallocate::DISTRIBUTION_STATUS_PUBLISHED],
-            'The rating phase is running and allocations exist and are published.' => [
-                -7, -6, true, true, ratingallocate::DISTRIBUTION_STATUS_PUBLISHED]
+                'Rating phase is not started.' => [
+                        3, 6, false, false, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
+                'Rating phase is not started, but some allocations exist.' => [
+                        3, 6, false, true, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
+                'Rating phase is not started, but allocation is published.' => [
+                        3, 6, true, false, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
+                'Rating phase is not started, but allocations exist and are published.' => [
+                        3, 6, true, true, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
+                'The rating phase is running' => [
+                        -1, 6, false, false, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
+                'The rating phase is running, but allocations exist.' => [
+                        -1, 6, false, true, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
+                'The rating phase is running, but allocation is published.' => [
+                        -1, 6, true, false, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
+                'The rating phase is running, but allocations exist and are published.' => [
+                        -1, 6, true, true, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
+                'The rating phase is running.' => [
+                        -7, -6, false, false, ratingallocate::DISTRIBUTION_STATUS_READY],
+                'The rating phase is running and some allocations exist.' => [
+                        -7, -6, false, true, ratingallocate::DISTRIBUTION_STATUS_READY_ALLOC_STARTED],
+                'The rating phase is running and allocation is published.' => [
+                        -7, -6, true, false, ratingallocate::DISTRIBUTION_STATUS_PUBLISHED],
+                'The rating phase is running and allocations exist and are published.' => [
+                        -7, -6, true, true, ratingallocate::DISTRIBUTION_STATUS_PUBLISHED]
         ];
     }
 
@@ -82,7 +85,7 @@ class mod_ratingallocate_status_testcase extends advanced_testcase {
         } else {
             $course = $this->getDataGenerator()->create_course();
             $record['course'] = $course;
-            $moddb = $this->getDataGenerator()->create_module(ratingallocate_MOD_NAME, $record);
+            $moddb = $this->getDataGenerator()->create_module(RATINGALLOCATE_MOD_NAME, $record);
         }
 
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate($moddb);

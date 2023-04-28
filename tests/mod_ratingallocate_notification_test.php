@@ -26,7 +26,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @copyright  2018 T Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_notification_testcase extends advanced_testcase {
+class mod_ratingallocate_notification_test extends advanced_testcase {
 
     const CHOICE1 = 'Choice 1';
     const CHOICE2 = 'Choice 2';
@@ -41,52 +41,52 @@ class mod_ratingallocate_notification_testcase extends advanced_testcase {
             $students[$i] = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         }
         $choices = array(
-            array(
-                'title' => self::CHOICE1,
-                'maxsize' => '1',
-                'active' => '1',
-            ),
-            array(
-                'title' => self::CHOICE2,
-                'maxsize' => '1',
-                'active' => '1',
-            )
+                array(
+                        'title' => self::CHOICE1,
+                        'maxsize' => '1',
+                        'active' => '1',
+                ),
+                array(
+                        'title' => self::CHOICE2,
+                        'maxsize' => '1',
+                        'active' => '1',
+                )
         );
         $ratings = array(
-            $students[1]->id => array(
-                array(
-                    'choice' => self::CHOICE1,
-                    'rating' => 1
+                $students[1]->id => array(
+                        array(
+                                'choice' => self::CHOICE1,
+                                'rating' => 1
+                        ),
+                        array(
+                                'choice' => self::CHOICE2,
+                                'rating' => 0
+                        )
                 ),
-                array(
-                    'choice' => self::CHOICE2,
-                    'rating' => 0
-                )
-            ),
-            $students[2]->id => array(
-                array(
-                    'choice' => self::CHOICE1,
-                    'rating' => 0
+                $students[2]->id => array(
+                        array(
+                                'choice' => self::CHOICE1,
+                                'rating' => 0
+                        ),
+                        array(
+                                'choice' => self::CHOICE2,
+                                'rating' => 1
+                        )
                 ),
-                array(
-                    'choice' => self::CHOICE2,
-                    'rating' => 1
+                $students[3]->id => array(
+                        array(
+                                'choice' => self::CHOICE1,
+                                'rating' => 0
+                        ),
+                        array(
+                                'choice' => self::CHOICE2,
+                                'rating' => 0
+                        )
                 )
-            ),
-            $students[3]->id => array(
-                array(
-                    'choice' => self::CHOICE1,
-                    'rating' => 0
-                ),
-                array(
-                    'choice' => self::CHOICE2,
-                    'rating' => 0
-                )
-            )
         );
 
         $ratingallocate = mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this, $choices,
-            $course, $ratings);
+                $course, $ratings);
         $allocations = $ratingallocate->get_allocations();
         $this->assertArrayHasKey($students[1]->id, $allocations);
         $this->assertArrayHasKey($students[2]->id, $allocations);
@@ -104,7 +104,7 @@ class mod_ratingallocate_notification_testcase extends advanced_testcase {
         // Add custom data.
         $task->set_component('mod_ratingallocate');
         $task->set_custom_data(array(
-            'ratingallocateid' => $ratingallocate->ratingallocate->id
+                'ratingallocateid' => $ratingallocate->ratingallocate->id
         ));
 
         $this->setAdminUser();
@@ -132,7 +132,7 @@ class mod_ratingallocate_notification_testcase extends advanced_testcase {
                 $this->assertStringContainsString($needle, $message->fullmessage);
             }
         }
-        $this->assertTrue($messageexists, 'Message for userid '. $userid . 'could not be found.' );
+        $this->assertTrue($messageexists, 'Message for userid ' . $userid . 'could not be found.');
     }
 
     /**
@@ -148,6 +148,6 @@ class mod_ratingallocate_notification_testcase extends advanced_testcase {
                 $messageexists = true;
             }
         }
-        $this->assertFalse($messageexists, 'There is a message for userid '. $userid . '.' );
+        $this->assertFalse($messageexists, 'There is a message for userid ' . $userid . '.');
     }
 }

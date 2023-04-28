@@ -1,4 +1,18 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Steps definitions related to mod_reallocate.
@@ -10,9 +24,8 @@
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode,
-Behat\Mink\Exception\ExpectationException as ExpectationException,
-Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
-use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+        Behat\Mink\Exception\ExpectationException as ExpectationException,
+        Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 class behat_mod_ratingallocate extends behat_base {
 
@@ -21,9 +34,9 @@ class behat_mod_ratingallocate extends behat_base {
      *
      * @Given /^the following choices exist:$/
      *
-     * @throws Exception
-     * @throws PendingException
      * @param TableNode $data
+     * @throws PendingException
+     * @throws Exception
      */
     public function the_following_choices_exist(TableNode $data) {
         global $DB;
@@ -46,7 +59,7 @@ class behat_mod_ratingallocate extends behat_base {
 
             $record['ratingallocateid'] = $ratingallocate->id;
 
-            $record = (object)$record;
+            $record = (object) $record;
 
             // Add the subscription.
             $record->id = $DB->insert_record('ratingallocate_choices', $record);
@@ -59,9 +72,9 @@ class behat_mod_ratingallocate extends behat_base {
      *
      * @Given /^the following ratings exist:$/
      *
-     * @throws Exception
-     * @throws PendingException
      * @param TableNode $data
+     * @throws PendingException
+     * @throws Exception
      */
     public function the_following_ratings_exist(TableNode $data) {
         global $DB;
@@ -86,7 +99,7 @@ class behat_mod_ratingallocate extends behat_base {
             $record['userid'] = $user->id;
             $record['choiceid'] = $choice->id;
 
-            $record = (object)$record;
+            $record = (object) $record;
 
             // Add the subscription.
             $record->id = $DB->insert_record('ratingallocate_ratings', $record);
@@ -94,7 +107,7 @@ class behat_mod_ratingallocate extends behat_base {
         }
     }
 
-        /**
+    /**
      * Fills the respective fields of a choice.
      *
      * @Given /^I set the values of the choice to:$/
@@ -146,7 +159,7 @@ class behat_mod_ratingallocate extends behat_base {
             foreach ($entry as $key => $val) {
                 array_push($newrows, array($key, $val));
             }
-            //TODO: Ensure backward-compatibility after changed TableNode constructor in Moodle 3.1
+            // TODO: Ensure backward-compatibility after changed TableNode constructor in Moodle 3.1
             if ($CFG->version < 2016052300) {
                 $newrows = implode("\n", $newrows);
             }
@@ -166,8 +179,8 @@ class behat_mod_ratingallocate extends behat_base {
      * @param string $choicetitle tilte of the choice
      */
     public function i_delete_the_choice_with_the_title($choicetitle) {
-        $fieldxpath = "//table[@id='mod_ratingallocateshowoptions']//td[text()='$choicetitle']".
-            "//following-sibling::td/a[@title='Delete choice']";
+        $fieldxpath = "//table[@id='mod_ratingallocateshowoptions']//td[text()='$choicetitle']" .
+                "//following-sibling::td/a[@title='Delete choice']";
         $link = $this->find('xpath', $fieldxpath);
         $link->click();
         $this->execute('behat_general::i_click_on', array("Yes", "button"));
@@ -194,7 +207,7 @@ class behat_mod_ratingallocate extends behat_base {
             $this->find('xpath', $fieldxpath);
         } catch (ElementNotFoundException $e) {
             throw new ExpectationException('"' . $firstname . '" is not assigned to choice "' .
-                $choicetitle . '"', $this->getSession());
+                    $choicetitle . '"', $this->getSession());
         }
     }
 
@@ -220,7 +233,7 @@ class behat_mod_ratingallocate extends behat_base {
             $this->find('xpath', $checkbox);
         } catch (ElementNotFoundException $e) {
             throw new ExpectationException('"' . $firstname . '" or choice "' .
-                $choicetitle . '" could not be found in the table', $this->getSession());
+                    $choicetitle . '" could not be found in the table', $this->getSession());
         }
         try {
             $this->find('xpath', $checked);
@@ -228,7 +241,7 @@ class behat_mod_ratingallocate extends behat_base {
             return;
         }
         throw new ExpectationException('"' . $firstname . '" is assigned to the choice "' .
-            $choicetitle . '"', $this->getSession());
+                $choicetitle . '"', $this->getSession());
     }
 
     /**
@@ -308,7 +321,6 @@ class behat_mod_ratingallocate extends behat_base {
         $this->click_tool_for_choice($choicetitle, 'Enable');
     }
 
-
     /**
      * Adds a new choice for the existing rating allocation.
      *
@@ -352,8 +364,8 @@ class behat_mod_ratingallocate extends behat_base {
      *
      * @Then /^the choice with name "([^"]*)" should be active$/
      *
-     * @throws ExpectationException
      * @param string $title title of the choice
+     * @throws ExpectationException
      */
     public function the_choice_should_be_active($title) {
         $choice = $this->get_choice($title);
@@ -369,13 +381,13 @@ class behat_mod_ratingallocate extends behat_base {
      *
      * @Then /^the choice with name "([^"]*)" should not be active$/
      *
-     * @throws ExpectationException
      * @param string $title title of the choice
+     * @throws ExpectationException
      */
     public function the_choice_should_not_be_active($title) {
         $choice = $this->get_choice($title);
         if ($choice->active) {
-            throw new ExpectationException('The choice "' . $title. '" should not be active',
+            throw new ExpectationException('The choice "' . $title . '" should not be active',
                     $this->getSession());
         }
     }
@@ -385,46 +397,46 @@ class behat_mod_ratingallocate extends behat_base {
      *
      * @Then /^the choice with name "([^"]*)" should have explanation being equal to "([^"]*)"$/
      *
-     * @throws ExpectationException
      * @param string $title title of the choice
      * @param string $value expected value
+     * @throws ExpectationException
      */
     public function the_choice_should_have_explanation_equal($title, $value) {
         $choice = $this->get_choice($title);
         if ($choice->explanation !== $value) {
-            throw new ExpectationException('The explanation of the choice '.$title.
-                ' was expected to be "'.$value.'" but was "'.$choice->explanation.'".',
-                $this->getSession());
+            throw new ExpectationException('The explanation of the choice ' . $title .
+                    ' was expected to be "' . $value . '" but was "' . $choice->explanation . '".',
+                    $this->getSession());
         }
     }
 
     /**
      * @Then the user :useridentifier should have ratings
      *
-     * @throws ExpectationException
      * @param string $username username of a user.
+     * @throws ExpectationException
      */
     public function the_user_should_have_ratings($username) {
         $ratings = $this->get_ratings_for_username($username);
         if (count($ratings) == 0) {
-            throw new ExpectationException("It was expected that the user $username has ratings, ".
-                "but there were none.",
-                $this->getSession());
+            throw new ExpectationException("It was expected that the user $username has ratings, " .
+                    "but there were none.",
+                    $this->getSession());
         }
     }
 
     /**
      * @Then the user :useridentifier should not have ratings
      *
-     * @throws ExpectationException
      * @param string $username username of a user.
+     * @throws ExpectationException
      */
     public function the_user_should_not_have_ratings($username) {
         $ratings = $this->get_ratings_for_username($username);
         if (count($ratings) > 0) {
-            throw new ExpectationException("It was expected that the user $username has no ratings, ".
-                "but there were some.",
-                $this->getSession());
+            throw new ExpectationException("It was expected that the user $username has no ratings, " .
+                    "but there were some.",
+                    $this->getSession());
         }
     }
 
@@ -445,16 +457,16 @@ class behat_mod_ratingallocate extends behat_base {
      *
      * @Then /^the choice with name "([^"]*)" should have maxsize being equal to ([\d]*)$/
      *
-     * @throws ExpectationException
      * @param string $title title of the choice
      * @param integer $value expected value
+     * @throws ExpectationException
      */
     public function the_choice_should_have_maxsize_equal($title, $value) {
         $choice = $this->get_choice($title);
         if ($choice->maxsize !== $value) {
-            throw new ExpectationException('The maxsize of the choice '.$title.
-            ' was expected to be "'.$value.'" but was "'.$choice->explanation.'".',
-                $this->getSession());
+            throw new ExpectationException('The maxsize of the choice ' . $title .
+                    ' was expected to be "' . $value . '" but was "' . $choice->explanation . '".',
+                    $this->getSession());
         }
     }
 
@@ -470,8 +482,8 @@ class behat_mod_ratingallocate extends behat_base {
         global $DB;
         $choices = $DB->get_records("ratingallocate_choices", array('title' => $title));
         if (count($choices) != 1) {
-            throw new ExpectationException('Excatly one choice with the name "'.$title.
-                '" is expected but '.count($choices). ' found.', $this->getSession());
+            throw new ExpectationException('Excatly one choice with the name "' . $title .
+                    '" is expected but ' . count($choices) . ' found.', $this->getSession());
         }
         return array_shift($choices);
     }
@@ -483,8 +495,8 @@ class behat_mod_ratingallocate extends behat_base {
      * @throws ElementException
      */
     private function click_tool_for_choice($choicetitle, $tooltitle) {
-        $fieldxpath = "//table[@id='mod_ratingallocateshowoptions']//td[text()='$choicetitle']".
-            "//following-sibling::td/a[@title='$tooltitle']";
+        $fieldxpath = "//table[@id='mod_ratingallocateshowoptions']//td[text()='$choicetitle']" .
+                "//following-sibling::td/a[@title='$tooltitle']";
         $link = $this->find('xpath', $fieldxpath);
         $link->click();
     }
@@ -500,7 +512,8 @@ class behat_mod_ratingallocate extends behat_base {
         $ratingdatehash = $ratingdata->getRowsHash();
         // The action depends on the field type.
         foreach ($ratingdatehash as $choice => $value) {
-            $fieldxpath = "//a[normalize-space(.)=\"$choice\"]/ancestor::fieldset/descendant::input[@type='radio' and @checked and @value=$value]";
+            $fieldxpath =
+                    "//a[normalize-space(.)=\"$choice\"]/ancestor::fieldset/descendant::input[@type='radio' and @checked and @value=$value]";
             try {
                 $this->find('xpath', $fieldxpath);
             } catch (ElementNotFoundException $e) {
@@ -520,12 +533,14 @@ class behat_mod_ratingallocate extends behat_base {
         $ratingdatehash = $ratingdata->getRowsHash();
         // The action depends on the field type.
         foreach ($ratingdatehash as $choice => $value) {
-            $fieldxpath = "//a[normalize-space(.)=\"$choice\"]/ancestor::fieldset/descendant::input[@type='radio' and @value=$value]";
+            $fieldxpath =
+                    "//a[normalize-space(.)=\"$choice\"]/ancestor::fieldset/descendant::input[@type='radio' and @value=$value]";
             try {
                 $option = $this->find('xpath', $fieldxpath);
                 $option->click();
             } catch (ElementNotFoundException $e) {
-                throw new ExpectationException('Option "'.$value.'"  was not found for choice "' . $choice . '".' . $value, $this->getSession());
+                throw new ExpectationException('Option "' . $value . '"  was not found for choice "' . $choice . '".' . $value,
+                        $this->getSession());
             }
         }
     }
@@ -551,10 +566,4 @@ class behat_mod_ratingallocate extends behat_base {
         }
     }
 
-}
-
-
-class bht_ratingallocate {
-
-    const modulename = "Fair Allocation";
 }

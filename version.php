@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Defines the version of ratingallocate
  *
@@ -28,6 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2022120100;        // The current module version (Date: YYYYMMDDXX)
 $plugin->requires = 2020061500;         // Requires Moodle 3.9+.
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v4.0-r1';
+$plugin->maturity = MATURITY_STABLE;
+$plugin->release = 'v4.0-r1';
 $plugin->component = 'mod_ratingallocate';  // To check on upgrade, that module sits in correct place

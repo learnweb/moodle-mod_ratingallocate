@@ -58,7 +58,7 @@ class distributor {
     protected $graph;
 
     /**
-     * Compute the 'satisfaction' functions that is to be maximized by adding the 
+     * Compute the 'satisfaction' functions that is to be maximized by adding the
      * ratings users gave to their allocated choices
      * @param array $ratings
      * @param array $distribution
@@ -87,7 +87,7 @@ class distributor {
      */
     public function distribute_users(\ratingallocate $ratingallocate) {
         // Extend PHP time limit
-//        core_php_time_limit::raise();
+        // core_php_time_limit::raise();
 
         // Load data from database
         $choicerecords = $ratingallocate->get_rateable_choices();
@@ -100,7 +100,8 @@ class distributor {
 
         $distributions = $this->compute_distribution($choicerecords, $ratings, $usercount);
 
-        $transaction = $ratingallocate->db->start_delegated_transaction(); // perform all allocation manipulation / inserts in one transaction
+        $transaction =
+                $ratingallocate->db->start_delegated_transaction(); // perform all allocation manipulation / inserts in one transaction
 
         $ratingallocate->clear_all_allocations();
 
@@ -184,7 +185,8 @@ class distributor {
      * @param type $source
      * @param type $sink
      */
-    protected function setup_graph($choicecount, $usercount, $fromuserid, $fromchoiceid, $ratings, $choicedata, $source, $sink, $weightmult = 1) {
+    protected function setup_graph($choicecount, $usercount, $fromuserid, $fromchoiceid, $ratings, $choicedata, $source, $sink,
+            $weightmult = 1) {
         // Construct the datastructures for the algorithm
         // A directed weighted bipartite graph.
         // A source is connected to all users with unit cost.
@@ -218,7 +220,7 @@ class distributor {
     }
 
     /**
-     * Augments the flow in the network, i.e. augments the overall 'satisfaction' 
+     * Augments the flow in the network, i.e. augments the overall 'satisfaction'
      * by distributing users to choices
      * Reverses all edges along $path in $graph
      * @param type $path path from t to s
@@ -245,14 +247,14 @@ class distributor {
             // The second to last node in a path has to be a choice-node.
             // Reduce its space by one, because one user just got distributed into it.
             if ($i == 1 and $edge->space > 1) {
-                $edge->space --;
+                $edge->space--;
             } else {
                 // Remove the edge
                 array_splice($this->graph[$from], $foundedgeid, 1);
                 // Add a new edge in the opposite direction whose weight has an opposite sign
                 // array_push($this->graph[$to], new edge($to, $from, -1 * $edge->weight));
-                // according to php doc, this is faster 
-                $this->graph[$to][] =  new edge($to, $from, -1 * $edge->weight);
+                // according to php doc, this is faster
+                $this->graph[$to][] = new edge($to, $from, -1 * $edge->weight);
             }
         }
     }

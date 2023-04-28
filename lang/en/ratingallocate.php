@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * English strings for ratingallocate
  *
@@ -31,7 +30,8 @@ $string['ratingallocate'] = 'Fair Allocation';
 $string['ratingallocatename'] = 'Name of this Fair Allocation';
 $string['ratingallocatename_help'] = 'Please choose a name for this Fair Allocation activity.';
 $string['modulename'] = 'Fair Allocation';
-$string['modulename_help'] = 'The Fair Allocation module lets you define choices your participants can then rate. The participants can then be distributed automatically to the available choices according to their ratings.';
+$string['modulename_help'] =
+        'The Fair Allocation module lets you define choices your participants can then rate. The participants can then be distributed automatically to the available choices according to their ratings.';
 $string['modulenameplural'] = 'Fair Allocations';
 $string['pluginadministration'] = 'Fair Allocation administration';
 $string['pluginname'] = 'Fair Allocation';
@@ -47,7 +47,8 @@ $string['algorithmtimeout'] = 'Algorithm timeout';
 $string['configalgorithmtimeout'] = 'The time in seconds after which the algorithm is assumed to be stuck.
 The current run is terminated and marked as failed.';
 $string['downloaduserfields'] = 'Additional user fields for download';
-$string['configdownloaduserfields'] = 'When downloading a table with users in it, these fields may be shown in addition to the users\' first and last name.';
+$string['configdownloaduserfields'] =
+        'When downloading a table with users in it, these fields may be shown in addition to the users\' first and last name.';
 $string['userid'] = 'User ID';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Rating Form for Users">
@@ -88,16 +89,20 @@ $string['allocations_table'] = 'Allocations Overview';
 $string['allocations_table_choice'] = 'Choice';
 $string['allocations_table_users'] = 'Users';
 $string['allocations_table_noallocation'] = 'No Allocation';
-$string['start_distribution_explanation'] = ' An algorithm will automatically try to fairly allocate the users according to their given ratings.';
+$string['start_distribution_explanation'] =
+        ' An algorithm will automatically try to fairly allocate the users according to their given ratings.';
 $string['distribution_table'] = 'Distribution Table';
 $string['download_problem_mps_format'] = 'Download Equation (mps/txt)';
 $string['export_choice_text_suffix'] = ' - Text';
 $string['export_choice_alloc_suffix'] = ' - Allocation';
 $string['too_early_to_distribute'] = 'Too early to distribute. Rating is not over yet.';
-$string['algorithm_already_running']='Another instance of the allocation algorithm is already running. Please wait a few minutes and refresh the page.';
-$string['algorithm_scheduled_for_cron']='The allocation algorithm run is scheduled for immediate execution by the cron job. Please wait a few minutes and refresh the page.';
+$string['algorithm_already_running'] =
+        'Another instance of the allocation algorithm is already running. Please wait a few minutes and refresh the page.';
+$string['algorithm_scheduled_for_cron'] =
+        'The allocation algorithm run is scheduled for immediate execution by the cron job. Please wait a few minutes and refresh the page.';
 $string['start_distribution'] = 'Run Allocation Algorithm';
-$string['confirm_start_distribution'] = 'Running the algorithm will delete all existing allocations, if any. Are you sure to continue?';
+$string['confirm_start_distribution'] =
+        'Running the algorithm will delete all existing allocations, if any. Are you sure to continue?';
 $string['unassigned_users'] = 'Unassigned Users';
 $string['invalid_dates'] = 'Dates are invalid. Starting date must be before ending date.';
 $string['invalid_publishdate'] = 'Publication date is invalid. Publication date must be after the end of rating.';
@@ -121,9 +126,12 @@ $string['last_algorithm_run_status_1'] = 'Running';
 $string['last_algorithm_run_status_2'] = 'Successful';
 
 $string['modify_allocation_group'] = 'Modify Allocation';
-$string['modify_allocation_group_desc_too_early'] = 'The rating phase has not yet started. You can start the allocation process after the rating phase has ended.';
-$string['modify_allocation_group_desc_rating_in_progress'] = 'The rating phase is currently running. You can start the allocation process after the rating phase has ended.';
-$string['modify_allocation_group_desc_ready'] = 'The rating phase has ended. You can now run the algorithm for an automatic allocation.';
+$string['modify_allocation_group_desc_too_early'] =
+        'The rating phase has not yet started. You can start the allocation process after the rating phase has ended.';
+$string['modify_allocation_group_desc_rating_in_progress'] =
+        'The rating phase is currently running. You can start the allocation process after the rating phase has ended.';
+$string['modify_allocation_group_desc_ready'] =
+        'The rating phase has ended. You can now run the algorithm for an automatic allocation.';
 $string['modify_allocation_group_desc_ready_alloc_started'] = 'The rating phase has ended. Some allocations have already been created.
 Rerunning the algorithm will delete all current allocations.
 You can now modify the allocations manually or proceed to publishing the allocations.';
@@ -131,8 +139,10 @@ $string['modify_allocation_group_desc_published'] = 'The allocations have been p
 You should only alter them with care.
 If you do so, please inform the students about the changes manually!';
 $string['publish_allocation_group'] = 'Publish Allocation';
-$string['publish_allocation_group_desc_too_early'] = 'The rating phase has not started yet. Please wait till the rating phase has ended and then start to create allocations, first.';
-$string['publish_allocation_group_desc_rating_in_progress'] = 'The rating phase is in progress. Please wait till the rating phase has ended and then start to create allocations, first.';
+$string['publish_allocation_group_desc_too_early'] =
+        'The rating phase has not started yet. Please wait till the rating phase has ended and then start to create allocations, first.';
+$string['publish_allocation_group_desc_rating_in_progress'] =
+        'The rating phase is in progress. Please wait till the rating phase has ended and then start to create allocations, first.';
 $string['publish_allocation_group_desc_ready'] = 'There are no allocations yet. Please see the modify allocation section.';
 $string['publish_allocation_group_desc_ready_alloc_started'] = 'The allocations can now be published.
 After publishing the allocations they can no longer be altered.
@@ -183,10 +193,14 @@ $string['modify_choices_group'] = 'Choices';
 $string['modify_choices'] = 'Edit Choices';
 $string['modify_choices_explanation'] = 'Shows the list of all choices. Here, the choices can be hidden, altered and deleted.';
 $string['modify_choices_group_desc_too_early'] = 'Here, the choices can be specified, which should be available to the students.';
-$string['modify_choices_group_desc_rating_in_progress'] = 'The rating is in progress, you should not change the set of available choices in this step.';
-$string['modify_choices_group_desc_ready'] = 'The rating phase is over, you can now modify the amount of students of each choice or deactivate some choices to variate the outcome of the distribution.';
-$string['modify_choices_group_desc_ready_alloc_started'] = 'The rating phase is over, you can now modify the amount of students of each choice or deactivate some choices to variate the outcome of the distribution.';
-$string['modify_choices_group_desc_published'] = 'The allocations have been published, it is no longer recommended to alter the choices.';
+$string['modify_choices_group_desc_rating_in_progress'] =
+        'The rating is in progress, you should not change the set of available choices in this step.';
+$string['modify_choices_group_desc_ready'] =
+        'The rating phase is over, you can now modify the amount of students of each choice or deactivate some choices to variate the outcome of the distribution.';
+$string['modify_choices_group_desc_ready_alloc_started'] =
+        'The rating phase is over, you can now modify the amount of students of each choice or deactivate some choices to variate the outcome of the distribution.';
+$string['modify_choices_group_desc_published'] =
+        'The allocations have been published, it is no longer recommended to alter the choices.';
 $string['err_positivnumber'] = 'You must supply a positive number here.';
 $string['saveandnext'] = 'Save and add next';
 $string['choice_added_notification'] = 'Choice saved.';
@@ -237,7 +251,8 @@ $string['newchoicetitle'] = 'New choice {$a}';
 $string['deletechoice'] = 'Delete choice';
 $string['publishdate'] = 'Estimated publication date';
 $string['runalgorithmbycron'] = 'Automatic allocation after rating period';
-$string['runalgorithmbycron_help'] = 'Automatically runs the allocation algorithm after the rating period ended. However, the results have to be published manually.';
+$string['runalgorithmbycron_help'] =
+        'Automatically runs the allocation algorithm after the rating period ended. However, the results have to be published manually.';
 $string['select_strategy'] = 'Rating strategy';
 $string['select_strategy_help'] = 'Choose a rating strategy:
 
@@ -298,11 +313,11 @@ $string['strategy_lickert_setting_maxlickert'] = 'Highest number on the likert s
 $string['strategy_lickert_rating_biggestwish'] = '{$a} - Highly appreciated';
 $string['strategy_lickert_rating_exclude'] = '{$a} - Exclude';
 
-
 // Specific to Strategy04, Points
 $string['strategy_points_name'] = 'Give Points';
 $string['strategy_points_setting_maxzero'] = 'Maximum number of choices to which the user can give 0 points';
-$string['strategy_points_explain_distribute_points'] = 'Give points to each choice, you have a total of {$a} points to distribute. Prioritize the best choice by giving the most points.';
+$string['strategy_points_explain_distribute_points'] =
+        'Give points to each choice, you have a total of {$a} points to distribute. Prioritize the best choice by giving the most points.';
 $string['strategy_points_explain_max_zero'] = 'You may only assign 0 points to at most {$a} choice(s).';
 $string['strategy_points_incorrect_totalpoints'] = 'Incorrect total number of points. The sum of all points has to be {$a}.';
 $string['strategy_points_setting_totalpoints'] = 'Total number of points the user can assign';
@@ -313,8 +328,10 @@ $string['strategy_points_illegal_entry'] = 'The points that you assign to a choi
 $string['strategy_order_name'] = 'Rank Choices';
 $string['strategy_order_no_choice'] = '{$a}. Choice';
 $string['strategy_order_use_only_once'] = 'Choices cannot be selected twice and must be unique.';
-$string['strategy_order_explain_choices'] = 'Select one choice in each select-box. The first choice receives the highest priority, and so on.';
-$string['strategy_order_setting_countoptions'] = 'Minimum number of fields the user has to vote on (smaller than or equal to the number of choices!)';
+$string['strategy_order_explain_choices'] =
+        'Select one choice in each select-box. The first choice receives the highest priority, and so on.';
+$string['strategy_order_setting_countoptions'] =
+        'Minimum number of fields the user has to vote on (smaller than or equal to the number of choices!)';
 $string['strategy_order_header_description'] = 'Available Choices';
 $string['strategy_order_choice_none'] = 'Please select a choice';
 
@@ -329,44 +346,54 @@ $string['strategy_tickyes_explain_mintickyes'] = 'You have to tick a minimum of 
 // As message provider, for the notification after allocation
 $string['messageprovider:notifyalloc'] = 'Notification of option allocation';
 $string['allocation_notification_message_subject'] = 'Allocation published for {$a}';
-$string['allocation_notification_message'] = 'Concerning the "{$a->ratingallocate}", you have been assigned to the choice "{$a->choice} ({$a->explanation})".';
+$string['allocation_notification_message'] =
+        'Concerning the "{$a->ratingallocate}", you have been assigned to the choice "{$a->choice} ({$a->explanation})".';
 $string['no_allocation_notification_message'] = 'Concerning the "{$a->ratingallocate}", you could not be assigned to any choice.';
 $string['messageprovider:allocation'] = 'Notification about published allocation';
 
 // Logging
 $string['log_rating_saved'] = 'User rating saved';
-$string['log_rating_saved_description'] =  'The user with id "{$a->userid}" saved his rating for the Fair Allocation with id "{$a->ratingallocateid}".';
+$string['log_rating_saved_description'] =
+        'The user with id "{$a->userid}" saved his rating for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_rating_deleted'] = 'User rating deleted';
-$string['log_rating_deleted_description'] =  'The user with id "{$a->userid}" deleted his rating for the Fair Allocation with id "{$a->ratingallocateid}".';
+$string['log_rating_deleted_description'] =
+        'The user with id "{$a->userid}" deleted his rating for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_rating_viewed'] = 'User rating viewed';
-$string['log_rating_viewed_description'] =  'The user with id "{$a->userid}" viewed his rating for the Fair Allocation with id "{$a->ratingallocateid}".';
+$string['log_rating_viewed_description'] =
+        'The user with id "{$a->userid}" viewed his rating for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_allocation_published'] = 'Allocation published';
-$string['log_allocation_published_description'] =  'The user with id "{$a->userid}" published the allocation for the Fair Allocation with id "{$a->ratingallocateid}".';
+$string['log_allocation_published_description'] =
+        'The user with id "{$a->userid}" published the allocation for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_distribution_triggered'] = 'Distribution triggered';
-$string['log_distribution_triggered_description'] =  'The user with id "{$a->userid}" triggered the distribution for the Fair Allocation with id "{$a->ratingallocateid}". The algorithm needed {$a->time_needed}sec.';
+$string['log_distribution_triggered_description'] =
+        'The user with id "{$a->userid}" triggered the distribution for the Fair Allocation with id "{$a->ratingallocateid}". The algorithm needed {$a->time_needed}sec.';
 
 $string['log_manual_allocation_saved'] = 'Manual allocation saved';
-$string['log_manual_allocation_saved_description'] =  'The user with id "{$a->userid}" saved a manual allocation for the Fair Allocation with id "{$a->ratingallocateid}".';
+$string['log_manual_allocation_saved_description'] =
+        'The user with id "{$a->userid}" saved a manual allocation for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_ratingallocate_viewed'] = 'Ratingallocate viewed';
-$string['log_ratingallocate_viewed_description'] =  'The user with id "{$a->userid}" viewed the Fair Allocation with id "{$a->ratingallocateid}".';
+$string['log_ratingallocate_viewed_description'] =
+        'The user with id "{$a->userid}" viewed the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_allocation_table_viewed'] = 'Allocation table viewed';
-$string['log_allocation_table_viewed_description'] =  'The user with id "{$a->userid}" viewed the allocation table for the Fair Allocation with id "{$a->ratingallocateid}".';
+$string['log_allocation_table_viewed_description'] =
+        'The user with id "{$a->userid}" viewed the allocation table for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_ratings_and_allocation_table_viewed'] = 'Ratings and allocation table viewed';
-$string['log_ratings_and_allocation_table_viewed_description'] =  'The user with id "{$a->userid}" viewed the ratings and allocation table for the Fair Allocation with id "{$a->ratingallocateid}".';
+$string['log_ratings_and_allocation_table_viewed_description'] =
+        'The user with id "{$a->userid}" viewed the ratings and allocation table for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_allocation_statistics_viewed'] = 'Allocation statistics viewed';
-$string['log_allocation_statistics_viewed_description'] =  'The user with id "{$a->userid}" viewed the allocation statistics for the Fair Allocation with id "{$a->ratingallocateid}".';
+$string['log_allocation_statistics_viewed_description'] =
+        'The user with id "{$a->userid}" viewed the allocation statistics for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['log_index_viewed'] = 'User viewed all instances of Fair Allocation';
-$string['log_index_viewed_description'] =  'The user with id "{$a->userid}" viewed all instances of Fair Allocation in this course.';
-
+$string['log_index_viewed_description'] = 'The user with id "{$a->userid}" viewed all instances of Fair Allocation in this course.';
 
 $string['no_id_or_m_error'] = 'You must specify a course_module ID or an instance ID';
 
@@ -376,13 +403,16 @@ $string['privacy:metadata:ratingallocate_ratings:choiceid'] = 'The ID of the cho
 $string['privacy:metadata:ratingallocate_ratings:userid'] = 'The ID of the user rating this choice';
 $string['privacy:metadata:ratingallocate_ratings:rating'] = 'The rating a user has given to a choice.';
 
-$string['privacy:metadata:ratingallocate_allocations'] = 'Information about the user\'s allocated choices for an activity instance.';
+$string['privacy:metadata:ratingallocate_allocations'] =
+        'Information about the user\'s allocated choices for an activity instance.';
 $string['privacy:metadata:ratingallocate_allocations:userid'] = 'The ID of the user who was allocated to a choice';
-$string['privacy:metadata:ratingallocate_allocations:ratingallocateid'] = 'The ID of the activity instance this allocation belongs to';
+$string['privacy:metadata:ratingallocate_allocations:ratingallocateid'] =
+        'The ID of the activity instance this allocation belongs to';
 $string['privacy:metadata:ratingallocate_allocations:choiceid'] = 'The ID of the choice the user was allocated to';
 
 $string['privacy:metadata:preference:flextable_filter'] = 'Stores the filters that are applied to the allocations table.';
-$string['privacy:metadata:preference:flextable_manual_filter'] = 'Stores the filters that are applied to the manual allocations table.';
+$string['privacy:metadata:preference:flextable_manual_filter'] =
+        'Stores the filters that are applied to the manual allocations table.';
 
 $string['filtertabledesc'] = 'Describes the filters that are applied to the allocation table.';
 $string['filtermanualtabledesc'] = 'Describes the filters that are applied to the table of the manual allocation form.';

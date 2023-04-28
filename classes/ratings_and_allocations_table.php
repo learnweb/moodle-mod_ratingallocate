@@ -19,12 +19,13 @@
  * @copyright  2016 Janek Lasocki-Biczysko <j.lasocki-biczysko@intrallect.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace mod_ratingallocate;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->libdir . '/tablelib.php');
 
 class ratings_and_allocations_table extends \table_sql {
 
@@ -56,14 +57,14 @@ class ratings_and_allocations_table extends \table_sql {
     private $renderer;
 
     public function __construct(\mod_ratingallocate_renderer $renderer, $titles, $ratingallocate,
-                                $action = ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE, $uniqueid = 'mod_ratingallocate_table', $downloadable = true) {
+            $action = ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE, $uniqueid = 'mod_ratingallocate_table', $downloadable = true) {
         parent::__construct($uniqueid);
         global $PAGE;
         $url = $PAGE->url;
         $url->params(array("action" => $action));
         $PAGE->set_url($url);
         $this->renderer = $renderer;
-        $this->titles   = $titles;
+        $this->titles = $titles;
         $this->ratingallocate = $ratingallocate;
         if ($downloadable && has_capability('mod/ratingallocate:export_ratings', $ratingallocate->get_context())) {
             $download = optional_param('download', '', PARAM_ALPHA);
@@ -136,7 +137,7 @@ class ratings_and_allocations_table extends \table_sql {
                 }
             } else {
                 $columns[] = 'fullname';
-                $headers[] = get_string('ratings_table_user', ratingallocate_MOD_NAME);
+                $headers[] = get_string('ratings_table_user', RATINGALLOCATE_MOD_NAME);
             }
         }
 
@@ -145,9 +146,9 @@ class ratings_and_allocations_table extends \table_sql {
             $headers[] = $choicetitle;
             if ($this->is_downloading()) {
                 $columns[] = self::CHOICE_COL . $choiceid . self::EXPORT_CHOICE_TEXT_SUFFIX;
-                $headers[] = $choicetitle . get_string('export_choice_text_suffix', ratingallocate_MOD_NAME);
+                $headers[] = $choicetitle . get_string('export_choice_text_suffix', RATINGALLOCATE_MOD_NAME);
                 $columns[] = self::CHOICE_COL . $choiceid . self::EXPORT_CHOICE_ALLOC_SUFFIX;
-                $headers[] = $choicetitle . get_string('export_choice_alloc_suffix', ratingallocate_MOD_NAME);
+                $headers[] = $choicetitle . get_string('export_choice_alloc_suffix', RATINGALLOCATE_MOD_NAME);
             }
         }
 
@@ -172,7 +173,7 @@ class ratings_and_allocations_table extends \table_sql {
     /**
      * Should be called after setup_choices
      *
-     * @param array $ratings     an array of ratings -- the data for this table
+     * @param array $ratings an array of ratings -- the data for this table
      * @param array $allocations an array of allocations
      * @param bool $writeable if true the cells are rendered as radio buttons
      */
@@ -202,8 +203,8 @@ class ratings_and_allocations_table extends \table_sql {
 
         // Add rating rows for each user.
         foreach ($users as $user) {
-            $userratings        = isset($ratingsbyuser[$user->id]) ? $ratingsbyuser[$user->id] : array();
-            $userallocations    = isset($allocationsbyuser[$user->id]) ? $allocationsbyuser[$user->id] : array();
+            $userratings = isset($ratingsbyuser[$user->id]) ? $ratingsbyuser[$user->id] : array();
+            $userallocations = isset($allocationsbyuser[$user->id]) ? $allocationsbyuser[$user->id] : array();
             $this->add_user_ratings_row($user, $userratings, $userallocations);
         }
 
@@ -232,8 +233,8 @@ class ratings_and_allocations_table extends \table_sql {
 
         foreach ($userratings as $choiceid => $userrating) {
             $row[self::CHOICE_COL . $choiceid] = array(
-                'rating' => $userrating,
-                'hasallocation' => false // May be overridden later.
+                    'rating' => $userrating,
+                    'hasallocation' => false // May be overridden later.
             );
         }
 
@@ -249,8 +250,8 @@ class ratings_and_allocations_table extends \table_sql {
             if (!isset($row[$rowkey])) {
                 // User has not rated this choice, but it was assigned to him/her.
                 $row[$rowkey] = array(
-                    'rating' => null,
-                    'hasallocation' => true
+                        'rating' => null,
+                        'hasallocation' => true
                 );
             } else {
                 // User has rated this choice.
@@ -269,14 +270,14 @@ class ratings_and_allocations_table extends \table_sql {
         $row = array();
 
         if ($this->shownames) {
-            $row[] = get_string('ratings_table_sum_allocations', ratingallocate_MOD_NAME);
+            $row[] = get_string('ratings_table_sum_allocations', RATINGALLOCATE_MOD_NAME);
         }
 
         foreach ($this->choicesum as $choiceid => $sum) {
             $row[] = get_string(
-                'ratings_table_sum_allocations_value',
-                ratingallocate_MOD_NAME,
-                array('sum' => $sum, 'max' => $this->choicemax[$choiceid])
+                    'ratings_table_sum_allocations_value',
+                    RATINGALLOCATE_MOD_NAME,
+                    array('sum' => $sum, 'max' => $this->choicemax[$choiceid])
             );
         }
 
@@ -314,7 +315,7 @@ class ratings_and_allocations_table extends \table_sql {
             if ($celldata['rating'] != null) {
                 $ratingtext = $this->titles[$celldata['rating']];
             } else {
-                $ratingtext = get_string('no_rating_given', ratingallocate_MOD_NAME);
+                $ratingtext = get_string('no_rating_given', RATINGALLOCATE_MOD_NAME);
             }
             $hasallocation = $celldata['hasallocation'] ? 'checked' : '';
             $ratingclass = $celldata['hasallocation'] ? 'ratingallocate_member' : '';
@@ -334,10 +335,10 @@ class ratings_and_allocations_table extends \table_sql {
             }
 
             return $this->render_cell($row->id, substr($column, 7),
-                $ratingtext, $hasallocation, $ratingclass);
+                    $ratingtext, $hasallocation, $ratingclass);
         } else {
 
-            $ratingtext = get_string('no_rating_given', ratingallocate_MOD_NAME);
+            $ratingtext = get_string('no_rating_given', RATINGALLOCATE_MOD_NAME);
 
             if ($this->is_downloading()) {
                 if ($suffix === self::EXPORT_CHOICE_TEXT_SUFFIX) {
@@ -369,15 +370,15 @@ class ratings_and_allocations_table extends \table_sql {
         if ($this->writeable) {
             $result = \html_writer::start_span();
             $result .= \html_writer::tag('input', '',
-                array('class' => 'ratingallocate_checkbox_label',
-                    'type' => 'radio',
-                    'name' => 'allocdata[' . $userid . ']',
-                    'id' => 'user_' . $userid . '_alloc_' . $choiceid,
-                    'value' => $choiceid,
-                     $checked => ''));
+                    array('class' => 'ratingallocate_checkbox_label',
+                            'type' => 'radio',
+                            'name' => 'allocdata[' . $userid . ']',
+                            'id' => 'user_' . $userid . '_alloc_' . $choiceid,
+                            'value' => $choiceid,
+                            $checked => ''));
             $result .= \html_writer::label(
-                \html_writer::span('', 'ratingallocate_checkbox') . $text,
-                'user_' . $userid . '_alloc_' . $choiceid
+                    \html_writer::span('', 'ratingallocate_checkbox') . $text,
+                    'user_' . $userid . '_alloc_' . $choiceid
             );
             return $result;
         } else {
@@ -395,11 +396,11 @@ class ratings_and_allocations_table extends \table_sql {
             echo \html_writer::start_span();
             foreach ($users as $user) {
                 echo \html_writer::tag('input', '',
-                    array(
-                        'name' => 'userdata[' . $user->id . ']',
-                        'value' => $user->id,
-                        'type' => 'hidden',
-                    ));
+                        array(
+                                'name' => 'userdata[' . $user->id . ']',
+                                'value' => $user->id,
+                                'type' => 'hidden',
+                        ));
             }
             echo \html_writer::end_span();
         }
@@ -418,12 +419,12 @@ class ratings_and_allocations_table extends \table_sql {
      */
     private function setup_filter($hidenorating = null, $showallocnecessary = null) {
         // Get the filter settings.
-        $filter = json_decode(get_user_preferences('flextable_'.$this->uniqueid.'_filter'), true);
+        $filter = json_decode(get_user_preferences('flextable_' . $this->uniqueid . '_filter'), true);
 
         if (!$filter) {
             $filter = array(
-                'hidenorating' => $this->hidenorating,
-                'showallocnecessary' => $this->showallocnecessary,
+                    'hidenorating' => $this->hidenorating,
+                    'showallocnecessary' => $this->showallocnecessary,
             );
         }
         if (!is_null($hidenorating)) {
@@ -432,7 +433,7 @@ class ratings_and_allocations_table extends \table_sql {
         if (!is_null($showallocnecessary)) {
             $filter['showallocnecessary'] = $showallocnecessary;
         }
-        set_user_preference('flextable_'.$this->uniqueid.'_filter', json_encode($filter));
+        set_user_preference('flextable_' . $this->uniqueid . '_filter', json_encode($filter));
         $this->hidenorating = $filter['hidenorating'];
         $this->showallocnecessary = $filter['showallocnecessary'];
     }
@@ -443,8 +444,8 @@ class ratings_and_allocations_table extends \table_sql {
      */
     public function get_filter() {
         $filter = array(
-            'hidenorating' => $this->hidenorating,
-            'showallocnecessary' => $this->showallocnecessary,
+                'hidenorating' => $this->hidenorating,
+                'showallocnecessary' => $this->showallocnecessary,
         );
         return $filter;
     }
@@ -465,29 +466,29 @@ class ratings_and_allocations_table extends \table_sql {
         $sql = "SELECT distinct u.id FROM {user} u ";
         if ($this->hidenorating) {
             $sql .= "JOIN {ratingallocate_ratings} r ON u.id=r.userid " .
-                "JOIN {ratingallocate_choices} c ON r.choiceid = c.id ".
-                "AND c.ratingallocateid = :ratingallocateid ".
-                "AND c.active=1 ";
+                    "JOIN {ratingallocate_choices} c ON r.choiceid = c.id " .
+                    "AND c.ratingallocateid = :ratingallocateid " .
+                    "AND c.active=1 ";
         }
         if ($this->showallocnecessary) {
             $sql .= "LEFT JOIN ({ratingallocate_allocations} a " .
-                "JOIN {ratingallocate_choices} c2 ON c2.id = a.choiceid AND c2.active=1 ".
-                "AND a.ratingallocateid = :ratingallocateid2 )" .
-                "ON u.id=a.userid ".
-                "WHERE a.id is null AND u.id in (".implode(",", $userids).") ";
+                    "JOIN {ratingallocate_choices} c2 ON c2.id = a.choiceid AND c2.active=1 " .
+                    "AND a.ratingallocateid = :ratingallocateid2 )" .
+                    "ON u.id=a.userid " .
+                    "WHERE a.id is null AND u.id in (" . implode(",", $userids) . ") ";
         } else {
-            $sql .= "WHERE u.id in (".implode(",", $userids).") ";
+            $sql .= "WHERE u.id in (" . implode(",", $userids) . ") ";
         }
         return array_map(
-            function($u) {
-                return $u->id;
-            },
-            $DB->get_records_sql($sql,
-                array(
-                    'ratingallocateid' => $this->ratingallocate->ratingallocate->id,
-                    'ratingallocateid2' => $this->ratingallocate->ratingallocate->id
+                function($u) {
+                    return $u->id;
+                },
+                $DB->get_records_sql($sql,
+                        array(
+                                'ratingallocateid' => $this->ratingallocate->ratingallocate->id,
+                                'ratingallocateid2' => $this->ratingallocate->ratingallocate->id
+                        )
                 )
-            )
         );
     }
 
@@ -495,15 +496,16 @@ class ratings_and_allocations_table extends \table_sql {
      * Sets up the sql statement for querying the table data.
      */
     public function init_sql() {
-        $userids = array_map(function($c){return $c->id;
+        $userids = array_map(function($c) {
+            return $c->id;
         },
-            $this->ratingallocate->get_raters_in_course());
+                $this->ratingallocate->get_raters_in_course());
         $userids = $this->filter_userids($userids);
 
         $sortfields = $this->get_sort_columns();
         $fields = "u.*";
         if ($userids) {
-            $where = "u.id in (".implode(",", $userids).")";
+            $where = "u.id in (" . implode(",", $userids) . ")";
         } else {
             $where = "u.id is null";
         }
