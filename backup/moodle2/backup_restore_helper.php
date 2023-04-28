@@ -25,7 +25,7 @@ function get_fields_for_tableclass($class) {
     $class = new ReflectionClass($class);
     $constants = $class->getConstants();
     $keystoremove = array('ID', 'TABLE');
-    foreach($constants as $key => $value) {
+    foreach ($constants as $key => $value) {
         if (count(array_intersect(array($key), $keystoremove)) > 0) {
             unset($constants[$key]);
         }
