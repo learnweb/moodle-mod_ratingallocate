@@ -36,8 +36,11 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
 
         // Define each element separated.
         $class = 'ratingallocate\db\ratingallocate';
-        $ratingallocate = new backup_nested_element(get_tablename_for_tableClass($class), get_id_for_tableClass($class),
-                get_fields_for_tableClass($class));
+        $ratingallocate = new backup_nested_element(
+            get_tablename_for_tableclass($class),
+            get_id_for_tableclass($class),
+            get_fields_for_tableclass($class)
+        );
 
         $class = 'ratingallocate\db\ratingallocate_choices';
         $ratingallocatechoices = new backup_nested_element(get_tablename_for_tableClass($class) . 's');

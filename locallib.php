@@ -523,8 +523,8 @@ class ratingallocate {
                         redirect(new moodle_url('/mod/ratingallocate/view.php',
                             array('id' => $this->coursemodule->id)));
                     }
-                // If the save and continue button was pressed,
-                // redirect to the manual allocation form to refresh the checked radiobuttons.
+                    // If the save and continue button was pressed,
+                    // redirect to the manual allocation form to refresh the checked radiobuttons.
                 } else if (property_exists($data, "submitbutton2")) {
                     if ($notification) {
                         redirect(new moodle_url('/mod/ratingallocate/view.php',
@@ -650,7 +650,7 @@ class ratingallocate {
                         'action' => ACTION_GIVE_RATING)),
                     get_string('edit_rating', ratingallocate_MOD_NAME), 'get');
 
-                $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
+                    $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
                     array('id' => $this->coursemodule->id,
                         'action' => ACTION_DELETE_RATING)),
                     get_string('delete_rating', ratingallocate_MOD_NAME), 'get');
@@ -1127,7 +1127,6 @@ class ratingallocate {
                 array('id' => $this->coursemodule->id));
             $eventdata->contexturlname    = $this->ratingallocate->name;
 
-
             $mailresult = message_send($eventdata);
             if (!$mailresult) {
                 mtrace(
@@ -1233,10 +1232,10 @@ class ratingallocate {
         try {
             foreach ($data as $id => $rdata) {
                 $rating = new stdClass ();
-                $rating->rating = $rdata ['rating'];
+                $rating->rating = $rdata['rating'];
 
                 $ratingexists = array(
-                    'choiceid' => $rdata ['choiceid'],
+                    'choiceid' => $rdata['choiceid'],
                     'userid' => $userid
                 );
                 if ($DB->record_exists('ratingallocate_ratings', $ratingexists)) {
@@ -1256,7 +1255,7 @@ class ratingallocate {
                     // Create a new rating in the table.
 
                     $rating->userid = $userid;
-                    $rating->choiceid = $rdata ['choiceid'];
+                    $rating->choiceid = $rdata['choiceid'];
                     $rating->ratingallocateid = $this->ratingallocateid;
                     $DB->insert_record('ratingallocate_ratings', $rating);
 
@@ -1414,9 +1413,9 @@ class ratingallocate {
             }
 
             // Logging.
-//            $event = \mod_ratingallocate\event\choice_saved::create_simple(
-//                context_course::instance($this->course->id), $this->ratingallocateid, );
-//            $event->trigger();
+            // $event = \mod_ratingallocate\event\choice_saved::create_simple(
+            // context_course::instance($this->course->id), $this->ratingallocateid, );
+            // $event->trigger();
 
             $transaction->allow_commit();
         } catch (Exception $e) {
@@ -1528,13 +1527,13 @@ class ratingallocate {
     public function prepare_horizontal_radio_choice($radioarray, $mform) {
         $result = array();
         // Add static elements to provide a list with choices annotated with css classes.
-        $result [] =& $mform->createElement('static', 'li', null, '<ul class="horizontal choices">');
+        $result[] =& $mform->createElement('static', 'li', null, '<ul class="horizontal choices">');
         foreach ($radioarray as $id => $radio) {
-            $result [] =& $mform->createElement('static', 'static' . $id, null, '<li class="option">');
-            $result [] = $radio;
-            $result [] =& $mform->createElement('static', 'static' . $id, null, '</li>');
+            $result[] =& $mform->createElement('static', 'static' . $id, null, '<li class="option">');
+            $result[] = $radio;
+            $result[] =& $mform->createElement('static', 'static' . $id, null, '</li>');
         }
-        $result [] =& $mform->createElement('static', 'static' , null, '</ul>');
+        $result[] =& $mform->createElement('static', 'static' , null, '</ul>');
 
         return $result;
     }
@@ -1701,8 +1700,8 @@ class ratingallocate {
             $choicecount = count($this->get_rateable_choices());
             $strategyclass = $this->get_strategy_class();
             $strategysettings = $strategyclass->get_static_settingfields();
-            $necessary_choices = $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
-            if ($choicecount < $necessary_choices) {
+            $necessarychoices = $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
+            if ($choicecount < $necessarychoices) {
                 return false;
             }
         }
