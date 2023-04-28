@@ -718,7 +718,8 @@ class ratingallocate {
      *
      * @param string $distributionalgorithm the algorithm which should be applied to search for the next choice
      * @param int $userid the userid of the user for which the next choice should be retrieved
-     * @return int $choiceid id of the choice the given user should be assigned to
+     * @return int id of the choice the given user should be assigned to, returns -1 if no valid choice
+     *  for the user could be found, returns -2 if there are no places left to assign any user
      * @throws dml_exception
      */
     public function get_next_choice_to_assign_user(string $distributionalgorithm, int $userid): int {
@@ -738,6 +739,13 @@ class ratingallocate {
 
         // We have to remove the choices which are already maxed out.
         $placesleft = array_filter($placesleft, fn($numberoffreeplaces) => $numberoffreeplaces != 0);
+
+        // Early exit if there are no choices with places left. We return -2 to signal the calling function that
+        // *independently* from the userid (we have not calculated anything userid specific until here) there are no
+        // choices with free places left.
+        if (empty($placesleft)) {
+            return -2;
+        }
 
         // Filter choices the user cannot be assigned to.
         foreach (array_keys($placesleft) as $choiceid) {
@@ -871,8 +879,13 @@ class ratingallocate {
 
             // Calculate the choice to assign the user to depending on the given algorithm.
             $choicetoassign = $this->get_next_choice_to_assign_user($distributionalgorithm, $usertoassign);
-            if ($choicetoassign == -1) {
-                // If the function returns -1 that means that the user could not be assigned, so we try the next one.
+            if ($choicetoassign === -2) {
+                // This means there are no free places left in any choice for any user, so we can stop the algorithm
+                // as a whole.
+                return;
+            } else if ($choicetoassign == -1) {
+                // This means that the user could not be assigned (for example due to group restrictions),
+                // so we try the next one.
                 $usertoassign = array_shift($possibleusers);
                 continue;
             }
