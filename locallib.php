@@ -80,6 +80,7 @@ define('ACTION_GIVE_RATING', 'give_rating');
 define('ACTION_DELETE_RATING', 'delete_rating');
 define('ACTION_SHOW_CHOICES', 'show_choices');
 define('ACTION_EDIT_CHOICE', 'edit_choice');
+define('ACTION_UPLOAD_CHOICES', 'upload_choices');
 define('ACTION_ENABLE_CHOICE', 'enable_choice');
 define('ACTION_DISABLE_CHOICE', 'disable_choice');
 define('ACTION_DELETE_CHOICE', 'delete_choice');
@@ -422,6 +423,65 @@ class ratingallocate {
                 $output .= $OUTPUT->heading(get_string('edit_choice', RATINGALLOCATE_MOD_NAME), 2);
                 $output .= $mform->to_html();
             }
+        }
+        return $output;
+    }
+
+    /**
+     * Upload one or more choices via a CSV file.
+     */
+    private function process_action_upload_choices() {
+        global $DB, $PAGE;
+
+        $output = '';
+        if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
+            global $OUTPUT;
+
+            $url = new moodle_url('/mod/ratingallocate/view.php',
+                array('id' => $this->coursemodule->id,
+                    'ratingallocateid' => $this->ratingallocateid,
+                    'action' => ACTION_UPLOAD_CHOICES,
+                )
+            );
+            $mform = new upload_choices_form($url, $this);
+            $renderer = $this->get_renderer();
+
+            if ($mform->is_submitted() && $data = $mform->get_submitted_data()) {
+                if (!$mform->is_cancelled()) {
+                    if ($mform->is_validated()) {
+                        $content = $mform->get_file_content('uploadfile');
+                        $name = $mform->get_new_filename('uploadfile');
+                        $live = !$data->testimport;  // If testing, importer is not live.
+                        // Properly process the file content.
+                        $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this);
+                        $importstatus = $choiceimporter->import($content, $live);
+
+                        switch ($importstatus->status) {
+                            case \mod_ratingallocate\choice_importer::IMPORT_STATUS_OK:
+                                \core\notification::info($importstatus->status_message);
+                                break;
+                            case \mod_ratingallocate\choice_importer::IMPORT_STATUS_DATA_ERROR:
+                                \core\notification::warning($importstatus->status_message);
+                                $choiceimporter->issue_notifications($importstatus->errors);
+                                break;
+                            case \mod_ratingallocate\choice_importer::IMPORT_STATUS_SETUP_ERROR:
+                            default:
+                                \core\notification::error($importstatus->status_message);
+                                $choiceimporter->issue_notifications($importstatus->errors,
+                                    \core\output\notification::NOTIFY_ERROR);
+                        }
+
+                        redirect(new moodle_url('/mod/ratingallocate/view.php',
+                            array(
+                                'id' => $this->coursemodule->id,
+                                'action' => ACTION_SHOW_CHOICES
+                            )));
+                    }
+                }
+            }
+
+            $output .= $OUTPUT->heading(get_string('upload_choices', 'ratingallocate'), 2);
+            $output .= $mform->to_html();
         }
         return $output;
     }
