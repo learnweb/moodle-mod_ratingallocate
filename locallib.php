@@ -199,24 +199,24 @@ class ratingallocate {
         // Process form: Start distribution and call default page after finishing.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
 
-            if ($this->get_algorithm_status() === \mod_ratingallocate\algorithm_status::running) {
+            if ($this->get_algorithm_status() === \mod_ratingallocate\algorithm_status::RUNNING) {
                 // Don't run, if an instance is already running.
                 redirect(new moodle_url('/mod/ratingallocate/view.php',
                     array('id' => $this->coursemodule->id)),
-                    get_string('algorithm_already_running', ratingallocate_MOD_NAME),
+                    get_string('algorithm_already_running', RATINGALLOCATE_MOD_NAME),
                     null,
                     \core\output\notification::NOTIFY_INFO);
             } else if ($this->ratingallocate->runalgorithmbycron === "1" &&
-                $this->get_algorithm_status() === \mod_ratingallocate\algorithm_status::notstarted
+                $this->get_algorithm_status() === \mod_ratingallocate\algorithm_status::NOTSTARTED
             ) {
                 // Don't run, if the cron has not started yet, but is set as priority.
                 redirect(new moodle_url('/mod/ratingallocate/view.php',
                     array('id' => $this->coursemodule->id)),
-                    get_string('algorithm_scheduled_for_cron', ratingallocate_MOD_NAME),
+                    get_string('algorithm_scheduled_for_cron', RATINGALLOCATE_MOD_NAME),
                     null,
                     \core\output\notification::NOTIFY_INFO);
             } else {
-                $this->origdbrecord->{this_db\ratingallocate::ALGORITHMSTATUS} = \mod_ratingallocate\algorithm_status::running;
+                $this->origdbrecord->{this_db\ratingallocate::ALGORITHMSTATUS} = \mod_ratingallocate\algorithm_status::RUNNING;
                 $DB->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
                 // Try to get some more memory, 500 users in 10 groups take about 15mb.
                 raise_memory_limit(MEMORY_EXTRA);
@@ -230,7 +230,7 @@ class ratingallocate {
                 $event->trigger();
 
                 redirect(new moodle_url($PAGE->url->out()),
-                    get_string('distribution_saved', ratingallocate_MOD_NAME, $timeneeded),
+                    get_string('distribution_saved', RATINGALLOCATE_MOD_NAME, $timeneeded),
                     null,
                     \core\output\notification::NOTIFY_SUCCESS);
             }
@@ -253,7 +253,7 @@ class ratingallocate {
             $status = $this->get_status();
             // If no choice option exists WARN!
             if (!$DB->record_exists('ratingallocate_choices', array('ratingallocateid' => $this->ratingallocateid))) {
-                $renderer->add_notification(get_string('no_choice_to_rate', ratingallocate_MOD_NAME));
+                $renderer->add_notification(get_string('no_choice_to_rate', RATINGALLOCATE_MOD_NAME));
             } else if ($status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
                 // Rating is possible...
 
@@ -271,7 +271,7 @@ class ratingallocate {
                 } else if ($mform->is_submitted() && $mform->is_validated() && $data = $mform->get_data() ) {
                     // Save submitted data and call default page.
                     $this->save_ratings_to_db($USER->id, $data->data);
-                    $renderer->add_notification(get_string('ratings_saved', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
+                    $renderer->add_notification(get_string('ratings_saved', RATINGALLOCATE_MOD_NAME), self::NOTIFY_SUCCESS);
                     return $this->process_default();
                 }
 
@@ -302,11 +302,11 @@ class ratingallocate {
                 // Rating is possible...
 
                 $this->delete_ratings_of_user($USER->id);
-                $renderer->add_notification(get_string('ratings_deleted', ratingallocate_MOD_NAME), self::NOTIFY_SUCCESS);
+                $renderer->add_notification(get_string('ratings_deleted', RATINGALLOCATE_MOD_NAME), self::NOTIFY_SUCCESS);
 
                 redirect(new moodle_url('/mod/ratingallocate/view.php',
                     array('id' => $this->coursemodule->id)),
-                    get_string('ratings_deleted', ratingallocate_MOD_NAME),
+                    get_string('ratings_deleted', RATINGALLOCATE_MOD_NAME),
                     null,
                     \core\output\notification::NOTIFY_SUCCESS);
             }
@@ -331,11 +331,11 @@ class ratingallocate {
                 $necessarychoices = 0;
             }
             if (count($availablechoices) < $necessarychoices) {
-                $renderer->add_notification(get_string('too_few_choices_to_rate', ratingallocate_MOD_NAME, $necessarychoices));
+                $renderer->add_notification(get_string('too_few_choices_to_rate', RATINGALLOCATE_MOD_NAME, $necessarychoices));
             }
 
             echo $renderer->render_header($this->ratingallocate, $this->context, $this->coursemodule->id);
-            echo $OUTPUT->heading(get_string('show_choices_header', ratingallocate_MOD_NAME));
+            echo $OUTPUT->heading(get_string('show_choices_header', RATINGALLOCATE_MOD_NAME));
 
             $renderer->ratingallocate_show_choices_table($this, true);
             echo $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
@@ -389,7 +389,7 @@ class ratingallocate {
 
                         $data = file_postupdate_standard_filemanager($data, 'attachments', $options, $this->context,
                             'mod_ratingallocate', 'choice_attachment', $data->choiceid);
-                        $renderer->add_notification(get_string("choice_added_notification", ratingallocate_MOD_NAME),
+                        $renderer->add_notification(get_string("choice_added_notification", RATINGALLOCATE_MOD_NAME),
                         self::NOTIFY_SUCCESS);
 
                         if ($data->usegroups) {
@@ -397,7 +397,7 @@ class ratingallocate {
                         }
 
                     } else {
-                        $output .= $OUTPUT->heading(get_string('edit_choice', ratingallocate_MOD_NAME), 2);
+                        $output .= $OUTPUT->heading(get_string('edit_choice', RATINGALLOCATE_MOD_NAME), 2);
                         $output .= $mform->to_html();
                         return $output;
                     }
@@ -416,10 +416,10 @@ class ratingallocate {
             } else {
                 $isnext = optional_param('next', false, PARAM_BOOL);
                 if ($isnext) {
-                    $renderer->add_notification(get_string("choice_added_notification", ratingallocate_MOD_NAME),
+                    $renderer->add_notification(get_string("choice_added_notification", RATINGALLOCATE_MOD_NAME),
                         self::NOTIFY_SUCCESS);
                 }
-                $output .= $OUTPUT->heading(get_string('edit_choice', ratingallocate_MOD_NAME), 2);
+                $output .= $OUTPUT->heading(get_string('edit_choice', RATINGALLOCATE_MOD_NAME), 2);
                 $output .= $mform->to_html();
             }
         }
@@ -462,14 +462,14 @@ class ratingallocate {
                     $DB->delete_records(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
                     redirect(new moodle_url('/mod/ratingallocate/view.php',
                         array('id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES)),
-                        get_string('choice_deleted_notification', ratingallocate_MOD_NAME,
+                        get_string('choice_deleted_notification', RATINGALLOCATE_MOD_NAME,
                             $choice->{this_db\ratingallocate_choices::TITLE}),
                         null,
                         \core\output\notification::NOTIFY_SUCCESS);
                 } else {
                     redirect(new moodle_url('/mod/ratingallocate/view.php',
                         array('id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES)),
-                        get_string('choice_deleted_notification_error', ratingallocate_MOD_NAME),
+                        get_string('choice_deleted_notification_error', RATINGALLOCATE_MOD_NAME),
                         null,
                         \core\output\notification::NOTIFY_ERROR);
                 }
@@ -496,16 +496,16 @@ class ratingallocate {
                     $status = $this->get_status();
                     if ($status === self::DISTRIBUTION_STATUS_TOO_EARLY ||
                         $status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
-                        $notification = get_string('modify_allocation_group_desc_'.$status, ratingallocate_MOD_NAME);
+                        $notification = get_string('modify_allocation_group_desc_'.$status, RATINGALLOCATE_MOD_NAME);
                         $notificationtype = \core\output\notification::NOTIFY_WARNING;
                     } else {
                         $allocationdata = optional_param_array('allocdata', array(), PARAM_INT);
                         if ($userdata = optional_param_array('userdata', null, PARAM_INT)) {
                             $this->save_manual_allocation_form($allocationdata, $userdata);
-                            $notification = get_string('manual_allocation_saved', ratingallocate_MOD_NAME);
+                            $notification = get_string('manual_allocation_saved', RATINGALLOCATE_MOD_NAME);
                             $notificationtype = \core\output\notification::NOTIFY_SUCCESS;
                         } else {
-                            $notification = get_string('manual_allocation_nothing_to_be_saved', ratingallocate_MOD_NAME);
+                            $notification = get_string('manual_allocation_nothing_to_be_saved', RATINGALLOCATE_MOD_NAME);
                             $notificationtype = \core\output\notification::NOTIFY_INFO;
                         }
                     }
@@ -536,7 +536,7 @@ class ratingallocate {
                     }
                 }
             }
-            $output .= $OUTPUT->heading(get_string('manual_allocation', ratingallocate_MOD_NAME), 2);
+            $output .= $OUTPUT->heading(get_string('manual_allocation', RATINGALLOCATE_MOD_NAME), 2);
 
             $output .= $mform->to_html();
             $this->showinfo = false;
@@ -617,7 +617,7 @@ class ratingallocate {
 
             redirect(new moodle_url('/mod/ratingallocate/view.php',
                 array('id' => $this->coursemodule->id)),
-                get_string('distribution_published', ratingallocate_MOD_NAME),
+                get_string('distribution_published', RATINGALLOCATE_MOD_NAME),
                 null,
                 \core\output\notification::NOTIFY_SUCCESS);
         }
@@ -631,7 +631,7 @@ class ratingallocate {
 
         redirect(new moodle_url('/mod/ratingallocate/view.php',
             array('id' => $this->coursemodule->id)),
-            get_string('moodlegroups_created', ratingallocate_MOD_NAME),
+            get_string('moodlegroups_created', RATINGALLOCATE_MOD_NAME),
             null,
             \core\output\notification::NOTIFY_SUCCESS);
     }
@@ -648,14 +648,14 @@ class ratingallocate {
                     $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
                     array('id' => $this->coursemodule->id,
                         'action' => ACTION_GIVE_RATING)),
-                    get_string('edit_rating', ratingallocate_MOD_NAME), 'get');
+                    get_string('edit_rating', RATINGALLOCATE_MOD_NAME), 'get');
 
                     $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
                     array('id' => $this->coursemodule->id,
                         'action' => ACTION_DELETE_RATING)),
-                    get_string('delete_rating', ratingallocate_MOD_NAME), 'get');
+                    get_string('delete_rating', RATINGALLOCATE_MOD_NAME), 'get');
                 } else {
-                    $renderer->add_notification(get_string('no_rating_possible', ratingallocate_MOD_NAME));
+                    $renderer->add_notification(get_string('no_rating_possible', RATINGALLOCATE_MOD_NAME));
                 }
             }
         }
@@ -851,7 +851,7 @@ class ratingallocate {
         require_capability('mod/ratingallocate:start_distribution', $this->context);
 
         // Set algorithm status to running.
-        $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::running;
+        $this->origdbrecord->algorithmstatus = \MOD_RATINGALLOCATE\algorithm_status::RUNNING;
         $this->origdbrecord->algorithmstarttime = time();
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
 
@@ -863,7 +863,7 @@ class ratingallocate {
         // echo memory_get_peak_usage();
 
         // Set algorithm status to finished.
-        $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::finished;
+        $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::FINISHED;
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
 
         return $timeneeded;
@@ -993,7 +993,7 @@ class ratingallocate {
      * Call this function when the algorithm failed and the algorithm status has to be set to failed.
      */
     public function set_algorithm_failed() {
-        $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::failure;
+        $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::FAILURE;
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
     }
 
