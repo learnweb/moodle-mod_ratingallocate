@@ -1000,7 +1000,7 @@ class ratingallocate {
             $groupingidentries = array_keys($groupingids);
             $groupingid = $groupingidentries[0];
             // There should only be one entry in groupingids.
-            if (count($groupingidentries) > 0) {
+            if (count($groupingidentries) > 1) {
                 throw new dml_exception('Multiple groupings for this allocation in Database');
             }
 
@@ -1025,7 +1025,7 @@ class ratingallocate {
                     $keyid = $groupidentries[0];
 
                     // There should only be one entry in the table with this choiceid.
-                    if (count($groupidentries) > 0) {
+                    if (count($groupidentries) > 1) {
                         throw new dml_exception('Multiple groups per choice '. $choice->title .' in the Database');
                     }
                     $groupid = $groupids[$keyid]->groupid;
@@ -1072,7 +1072,7 @@ class ratingallocate {
             $keyid = $groupidentries[0];
 
             // There should only be one entry in the table with this choiceid.
-            if (count($groupidentries) > 0) {
+            if (count($groupidentries) > 1) {
                 throw new dml_exception('Multiple groups per choice in the Database');
             }
             $groupid = $groupids[$keyid]->groupid;
