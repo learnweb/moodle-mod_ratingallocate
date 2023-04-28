@@ -71,7 +71,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         // Adding the standard "name" field.
         $mform->addElement('text', 'name', get_string('ratingallocatename', self::MOD_NAME), array(
-                'size' => '64'
+            'size' => '64'
         ));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
@@ -115,7 +115,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->setDefault($elementname, 1);
 
         $headerid = 'strategy_fieldset';
-        $mform->addElement('header', $headerid, get_string('strategyspecificoptions', RATINGALLOCATE_MOD_NAME));
+        $mform->addElement('header', $headerid, get_string('strategyspecificoptions', ratingallocate_MOD_NAME));
         $mform->setExpanded($headerid);
 
         foreach (\strategymanager::get_strategies() as $strategy) {
@@ -129,7 +129,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                 $fieldid = $this->get_settingsfield_identifier($strategy, $key);
                 $this->add_settings_field($fieldid, $value, $strategy, $mform);
             }
-            $mform->addElement('static', self::STRATEGY_OPTIONS_PLACEHOLDER . '[' . $strategy . ']', '', '');
+            $mform->addElement('static', self::STRATEGY_OPTIONS_PLACEHOLDER.'[' . $strategy . ']', '', '');
         }
 
         // Add standard elements, common to all modules.
@@ -142,7 +142,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     /**
      * Add an settings element to the form. It is enabled only if the strategy it belongs to is selected.
      * @param string $stratfieldid id of the element to be added
-     * @param array $value array with the element type and its caption
+     * @param array $value array with the element type and its caption 
      *        (usually returned by the strategys get settingsfields methods).
      * @param string $strategyid id of the strategy it belongs to.
      * @param $mform MoodleQuickForm form object the settings field should be added to.
@@ -175,7 +175,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     // Override if you need to setup the form depending on current values.
     public function definition_after_data() {
         parent::definition_after_data();
-        $mform = &$this->_form;
+        $mform = & $this->_form;
 
         $data = $this->current;
 
@@ -202,15 +202,15 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                 $fieldid = $this->get_settingsfield_identifier($strategy, $key);
                 $this->add_settings_field($fieldid, $value, $strategy, $mform);
                 $mform->insertElementBefore($mform->removeElement($fieldid, false),
-                        $strategyplaceholder);
+                    $strategyplaceholder);
             }
             // If any dynamic field is present, add a no submit button to refresh the page.
             if (count($dynamicsettingsfields) > 0) {
-                $buttonname = self::STRATEGY_OPTIONS . $strategy . 'refresh';
+                $buttonname = self::STRATEGY_OPTIONS.$strategy.'refresh';
                 $mform->registerNoSubmitButton($buttonname);
                 $mform->addElement('submit', $buttonname, get_string('refresh'));
                 $mform->insertElementBefore($mform->removeElement($buttonname, false),
-                        $strategyplaceholder);
+                    $strategyplaceholder);
                 $mform->hideIf($buttonname, 'strategy', 'neq', $strategy);
 
             }
@@ -247,7 +247,6 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         }
         return $errors;
     }
-
     /**
      * Returns a valid identifier for a settings field
      * @param $strategy identifier of the strategy

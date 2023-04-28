@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,18 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 require_once(dirname(__FILE__) . '/backup_restore_helper.php');
-
 use ratingallocate\db as this_db;
+/**
+ * @package moodlecore
+ * @subpackage backup-moodle2
+ * @copyright  2014 C. Usener
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 /**
  * Define the complete ratingallocate structure for backup, with [file and] id annotations
- *
- * @package   mod_ratingallocate
- * @copyright 2014 C. Usener
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_ratingallocate_activity_structure_step extends backup_activity_structure_step {
 
@@ -36,8 +36,11 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
 
         // Define each element separated
         $class = 'ratingallocate\db\ratingallocate';
-        $ratingallocate = new backup_nested_element(get_tablename_for_tableClass($class), get_id_for_tableClass($class),
-                get_fields_for_tableClass($class));
+        $ratingallocate = new backup_nested_element(
+            get_tablename_for_tableClass($class),
+            get_id_for_tableClass($class),
+            get_fields_for_tableClass($class)
+        );
 
         $class = 'ratingallocate\db\ratingallocate_choices';
         $ratingallocatechoices = new backup_nested_element(get_tablename_for_tableClass($class) . 's');
@@ -57,8 +60,8 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
         $groupchoiceclass = 'ratingallocate\db\ratingallocate_group_choices';
         $groupchoices = new backup_nested_element(get_tablename_for_tableClass($groupchoiceclass) . 's');
         $groupchoice = new backup_nested_element(get_tablename_for_tableClass($groupchoiceclass),
-            get_id_for_tableClass($groupchoiceclass),
-            get_fields_for_tableClass($groupchoiceclass));
+                                                 get_id_for_tableClass($groupchoiceclass),
+                                                 get_fields_for_tableClass($groupchoiceclass));
 
         $choicegroupclass = 'ratingallocate\db\ratingallocate_choice_groups';
         $ratingallocatechoicegroups = new backup_nested_element(get_tablename_for_tableClass($choicegroupclass) . 's');
@@ -80,11 +83,11 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
         $ratingallocate->add_child($ratingallocategroupings);
         $ratingallocategroupings->add_child($ratingallocategrouping);
 
-        $ratingallocatechoice->add_child($ratingallocateratings);
-        $ratingallocateratings->add_child($ratingallocaterating);
-
         $ratingallocatechoice->add_child($ratingallocateallocations);
         $ratingallocateallocations->add_child($ratingallocateallocation);
+
+        $ratingallocatechoice->add_child($ratingallocateratings);
+        $ratingallocateratings->add_child($ratingallocaterating);
 
         $ratingallocatechoice->add_child($groupchoices);
         $groupchoices->add_child($groupchoice);
