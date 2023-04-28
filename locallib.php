@@ -977,10 +977,8 @@ class ratingallocate {
         //$groupingid = null;
 
         // Search if there is already a grouping from us.
-        if (!$groupingids = $this->db->get_records_select(this_db\ratingallocate_groupings::TABLE,
-            "ratingallocateid=$this->ratingallocateid",
-            null,
-            '',
+        if (!$groupingids = $this->db->get_record(this_db\ratingallocate_groupings::TABLE,
+            array('ratingallocateid' => $this->ratingallocateid),
             'groupingid')) {
             // Create grouping.
             $data = new stdClass();
@@ -996,14 +994,7 @@ class ratingallocate {
 
         } else {
             // If there is already a grouping for this allocation assign the corresponing id to groupingid.
-            // The key of the array $groupingids is the groupingid of this grouping.
-            $groupingidentries = array_keys($groupingids);
-            $groupingid = $groupingidentries[0];
-            // There should only be one entry in groupingids.
-            if (count($groupingidentries) > 1) {
-                throw new dml_exception('Multiple groupings for this allocation in Database');
-            }
-
+            $groupingid = $groupingids->groupingid;
         }
 
         $choices = $this->get_choices_with_allocationcount();
@@ -1014,21 +1005,12 @@ class ratingallocate {
                     ['id' => $choice->id])) {
 
                 // Checks if there is already a group for this choice.
-                if ($groupids = $this->db->get_records_select(this_db\ratingallocate_choice_groups::TABLE,
-                    "choiceid=$choice->id",
-                    null,
-                    '',
-                    'id, groupid')) {
 
-                    // Get the correct key to acces the groupid in the array $groupids.
-                    $groupidentries = array_keys($groupids);
-                    $keyid = $groupidentries[0];
+                if ($groupids = $this->db->get_record(this_db\ratingallocate_choice_groups::TABLE,
+                    array('choiceid' => $choice->id),
+                    'groupid')) {
 
-                    // There should only be one entry in the table with this choiceid.
-                    if (count($groupidentries) > 1) {
-                        throw new dml_exception('Multiple groups per choice '. $choice->title .' in the Database');
-                    }
-                    $groupid = $groupids[$keyid]->groupid;
+                    $groupid = $groupids->groupid;
                     $group = groups_get_group($groupid);
 
                     // Delete all the members from the existing group for this choice.
@@ -1061,26 +1043,14 @@ class ratingallocate {
             $userid = $allocation->userid;
 
             // Get the group corresponding to the choiceid.
-            $groupids = $this->db->get_records_select(this_db\ratingallocate_choice_groups::TABLE,
-                "choiceid=$choiceid",
-                null,
-                '',
-                'id, groupid');
-
-            // Get the correct key to acces the groupid in the array $groupids.
-            $groupidentries = array_keys($groupids);
-            $keyid = $groupidentries[0];
-
-            // There should only be one entry in the table with this choiceid.
-            if (count($groupidentries) > 1) {
-                throw new dml_exception('Multiple groups per choice in the Database');
-            }
-            $groupid = $groupids[$keyid]->groupid;
+            $groupids = $this->db->get_record(this_db\ratingallocate_choice_groups::TABLE,
+                array('choiceid' => $choiceid),
+                'groupid');
+            $groupid = $groupids->groupid;
             $group = groups_get_group($groupid);
             if ($group) {
                 groups_add_member($group, $userid);
             }
-
         }
         // Invalidate the grouping cache for the course.
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($this->course->id));
