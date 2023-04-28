@@ -37,44 +37,43 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
         // Define each element separated
         $class = 'ratingallocate\db\ratingallocate';
         $ratingallocate = new backup_nested_element(
-            get_tablename_for_tableClass($class),
-            get_id_for_tableClass($class),
-            get_fields_for_tableClass($class)
+            get_tablename_for_tableclass($class),
+            get_id_for_tableclass($class),
+            get_fields_for_tableclass($class)
         );
 
         $class = 'ratingallocate\db\ratingallocate_choices';
-        $ratingallocatechoices = new backup_nested_element(get_tablename_for_tableClass($class) . 's');
-        $ratingallocatechoice = new backup_nested_element(get_tablename_for_tableClass($class), get_id_for_tableClass($class),
-                get_fields_for_tableClass($class));
+        $ratingallocatechoices = new backup_nested_element(get_tablename_for_tableclass($class) . 's');
+        $ratingallocatechoice = new backup_nested_element(get_tablename_for_tableclass($class), get_id_for_tableclass($class),
+                get_fields_for_tableclass($class));
 
         $class = 'ratingallocate\db\ratingallocate_ratings';
-        $ratingallocateratings = new backup_nested_element(get_tablename_for_tableClass($class) . 's');
-        $ratingallocaterating = new backup_nested_element(get_tablename_for_tableClass($class), get_id_for_tableClass($class),
-                get_fields_for_tableClass($class));
+        $ratingallocateratings = new backup_nested_element(get_tablename_for_tableclass($class) . 's');
+        $ratingallocaterating = new backup_nested_element(get_tablename_for_tableclass($class), get_id_for_tableclass($class),
+                get_fields_for_tableclass($class));
 
         $class = 'ratingallocate\db\ratingallocate_allocations';
-        $ratingallocateallocations = new backup_nested_element(get_tablename_for_tableClass($class) . 's');
-        $ratingallocateallocation = new backup_nested_element(get_tablename_for_tableClass($class), get_id_for_tableClass($class),
-                get_fields_for_tableClass($class));
+        $ratingallocateallocations = new backup_nested_element(get_tablename_for_tableclass($class) . 's');
+        $ratingallocateallocation = new backup_nested_element(get_tablename_for_tableclass($class), get_id_for_tableclass($class),
+                get_fields_for_tableclass($class));
 
         $groupchoiceclass = 'ratingallocate\db\ratingallocate_group_choices';
-        $groupchoices = new backup_nested_element(get_tablename_for_tableClass($groupchoiceclass) . 's');
-        $groupchoice = new backup_nested_element(get_tablename_for_tableClass($groupchoiceclass),
-                                                 get_id_for_tableClass($groupchoiceclass),
-                                                 get_fields_for_tableClass($groupchoiceclass));
+        $groupchoices = new backup_nested_element(get_tablename_for_tableclass($groupchoiceclass) . 's');
+        $groupchoice = new backup_nested_element(get_tablename_for_tableclass($groupchoiceclass),
+                                                 get_id_for_tableclass($groupchoiceclass),
+                                                 get_fields_for_tableclass($groupchoiceclass));
 
         $choicegroupclass = 'ratingallocate\db\ratingallocate_choice_groups';
-        $ratingallocatechoicegroups = new backup_nested_element(get_tablename_for_tableClass($choicegroupclass) . 's');
-        $ratingallocatechoicegroup = new backup_nested_element(get_tablename_for_tableClass($choicegroupclass),
-                                                 get_id_for_tableClass($choicegroupclass),
-                                                 get_fields_for_tableClass($choicegroupclass));
+        $ratingallocatechoicegroups = new backup_nested_element(get_tablename_for_tableclass($choicegroupclass) . 's');
+        $ratingallocatechoicegroup = new backup_nested_element(get_tablename_for_tableclass($choicegroupclass),
+                                                 get_id_for_tableclass($choicegroupclass),
+                                                 get_fields_for_tableclass($choicegroupclass));
 
         $groupingclass = 'ratingallocate\db\ratingallocate_groupings';
-        $ratingallocategroupings = new backup_nested_element(get_tablename_for_tableClass($groupingclass) . 's');
-        $ratingallocategrouping = new backup_nested_element(get_tablename_for_tableClass($groupingclass),
-                                                get_ratingallocateid_for_tableClass($groupingclass),
-                                                get_fields_for_tableClass($groupingclass));
-
+        $ratingallocategroupings = new backup_nested_element(get_tablename_for_tableclass($groupingclass) . 's');
+        $ratingallocategrouping = new backup_nested_element(get_tablename_for_tableclass($groupingclass),
+                                                get_ratingallocateid_for_tableclass($groupingclass),
+                                                get_fields_for_tableclass($groupingclass));
 
         // Build the tree.
         $ratingallocate->add_child($ratingallocatechoices);
@@ -96,20 +95,20 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
         $ratingallocatechoicegroups->add_child($ratingallocatechoicegroup);
 
         // Define sources
-        $ratingallocate->set_source_table(get_tablename_for_tableClass('ratingallocate\db\ratingallocate'),
+        $ratingallocate->set_source_table(get_tablename_for_tableclass('ratingallocate\db\ratingallocate'),
                 array(this_db\ratingallocate::ID => backup::VAR_ACTIVITYID), this_db\ratingallocate_choices::ID . ' ASC');
-        $ratingallocatechoice->set_source_table(get_tablename_for_tableClass('ratingallocate\db\ratingallocate_choices'),
+        $ratingallocatechoice->set_source_table(get_tablename_for_tableclass('ratingallocate\db\ratingallocate_choices'),
                 array(this_db\ratingallocate_choices::RATINGALLOCATEID => backup::VAR_PARENTID),
                 this_db\ratingallocate_choices::ID . ' ASC');
-        $groupchoice->set_source_table(get_tablename_for_tableClass($groupchoiceclass), ['choiceid' => backup::VAR_PARENTID]);
-        $ratingallocatechoicegroup->set_source_table(get_tablename_for_tableClass($choicegroupclass), ['choiceid' => backup::VAR_PARENTID]);
-        $ratingallocategrouping->set_source_table(get_tablename_for_tableClass($groupingclass), ['ratingallocateid' => backup::VAR_PARENTID]);
+        $groupchoice->set_source_table(get_tablename_for_tableclass($groupchoiceclass), ['choiceid' => backup::VAR_PARENTID]);
+        $ratingallocatechoicegroup->set_source_table(get_tablename_for_tableclass($choicegroupclass), ['choiceid' => backup::VAR_PARENTID]);
+        $ratingallocategrouping->set_source_table(get_tablename_for_tableclass($groupingclass), ['ratingallocateid' => backup::VAR_PARENTID]);
 
         if ($userinfo) {
-            $ratingallocaterating->set_source_table(get_tablename_for_tableClass('ratingallocate\db\ratingallocate_ratings'),
+            $ratingallocaterating->set_source_table(get_tablename_for_tableclass('ratingallocate\db\ratingallocate_ratings'),
                     array(this_db\ratingallocate_ratings::CHOICEID => backup::VAR_PARENTID),
                     this_db\ratingallocate_ratings::ID . ' ASC');
-            $ratingallocateallocation->set_source_table(get_tablename_for_tableClass('ratingallocate\db\ratingallocate_allocations'),
+            $ratingallocateallocation->set_source_table(get_tablename_for_tableclass('ratingallocate\db\ratingallocate_allocations'),
                     array(
                             this_db\ratingallocate_allocations::RATINGALLOCATEID => backup::VAR_ACTIVITYID,
                             this_db\ratingallocate_allocations::CHOICEID => backup::VAR_PARENTID),

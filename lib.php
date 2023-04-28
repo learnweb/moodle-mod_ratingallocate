@@ -81,8 +81,7 @@ function ratingallocate_supports($feature) {
  * will create a new instance and return the id number
  * of the new instance.
  *
- * @param object $ratingallocate
- *        	An object from the form in mod_form.php
+ * @param object $ratingallocate  An object from the form in mod_form.php
  * @param mod_ratingallocate_mod_form $mform
  * @return int The id of the newly inserted ratingallocate record
  */
@@ -112,8 +111,7 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  *
- * @param object $ratingallocate
- *        	An object from the form in mod_form.php
+ * @param object $ratingallocate An object from the form in mod_form.php
  * @param mod_ratingallocate_mod_form $mform
  * @return boolean Success/Fail
  */
@@ -146,8 +144,7 @@ function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallo
  * this function will permanently delete the instance
  * and any data that depends on it.
  *
- * @param int $id
- *        	Id of the module instance
+ * @param int $id Id of the module instance
  * @return boolean Success/Failure
  */
 function ratingallocate_delete_instance($id) {
@@ -290,19 +287,19 @@ function ratingallocate_get_file_info($browser, $areas, $course, $cm, $context, 
  * @category files
  *
  * @param stdClass $course
- *        	the course object
+ *          the course object
  * @param stdClass $cm
- *        	the course module object
+ *          the course module object
  * @param stdClass $context
- *        	the ratingallocate's context
+ *          the ratingallocate's context
  * @param string $filearea
- *        	the name of the file area
+ *          the name of the file area
  * @param array $args
- *        	extra arguments (itemid, path)
+ *          extra arguments (itemid, path)
  * @param bool $forcedownload
- *        	whether or not force download
+ *          whether or not force download
  * @param array $options
- *        	additional options affecting the file serving
+ *          additional options affecting the file serving
  */
 function ratingallocate_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options = array()) {
     global $DB, $CFG;
@@ -351,7 +348,7 @@ function ratingallocate_pluginfile($course, $cm, $context, $filearea, array $arg
  * This can be called by an AJAX request so do not rely on $PAGE as it might not be set up properly.
  *
  * @param navigation_node $navref
- *        	An object representing the navigation tree node of the ratingallocate module instance
+ *           An object representing the navigation tree node of the ratingallocate module instance
  * @param stdClass $course
  * @param stdClass $module
  * @param cm_info $cm
@@ -367,9 +364,9 @@ function ratingallocate_extend_navigation(navigation_node $navref, stdclass $cou
  * so it is safe to rely on the $PAGE.
  *
  * @param settings_navigation $settingsnav
- *        	{@link settings_navigation}
+ *          {@link settings_navigation}
  * @param navigation_node $ratingallocatenode
- *        	{@link navigation_node}
+ *          {@link navigation_node}
  */
 function ratingallocate_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $ratingallocatenode = null) {
 
