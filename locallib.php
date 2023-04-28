@@ -811,8 +811,8 @@ class ratingallocate {
      */
     public function get_number_of_active_raters() {
         $sql = 'SELECT COUNT(DISTINCT ra_ratings.userid) AS number
-                FROM {ratingallocate} as ra INNER JOIN {ratingallocate_choices} as ra_choices
-                ON ra.id = ra_choices.ratingallocateid INNER JOIN {ratingallocate_ratings} as ra_ratings
+                FROM {ratingallocate} ra INNER JOIN {ratingallocate_choices} ra_choices
+                ON ra.id = ra_choices.ratingallocateid INNER JOIN {ratingallocate_ratings} ra_ratings
                 ON ra_choices.id = ra_ratings.choiceid
                 WHERE ra.course = :courseid AND ra.id = :ratingallocateid';
         $numberofratersfromdb = $this->db->get_field_sql($sql, array(
@@ -1029,7 +1029,7 @@ class ratingallocate {
      */
     public function get_choices_with_allocationcount() {
         $sql = 'SELECT c.*, al.usercount
-            FROM {ratingallocate_choices} AS c
+            FROM {ratingallocate_choices} c
             LEFT JOIN (
                 SELECT choiceid, count( userid ) AS usercount
                 FROM {ratingallocate_allocations}
@@ -1824,7 +1824,7 @@ function groups_delete_group_members_by_group($groupid) {
 
         // Very ugly hack because some group-management functions are not provided in lib/grouplib.php
         // but does not add too much overhead since it does not include more files...
-        require_once (dirname(dirname(dirname(__FILE__))) . '/group/lib.php');
+        require_once(dirname(dirname(dirname(__FILE__))) . '/group/lib.php');
         foreach ($userids as $id) {
             groups_remove_member($group, $id);
         }

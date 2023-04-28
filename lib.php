@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * example constant
  */
-define('ratingallocate_MOD_NAME', 'ratingallocate');
+define('RATINGALLOCATE_MOD_NAME', 'ratingallocate');
 // define('NEWMODULE_ULTIMATE_ANSWER', 42);
 
 require_once(dirname(__FILE__).'/db/db_structure.php');
