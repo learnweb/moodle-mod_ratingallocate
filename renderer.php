@@ -255,7 +255,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      * @param $classes string class for the formatting of the notification
      */
     public function add_notification($note, $classes = 'notifyproblem') {
-        array_push($this->notifications, $this->notification($note, $classes));
+        array_push($this->notifications, $this->notification($note, $classes, false));
     }
 
     /**
