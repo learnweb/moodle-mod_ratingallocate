@@ -68,7 +68,7 @@ class ratings_and_allocations_table extends \table_sql {
         $this->ratingallocate = $ratingallocate;
         if ($downloadable && has_capability('mod/ratingallocate:export_ratings', $ratingallocate->get_context())) {
             $download = optional_param('download', '', PARAM_ALPHA);
-            $this->is_downloading($download, 'Test', 'Testsheet');
+            $this->is_downloading($download, $ratingallocate->ratingallocate->name . '-ratings_and_allocations', 'ratings_and_allocations');
         }
 
         $this->shownames = true;
