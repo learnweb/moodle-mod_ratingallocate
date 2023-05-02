@@ -45,7 +45,7 @@ function get_id_for_tableclass($class) {
     return array($constants['ID']);
 }
 
-function get_ratingallocateid_for_tableClass($class) {
+function get_ratingallocateid_for_tableclass($class) {
     $class = new ReflectionClass($class);
     $constants = $class->getConstants();
     return array($constants['RATINGALLOCATEID']);

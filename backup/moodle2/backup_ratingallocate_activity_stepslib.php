@@ -72,7 +72,6 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
                                                 get_ratingallocateid_for_tableClass($groupingclass),
                                                 get_fields_for_tableClass($groupingclass));
 
-
         // Build the tree.
         $ratingallocate->add_child($ratingallocatechoices);
         $ratingallocatechoices->add_child($ratingallocatechoice);

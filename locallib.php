@@ -973,9 +973,6 @@ class ratingallocate {
     public function synchronize_allocation_and_grouping() {
         require_capability('moodle/course:managegroups', $this->context);
 
-        //$groupingidname = ratingallocate_MOD_NAME . '_instid_' . $this->ratingallocateid;
-        //$groupingid = null;
-
         // Search if there is already a grouping from us.
         if (!$groupingids = $this->db->get_record(this_db\ratingallocate_groupings::TABLE,
             array('ratingallocateid' => $this->ratingallocateid),
