@@ -882,7 +882,7 @@ class ratingallocate {
             if ($choicetoassign === -2) {
                 // This means there are no free places left in any choice for any user, so we can stop the algorithm
                 // as a whole.
-                return;
+                break;
             } else if ($choicetoassign == -1) {
                 // This means that the user could not be assigned (for example due to group restrictions),
                 // so we try the next one.
