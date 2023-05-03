@@ -1117,7 +1117,7 @@ class ratingallocate {
             case ACTION_DISTRIBUTE_UNALLOCATED_FILL:
                 $this->distribute_users_without_choice($action);
                 redirect(new moodle_url('/mod/ratingallocate/view.php', ['id' => $this->coursemodule->id]),
-                    get_string('unassigned_users_assigned', ratingallocate_MOD_NAME),
+                    get_string('unassigned_users_assigned', RATINGALLOCATE_MOD_NAME),
                     null,
                     \core\output\notification::NOTIFY_SUCCESS);
                 break;
