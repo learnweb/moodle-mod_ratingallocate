@@ -24,6 +24,8 @@
  */
 
 namespace ratingallocate\db;
+
+defined('MOODLE_INTERNAL') || die();
 class ratingallocate {
     const TABLE = 'ratingallocate';
     const ID = 'id';

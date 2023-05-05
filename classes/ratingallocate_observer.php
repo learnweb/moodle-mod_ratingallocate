@@ -23,6 +23,9 @@
  */
 
 namespace mod_ratingallocate;
+use coding_exception;
+use dml_exception;
+
 defined('MOODLE_INTERNAL') || die();
 
 class ratingallocate_observer {
