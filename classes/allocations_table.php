@@ -211,7 +211,7 @@ class allocations_table extends \table_sql {
             $fields = "u.*, c.title as choicetitle";
 
             $from =
-                    "{ratingallocate_allocations} a JOIN {ratingallocate_choices} c ON a.choiceid = c.id 
+                    "{ratingallocate_allocations} a JOIN {ratingallocate_choices} c ON a.choiceid = c.id
                     JOIN {user} u ON a.userid = u.id";
         } else {
             $fields = "c.id, c.title as choicetitle";
