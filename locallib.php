@@ -987,7 +987,7 @@ class ratingallocate {
             $data = new stdClass();
             $data->groupingid = $groupingid;
             $data->ratingallocateid = $this->ratingallocateid;
-            $this->db->insert_record(this_db\ratingallocate_groupings::TABLE, $data, false);
+            $this->db->insert_record(this_db\ratingallocate_groupings::TABLE, $data);
 
         } else {
             // If there is already a grouping for this allocation assign the corresponing id to groupingid.

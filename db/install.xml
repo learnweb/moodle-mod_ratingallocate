@@ -97,11 +97,12 @@
     </TABLE>
     <TABLE NAME="ratingallocate_groupings" COMMENT="Maps the Instance of the Allocation with the Grouping.">
       <FIELDS>
-        <FIELD NAME="ratingallocateid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="reference to the instance of ratingallocate it belongs to"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="ratingallocateid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="reference to the instance of ratingallocate it belongs to"/>
         <FIELD NAME="groupingid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Reference to the Grouping the Allocation creates"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="ratingallocateid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="ratingallocateid" TYPE="foreign" FIELDS="ratingallocateid" REFTABLE="ratingallocate" REFFIELDS="id"/>
         <KEY NAME="groupingid" TYPE="foreign" FIELDS="groupingid" REFTABLE="groupings" REFFIELDS="id"/>
       </KEYS>

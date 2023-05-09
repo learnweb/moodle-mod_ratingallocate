@@ -74,6 +74,7 @@ class ratingallocate_choice_groups {
 
 class ratingallocate_groupings {
     const TABLE = 'ratingallocate_groupings';
+    const ID = 'id';
     const RATINGALLOCATEID = 'ratingallocateid';
     const GROUPINGID = 'groupingid';
 }

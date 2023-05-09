@@ -69,7 +69,7 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
         $groupingclass = 'ratingallocate\db\ratingallocate_groupings';
         $ratingallocategroupings = new backup_nested_element(get_tablename_for_tableClass($groupingclass) . 's');
         $ratingallocategrouping = new backup_nested_element(get_tablename_for_tableClass($groupingclass),
-                                                get_ratingallocateid_for_tableClass($groupingclass),
+                                                get_id_for_tableClass($groupingclass),
                                                 get_fields_for_tableClass($groupingclass));
 
         // Build the tree.
