@@ -290,8 +290,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      */
     public function modify_allocation_group($ratingallocateid, $coursemoduleid,
             $status, $undistributeduserscount, $algorithmstatus, $runalgorithmbycron) {
-        global $PAGE;
-
         $output = '';
         $output .= $this->heading(get_string('modify_allocation_group', RATINGALLOCATE_MOD_NAME), 2);
         $output .= $this->box_start();
@@ -321,11 +319,10 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 'action' => ACTION_MANUAL_ALLOCATION)), get_string('manual_allocation_form', RATINGALLOCATE_MOD_NAME), 'get',
                 array('disabled' => !$ratingover));
 
-
         if (has_capability('mod/ratingallocate:distribute_unallocated', context_module::instance($coursemoduleid))) {
             $output .= html_writer::start_div('ratingallocate_distribute_unallocated');
 
-            $distributeunallocatedurl = new moodle_url($PAGE->url, array('action' => ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY));
+            $distributeunallocatedurl = new moodle_url($this->page->url, array('action' => ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY));
 
             $button = new single_button($distributeunallocatedurl,
                 get_string('distributeequally', RATINGALLOCATE_MOD_NAME), 'get');
@@ -336,7 +333,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
             $output .= $this->render($button);
 
-            $distributeunallocatedurl = new moodle_url($PAGE->url, array('action' => ACTION_DISTRIBUTE_UNALLOCATED_FILL));
+            $distributeunallocatedurl = new moodle_url($this->page->url, array('action' => ACTION_DISTRIBUTE_UNALLOCATED_FILL));
             $button = new single_button($distributeunallocatedurl,
                 get_string('distributefill', RATINGALLOCATE_MOD_NAME), 'get');
             // Enable only if the instance is ready, there are users to distribute and the algorithm may run manually
