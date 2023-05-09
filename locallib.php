@@ -193,7 +193,6 @@ class ratingallocate {
         foreach ($groupcandidates as $group) {
             $options[$group->id] = $group->name;
         }
-
         return $options;
     }
 

@@ -299,5 +299,4 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     private function get_settingsfield_identifier($strategy, $key) {
         return self::STRATEGY_OPTIONS . '[' . $strategy . '][' . $key . ']';
     }
-
 }
