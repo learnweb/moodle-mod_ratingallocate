@@ -147,7 +147,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
     public function get_disable_strategy($includeratingallocate = false) {
         $update = $this->optional_param('update', 0, PARAM_INT);
-        if($update != 0) {
+        if ($update != 0) {
             global $DB;
             $courseid = $update;
             $cm         = get_coursemodule_from_id('ratingallocate', $courseid, 0, false, MUST_EXIST);
