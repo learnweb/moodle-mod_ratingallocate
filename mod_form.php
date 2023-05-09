@@ -66,7 +66,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         global $CFG, $PAGE;
         $mform = $this->_form;
 
-        $disable_strategy = $this->get_disable_strategy();
+        $disablestrategy = $this->get_disable_strategy();
 
         // Adding the "general" fieldset, where all the common settings are showed.
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -95,9 +95,9 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $selectoptions[$strategy] = get_string($strategy . '_name', self::MOD_NAME);
         }
         $mform->addElement('select', $elementname, get_string('select_strategy', self::MOD_NAME), $selectoptions,
-            $disable_strategy? ['disabled' => ''] : null);
+            $disablestrategy ? ['disabled' => ''] : null);
         $mform->addHelpButton($elementname, 'select_strategy', self::MOD_NAME);
-        if (!$disable_strategy) {
+        if (!$disablestrategy) {
             // disabled elements don't get posted so disable the required rule if strategy selection is disabled.
             $mform->addRule('strategy', null, 'required', null, 'client');
         }
@@ -155,17 +155,17 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $ratingallocatedb  = $DB->get_record('ratingallocate', array('id' => $cm->instance), '*', MUST_EXIST);
             $context = context_module::instance($cm->id);
             $ratingallocate = new ratingallocate($ratingallocatedb, $course, $cm, $context);
-            $disable_strategy = $ratingallocate->get_number_of_active_raters() > 0;
+            $disablestrategy = $ratingallocate->get_number_of_active_raters() > 0;
         } else {
             $ratingallocate = null;
-            $disable_strategy = false;
+            $disablestrategy = false;
         }
         if (!$includeratingallocate) {
-            return $disable_strategy;
+            return $disablestrategy;
         } else {
             return [
                 'ratingallocate' => $ratingallocate,
-                'disable_strategy' => $disable_strategy
+                'disable_strategy' => $disablestrategy
             ];
         }
     }
@@ -264,11 +264,11 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         }
 
         $info = $this->get_disable_strategy(true);
-        $disable_strategy = $info['disable_strategy'];
+        $disablestrategy = $info['disable_strategy'];
         $ratingallocate = $info['ratingallocate'];
 
-        if ($disable_strategy) {
-            //If strategy selection is disabled make sure the user didn't change it.
+        if ($disablestrategy) {
+            // If strategy selection is disabled make sure the user didn't change it.
             if ($ratingallocate->ratingallocate->dbrecord->strategy !== $data['strategy']) {
                 $errors['strategy'] = get_string('strategy_altered_after_preferences', self::MOD_NAME);
             }

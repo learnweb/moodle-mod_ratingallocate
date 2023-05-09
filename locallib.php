@@ -1315,7 +1315,7 @@ class ratingallocate {
                     'choiceid' => $id
                 );
 
-                //Delete the allocations associated with this rating.
+                // Delete the allocations associated with this rating.
                 $DB->delete_records('ratingallocate_allocations', $data);
 
                 // Actually delete the rating.
