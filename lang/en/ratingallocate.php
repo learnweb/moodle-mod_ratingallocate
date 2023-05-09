@@ -104,7 +104,8 @@ $string['start_distribution'] = 'Run Allocation Algorithm';
 $string['confirm_start_distribution'] =
         'Running the algorithm will delete all existing allocations, if any. Are you sure to continue?';
 $string['delete_all_ratings'] = 'Delete all student ratings';
-$string['delete_all_ratings_explanation'] = 'Deletes all ratings that students have submitted so far. Use with caution.';
+$string['delete_all_ratings_explanation'] = 'Deletes all ratings that students have submitted so far 
+        and all allocations that may have been created based on these ratings. Use with caution.';
 $string['confirm_delete_all_ratings'] = 'Are you sure you want to delete all ratings students have submitted so far?';
 $string['error_deleting_all_insufficient_permission'] = 'You don\'t have the permission to do that';
 $string['error_deleting_all_no_rating_possible'] = 'You can\'t delete the ratings when the rating phase is already over';
