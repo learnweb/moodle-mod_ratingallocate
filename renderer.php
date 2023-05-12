@@ -320,10 +320,10 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 array('disabled' => !$ratingover));
 
         // Add delete all ratings button
-        $deletebutton = new single_button($deleteurl, get_string('delete_all_ratings', ratingallocate_MOD_NAME, 'get'));
+        $deletebutton = new single_button($deleteurl, get_string('delete_all_ratings', RATINGALLOCATE_MOD_NAME, 'get'));
         $deletebutton->disabled = $ratingover; // Only allow deletion if new submission is possible.
-        $deletebutton->tooltip = get_string('delete_all_ratings_explanation', ratingallocate_MOD_NAME);
-        $deletebutton->add_action(new confirm_action(get_string('confirm_delete_all_ratings', ratingallocate_MOD_NAME)));
+        $deletebutton->tooltip = get_string('delete_all_ratings_explanation', RATINGALLOCATE_MOD_NAME);
+        $deletebutton->add_action(new confirm_action(get_string('confirm_delete_all_ratings', RATINGALLOCATE_MOD_NAME)));
 
         $output .= $this->render($deletebutton);
 
