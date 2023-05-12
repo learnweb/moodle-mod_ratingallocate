@@ -87,6 +87,7 @@ define('ACTION_ENABLE_CHOICE', 'enable_choice');
 define('ACTION_DISABLE_CHOICE', 'disable_choice');
 define('ACTION_DELETE_CHOICE', 'delete_choice');
 define('ACTION_START_DISTRIBUTION', 'start_distribution');
+define('ACTION_DELETE_ALL_RATINGS', 'delete_all_ratings');
 define('ACTION_MANUAL_ALLOCATION', 'manual_allocation');
 define('ACTION_DISTRIBUTE_UNALLOCATED_FILL', 'distribute_unallocated_fill');
 define('ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY', 'distribute_unallocated_equally');
@@ -195,7 +196,6 @@ class ratingallocate {
         foreach ($groupcandidates as $group) {
             $options[$group->id] = $group->name;
         }
-
         return $options;
     }
 
@@ -259,6 +259,26 @@ class ratingallocate {
         redirect(new moodle_url('/mod/ratingallocate/view.php',
                 array('id' => $this->coursemodule->id)));
         return;
+    }
+
+    private function delete_all_student_ratings() {
+        global $USER;
+        // Disallow to delete ratings for students and tutors.
+        if (!has_capability('mod/ratingallocate:start_distribution', $this->context, null, false)) {
+            redirect(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id)),
+                get_string('error_deleting_all_insufficient_permission', RATINGALLOCATE_MOD_NAME));
+            return;
+        }
+        // Disallow deletion when there can't be new ratings submitted
+        $status = $this->get_status();
+        if ($status !== self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS and $status !== self::DISTRIBUTION_STATUS_TOO_EARLY) {
+            redirect(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id)),
+                get_string('error_deleting_all_no_rating_possible', RATINGALLOCATE_MOD_NAME));
+            return;
+        }
+        $this->delete_all_ratings();
+        redirect(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id)),
+            get_string('success_deleting_all', RATINGALLOCATE_MOD_NAME));
     }
 
     private function process_action_give_rating() {
@@ -1067,6 +1087,10 @@ class ratingallocate {
                 $this->process_action_delete_rating();
                 break;
 
+            case ACTION_DELETE_ALL_RATINGS:
+                $this->delete_all_student_ratings();
+                break;
+
             case ACTION_SHOW_CHOICES:
                 $this->process_action_show_choices();
                 return "";
@@ -1552,6 +1576,40 @@ class ratingallocate {
         return $this->db->get_records_sql($sql, array(
                 'ratingallocateid' => $this->ratingallocateid
         ));
+    }
+
+    /**
+     * Deletes all ratings in this ratingallocate
+     */
+    public function delete_all_ratings() {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        try {
+            $choices = $this->get_choices();
+
+            foreach ($choices as $id => $choice) {
+                $data = array(
+                    'choiceid' => $id
+                );
+
+                // Delete the allocations associated with this rating.
+                $DB->delete_records('ratingallocate_allocations', $data);
+
+                // Actually delete the rating.
+                $DB->delete_records('ratingallocate_ratings', $data);
+            }
+
+            $transaction->allow_commit();
+
+            // Logging.
+            $event = \mod_ratingallocate\event\all_ratings_deleted::create_simple(
+                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
+            $event->trigger();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
+        }
     }
 
     /**

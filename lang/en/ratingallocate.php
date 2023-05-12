@@ -116,6 +116,13 @@ $string['algorithm_scheduled_for_cron'] =
 $string['start_distribution'] = 'Run Allocation Algorithm';
 $string['confirm_start_distribution'] =
         'Running the algorithm will delete all existing allocations, if any. Are you sure to continue?';
+$string['delete_all_ratings'] = 'Delete all student ratings';
+$string['delete_all_ratings_explanation'] = 'Deletes all ratings that students have submitted so far and all allocations
+        that may have been created based on these ratings. Use with caution.';
+$string['confirm_delete_all_ratings'] = 'Are you sure you want to delete all ratings students have submitted so far?';
+$string['error_deleting_all_insufficient_permission'] = 'You don\'t have the permission to do that';
+$string['error_deleting_all_no_rating_possible'] = 'You can\'t delete the ratings when the rating phase is already over';
+$string['success_deleting_all'] = 'Deleted all ratings';
 $string['unassigned_users'] = 'Unassigned Users';
 $string['unassigned_users_assigned'] = 'Unassigned users have been assigned as good as possible.';
 $string['invalid_dates'] = 'Dates are invalid. Starting date must be before ending date.';
@@ -244,7 +251,6 @@ $string['csvupload_test_success'] = 'CSV import test successful. {$a->importcoun
 $string['csvupload_test_upload'] = 'Test upload';
 $string['csvupload_test_upload_help'] = 'When checked: test the uploaded CSV file for data problems, but do not commit to the database.';
 // </editor-fold>
-
 // <editor-fold defaultstate="collapsed" desc="Form to edit the instance(administrator)">
 $string['choice_active'] = 'Choice is active';
 $string['choice_active_help'] = 'Only active choices are displayed to the user. Inactive choices are not displayed.';
@@ -275,9 +281,13 @@ $string['select_strategy_help'] = 'Choose a rating strategy:
 * **Likert Scale** The user can rate each choice with a number from a defined range. The range of numbers can be defined individually (beginning with 0). A high number corresponds to a high preference.
 * **Give Points** The user can rate the choices by assigning a number of points. The maximum number of points can be defined individually. A high number of points corresponds to a high preference.
 * **Rank Choices** The user has to rank the available choices. How many choices need to be rated can be defined individually.
-* **Tick Accept**  The user can state for each choice whether it is acceptable for him/her.';
+* **Tick Accept**  The user can state for each choice whether it is acceptable for him/her.
+
+This option can\'t be changed if a student has already submitted their preference.
+';
 $string['strategy_not_specified'] = 'You have to select a strategy.';
 $string['strategyspecificoptions'] = 'Strategy specific options';
+$string['strategy_altered_after_preferences'] = 'Strategy cannot be changed after preferences where submitted';
 
 $string['err_required'] = 'You need to provide a value for this field.';
 $string['err_minimum'] = 'The minimum value for this field is {$a}.';
@@ -408,6 +418,9 @@ $string['log_allocation_statistics_viewed_description'] =
 
 $string['log_index_viewed'] = 'User viewed all instances of Fair Allocation';
 $string['log_index_viewed_description'] = 'The user with id "{$a->userid}" viewed all instances of Fair Allocation in this course.';
+
+$string['log_all_ratings_deleted'] = 'All ratings of a Fair Allocation instance were deleted';
+$string['log_all_ratings_deleted_description'] = 'The user with id "{$a->userid}" has deleted all ratings for the Fair Allocation with id "{$a->ratingallocateid}".';
 
 $string['no_id_or_m_error'] = 'You must specify a course_module ID or an instance ID';
 
