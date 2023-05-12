@@ -180,20 +180,20 @@ function xmldb_ratingallocate_upgrade($oldversion) {
 
     if ($oldversion < 2023041100) {
 
-        // Define table ratingallocate_choice_groups to be created.
-        $table = new xmldb_table('ratingallocate_choice_groups');
+        // Define table ratingallocate_ch_gengroups to be created.
+        $table = new xmldb_table('ratingallocate_ch_gengroups');
 
-        // Adding fields to table ratingallocate_choice_groups.
+        // Adding fields to table ratingallocate_ch_gengroups.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('groupid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('choiceid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
-        // Adding keys to table ratingallocate_choice_groups.
+        // Adding keys to table ratingallocate_ch_gengroups.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         $table->add_key('groupid', XMLDB_KEY_FOREIGN, ['groupid'], 'groups', ['id']);
         $table->add_key('choiceid', XMLDB_KEY_FOREIGN, ['choiceid'], 'ratingallocate_choices', ['id']);
 
-        // Conditionally launch create table for ratingallocate_choice_groups.
+        // Conditionally launch create table for ratingallocate_ch_gengroups.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
@@ -211,7 +211,7 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         $table->add_key('ratingallocateid', XMLDB_KEY_FOREIGN, ['ratingallocateid'], 'ratingallocate', ['id']);
         $table->add_key('groupingid', XMLDB_KEY_FOREIGN, ['groupingid'], 'groupings', ['id']);
 
-        // Conditionally launch create table for ratingallocate_choice_groups.
+        // Conditionally launch create table for ratingallocate_ch_gengroups.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }

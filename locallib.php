@@ -518,7 +518,7 @@ class ratingallocate {
                 $choice = $DB->get_record(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
                 if ($choice) {
                     $DB->delete_records(this_db\ratingallocate_group_choices::TABLE, ['choiceid' => $choiceid]);
-                    $DB->delete_records(this_db\ratingallocate_choice_groups::TABLE, ['choiceid' => $choiceid]);
+                    $DB->delete_records(this_db\ratingallocate_ch_gengroups::TABLE, ['choiceid' => $choiceid]);
                     $DB->delete_records(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
                     redirect(new moodle_url('/mod/ratingallocate/view.php',
                         array('id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES)),
@@ -969,7 +969,7 @@ class ratingallocate {
 
                 // Checks if there is already a group for this choice.
 
-                if ($groupids = $this->db->get_record(this_db\ratingallocate_choice_groups::TABLE,
+                if ($groupids = $this->db->get_record(this_db\ratingallocate_ch_gengroups::TABLE,
                     array('choiceid' => $choice->id),
                     'groupid')) {
 
@@ -992,7 +992,7 @@ class ratingallocate {
                         groups_assign_grouping($groupingid, $createdid);
 
                         // Insert the mapping between group and choice into the Table.
-                        $this->db->insert_record(this_db\ratingallocate_choice_groups::TABLE,
+                        $this->db->insert_record(this_db\ratingallocate_ch_gengroups::TABLE,
                             ['choiceid' => $choice->id, 'groupid' => $createdid]);
                     }
                 }
@@ -1006,7 +1006,7 @@ class ratingallocate {
             $userid = $allocation->userid;
 
             // Get the group corresponding to the choiceid.
-            $groupids = $this->db->get_record(this_db\ratingallocate_choice_groups::TABLE,
+            $groupids = $this->db->get_record(this_db\ratingallocate_ch_gengroups::TABLE,
                 array('choiceid' => $choiceid),
                 'groupid');
             $groupid = $groupids->groupid;

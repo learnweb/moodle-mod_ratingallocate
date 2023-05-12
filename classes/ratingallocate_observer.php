@@ -35,17 +35,17 @@ class ratingallocate_observer {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public static function choice_group_delete (\core\event\group_deleted $event) {
+    public static function ch_gengroup_delete (\core\event\group_deleted $event) {
         global $DB;
 
         $eventdata = $event->get_record_snapshot('groups', $event->objectid);
         if ($DB->record_exists(
-            'ratingallocate_choice_groups',
+            'ratingallocate_ch_gengroups',
             ['groupid' => $eventdata->id])) {
 
-            // Delete the group from ratingallocate_choice_groups table.
+            // Delete the group from ratingallocate_ch_gengroups table.
             $DB->delete_records(
-                'ratingallocate_choice_groups',
+                'ratingallocate_ch_gengroups',
                 ['groupid' => $eventdata->id]
             );
         }
@@ -60,7 +60,7 @@ class ratingallocate_observer {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public static function id_grouping_delete (\core\event\grouping_deleted $event) {
+    public static function ra_grouping_delete (\core\event\grouping_deleted $event) {
         global $DB;
 
         $eventdata = $event->get_record_snapshot('groupings', $event->objectid);

@@ -83,7 +83,7 @@
         <KEY NAME="groupid" TYPE="foreign" FIELDS="groupid" REFTABLE="groups" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="ratingallocate_choice_groups" COMMENT="Maps Groups and the Allocations on which they are created with">
+    <TABLE NAME="ratingallocate_ch_gengroups" COMMENT="Maps Groups and the Allocations on which they are created with">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" />
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Reference to a group."/>
