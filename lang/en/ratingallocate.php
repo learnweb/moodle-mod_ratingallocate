@@ -237,55 +237,6 @@ $string['csvupload_test_success'] = 'CSV import test successful. {$a->importcoun
 $string['csvupload_test_upload'] = 'Test upload';
 $string['csvupload_test_upload_help'] = 'When checked: test the uploaded CSV file for data problems, but do not commit to the database.';
 // </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Form to upload choices via CSV (administrator)">
-$string['upload_choices'] = 'Upload choices via CSV';
-$string['upload_choices_required_fields'] = 'Required Fields';
-$string['upload_choices_fields_desc'] = 'CSV files uploaded through this form are expected to be UTF-8 encoded, and include the following choice fields:<br/><pre>{$a}</pre>
-The file is required to contain a header line. Multiple groups should be separated by a semicolon. The "active" column should contain 1 or 0 to make the choice enabled or disabled.<br/>
-Example file content:
-<pre>
-title,explanation,maxsize,active,groups
-First Choice,This is the description of the first choice,15,1,Group A;Group B;Group C
-Second Choice,This is the description of the second choice,12,0,Group A;Group D
-</pre>';
-$string['csvempty'] = 'CSV file is empty.';
-$string['csvupload'] = 'Upload CSV';
-$string['csvupload_further_problems'] = '{$a} further problems found but not displayed.';
-$string['csvupload_explanation'] = 'Bulk upload choices via a CSV file';
-$string['csvupload_missing_fields'] = 'Columns missing from CSV import: {$a}';
-$string['csvupload_missing_groups'] = 'Line {$a->row}: group(s) not available in course: [{$a->invalidgroups}]';
-$string['csvupload_live_problems'] = 'Problems found in CSV import: {$a}';
-$string['csvupload_live_success'] = 'CSV import successful. {$a->importcount} choices imported.';
-$string['csvupload_test_problems'] = 'Problems found in CSV import test: {$a}';
-$string['csvupload_test_success'] = 'CSV import test successful. {$a->importcount} choices can be imported.';
-$string['csvupload_test_upload'] = 'Test upload';
-$string['csvupload_test_upload_help'] = 'When checked: test the uploaded CSV file for data problems, but do not commit to the database.';
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Form to upload choices via CSV (administrator)">
-$string['upload_choices'] = 'Upload choices via CSV';
-$string['upload_choices_required_fields'] = 'Required Fields';
-$string['upload_choices_fields_desc'] = 'CSV files uploaded through this form are expected to be UTF-8 encoded, and include the following choice fields:<br/><pre>{$a}</pre>
-The file is required to contain a header line. Multiple groups should be separated by a semicolon. The "active" column should contain 1 or 0 to make the choice enabled or disabled.<br/>
-Example file content:
-<pre>
-title,explanation,maxsize,active,groups
-First Choice,This is the description of the first choice,15,1,Group A;Group B;Group C
-Second Choice,This is the description of the second choice,12,0,Group A;Group D
-</pre>';
-$string['csvempty'] = 'CSV file is empty.';
-$string['csvupload'] = 'Upload CSV';
-$string['csvupload_further_problems'] = '{$a} further problems found but not displayed.';
-$string['csvupload_explanation'] = 'Bulk upload choices via a CSV file';
-$string['csvupload_missing_fields'] = 'Columns missing from CSV import: {$a}';
-$string['csvupload_missing_groups'] = 'Line {$a->row}: group(s) not available in course: [{$a->invalidgroups}]';
-$string['csvupload_live_problems'] = 'Problems found in CSV import: {$a}';
-$string['csvupload_live_success'] = 'CSV import successful. {$a->importcount} choices imported.';
-$string['csvupload_test_problems'] = 'Problems found in CSV import test: {$a}';
-$string['csvupload_test_success'] = 'CSV import test successful. {$a->importcount} choices can be imported.';
-$string['csvupload_test_upload'] = 'Test upload';
-$string['csvupload_test_upload_help'] = 'When checked: test the uploaded CSV file for data problems, but do not commit to the database.';
-// </editor-fold>
-
 // <editor-fold defaultstate="collapsed" desc="Form to edit the instance(administrator)">
 $string['choice_active'] = 'Choice is active';
 $string['choice_active_help'] = 'Only active choices are displayed to the user. Inactive choices are not displayed.';
