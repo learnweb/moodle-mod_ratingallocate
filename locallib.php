@@ -178,8 +178,7 @@ class ratingallocate {
      * Returns all users enrolled in the course the ratingallocate is in
      * @throws moodle_exception
      */
-    public function get_raters_in_course(): array
-    {
+    public function get_raters_in_course(): array {
 
         $modinfo = get_fast_modinfo($this->course);
         $cm = $modinfo->get_cm($this->coursemodule->id);
