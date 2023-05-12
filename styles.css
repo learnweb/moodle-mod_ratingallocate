@@ -62,3 +62,7 @@
 .path-mod-ratingallocate .mod-ratingallocate-choice-maxno {
     text-align: right;
 }
+
+.ratingallocate_distribute_unallocated {
+    margin: 1em 1em 0 0;
+}
