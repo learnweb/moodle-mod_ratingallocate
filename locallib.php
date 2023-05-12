@@ -266,19 +266,19 @@ class ratingallocate {
         // Disallow to delete ratings for students and tutors.
         if (!has_capability('mod/ratingallocate:start_distribution', $this->context, null, false)) {
             redirect(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id)),
-                get_string('error_deleting_all_insufficient_permission', ratingallocate_MOD_NAME));
+                get_string('error_deleting_all_insufficient_permission', RATINGALLOCATE_MOD_NAME));
             return;
         }
         // Disallow deletion when there can't be new ratings submitted
         $status = $this->get_status();
         if ($status !== self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS and $status !== self::DISTRIBUTION_STATUS_TOO_EARLY) {
             redirect(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id)),
-                get_string('error_deleting_all_no_rating_possible', ratingallocate_MOD_NAME));
+                get_string('error_deleting_all_no_rating_possible', RATINGALLOCATE_MOD_NAME));
             return;
         }
         $this->delete_all_ratings();
         redirect(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id)),
-            get_string('success_deleting_all', ratingallocate_MOD_NAME));
+            get_string('success_deleting_all', RATINGALLOCATE_MOD_NAME));
     }
 
     private function process_action_give_rating() {
