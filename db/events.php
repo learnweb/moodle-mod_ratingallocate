@@ -36,10 +36,10 @@ $handlers = array();
 $observers = array(
     array(
         'eventname' => '\core\event\group_deleted',
-        'callback'  => 'mod_ratingallocate\ratingallocate_observer::choice_group_delete',
+        'callback'  => 'mod_ratingallocate\ratingallocate_observer::ch_gengroups_delete',
     ),
     array(
         'eventname' => '\core\event\grouping_deleted',
-        'callback'  => 'mod_ratingallocate\ratingallocate_observer::id_grouping_delete'
+        'callback'  => 'mod_ratingallocate\ratingallocate_observer::ra_groupings_delete'
     )
 );

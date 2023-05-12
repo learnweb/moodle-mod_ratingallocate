@@ -65,8 +65,8 @@ class ratingallocate_group_choices {
 }
 
 
-class ratingallocate_choice_groups {
-    const TABLE = 'ratingallocate_choice_groups';
+class ratingallocate_ch_gengroups {
+    const TABLE = 'ratingallocate_ch_gengroups';
     const ID = 'id';
     const  GROUPID = 'groupid';
     const CHOICEID = 'choiceid';

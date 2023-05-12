@@ -60,7 +60,7 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
             get_id_for_tableClass($groupchoiceclass),
             get_fields_for_tableClass($groupchoiceclass));
 
-        $choicegroupclass = 'ratingallocate\db\ratingallocate_choice_groups';
+        $choicegroupclass = 'ratingallocate\db\ratingallocate_ch_gengroups';
         $ratingallocatechoicegroups = new backup_nested_element(get_tablename_for_tableClass($choicegroupclass) . 's');
         $ratingallocatechoicegroup = new backup_nested_element(get_tablename_for_tableClass($choicegroupclass),
                                                  get_id_for_tableClass($choicegroupclass),
