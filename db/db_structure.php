@@ -24,6 +24,8 @@
  */
 
 namespace ratingallocate\db;
+
+defined('MOODLE_INTERNAL') || die();
 class ratingallocate {
     const TABLE = 'ratingallocate';
     const ID = 'id';
@@ -60,6 +62,21 @@ class ratingallocate_group_choices {
     const ID = 'id';
     const CHOICEID = 'choiceid';
     const GROUPID = 'groupid';
+}
+
+
+class ratingallocate_ch_gengroups {
+    const TABLE = 'ratingallocate_ch_gengroups';
+    const ID = 'id';
+    const  GROUPID = 'groupid';
+    const CHOICEID = 'choiceid';
+}
+
+class ratingallocate_groupings {
+    const TABLE = 'ratingallocate_groupings';
+    const ID = 'id';
+    const RATINGALLOCATEID = 'ratingallocateid';
+    const GROUPINGID = 'groupingid';
 }
 
 class ratingallocate_ratings {

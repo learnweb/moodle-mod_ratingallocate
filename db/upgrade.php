@@ -178,5 +178,47 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2022120100, 'ratingallocate');
     }
 
+    if ($oldversion < 2023050900) {
+
+        // Define table ratingallocate_ch_gengroups to be created.
+        $table = new xmldb_table('ratingallocate_ch_gengroups');
+
+        // Adding fields to table ratingallocate_ch_gengroups.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('groupid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('choiceid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table ratingallocate_ch_gengroups.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('groupid', XMLDB_KEY_FOREIGN, ['groupid'], 'groups', ['id']);
+        $table->add_key('choiceid', XMLDB_KEY_FOREIGN, ['choiceid'], 'ratingallocate_choices', ['id']);
+
+        // Conditionally launch create table for ratingallocate_ch_gengroups.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table ratingallocate_groupings to be created.
+        $table = new xmldb_table('ratingallocate_groupings');
+
+        // Adding fields to table ratingallocate_groupings.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('ratingallocateid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('groupingid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table ratingallocate_groupings.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('ratingallocateid', XMLDB_KEY_FOREIGN, ['ratingallocateid'], 'ratingallocate', ['id']);
+        $table->add_key('groupingid', XMLDB_KEY_FOREIGN, ['groupingid'], 'groupings', ['id']);
+
+        // Conditionally launch create table for ratingallocate_ch_gengroups.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Ratingallocate savepoint reached.
+        upgrade_mod_savepoint(true, 2023050900, 'ratingallocate');
+    }
+
     return true;
 }

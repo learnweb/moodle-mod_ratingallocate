@@ -159,7 +159,7 @@ class allocations_table extends \table_sql {
             }
 
             // If there are users, which rated but were not allocated, add them to a special row.
-            if (count($userwithrating) > 0 and ($this->currpage + 1) * $this->pagesize >= $this->totalrows) {
+            if (count($userwithrating) > 0 && ($this->currpage + 1) * $this->pagesize >= $this->totalrows) {
                 $noallocation = new \stdClass();
                 $noallocation->choicetitle = get_string(
                         'allocations_table_noallocation',
@@ -211,7 +211,8 @@ class allocations_table extends \table_sql {
             $fields = "u.*, c.title as choicetitle";
 
             $from =
-                    "{ratingallocate_allocations} a JOIN {ratingallocate_choices} c ON a.choiceid = c.id JOIN {user} u ON a.userid = u.id";
+                    "{ratingallocate_allocations} a JOIN {ratingallocate_choices} c ON a.choiceid = c.id
+                    JOIN {user} u ON a.userid = u.id";
         } else {
             $fields = "c.id, c.title as choicetitle";
 
