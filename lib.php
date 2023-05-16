@@ -99,12 +99,12 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
         $ratingallocate->{this_db\ratingallocate::SETTING} = json_encode($ratingallocate->strategyopt);
         // instanz einfuegen, damit wir die ID fuer die Kinder haben
         $id = $DB->insert_record(this_db\ratingallocate::TABLE, $ratingallocate);
+        $ratingallocate->id = $id;
 
+
+
+        ratingallocate_set_events($ratingallocate);
         $transaction->allow_commit();
-
-        $instance = $DB->get_record(this_db\ratingallocate::TABLE, ['id' => $id]);
-        ratingallocate_set_events($instance);
-
         return $id;
     } catch (Exception $e) {
         $transaction->rollback($e);
@@ -194,6 +194,9 @@ function ratingallocate_delete_instance($id) {
     $DB->delete_records('ratingallocate_choices', array(
             'ratingallocateid' => $ratingallocate->id
     ));
+
+    // Delete associated events.
+    $DB->delete_records('event', array('modulename'=>'ratingallocate', 'instance'=>$id));
 
     $DB->delete_records('ratingallocate', array(
             'id' => $ratingallocate->id
@@ -439,12 +442,15 @@ function ratingallocate_refresh_events($courseid = 0, $instance = null, $cm = nu
 function ratingallocate_set_events($ratingallocate) {
     global $DB, $CFG;
 
+    var_dump($ratingallocate);
+
     require_once($CFG->dirroot.'/calendar/lib.php');
 
     // Get CMID if not sent as part of $ratingallocate.
     if (!isset($ratingallocate->coursemodule)) {
 
-        $cm = get_coursemodule_from_instance('ratingallocate', $ratingallocate->id, (int) ($ratingallocate->course));
+        //$cm = get_coursemodule_from_instance('ratingallocate', $ratingallocate->id, $ratingallocate->course);
+        $cm = get_fast_modinfo($ratingallocate->course)->instances['ratingallocate'][$ratingallocate->id];
 
         $ratingallocate->coursemodule = $cm->id;
     }
@@ -453,8 +459,7 @@ function ratingallocate_set_events($ratingallocate) {
     $eventid = $DB->get_field('event', 'id',
         array('modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_START));
 
-    $eventid = false;
-    $timestart = $DB->get_field('ratingallocate', 'accesstimestart', array('id' => $ratingallocate->ratingallocateid));
+    $timestart = $DB->get_field('ratingallocate', 'accesstimestart', array('id' => $ratingallocate->id));
 
     if (isset($timestart) && $timestart > 0) {
         $event = new stdClass();
@@ -467,8 +472,10 @@ function ratingallocate_set_events($ratingallocate) {
         $event->timestart = $timestart;
         $event->timesort = $timestart;
         // Check visibility for different users.
-        $cm_info = get_fast_modinfo($ratingallocate->course);
-        $event->visible = $cm_info->uservisible;
+        $modinfo = get_fast_modinfo($ratingallocate->course);
+        //$cm = $modinfo->get_cm($ratingallocate->coursemodule);
+        $event->visible = $ratingallocate->visible;
+        //$event->visible = instance_is_visible('ratingallocate', $ratingallocate);
         $event->timeduration = 0;
         if ($eventid) {
             // Calendar event exists so update it.
@@ -495,7 +502,7 @@ function ratingallocate_set_events($ratingallocate) {
     $eventid = $DB->get_field('event', 'id',
         array('modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_STOP));
 
-    $timestop = $DB->get_field('ratingallocate', 'accesstimestop', array('id' => $ratingallocate->ratingallocateid));
+    $timestop = $DB->get_field('ratingallocate', 'accesstimestop', array('id' => $ratingallocate->id));
 
     if (isset($timestop) && $timestop > 0) {
         $event = new stdClass();
@@ -507,9 +514,11 @@ function ratingallocate_set_events($ratingallocate) {
         $event->instance = $ratingallocate->id;
         $event->timestart = $timestop;
         $event->timesort = $timestop;
-        // Check visibility for different users.
-        $cm_info = get_fast_modinfo($ratingallocate->course);
-        $event->visible = $cm_info->uservisible;
+        //Check visibility for different users.
+        $modinfo = get_fast_modinfo($ratingallocate->course);
+        //$cm = $modinfo->get_cm($ratingallocate->coursemodule);
+        $event->visible = $ratingallocate->visible;
+        //$event->visible = instance_is_visible('ratingallocate', $ratingallocate);
         $event->timeduration = 0;
         if ($eventid) {
             // Calendar event exists so update it.
