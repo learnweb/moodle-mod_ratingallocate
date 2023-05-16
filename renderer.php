@@ -288,7 +288,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * Output the ratingallocate modfify allocation
      */
-    public function modify_allocation_group($ratingallocateid, $coursemoduleid, $status, $algorithmstatus, $runalgorithmbycron) {
+    public function modify_allocation_group($ratingallocateid, $coursemoduleid,
+            $status, $undistributeduserscount, $algorithmstatus, $runalgorithmbycron) {
         $output = '';
         $output .= $this->heading(get_string('modify_allocation_group', RATINGALLOCATE_MOD_NAME), 2);
         $output .= $this->box_start();
@@ -297,6 +298,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $status !== ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS;
 
         $starturl = new moodle_url($this->page->url, array('action' => ACTION_START_DISTRIBUTION));
+        $deleteurl = new moodle_url($this->page->url, array('id' => $coursemoduleid, 'action' => ACTION_DELETE_ALL_RATINGS));
 
         // Get description dependent on status
         $descriptionbaseid = 'modify_allocation_group_desc_';
@@ -317,6 +319,41 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $output .= $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
                 'action' => ACTION_MANUAL_ALLOCATION)), get_string('manual_allocation_form', RATINGALLOCATE_MOD_NAME), 'get',
                 array('disabled' => !$ratingover));
+
+        // Add delete all ratings button
+        $deletebutton = new single_button($deleteurl, get_string('delete_all_ratings', RATINGALLOCATE_MOD_NAME, 'get'));
+        $deletebutton->disabled = $ratingover; // Only allow deletion if new submission is possible.
+        $deletebutton->tooltip = get_string('delete_all_ratings_explanation', RATINGALLOCATE_MOD_NAME);
+        $deletebutton->add_action(new confirm_action(get_string('confirm_delete_all_ratings', RATINGALLOCATE_MOD_NAME)));
+
+        $output .= $this->render($deletebutton);
+
+        if (has_capability('mod/ratingallocate:distribute_unallocated', context_module::instance($coursemoduleid))) {
+            $output .= html_writer::start_div('ratingallocate_distribute_unallocated');
+
+            $distributeunallocatedurl = new moodle_url($this->page->url, array('action' => ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY));
+
+            $button = new single_button($distributeunallocatedurl,
+                get_string('distributeequally', RATINGALLOCATE_MOD_NAME), 'get');
+            // Enable only if the instance is ready and the algorithm may run manually.
+            $button->disabled = !($ratingover) || $undistributeduserscount === 0;
+            $button->add_action(new confirm_action(
+                get_string('distribute_unallocated_equally_confirm', RATINGALLOCATE_MOD_NAME)));
+
+            $output .= $this->render($button);
+
+            $distributeunallocatedurl = new moodle_url($this->page->url, array('action' => ACTION_DISTRIBUTE_UNALLOCATED_FILL));
+            $button = new single_button($distributeunallocatedurl,
+                get_string('distributefill', RATINGALLOCATE_MOD_NAME), 'get');
+            // Enable only if the instance is ready, there are users to distribute and the algorithm may run manually.
+            $button->disabled = !($ratingover) || $undistributeduserscount === 0;
+            $button->add_action(new confirm_action(
+                get_string('distribute_unallocated_fill_confirm', RATINGALLOCATE_MOD_NAME)));
+
+            $output .= $this->render($button);
+            $output .= $this->help_icon('distribution_description', RATINGALLOCATE_MOD_NAME);
+            $output .= html_writer::end_div();
+        }
 
         $output .= $this->box_end();
         return $output;
