@@ -37,7 +37,11 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
                 $ratingallocatepath . '/' . this_db\ratingallocate_choices::TABLE . 's/' . this_db\ratingallocate_choices::TABLE;
         $paths[] = new restore_path_element(this_db\ratingallocate_choices::TABLE, $choicespath);
         $paths[] = new restore_path_element(this_db\ratingallocate_group_choices::TABLE,
-                $choicespath .'/' . this_db\ratingallocate_group_choices::TABLE .'s/' . this_db\ratingallocate_group_choices::TABLE);
+            $choicespath .'/' . this_db\ratingallocate_group_choices::TABLE .'s/' . this_db\ratingallocate_group_choices::TABLE);
+        $paths[] = new restore_path_element(this_db\ratingallocate_ch_gengroups::TABLE,
+            $choicespath .'/'. this_db\ratingallocate_ch_gengroups::TABLE . 's/' . this_db\ratingallocate_ch_gengroups::TABLE);
+        $paths[] = new restore_path_element(this_db\ratingallocate_groupings::TABLE,
+            $ratingallocatepath . '/' . this_db\ratingallocate_groupings::TABLE . 's/' . this_db\ratingallocate_groupings::TABLE);
         if ($userinfo) {
             $paths[] = new restore_path_element(this_db\ratingallocate_ratings::TABLE,
                     $choicespath . '/' . this_db\ratingallocate_ratings::TABLE . 's/' . this_db\ratingallocate_ratings::TABLE);
@@ -46,7 +50,7 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
                     this_db\ratingallocate_allocations::TABLE);
         }
 
-        // Return the paths wrapped into standard activity structure
+        // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
     }
 
@@ -66,9 +70,9 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
             $data->{this_db\ratingallocate::PUBLISHED} = false;
         }
 
-        // insert the record
+        // Insert the record.
         $newitemid = $DB->insert_record(this_db\ratingallocate::TABLE, $data);
-        // immediately after inserting "activity" record, call this
+        // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
     }
 
@@ -80,7 +84,7 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $data->{this_db\ratingallocate_choices::RATINGALLOCATEID} = $this->get_new_parentid(this_db\ratingallocate::TABLE);
         $newitemid = $DB->insert_record(this_db\ratingallocate_choices::TABLE, $data);
         // No need to save this mapping as far as nothing depend on it
-        // (child paths, file areas nor links decoder)
+        // (child paths, file areas nor links decoder).
         $this->set_mapping(this_db\ratingallocate_choices::TABLE, $oldid, $newitemid);
     }
 
@@ -130,8 +134,34 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $this->set_mapping(this_db\ratingallocate_group_choices::TABLE, $oldid, $newitemid);
     }
 
+    protected function process_ratingallocate_ch_gengroups($data) {
+        global $DB;
+        $data = (object) $data;
+        $oldid = $data->id;
+        $data->choiceid = $this->get_new_parentid(this_db\ratingallocate_choices::TABLE);
+        if ((int) $data->groupid !== 0) {
+            $data->groupid = $this->get_mappingid('group', $data->groupid);
+        }
+
+        $newitemid = $DB->insert_record(this_db\ratingallocate_ch_gengroups::TABLE, $data);
+        $this->set_mapping(this_db\ratingallocate_ch_gengroups::TABLE, $oldid, $newitemid);
+    }
+
+    protected function process_ratingallocate_groupings($data) {
+        global $DB;
+        $data = (object) $data;
+        $oldid = $data->id;
+        $data->ratingallocateid = $this->get_new_parentid(this_db\ratingallocate::TABLE);
+        if ((int) $data->groupingid !== 0) {
+            $data->groupingid = $this->get_mappingid('grouping', $data->groupingid);
+        }
+
+        $newitemid = $DB->insert_record(this_db\ratingallocate_groupings::TABLE, $data);
+        $this->set_mapping(this_db\ratingallocate_groupings::TABLE, $oldid, $newitemid);
+    }
+
     protected function after_execute() {
-        // Add ratingallocate related files
+        // Add ratingallocate related files.
         $this->add_related_files('mod_' . RATINGALLOCATE_MOD_NAME, 'intro', null);
         // $this->add_related_files('mod_' . RATINGALLOCATE_MOD_NAME, ratingallocate_FILEAREA_NAME, RATINGALLOCATE_MOD_NAME);
     }

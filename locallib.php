@@ -88,7 +88,10 @@ define('ACTION_ENABLE_CHOICE', 'enable_choice');
 define('ACTION_DISABLE_CHOICE', 'disable_choice');
 define('ACTION_DELETE_CHOICE', 'delete_choice');
 define('ACTION_START_DISTRIBUTION', 'start_distribution');
+define('ACTION_DELETE_ALL_RATINGS', 'delete_all_ratings');
 define('ACTION_MANUAL_ALLOCATION', 'manual_allocation');
+define('ACTION_DISTRIBUTE_UNALLOCATED_FILL', 'distribute_unallocated_fill');
+define('ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY', 'distribute_unallocated_equally');
 define('ACTION_PUBLISH_ALLOCATIONS', 'publish_allocations'); // Make them displayable for the users.
 define('ACTION_SOLVE_LP_SOLVE', 'solve_lp_solve'); // Instead of only generating the mps-file, let it solve.
 define('ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE', 'show_ratings_and_allocation_table');
@@ -203,7 +206,6 @@ class ratingallocate {
         foreach ($groupcandidates as $group) {
             $options[$group->id] = $group->name;
         }
-
         return $options;
     }
 
@@ -267,6 +269,26 @@ class ratingallocate {
         redirect(new moodle_url('/mod/ratingallocate/view.php',
                 array('id' => $this->coursemodule->id)));
         return;
+    }
+
+    private function delete_all_student_ratings() {
+        global $USER;
+        // Disallow to delete ratings for students and tutors.
+        if (!has_capability('mod/ratingallocate:start_distribution', $this->context, null, false)) {
+            redirect(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id)),
+                get_string('error_deleting_all_insufficient_permission', RATINGALLOCATE_MOD_NAME));
+            return;
+        }
+        // Disallow deletion when there can't be new ratings submitted
+        $status = $this->get_status();
+        if ($status !== self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS and $status !== self::DISTRIBUTION_STATUS_TOO_EARLY) {
+            redirect(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id)),
+                get_string('error_deleting_all_no_rating_possible', RATINGALLOCATE_MOD_NAME));
+            return;
+        }
+        $this->delete_all_ratings();
+        redirect(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id)),
+            get_string('success_deleting_all', RATINGALLOCATE_MOD_NAME));
     }
 
     private function process_action_give_rating() {
@@ -552,6 +574,7 @@ class ratingallocate {
                 if ($choice) {
                     // Delete related group associations, if any.
                     $DB->delete_records(this_db\ratingallocate_group_choices::TABLE, ['choiceid' => $choiceid]);
+                    $DB->delete_records(this_db\ratingallocate_ch_gengroups::TABLE, ['choiceid' => $choiceid]);
                     $DB->delete_records(this_db\ratingallocate_choices::TABLE, array('id' => $choiceid));
 
                     redirect(new moodle_url('/mod/ratingallocate/view.php',
@@ -637,6 +660,272 @@ class ratingallocate {
             $this->showinfo = false;
         }
         return $output;
+    }
+
+    /**
+     * Retrieve all used groups in rateable choices.
+     *
+     * @return array of group ids used in rateable choices
+     */
+    public function get_all_groups_of_choices(): array {
+        $rateablechoiceswithgrouprestrictions = array_filter($this->get_rateable_choices(),
+                fn($choice) => !empty($choice->usegroups) && !empty($this->get_choice_groups($choice->id)));
+        $rateablechoiceids = array_map(fn($choice) => $choice->id, $rateablechoiceswithgrouprestrictions);
+        $groupids = [];
+        foreach ($rateablechoiceids as $choiceid) {
+            $groupids = array_merge($groupids, array_map(fn($group) => $group->id, $this->get_choice_groups($choiceid)));
+        }
+        return array_unique($groupids);
+    }
+
+    /**
+     * Helper method returning an array of groupids belonging to the groups the user is member in.
+     *
+     * If the user is not a member of any group an empty array is being returned. Only group ids of groups defined in the
+     * choices restrictions are being considered here.
+     *
+     * @param int $userid the id of the user we want to get the group ids he/she belongs to
+     * @return array of group ids the user belongs to, not including groups which are not specified in at least one of the choices'
+     *  group restrictions
+     */
+    public function get_user_groupids(int $userid): array {
+        $groups = groups_get_user_groups($this->ratingallocate->course, $userid)[0];
+        if (empty($groups)) {
+            return [];
+        } else {
+            return array_filter($groups, fn($group) => in_array($group, $this->get_all_groups_of_choices()));
+        }
+    }
+
+    /**
+     * Helper function to retrieve undistributed users.
+     *
+     * This function returns an associative array [groupcount => [ users ]], groupcount meaning the amount of groups (used in
+     *  ratingallocate choices) the users are member of.
+     *
+     * @return array Associative array [groupcount => [ users ]]
+     */
+    private function get_undistributed_users_with_groupscount(): array {
+        $cachedallocations = $this->get_allocations();
+        $raters = $this->get_raters_in_course();
+        $undistributedusers = array_map(fn($user) => $user->id, array_values(array_filter($raters,
+            fn($user) => !in_array($user->id, array_keys($cachedallocations)))));
+
+        $undistributeduserswithgroups = [];
+        foreach ($undistributedusers as $user) {
+            $undistributeduserswithgroups[count($this->get_user_groupids($user))][] = $user;
+        }
+        return $undistributeduserswithgroups;
+    }
+
+    /**
+     * Returns an array of all userids of users which do not have an allocation (yet).
+     *
+     * This array will be sorted: Users with fewer memberships in groups used in the choices will come first. Exception:
+     * Users without group membership (groups count 0) are at the end of the array.
+     *
+     * @return array Array of user ids not having an allocation
+     */
+    public function get_undistributed_users(): array {
+        $undistributedusers = [];
+        $userswithgroups = $this->get_undistributed_users_with_groupscount();
+        if (empty($userswithgroups)) {
+            return [];
+        }
+        for ($i = 1; $i <= max(array_keys($userswithgroups)); $i++) {
+            if (empty($userswithgroups[$i])) {
+                continue;
+            }
+            $undistributedusers = array_merge($undistributedusers, $userswithgroups[$i]);
+        }
+        if (!empty($userswithgroups[0])) {
+            $undistributedusers = array_merge($undistributedusers, $userswithgroups[0]);
+        }
+        return $undistributedusers;
+    }
+
+    /**
+     * Function to retrieve the next choice which an undistributed user should be assigned to.
+     *
+     * @param string $distributionalgorithm the algorithm which should be applied to search for the next choice
+     * @param int $userid the userid of the user for which the next choice should be retrieved
+     * @return int id of the choice the given user should be assigned to, returns -1 if no valid choice
+     *  for the user could be found, returns -2 if there are no places left to assign any user
+     * @throws dml_exception
+     */
+    public function get_next_choice_to_assign_user(string $distributionalgorithm, int $userid): int {
+        global $DB;
+
+        $placesleft = [];
+        // Due to performance reasons we need to save some database query results to avoid multiple inefficient queries.
+        $cachedusergroupids = $this->get_user_groupids($userid);
+        $cachedundistributedusers = $this->get_undistributed_users();
+        $cachedallocations = $this->get_allocations();
+        $cachedchoices = [];
+        foreach ($this->get_rateable_choices() as $choice) {
+            $cachedchoices[$choice->id] = $choice;
+            $placesleft[$choice->id] = $choice->maxsize -
+                count(array_filter($cachedallocations, fn($allocation) => $allocation->choiceid == $choice->id));
+        }
+
+        // We have to remove the choices which are already maxed out.
+        $placesleft = array_filter($placesleft, fn($numberoffreeplaces) => $numberoffreeplaces != 0);
+
+        // Early exit if there are no choices with places left. We return -2 to signal the calling function that
+        // *independently* from the userid (we have not calculated anything userid specific until here) there are no
+        // choices with free places left.
+        if (empty($placesleft)) {
+            return -2;
+        }
+
+        // Filter choices the user cannot be assigned to.
+        foreach (array_keys($placesleft) as $choiceid) {
+            $choice = $DB->get_record('ratingallocate_choices', ['id' => $choiceid]);
+            if (empty($choice->usegroups)) {
+                // If we have a group without group restrictions it will always be available.
+                continue;
+            }
+            $choicegroups = $this->get_choice_groups($choiceid);
+            if (empty($choicegroups)) {
+                // If we have a group with group restrictions enabled, but without groups defined, no user
+                // can ever be assigned, so remove it.
+                unset($placesleft[$choiceid]);
+                continue;
+            }
+            // So only choices with 'proper' group restrictions are left now.
+            $groupidsofcurrentchoice = array_map(fn($group) => $group->id, $choicegroups);
+            $intersectinggroupids = array_intersect($cachedusergroupids, $groupidsofcurrentchoice);
+            if (empty($intersectinggroupids)) {
+                // If the user is not in one of the groups of the current choice, we remove the choice from possibles choices.
+                unset($placesleft[$choiceid]);
+            }
+        }
+
+        // At this point $placesleft only contains choices the user can be assigned to.
+        if (empty($placesleft)) {
+            // If we have no choice to assign, we return -1 to signal the algorithm that we cannot assign the user.
+            return -1;
+        }
+
+        // We now have to decide which choice id will be returned as the one the user will be assigned to.
+        // In case of "equal distribution" we have to fake the amount of available places first.
+        if ($distributionalgorithm == ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY) {
+            $userstodistributecount = count($cachedundistributedusers);
+            $freeplacescount = array_reduce($placesleft, fn($a, $b) => $a + $b);
+
+            $freeplacesoverhang = $freeplacescount - $userstodistributecount;
+
+            if ($freeplacesoverhang > 0) {
+                // Only if there are more free places than users to distribute, we want to distribute "equally".
+                // Choices with more places left should be targeted first when reducing places left.
+                arsort($placesleft);
+                $i = 0;
+                $choicesmaxed = [];
+                // We now lower each count of available places in each choice for every additional place that we have altogether
+                // than users to still distribute.
+                while ($freeplacesoverhang > 0 && count(array_unique($choicesmaxed)) < count($placesleft)) {
+                    // Second condition means that we will stop if we failed trying to reduce *every* choice.
+                    $nextchoiceid = array_keys($placesleft)[$i];
+                    if ($placesleft[$nextchoiceid] > 0) {
+                        // If we can still lower it, we do it.
+                        $placesleft[$nextchoiceid] = $placesleft[$nextchoiceid] - 1;
+                        $freeplacesoverhang--;
+                    } else {
+                        // If we cannot lower the places left anymore for this choice, we track that and will try to lower the
+                        // available places for the next one instead.
+                        $choicesmaxed[] = $nextchoiceid;
+                    }
+                    $i++;
+                    // We are iterating over all the choices constantly and try to reduce the available places.
+                    $i = $i % count($placesleft);
+                }
+                // We recalculated the left places for each choice, so we have to remove the choices which are now maxed out.
+                $placesleft = array_filter($placesleft, fn($numberoffreeplaces) => $numberoffreeplaces != 0);
+            }
+        }
+
+        // From here on it's just the algorithm 'distribute by filling up'.
+        $possiblechoices = $placesleft;
+
+        $choicessortedwithgroupscount = [];
+        $choicessorted = [];
+        foreach (array_keys($possiblechoices) as $choiceid) {
+            $choice = $DB->get_record('ratingallocate_choices', ['id' => $choiceid]);
+            // In case group restrictions are disabled for a choice that choice could still could have groups assigned.
+            // However, we need to treat them like they do not have any groups.
+            $groupscount = empty($choice->usegroups) ? 0 : count($this->get_choice_groups($choiceid));
+            $choicessortedwithgroupscount[$groupscount][] = $choiceid;
+        }
+        foreach ($choicessortedwithgroupscount as &$choiceswithcertaingroupcount) {
+            usort($choiceswithcertaingroupcount, function($a, $b) use ($placesleft) {
+                // Choices with the same amount of groups are sorted according the count of left places: fewer places first.
+                return $placesleft[$a] - $placesleft[$b];
+            });
+        }
+        for ($i = 1; $i <= max(array_keys($choicessortedwithgroupscount)); $i++) {
+            if (empty($choicessortedwithgroupscount[$i])) {
+                continue;
+            }
+            $choicessorted = array_merge($choicessorted, $choicessortedwithgroupscount[$i]);
+        }
+        if (!empty($choicessortedwithgroupscount[0])) {
+            $choicessorted = array_merge($choicessorted, $choicessortedwithgroupscount[0]);
+        }
+
+        // This is kind of a dilemma. We want the choices to be filled up beginning at the one with the least places left to fill it
+        // up as quickly as possible.
+        // However, in case of group restrictions this will lead to problems as we are assigning users which have to be assigned to
+        // specific choices (because all others cannot be assigned to it). So in the end these choices will not be available when
+        // we arrive at the choice with the group restrictions.
+        // Therefore, we are first filling up choices with group restrictions first (beginning at choices with fewer groups). Only
+        // in case we have the same amount of groups for two choices or we have no group restrictions at all we pick choices with
+        // fewer places left first (see foreach loop with usort a few lines above).
+
+        return !empty($choicessorted) ? array_shift($choicessorted) : -1;
+    }
+
+    /**
+     * Try to distribute all currently unallocated users.
+     *
+     * @param string $distributionalgorithm the distributionalgorithm which should be used, you can choose between
+     *  ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY and ACTION_DISTRIBUTE_UNALLOCATED_FILL
+     * @return void
+     * @throws dml_exception
+     */
+    public function distribute_users_without_choice(string $distributionalgorithm): void {
+        // This could need some extra memory, especially because we are caching some data structures in memory while
+        // running the algorithm.
+        raise_memory_limit(MEMORY_EXTRA);
+        core_php_time_limit::raise();
+
+        // This will retrieve a list of users we are trying to assign to choices, sorted from the least group membership count to
+        // more group memberships. Users without group memberships will be at the end of the array.
+        $possibleusers = $this->get_undistributed_users();
+
+        $transaction = $this->db->start_delegated_transaction();
+
+        $usertoassign = array_shift($possibleusers);
+        // As long as we have a user to assign, we try to assign him.
+        while ($usertoassign != null) {
+
+            // Calculate the choice to assign the user to depending on the given algorithm.
+            $choicetoassign = $this->get_next_choice_to_assign_user($distributionalgorithm, $usertoassign);
+            if ($choicetoassign === -2) {
+                // This means there are no free places left in any choice for any user, so we can stop the algorithm
+                // as a whole.
+                break;
+            } else if ($choicetoassign == -1) {
+                // This means that the user could not be assigned (for example due to group restrictions),
+                // so we try the next one.
+                $usertoassign = array_shift($possibleusers);
+                continue;
+            }
+            $this->add_allocation($choicetoassign, $usertoassign);
+            $usertoassign = array_shift($possibleusers);
+        }
+        // At this point we tried to assign all the users. It is possible that users remain undistributed, though.
+
+        $transaction->allow_commit();
     }
 
     private function process_action_show_ratings_and_alloc_table() {
@@ -761,8 +1050,10 @@ class ratingallocate {
 
         // Print data and controls for teachers.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
+            $undistributeduserscount = count($this->get_undistributed_users());
             $output .= $renderer->modify_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status,
-                    (int) $this->ratingallocate->algorithmstatus, (boolean) $this->ratingallocate->runalgorithmbycron);
+                $undistributeduserscount, (int) $this->ratingallocate->algorithmstatus,
+                (boolean) $this->ratingallocate->runalgorithmbycron);
             $output .= $renderer->publish_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
             $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context);
         }
@@ -805,6 +1096,10 @@ class ratingallocate {
 
             case ACTION_DELETE_RATING:
                 $this->process_action_delete_rating();
+                break;
+
+            case ACTION_DELETE_ALL_RATINGS:
+                $this->delete_all_student_ratings();
                 break;
 
             case ACTION_SHOW_CHOICES:
@@ -851,6 +1146,15 @@ class ratingallocate {
 
             case ACTION_MANUAL_ALLOCATION:
                 $output .= $this->process_action_manual_allocation();
+                break;
+
+            case ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY:
+            case ACTION_DISTRIBUTE_UNALLOCATED_FILL:
+                $this->distribute_users_without_choice($action);
+                redirect(new moodle_url('/mod/ratingallocate/view.php', ['id' => $this->coursemodule->id]),
+                    get_string('unassigned_users_assigned', RATINGALLOCATE_MOD_NAME),
+                    null,
+                    \core\output\notification::NOTIFY_SUCCESS);
                 break;
 
             case ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE:
@@ -983,72 +1287,81 @@ class ratingallocate {
     public function synchronize_allocation_and_grouping() {
         require_capability('moodle/course:managegroups', $this->context);
 
-        $groupingidname = RATINGALLOCATE_MOD_NAME . '_instid_' . $this->ratingallocateid;
         // Search if there is already a grouping from us.
-        $grouping = groups_get_grouping_by_idnumber($this->course->id, $groupingidname);
-        $groupingid = null;
-        if (!$grouping) {
+        if (!$groupingids = $this->db->get_record(this_db\ratingallocate_groupings::TABLE,
+            array('ratingallocateid' => $this->ratingallocateid),
+            'groupingid')) {
             // Create grouping.
             $data = new stdClass();
             $data->name = get_string('groupingname', RATINGALLOCATE_MOD_NAME, $this->ratingallocate->name);
-            $data->idnumber = $groupingidname;
             $data->courseid = $this->course->id;
             $groupingid = groups_create_grouping($data);
-        } else {
-            $groupingid = $grouping->id;
-        }
 
-        $groupidentifierfromchoiceid = function($choiceid) {
-            return RATINGALLOCATE_MOD_NAME . '_c_' . $choiceid;
-        };
+            // Insert groupingid and ratingallocateid into the table.
+            $data = new stdClass();
+            $data->groupingid = $groupingid;
+            $data->ratingallocateid = $this->ratingallocateid;
+            $this->db->insert_record(this_db\ratingallocate_groupings::TABLE, $data);
+
+        } else {
+            // If there is already a grouping for this allocation assign the corresponing id to groupingid.
+            $groupingid = $groupingids->groupingid;
+        }
 
         $choices = $this->get_choices_with_allocationcount();
 
-        // Make a new array containing only the identifiers of the choices.
-        $choiceids = array();
-        foreach ($choices as $id => $choice) {
-            $choiceids[$groupidentifierfromchoiceid($choice->id)] = array('key' => $id);
-        }
+        // Loop through existing choices.
+        foreach ($choices as $choice) {
+            if ($this->db->record_exists(this_db\ratingallocate_choices::TABLE,
+                    ['id' => $choice->id])) {
 
-        // Dind all associated groups in this grouping.
-        $groups = groups_get_all_groups($this->course->id, 0, $groupingid);
+                // Checks if there is already a group for this choice.
 
-        // Loop through the groups in the grouping: if the choice does not exist anymore -> delete.
-        // Otherwise mark it.
-        foreach ($groups as $group) {
-            if (array_key_exists($group->idnumber, $choiceids)) {
-                // Group exists, mark.
-                $choiceids[$group->idnumber]['exists'] = true;
-                $choiceids[$group->idnumber]['groupid'] = $group->id;
-            } else {
-                // Delete group $group->id.
-                groups_delete_group($group->id);
-            }
-        }
+                if ($groupids = $this->db->get_record(this_db\ratingallocate_ch_gengroups::TABLE,
+                    array('choiceid' => $choice->id),
+                    'groupid')) {
 
-        // Create groups groups for new identifiers or empty group if it exists.
-        foreach ($choiceids as $groupid => $choice) {
-            if (key_exists('exists', $choice)) {
-                // Remove all members.
-                groups_delete_group_members_by_group($choice['groupid']);
-            } else {
-                $data = new stdClass();
-                $data->courseid = $this->course->id;
-                $data->name = $choices[$choice['key']]->title;
-                $data->idnumber = $groupid;
-                $createdid = groups_create_group($data);
-                groups_assign_grouping($groupingid, $createdid);
-                $choiceids[$groupid]['groupid'] = $createdid;
+                    $groupid = $groupids->groupid;
+                    $group = groups_get_group($groupid);
+
+                    // Delete all the members from the existing group for this choice.
+                    if ($group) {
+                        groups_delete_group_members_by_group($group->id);
+                        groups_assign_grouping($groupingid, $group->id);
+                    }
+
+                } else {
+                    // If the group for this choice does not exist yet, create it.
+                    $data = new stdClass();
+                    $data->courseid = $this->course->id;
+                    $data->name = $choice->title;
+                    $createdid = groups_create_group($data);
+                    if ($createdid) {
+                        groups_assign_grouping($groupingid, $createdid);
+
+                        // Insert the mapping between group and choice into the Table.
+                        $this->db->insert_record(this_db\ratingallocate_ch_gengroups::TABLE,
+                            ['choiceid' => $choice->id, 'groupid' => $createdid]);
+                    }
+                }
             }
         }
 
         // Add all participants in the correct group.
         $allocations = $this->get_allocations();
-        foreach ($allocations as $id => $allocation) {
+        foreach ($allocations as $allocation) {
             $choiceid = $allocation->choiceid;
             $userid = $allocation->userid;
-            $choiceidentifier = $groupidentifierfromchoiceid($choiceid);
-            groups_add_member($choiceids[$choiceidentifier]['groupid'], $userid);
+
+            // Get the group corresponding to the choiceid.
+            $groupids = $this->db->get_record(this_db\ratingallocate_ch_gengroups::TABLE,
+                array('choiceid' => $choiceid),
+                'groupid');
+            $groupid = $groupids->groupid;
+            $group = groups_get_group($groupid);
+            if ($group) {
+                groups_add_member($group, $userid);
+            }
         }
         // Invalidate the grouping cache for the course.
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($this->course->id));
@@ -1283,6 +1596,40 @@ class ratingallocate {
         return $this->db->get_records_sql($sql, array(
                 'ratingallocateid' => $this->ratingallocateid
         ));
+    }
+
+    /**
+     * Deletes all ratings in this ratingallocate
+     */
+    public function delete_all_ratings() {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        try {
+            $choices = $this->get_choices();
+
+            foreach ($choices as $id => $choice) {
+                $data = array(
+                    'choiceid' => $id
+                );
+
+                // Delete the allocations associated with this rating.
+                $DB->delete_records('ratingallocate_allocations', $data);
+
+                // Actually delete the rating.
+                $DB->delete_records('ratingallocate_ratings', $data);
+            }
+
+            $transaction->allow_commit();
+
+            // Logging.
+            $event = \mod_ratingallocate\event\all_ratings_deleted::create_simple(
+                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
+            $event->trigger();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
+        }
     }
 
     /**
@@ -1542,6 +1889,7 @@ class ratingallocate {
 
     /**
      * Remove all allocations of a user.
+     *
      * @param int $userid id of the user.
      */
     public function remove_allocations($userid) {

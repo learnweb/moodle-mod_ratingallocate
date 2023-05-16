@@ -101,6 +101,15 @@ $capabilities = array(
                         'manager' => CAP_ALLOW
                 )
         ),
+        'mod/ratingallocate:distribute_unallocated' => array(
+            'contextlevel' => CONTEXT_MODULE,
+            'riskbitmask' => RISK_PERSONAL,
+            'captype' => 'write',
+            'archetypes' => array(
+                'editingteacher' => CAP_ALLOW,
+                'manager' => CAP_ALLOW
+            )
+        ),
 );
 
 

@@ -128,6 +128,19 @@ class locallib_test extends advanced_testcase {
         $this->assertContains($student3->id, array_map($mapuserid, $alloc2));
         // Assert, that student 4 was allocated to choice 2.
         $this->assertContains($student4->id, array_map($mapuserid, $alloc2));
+
+        // We now unenrol a user and make sure he will not be considered in distribution.
+        $manualenrolplugin = enrol_get_plugin('manual');
+        $enrolinstance = array_values(
+            array_filter(enrol_get_instances($course->id, true), fn($instance) => $instance->enrol == "manual"))[0];
+
+        $manualenrolplugin->unenrol_user($enrolinstance, $student3->id);
+        // Re-distributing will first clear all allocations, so afterwards we will see if the unenrolled user has been considered.
+        $ratingallocate->distrubute_choices();
+
+        $numallocations = $DB->count_records(this_db\ratingallocate_allocations::TABLE);
+        $this->assertEquals(3, $numallocations, 'There should be only 3 allocations, because we unenrolled '
+            . 'a student, so this one should not have been distributed.');
     }
 
     private static function filter_allocations_by_choice($allocations, $choiceid) {
