@@ -658,11 +658,17 @@ class ratingallocate {
      */
     public function get_all_groups_of_choices(): array {
         $rateablechoiceswithgrouprestrictions = array_filter($this->get_rateable_choices(),
-                fn($choice) => !empty($choice->usegroups) && !empty($this->get_choice_groups($choice->id)));
-        $rateablechoiceids = array_map(fn($choice) => $choice->id, $rateablechoiceswithgrouprestrictions);
+                function($choice) {
+                    return !empty($choice->usegroups) && !empty($this->get_choice_groups($choice->id));
+                });
+        $rateablechoiceids = array_map(function($choice) {
+            return $choice->id;
+        }, $rateablechoiceswithgrouprestrictions);
         $groupids = [];
         foreach ($rateablechoiceids as $choiceid) {
-            $groupids = array_merge($groupids, array_map(fn($group) => $group->id, $this->get_choice_groups($choiceid)));
+            $groupids = array_merge($groupids, array_map(function($group) {
+                return $group->id;
+            }, $this->get_choice_groups($choiceid)));
         }
         return array_unique($groupids);
     }
@@ -682,7 +688,9 @@ class ratingallocate {
         if (empty($groups)) {
             return [];
         } else {
-            return array_filter($groups, fn($group) => in_array($group, $this->get_all_groups_of_choices()));
+            return array_filter($groups, function($group) {
+                return in_array($group, $this->get_all_groups_of_choices());
+            });
         }
     }
 
@@ -697,8 +705,12 @@ class ratingallocate {
     private function get_undistributed_users_with_groupscount(): array {
         $cachedallocations = $this->get_allocations();
         $raters = $this->get_raters_in_course();
-        $undistributedusers = array_map(fn($user) => $user->id, array_values(array_filter($raters,
-            fn($user) => !in_array($user->id, array_keys($cachedallocations)))));
+        $undistributedusers = array_map(function($user) {
+            return $user->id;
+        }, array_values(array_filter($raters,
+            function($user) use ($cachedallocations) {
+                return !in_array($user->id, array_keys($cachedallocations));
+            })));
 
         $undistributeduserswithgroups = [];
         foreach ($undistributedusers as $user) {
@@ -754,11 +766,15 @@ class ratingallocate {
         foreach ($this->get_rateable_choices() as $choice) {
             $cachedchoices[$choice->id] = $choice;
             $placesleft[$choice->id] = $choice->maxsize -
-                count(array_filter($cachedallocations, fn($allocation) => $allocation->choiceid == $choice->id));
+                count(array_filter($cachedallocations, function($allocation) use ($choice) {
+                    return $allocation->choiceid == $choice->id;
+                }));
         }
 
         // We have to remove the choices which are already maxed out.
-        $placesleft = array_filter($placesleft, fn($numberoffreeplaces) => $numberoffreeplaces != 0);
+        $placesleft = array_filter($placesleft, function($numberoffreeplaces) {
+            return $numberoffreeplaces != 0;
+        });
 
         // Early exit if there are no choices with places left. We return -2 to signal the calling function that
         // *independently* from the userid (we have not calculated anything userid specific until here) there are no
@@ -782,7 +798,9 @@ class ratingallocate {
                 continue;
             }
             // So only choices with 'proper' group restrictions are left now.
-            $groupidsofcurrentchoice = array_map(fn($group) => $group->id, $choicegroups);
+            $groupidsofcurrentchoice = array_map(function($group) {
+                return $group->id;
+            }, $choicegroups);
             $intersectinggroupids = array_intersect($cachedusergroupids, $groupidsofcurrentchoice);
             if (empty($intersectinggroupids)) {
                 // If the user is not in one of the groups of the current choice, we remove the choice from possibles choices.
@@ -800,7 +818,9 @@ class ratingallocate {
         // In case of "equal distribution" we have to fake the amount of available places first.
         if ($distributionalgorithm == ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY) {
             $userstodistributecount = count($cachedundistributedusers);
-            $freeplacescount = array_reduce($placesleft, fn($a, $b) => $a + $b);
+            $freeplacescount = array_reduce($placesleft, function($a, $b) {
+                return $a + $b;
+            });
 
             $freeplacesoverhang = $freeplacescount - $userstodistributecount;
 
@@ -829,7 +849,9 @@ class ratingallocate {
                     $i = $i % count($placesleft);
                 }
                 // We recalculated the left places for each choice, so we have to remove the choices which are now maxed out.
-                $placesleft = array_filter($placesleft, fn($numberoffreeplaces) => $numberoffreeplaces != 0);
+                $placesleft = array_filter($placesleft, function($numberoffreeplaces) {
+                    return $numberoffreeplaces != 0;
+                });
             }
         }
 
