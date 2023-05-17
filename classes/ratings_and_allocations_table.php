@@ -68,7 +68,7 @@ class ratings_and_allocations_table extends \table_sql {
         $this->ratingallocate = $ratingallocate;
         if ($downloadable && has_capability('mod/ratingallocate:export_ratings', $ratingallocate->get_context())) {
             $download = optional_param('download', '', PARAM_ALPHA);
-            $this->is_downloading($download, 'Test', 'Testsheet');
+            $this->is_downloading($download, $ratingallocate->ratingallocate->name . '-ratings_and_allocations', 'ratings_and_allocations');
         }
 
         $this->shownames = true;
@@ -419,7 +419,8 @@ class ratings_and_allocations_table extends \table_sql {
      */
     private function setup_filter($hidenorating = null, $showallocnecessary = null) {
         // Get the filter settings.
-        $filter = json_decode(get_user_preferences('flextable_' . $this->uniqueid . '_filter'), true);
+        $settings = get_user_preferences('flextable_' . $this->uniqueid . '_filter');
+        $filter = $settings ? json_decode($settings, true) : null;
 
         if (!$filter) {
             $filter = array(

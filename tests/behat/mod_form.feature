@@ -32,6 +32,7 @@ Feature: Creating a new rating allocation, where new choices need to
       | title                  | My third choice |
       | Description (optional) | Test 3          |
       | maxsize                | 2               |
+    And the default editor is set to "textarea"
 
   Scenario: Create a new rating alloation and add an additonal new choice.
     Given I add a new choice with the values:

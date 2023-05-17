@@ -255,7 +255,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      * @param $classes string class for the formatting of the notification
      */
     public function add_notification($note, $classes = 'notifyproblem') {
-        array_push($this->notifications, $this->notification($note, $classes));
+        array_push($this->notifications, $this->notification($note, $classes, false));
     }
 
     /**
@@ -764,48 +764,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $option = $strategy->translate_rating_to_titles($rating);
         return empty($option) ? get_string('no_rating_given', RATINGALLOCATE_MOD_NAME) :
                 get_string('rating_raw', RATINGALLOCATE_MOD_NAME, $option);
-    }
-
-    /**
-     * Format the users in the rating table
-     */
-    public function format_user_data($data) {
-        global $CFG, $USER, $COURSE;
-
-        $output = '';
-        $output .= html_writer::start_tag('div', array('class' => 'ratingallocate_user'));
-        $output .= html_writer::start_tag('div', array('class' => 'name'));
-        $output .= fullname($data);
-        $output .= html_writer::end_tag('div');
-        $output .= html_writer::start_tag('div', array('class' => 'icons'));
-        if (has_capability('moodle/user:viewdetails', $this->page->context)) {
-            $a = array();
-            $a['href'] = new moodle_url('/user/view.php', array('id' => $data->id, 'course' => $COURSE->id));
-            $a['title'] = get_string('viewprofile', 'core');
-            $output .= html_writer::start_tag('a', $a);
-
-            $src = array('src' => $this->output->pix_url('i/user'), 'class' => 'icon', 'alt' => get_string('viewprofile', 'core'));
-            $output .= html_writer::empty_tag('img', $src);
-
-            $output .= html_writer::end_tag('a');
-        }
-
-        if ($CFG->messaging && has_capability('moodle/site:sendmessage', $this->page->context) && $data->id != $USER->id) {
-            $a = array();
-            $a['href'] = new moodle_url('/message/index.php', array('id' => $data->id));
-            $a['title'] = get_string('sendmessageto', 'core_message', fullname($data));
-            $output .= html_writer::start_tag('a', $a);
-
-            $src = array('src' => $this->output->pix_url('t/email'), 'class' => 'icon');
-            $src['alt'] = get_string('sendmessageto', 'core_message', fullname($data));
-            $output .= html_writer::empty_tag('img', $src);
-
-            $output .= html_writer::end_tag('a');
-        }
-        $output .= html_writer::end_tag('div');
-        $output .= html_writer::end_tag('div');
-
-        return $output;
     }
 
     /**

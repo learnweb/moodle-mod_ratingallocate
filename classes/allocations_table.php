@@ -49,7 +49,7 @@ class allocations_table extends \table_sql {
         $this->ratingallocate = $ratingallocate;
         if (has_capability('mod/ratingallocate:export_ratings', $ratingallocate->get_context())) {
             $download = optional_param('download', '', PARAM_ALPHA);
-            $this->is_downloading($download, $ratingallocate->ratingallocate->name, 'Testsheet');
+            $this->is_downloading($download, $ratingallocate->ratingallocate->name . '-allocations', 'allocations');
         }
     }
 
