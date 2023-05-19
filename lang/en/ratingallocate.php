@@ -53,6 +53,8 @@ $string['configdownloaduserfields'] =
 $string['userid'] = 'User ID';
 $string['calendarstart'] = '{$a} opens';
 $string['calendarstop'] = '{$a} closes';
+$string['openafterclose'] = 'This activity must start before it ends.';
+$string['closebeforeopen'] = 'This activity must end after it begins.';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Rating Form for Users">
 $string['choicestatusheading'] = 'Status';
