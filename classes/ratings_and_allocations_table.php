@@ -164,6 +164,12 @@ class ratings_and_allocations_table extends \table_sql {
 
         foreach ($this->choicenames as $choiceid => $choicetitle) {
             $columns[] = self::CHOICE_COL . $choiceid;
+            $choice = $this->ratingallocate->get_choices()[$choiceid];
+            $choicegroups = array_map(fn($group) => groups_get_group_name($group->id), $this->ratingallocate->get_choice_groups($choiceid));
+            if (!empty($choice->usegroups) && !empty($choicegroups)) {
+                $choicetitle .= ' <br/>' . \html_writer::span('(' . implode(';', $choicegroups) . ')',
+                        'groupsinchoiceheadings');
+            }
             $headers[] = $choicetitle;
             if ($this->is_downloading()) {
                 $columns[] = self::CHOICE_COL . $choiceid . self::EXPORT_CHOICE_TEXT_SUFFIX;

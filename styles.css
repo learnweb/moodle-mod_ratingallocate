@@ -90,6 +90,10 @@
     z-index: 3;
 }
 
+.ratingallocate_ratings_table .groupsinchoiceheadings {
+    font-size: xx-small;
+}
+
 .ratingallocate_ratings_table tr.ratingallocate_summary td {
     position: sticky;
     bottom: -2px;
