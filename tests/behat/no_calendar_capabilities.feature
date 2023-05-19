@@ -22,8 +22,8 @@ Feature: Ratingallocate with no calendar capabilites
   @javascript
   Scenario: Editing a ratingallocate activity
     Given the following "activities" exist:
-      | activity       | course | idnumber | name               | accesstimestart      | accesstimestop
-      | ratingallocate | C1     | ra1      | My Fair Allocation | ##1 January 2023##   | ##1 February 2023##
+      | activity       | course | idnumber | name               | accesstimestart      | accesstimestop      |
+      | ratingallocate | C1     | ra1      | My Fair Allocation | ##1 January 2023##   | ##1 February 2023## |
     And I am on the "My Fair Allocation" "ratingallocate activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
