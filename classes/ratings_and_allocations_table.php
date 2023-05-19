@@ -178,7 +178,11 @@ class ratings_and_allocations_table extends \table_sql {
 
         // Set additional table settings.
         $this->sortable(true, 'lastname');
-        $this->set_attribute('class', 'ratingallocate_ratings_table');
+        $tableclasses ='ratingallocate_ratings_table';
+        if ($this->showgroups) {
+            $tableclasses .= ' includegroups';
+        }
+        $this->set_attribute('class', $tableclasses);
 
         $this->initialbars(true);
 
