@@ -101,8 +101,6 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
         $id = $DB->insert_record(this_db\ratingallocate::TABLE, $ratingallocate);
         $ratingallocate->id = $id;
 
-
-
         ratingallocate_set_events($ratingallocate);
         $transaction->allow_commit();
         return $id;
