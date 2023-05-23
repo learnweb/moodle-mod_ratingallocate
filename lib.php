@@ -649,11 +649,11 @@ function mod_ratingallocate_core_calendar_get_valid_event_timestart_range (\cale
 
     if ($event->eventtype == RATINGALLOCATE_EVENT_TYPE_START) {
         if (!empty($timeclose)) {
-            $maxdate = [$timeclose, get_string('openafterclose', 'ratingallocate')];
+            $maxdate = [$timeclose, get_string('openafterclose', RATINGALLOCATE_MOD_NAME)];
         }
     } else if ($event->eventtype == RATINGALLOCATE_EVENT_TYPE_STOP) {
         if (!empty($timeopen)) {
-            $mindate = [$timeopen, get_string('closebeforeopen', 'ratingallocate')];
+            $mindate = [$timeopen, get_string('closebeforeopen', RATINGALLOCATE_MOD_NAME)];
         }
     }
     return [$mindate, $maxdate];

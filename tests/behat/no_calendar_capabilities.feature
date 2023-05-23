@@ -15,7 +15,9 @@ Feature: Ratingallocate with no calendar capabilites
       | user      | course  | role            |
       | teacher1  | C1      | editingteacher  |
     And I log in as "admin"
-    And I override the system permissions of "Teacher" role with:
+    And I am on "C1" course homepage
+    And I navigate to "Participants > Permissions" in current page administration
+    And I override the system permissions of "editingteacher" role with:
       | capability                     | permission  |
       | moodle/calendar:manageentries  | Prohibit    |
 
