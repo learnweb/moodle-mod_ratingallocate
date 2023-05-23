@@ -14,7 +14,7 @@ Feature: Ratingallocate with no calendar capabilites
     And the following "course enrolments" exist:
       | user      | course  | role            |
       | teacher1  | C1      | editingteacher  |
-    And I am on the "C1" Permissions page logged in as admin
+    And I log in as "admin"
     And I override the system permissions of "Teacher" role with:
       | capability                     | permission  |
       | moodle/calendar:manageentries  | Prohibit    |
@@ -27,7 +27,7 @@ Feature: Ratingallocate with no calendar capabilites
     And I am on the "My Fair Allocation" "ratingallocate activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
-      | accesstimestart | ##yesterday## |
-      | accesstimestop  | ##tomorrow##  |
+      | Rating begins at | ##yesterday## |
+      | Rating ends at   | ##tomorrow##  |
     And I press "Save and return to course"
     Then I should see "My Fair Allocation"
