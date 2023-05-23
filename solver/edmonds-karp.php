@@ -41,7 +41,7 @@ class solver_edmonds_karp extends distributor {
         }
 
         $choicecount = count($choicedata);
-        // Index of source and sink in the graph
+        // Index of source and sink in the graph.
         $source = 0;
         $sink = $choicecount + $usercount + 1;
 
@@ -53,11 +53,11 @@ class solver_edmonds_karp extends distributor {
         // This is an adaptation of the Ford-Fulkerson algorithm
         // with Bellman-Ford as search function (see: Edmonds-Karp in Introduction to Algorithms)
         // http://stackoverflow.com/questions/6681075/while-loop-in-php-with-assignment-operator
-        // Look for an augmenting path (a shortest path from the source to the sink)
-        while ($path = $this->find_shortest_path_bellf($source, $sink)) { // if the function returns null, the while will stop.
-            // Reverse the augmentin path, thereby distributing a user into a group
+        // Look for an augmenting path (a shortest path from the source to the sink).
+        while ($path = $this->find_shortest_path_bellf($source, $sink)) { // If the function returns null, the while will stop.
+            // Reverse the augmentin path, thereby distributing a user into a group.
             $this->augment_flow($path);
-            unset($path); // clear up old path
+            unset($path); // Clear up old path.
         }
         return $this->extract_allocation($touserid, $tochoiceid);
     }
@@ -70,45 +70,45 @@ class solver_edmonds_karp extends distributor {
      * @return array with the of the nodes in the path
      */
     private function find_shortest_path_bellf($from, $to) {
-        // Table of distances known so far
+        // Table of distances known so far.
         $dists = array();
-        // Table of predecessors (used to reconstruct the shortest path later)
+        // Table of predecessors (used to reconstruct the shortest path later).
         $preds = array();
 
-        // Number of nodes in the graph
+        // Number of nodes in the graph.
         $count = $this->graph['count'];
 
-        // Step 1: initialize graph
-        for ($i = 0; $i < $count; $i++) { // for each vertex v in vertices:
-            if ($i == $from) {// if v is source then weight[v] := 0
+        // Step 1: initialize graph.
+        for ($i = 0; $i < $count; $i++) { // For each vertex v in vertices.
+            if ($i == $from) {// If v is source then weight[v] := 0.
                 $dists[$i] = 0;
-            } else {// else weight[v] := infinity
+            } else {// Else weight[v] := infinity.
                 $dists[$i] = INF;
             }
-            $preds[$i] = null; // predecessor[v] := null
+            $preds[$i] = null; // Set predecessor[v] := null.
         }
 
-        // Step 2: relax edges repeatedly
-        for ($i = 0; $i < $count; $i++) { // for i from 1 to size(vertices)-1:
+        // Step 2: relax edges repeatedly.
+        for ($i = 0; $i < $count; $i++) { // For i from 1 to size(vertices)-1:.
             $updatedsomething = false;
-            foreach ($this->graph as $key => $edges) { // for each edge (u, v) with weight w in edges:
+            foreach ($this->graph as $key => $edges) { // For each edge (u, v) with weight w in edges:.
                 if (is_array($edges)) {
                     foreach ($edges as $key2 => $edge) {
                         /* @var $edge edge */
-                        if ($dists[$edge->from] + $edge->weight < $dists[$edge->to]) { // if weight[u] + w < weight[v]:
-                            $dists[$edge->to] = $dists[$edge->from] + $edge->weight; // weight[v] := weight[u] + w
-                            $preds[$edge->to] = $edge->from; // predecessor[v] := u
+                        if ($dists[$edge->from] + $edge->weight < $dists[$edge->to]) { // If weight[u] + w < weight[v]:.
+                            $dists[$edge->to] = $dists[$edge->from] + $edge->weight; // Set weight[v] := weight[u] + w.
+                            $preds[$edge->to] = $edge->from; // Set predecessor[v] := u.
                             $updatedsomething = true;
                         }
                     }
                 }
             }
             if (!$updatedsomething) {
-                break; // leave
+                break; // Leave.
             }
         }
 
-        // Step 3: check for negative-weight cycles
+        // Step 3: check for negative-weight cycles.
         /*foreach ($graph as $key => $edges) { // for each edge (u, v) with weight w in edges:
             if (is_array($edges)) {
                 foreach ($edges as $key2 => $edge) {
@@ -120,15 +120,15 @@ class solver_edmonds_karp extends distributor {
             }
         }*/
 
-        // If there is no path to $to, return null
+        // If there is no path to $to, return null.
         if (is_null($preds[$to])) {
             return null;
         }
 
-        // cleanup dists to save some space
+        // Cleanup dists to save some space.
         unset($dists);
 
-        // Use the preds table to reconstruct the shortest path
+        // Use the preds table to reconstruct the shortest path.
         $path = array();
         $p = $to;
         while ($p != $from) {

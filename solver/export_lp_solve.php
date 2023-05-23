@@ -25,10 +25,10 @@
  * @copyright  2014 Max Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once(dirname(__FILE__) . '/../../../config.php'); // to include $CFG, for example
+require_once(dirname(__FILE__) . '/../../../config.php'); // To include $CFG, for example.
 require_once(dirname(__FILE__) . '/../locallib.php');
 
-$id = required_param('id', PARAM_INT); // course_module ID, or
+$id = required_param('id', PARAM_INT); // Course_module ID, or.
 $action = optional_param('action', '', PARAM_ACTION);
 
 if ($id) {
@@ -143,10 +143,10 @@ class lp_export_write {
      */
     protected function send_header() {
         global $CFG;
-        if (strpos($CFG->wwwroot, 'https://') === 0) { // https sites - watch out for IE! KB812935 and KB316431
+        if (strpos($CFG->wwwroot, 'https://') === 0) { // For https sites - watch out for IE! KB812935 and KB316431.
             header('Cache-Control: max-age=10');
             header('Pragma: ');
-        } else { // normal http - prevent caching at all cost
+        } else { // Normal http - prevent caching at all cost.
             header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
             header('Pragma: no-cache');
         }
@@ -169,7 +169,6 @@ class lp_export_write {
      */
     public function __destruct() {
         fclose($this->fp);
-        // unlink ( $this->path );
     }
 
 }
@@ -190,16 +189,16 @@ foreach ($ratings as $rating) {
     $ratingscells[$rating->userid][$rating->choiceid] = $rating->rating;
 }
 
-$zielfkt = 'max '; // die zu maximierende Zielfunktion
-$usernb = ''; // Stelle die NB pro User auf, dass er nur in eine Wahl kommt
+$zielfkt = 'max '; // The function to maximise.
+$usernb = ''; // Constraint for each user, to be only allocated to one choice.
 $variablenerkl = '';
-$nbkurs = array(); // nebenbedingungen pro Kurs
+$nbkurs = array(); // Constraint for each course.
 foreach ($ratingscells as $userid => $userrating) {
     $variablenerkl .= 'bin';
     $nbkursakt = '';
     foreach ($userrating as $choiceid => $rating) {
         $usercoursevar = 'u' . $userid . '_c' . $choiceid;
-        if ($rating > 0) {   // wenn der Nutzer das absolut nicht will,darf er da auch nicht rein kommen
+        if ($rating > 0) {   // If the user rejected this choice, he can't be allocated to it.
             $usernb .= '+' . $usercoursevar . ' ';
         }
         $zielfkt .= '+' . $rating . '*' . $usercoursevar;
@@ -213,7 +212,7 @@ foreach ($ratingscells as $userid => $userrating) {
     $usernb .= " = 1;\r\n";
 }
 
-// Nebenbedingungen pro Kurs abschließen
+// Conclude constraints for each course.
 foreach ($nbkurs as $choiceid => $nbeinkurs) {
     $nbkurs[$choiceid] .= '<=' . $choices[$choiceid]->maxsize . ";\r\n";
 }
@@ -236,7 +235,7 @@ if ($action == ACTION_SOLVE_LP_SOLVE) {
     $output = exec($command);
 
     if ($return != 0) {
-        // an error occurred
+        // An error occurred.
         print_erro("error");
     }
 }

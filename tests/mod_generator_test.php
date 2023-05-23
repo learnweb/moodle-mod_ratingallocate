@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+namespace mod_ratingallocate\tests;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -39,14 +39,14 @@ class mod_generator_test extends advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
 
-        // There should not be any module for that course first
+        // There should not be any module for that course first.
         $this->assertFalse(
                 $DB->record_exists('ratingallocate', array('course' => $course->id
                 )));
         $records = $DB->get_records('ratingallocate_choices', array(), 'id');
         $this->assertEquals(0, count($records));
 
-        // create activity
+        // cCreate activity.
         $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
                 array('course' => $course));
         $records = $DB->get_records('ratingallocate', array('course' => $course->id
@@ -74,7 +74,7 @@ class mod_generator_test extends advanced_testcase {
         );
 
         $this->assertEquals(json_decode(json_encode($expectedvaluesdb, false)), reset($records));
-        // must have two choices
+        // Must have two choices.
         $records = $DB->get_records('ratingallocate_choices',
                 array('ratingallocateid' => $mod->id
                 ), 'title');
@@ -102,21 +102,21 @@ class mod_generator_test extends advanced_testcase {
         );
         $this->assertEquals($expectedchoices, $records);
 
-        // Create an other mod_ratingallocate within the course
+        // Create an other mod_ratingallocate within the course.
         $params = array('course' => $course->id, 'name' => 'Another mod_ratingallocate'
         );
         $mod = mod_ratingallocate_generator::create_instance_with_choices($this, $params);
         $records = $DB->get_records('ratingallocate', array('course' => $course->id
         ), 'id');
-        // are there 2 modules within the course
+        // Are there 2 modules within the course?
         $this->assertEquals(2, count($records));
-        // is the name correct
+        // Is the name correct?
         $this->assertEquals('Another mod_ratingallocate', $records[$mod->id]->name);
 
         $records = $DB->get_records('ratingallocate_choices', array(), 'id');
         $this->assertEquals(4, count($records));
 
-        // other tables
+        // Other tables.
         $records = $DB->get_records('ratingallocate_ratings', array(), 'id');
         $this->assertEquals(0, count($records));
         $records = $DB->get_records('ratingallocate_allocations', array(), 'id');

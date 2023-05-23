@@ -25,8 +25,8 @@
  * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-// namespace is mandatory!
 
+// Namespace is mandatory!
 namespace ratingallocate\strategy_tickyes;
 
 defined('MOODLE_INTERNAL') || die();
@@ -84,7 +84,7 @@ class strategy extends \strategytemplate {
     }
 }
 
-// register with the strategymanager
+// Register with the strategymanager.
 \strategymanager::add_strategy(strategy::STRATEGYID);
 
 /**
@@ -114,11 +114,11 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             $ratingelem = $elemprefix . '[rating]';
             $groupsidelem = $elemprefix . '[choiceid]';
 
-            // choiceid ablegen
+            // Set choiceid.
             $mform->addElement('hidden', $groupsidelem, $data->choiceid);
             $mform->setType($groupsidelem, PARAM_INT);
 
-            // title anzeigen
+            // Show title.
             $mform->addElement('header', $headerelem, $data->title);
             $mform->setExpanded($headerelem);
 
@@ -155,7 +155,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         $errors = parent::validation($data, $files);
         $mintickyes = $this->get_strategysetting(strategy::MINTICKYES);
 
-        if (!array_key_exists('data', $data) or count($data['data']) < 2) {
+        if (!array_key_exists('data', $data) || count($data['data']) < 2) {
             return $errors;
         }
 

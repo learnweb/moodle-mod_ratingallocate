@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+namespace mod_ratingallocate\tests;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -38,7 +38,7 @@ use ratingallocate\db as this_db;
 class backup_restore_test extends advanced_testcase {
 
     public function test_backup_restore() {
-        // TODO this test does not check if userids are correctly mapped
+        // TODO this test does not check if userids are correctly mapped.
         global $CFG, $DB;
         core_php_time_limit::raise();
         // Set to admin user.
@@ -52,7 +52,7 @@ class backup_restore_test extends advanced_testcase {
         $bc->execute_plan();
         $results = $bc->get_results();
         $file = $results['backup_destination'];
-        // TODO: Necessary to ensure backward compatibility
+        // TODO: Necessary to ensure backward compatibility.
         if (tgz_packer::is_tgz_file($file)) {
             $fp = get_file_packer('application/x-gzip');
         } else {
@@ -97,13 +97,13 @@ class backup_restore_test extends advanced_testcase {
         $this->assertCount(2, array_values($choices2));
         $choice2copy = $choices2;
         foreach ($choices1 as $choice1) {
-            // work with copies
+            // Work with copies.
             $choice2 = json_decode(json_encode(array_shift($choice2copy)));
             $choice1 = json_decode(json_encode($choice1));
             list($choiceid1, $choiceid2) = $unsetvalues($choice1, $choice2, this_db\ratingallocate_choices::ID);
             $unsetvalues($choice1, $choice2, this_db\ratingallocate_choices::RATINGALLOCATEID);
             $this->assertEquals($choice1, $choice2);
-            // compare ratings for this choice
+            // Compare ratings for this choice.
             $ratings1 = array_values($DB->get_records(this_db\ratingallocate_ratings::TABLE,
                     array(this_db\ratingallocate_ratings::CHOICEID => $choiceid1),
                     this_db\ratingallocate_ratings::USERID));
@@ -121,22 +121,22 @@ class backup_restore_test extends advanced_testcase {
             }
         }
 
-        // compare allocations
+        // Compare allocations.
         $allocations1 = $DB->get_records(this_db\ratingallocate_allocations::TABLE,
                 array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $ratingid1),
                 this_db\ratingallocate_allocations::USERID);
         $allocations2 = $DB->get_records(this_db\ratingallocate_allocations::TABLE,
                 array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $ratingid2),
                 this_db\ratingallocate_allocations::USERID);
-        // number of allocations is equal
+        // Number of allocations is equal.
         // $this->assertCount(count($allocations1), $allocations2);
         $this->assertCount(count($genmod->allocations), $allocations2);
-        // create function that can be used to replace
+        // Create function that can be used to replace.
         $mapallocationtochoicetitle = function(&$alloc, $choices) {
             $alloc->{'choice_title'} =
                     $choices[$alloc->{this_db\ratingallocate_allocations::CHOICEID}]->{this_db\ratingallocate_choices::TITLE};
         };
-        // compare allocations in detail!
+        // Compare allocations in detail!
         $alloc2 = reset($allocations2);
         foreach ($allocations1 as &$alloc1) {
             $mapallocationtochoicetitle($alloc1, $choices1);

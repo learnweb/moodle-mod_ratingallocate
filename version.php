@@ -29,4 +29,4 @@ $plugin->version   = 2023050909;        // The current module version (Date: YYY
 $plugin->requires = 2020061500;         // Requires Moodle 3.9+.
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = 'v4.2-r1';
-$plugin->component = 'mod_ratingallocate';  // To check on upgrade, that module sits in correct place
+$plugin->component = 'mod_ratingallocate';  // To check on upgrade, that module sits in correct place.

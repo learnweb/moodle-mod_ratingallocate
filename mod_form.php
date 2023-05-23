@@ -98,7 +98,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $disablestrategy ? ['disabled' => ''] : null);
         $mform->addHelpButton($elementname, 'select_strategy', self::MOD_NAME);
         if (!$disablestrategy) {
-            // disabled elements don't get posted so disable the required rule if strategy selection is disabled.
+            // Disabled elements don't get posted so disable the required rule if strategy selection is disabled.
             $mform->addRule('strategy', null, 'required', null, 'client');
         }
 

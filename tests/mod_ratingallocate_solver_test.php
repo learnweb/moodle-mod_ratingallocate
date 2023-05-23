@@ -24,6 +24,9 @@
  * @copyright  2014 M Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace mod_ratingallocate\tests;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -37,8 +40,8 @@ class mod_ratingallocate_solver_test extends basic_testcase {
         $groupsmaxsizemin = floor($ratersnum / $groupsnum);
         $groupsmaxsizemax = ceil($ratersnum / $groupsnum) + 1;
 
-        $rateminimum = 0.7; // jeder Student gibt mind. votings ab
-        $ratingmax = 5; // Rating von 1-X
+        $rateminimum = 0.7; // Every Student gives a min voting.
+        $ratingmax = 5; // Rating from 1 to X.
         $result = array();
         $groups = array();
 
@@ -52,9 +55,9 @@ class mod_ratingallocate_solver_test extends basic_testcase {
 
         for ($i = 1; $i < $ratersnum; $i++) {
             $ratingsgiven = 0;
-            // create a rating for each group (or not, but simulate...)
+            // Create a rating for each group (or not, but simulate...).
             for ($l = 1; $l < $groupsnum; $l++) {
-                // create a rating for this group?
+                // Create a rating for this group?
                 if ($l * $rateminimum > $ratingsgiven) {
                     $rating = rand(1, $ratingmax);
                 } else {
@@ -89,7 +92,7 @@ class mod_ratingallocate_solver_test extends basic_testcase {
 
     public function teston_random() {
         if (!PHPUNIT_LONGTEST) {
-            return; // this test takes longer than 10s
+            return; // This test takes longer than 10s.
         }
         $testparams = array(array(5, 25), array(10, 50), array(10, 100),
                 array(20, 200)); // , array(40, 400), array(45, 600), array(85, 1000));
@@ -109,7 +112,7 @@ class mod_ratingallocate_solver_test extends basic_testcase {
             }
             $durchschnitt = array();
             $counter = 0;
-            // Durchschnitt der Runde berechnen
+            // Calculate average for each round.
             foreach ($rundenergebnis as $einzelergebnis) {
                 $counter++;
                 foreach ($einzelergebnis as $algname => $algresult) {
@@ -127,12 +130,15 @@ class mod_ratingallocate_solver_test extends basic_testcase {
             $durchschnitt['param_groups'] = $paramgroups;
             $durchschnitt['letzte_punkte'] = $ergebnis['ford-fulkerson Koegel2014']['gesamtpunktzahl'];
 
-            // an die ganzen Testergebnisse anhängen
+            // Append to the other results.
             $testergebnisse[] = $durchschnitt;
         }
         // print_r($testergebnisse);
     }
 
+    /**
+     * @return void
+     */
     public function test_edmondskarp() {
         $choices = array();
         $choices[1] = new stdClass();
@@ -198,7 +204,7 @@ class mod_ratingallocate_solver_test extends basic_testcase {
         $this->assertEquals($expected, $distribution);
         $this->assertEquals($solver::compute_target_function($ratings, $distribution), 15);
 
-        // test against Koegels solver
+        // Test against Koegels solver.
         $solverkoe = new solver_ford_fulkerson();
         $distributionkoe = $solverkoe->compute_distribution($choices, $ratings, $usercount);
         $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe), 15);
@@ -206,8 +212,11 @@ class mod_ratingallocate_solver_test extends basic_testcase {
                 $solver::compute_target_function($ratings, $distribution));
     }
 
+    /**
+     * @return void
+     */
     public function test_negweightcycle() {
-        // experimental
+        // Experimental.
         $choices = array();
         $choices[1] = new stdClass();
         $choices[1]->maxsize = 2;
@@ -251,6 +260,9 @@ class mod_ratingallocate_solver_test extends basic_testcase {
                 $solver::compute_target_function($ratings, $distribution));
     }
 
+    /**
+     * @return void
+     */
     public function test_targetfunc() {
         $ratings = array();
         $ratings[1] = new stdClass();

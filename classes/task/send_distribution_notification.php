@@ -29,19 +29,19 @@ require_once(dirname(__FILE__) . '/../../db/db_structure.php');
 use ratingallocate\db as this_db;
 
 class send_distribution_notification extends \core\task\adhoc_task {
-    // gets executed by the task runner. Will lookup the ratingallocation object and
-    // command it to notify users
+    // Gets executed by the task runner. Will lookup the ratingallocation object and
+    // command it to notify users.
     public function execute() {
         global $CFG, $DB;
 
         require_once($CFG->dirroot . '/mod/ratingallocate/locallib.php');
 
         $site = get_site();
-        // parse customdata passed
+        // Parse customdata passed.
         $customdata = $this->get_custom_data();
         $ratingallocateid = $customdata->ratingallocateid;
 
-        // get instance of ratingallocate
+        // Get instance of ratingallocate.
         $ratingallocate =
                 $DB->get_record(this_db\ratingallocate::TABLE, array(this_db\ratingallocate::ID => $ratingallocateid), '*',
                         MUST_EXIST);

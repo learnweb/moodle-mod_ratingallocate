@@ -108,7 +108,8 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
                     'ratingallocate\db\ratingallocate_ratings'),
                     array(this_db\ratingallocate_ratings::CHOICEID => backup::VAR_PARENTID),
                     this_db\ratingallocate_ratings::ID . ' ASC');
-            $ratingallocateallocation->set_source_table(get_tablename_for_tableClass('ratingallocate\db\ratingallocate_allocations'),
+            $ratingallocateallocation->set_source_table(
+                    get_tablename_for_tableClass('ratingallocate\db\ratingallocate_allocations'),
                     array(
                             this_db\ratingallocate_allocations::RATINGALLOCATEID => backup::VAR_ACTIVITYID,
                             this_db\ratingallocate_allocations::CHOICEID => backup::VAR_PARENTID),

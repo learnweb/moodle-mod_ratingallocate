@@ -44,15 +44,18 @@ class behat_mod_ratingallocate extends behat_base {
         foreach ($data->getColumnsHash() as $record) {
 
             if (!isset($record['title'])) {
-                throw new coding_exception('title must be present in behat_mod_ratingallocate::the_following_choices_exist() $data');
+                throw new coding_exception(
+                    'title must be present in behat_mod_ratingallocate::the_following_choices_exist() $data');
             }
 
             if (!isset($record['maxsize'])) {
-                throw new coding_exception('maxsize must be present in behat_mod_ratingallocate::the_following_choices_exist() $data');
+                throw new coding_exception(
+                    'maxsize must be present in behat_mod_ratingallocate::the_following_choices_exist() $data');
             }
 
             if (!isset($record['ratingallocate'])) {
-                throw new coding_exception('ratingallocate must be present in behat_mod_ratingallocate::the_following_choices_exist() $data');
+                throw new coding_exception(
+            'ratingallocate must be present in behat_mod_ratingallocate::the_following_choices_exist() $data');
             }
 
             $ratingallocate = $DB->get_record('ratingallocate', array('name' => $record['ratingallocate']));
@@ -82,15 +85,18 @@ class behat_mod_ratingallocate extends behat_base {
         foreach ($data->getColumnsHash() as $record) {
 
             if (!isset($record['choice'])) {
-                throw new coding_exception('choice must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data');
+                throw new coding_exception(
+                    'choice must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data');
             }
 
             if (!isset($record['user'])) {
-                throw new coding_exception('user must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data');
+                throw new coding_exception(
+                    'user must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data');
             }
 
             if (!isset($record['rating'])) {
-                throw new coding_exception('rating must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data');
+                throw new coding_exception(
+                    'rating must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data');
             }
 
             $user = $DB->get_record('user', array('username' => $record['user']));
@@ -159,7 +165,7 @@ class behat_mod_ratingallocate extends behat_base {
             foreach ($entry as $key => $val) {
                 array_push($newrows, array($key, $val));
             }
-            // TODO: Ensure backward-compatibility after changed TableNode constructor in Moodle 3.1
+            // TODO: Ensure backward-compatibility after changed TableNode constructor in Moodle 3.1.
             if ($CFG->version < 2016052300) {
                 $newrows = implode("\n", $newrows);
             }
@@ -513,7 +519,7 @@ class behat_mod_ratingallocate extends behat_base {
         // The action depends on the field type.
         foreach ($ratingdatehash as $choice => $value) {
             $fieldxpath =
-                    "//a[normalize-space(.)=\"$choice\"]/ancestor::fieldset/descendant::input[@type='radio' and @checked and @value=$value]";
+        "//a[normalize-space(.)=\"$choice\"]/ancestor::fieldset/descendant::input[@type='radio' and @checked and @value=$value]";
             try {
                 $this->find('xpath', $fieldxpath);
             } catch (ElementNotFoundException $e) {

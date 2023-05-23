@@ -25,7 +25,7 @@
  * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-// namespace is mandatory!
+// Namespace is mandatory!
 namespace ratingallocate\strategy_order;
 
 defined('MOODLE_INTERNAL') || die();
@@ -44,7 +44,7 @@ class strategy extends \strategytemplate {
 
     public function get_static_settingfields() {
         return array(
-                self::COUNTOPTIONS => array(// wie viele Felder es gibt
+                self::COUNTOPTIONS => array(// Amount of fields.
                         'int',
                         get_string(self::STRATEGYID . '_setting_countoptions', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::COUNTOPTIONS),
@@ -66,7 +66,7 @@ class strategy extends \strategytemplate {
         if (is_null($countoptions)) {
             $countoptions = $defaultcountoptions;
         }
-        // $rating_value_counter defines the id/value of the label (first choice has a high value)
+        // Variable $rating_value_counter defines the id/value of the label (first choice has a high value).
         for ($i = 1, $ratingvaluecounter = $countoptions; $i <= $countoptions; $i++, $ratingvaluecounter--) {
             $output[$ratingvaluecounter] = get_string(self::STRATEGYID . '_no_choice', RATINGALLOCATE_MOD_NAME, $i);
         }
@@ -80,7 +80,7 @@ class strategy extends \strategytemplate {
 
 }
 
-// register with the strategymanager
+// Register with the strategymanager.
 \strategymanager::add_strategy(strategy::STRATEGYID);
 
 /**
@@ -187,7 +187,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         }
 
         if (isset($data->choice)) {
-            // we do assign the highest rating to choice no.1
+            // We do assign the highest rating to choice no.1.
             $maxrating = count($data->choice);
             foreach ($data->choice as $prio => $curchoice) {
                 $data->data[$curchoice]['rating'] = $maxrating - ($prio - 1);
@@ -201,7 +201,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         $errors = parent::validation($data, $files);
         $usedchoices = array();
 
-        // no data exists, so skip
+        // No data exists, so skip.
         if (!array_key_exists('choice', $data)) {
             return $errors;
         }

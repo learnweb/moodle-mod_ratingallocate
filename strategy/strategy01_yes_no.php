@@ -36,7 +36,7 @@ require_once(dirname(__FILE__) . '/strategy_template_options.php');
 class strategy extends \strategytemplate_options {
 
     const STRATEGYID = 'strategy_yesno';
-    const MAXCROSSOUT = 'maxcrossout'; // maxcrossout: Anzahl maximaler abzulehnender
+    const MAXCROSSOUT = 'maxcrossout'; // Maximum to deny.
 
     public function get_strategyid() {
         return self::STRATEGYID;
@@ -89,11 +89,11 @@ class strategy extends \strategytemplate_options {
     }
 }
 
-// register with the strategymanager
+// Register with the strategymanager.
 \strategymanager::add_strategy(strategy::STRATEGYID);
 
 class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform {
-    // Already specified by parent class
+    // Already specified by parent class.
 
     protected function construct_strategy($strategyoptions) {
         return new strategy($strategyoptions);

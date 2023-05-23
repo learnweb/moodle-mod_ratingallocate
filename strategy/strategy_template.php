@@ -203,7 +203,7 @@ abstract class ratingallocate_strategyform extends \moodleform {
      */
     public function __construct($url, \ratingallocate $ratingallocate) {
         $this->ratingallocate = $ratingallocate;
-        // load strategy options
+        // Load strategy options.
         $allstrategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
         $strategyid = $ratingallocate->ratingallocate->strategy;
         if (array_key_exists($strategyid, $allstrategyoptions)) {

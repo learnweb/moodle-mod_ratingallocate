@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+namespace mod_ratingallocate\tests;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -194,7 +194,7 @@ class cron_test extends advanced_testcase {
         $this->teacher = mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
         $this->setUser($this->teacher);
 
-        // There should not be any module for that course first
+        // There should not be any module for that course first.
         $this->assertFalse(
                 $DB->record_exists(this_db\ratingallocate::TABLE, array(this_db\ratingallocate::COURSE => $course->id
                 )));
@@ -205,7 +205,7 @@ class cron_test extends advanced_testcase {
         $data['accesstimestop'] = time();
         if ($ratingperiodended) {
             $data['accesstimestart'] -= (6 * 24 * 60 * 60);
-            // Necessary to ensure access time stop being in the past
+            // Necessary to ensure access time stop being in the past.
             --$data['accesstimestop'];
         } else {
             $data['accesstimestop'] += (6 * 24 * 60 * 60);
@@ -213,7 +213,7 @@ class cron_test extends advanced_testcase {
         $data['algorithmstatus'] = $algorithmstatus;
         $data['algorithmstarttime'] = $algorithmstarttime;
 
-        // create activity
+        // Create activity.
         $this->mod = mod_ratingallocate_generator::create_instance_with_choices($this, $data);
         $this->assertEquals(2, $DB->count_records(this_db\ratingallocate_choices::TABLE,
                 array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->mod->id)));
@@ -229,7 +229,7 @@ class cron_test extends advanced_testcase {
         $choice1 = reset($choices);
         $choice2 = end($choices);
 
-        // Create preferences
+        // Create preferences.
         $prefersnon = array();
         foreach ($choices as $choice) {
             $prefersnon[$choice->{this_db\ratingallocate_choices::ID}] = array(
@@ -241,7 +241,7 @@ class cron_test extends advanced_testcase {
         $preferssecond = json_decode(json_encode($prefersnon), true);
         $preferssecond[$choice2->{this_db\ratingallocate_choices::ID}][this_db\ratingallocate_ratings::RATING] = true;
 
-        // assign preferences
+        // Assign preferences.
         mod_ratingallocate_generator::save_rating_for_user($this, $this->mod, $student1, $prefersfirst);
         mod_ratingallocate_generator::save_rating_for_user($this, $this->mod, $student2, $prefersfirst);
         mod_ratingallocate_generator::save_rating_for_user($this, $this->mod, $student3, $preferssecond);

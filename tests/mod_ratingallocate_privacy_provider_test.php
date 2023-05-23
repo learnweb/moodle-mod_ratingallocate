@@ -21,7 +21,7 @@
  * @copyright  2018 Tamara Gunkel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace mod_ratingallocate\tests;
 use core_privacy\local\metadata\collection;
 use mod_ratingallocate\privacy\provider;
 

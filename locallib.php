@@ -190,7 +190,7 @@ class ratingallocate {
         $raters = get_enrolled_users($this->context, 'mod/ratingallocate:give_rating');
         $info = new info_module($cm);
         // Only show raters who had the ability to access this activity. This funktion ignores the visibility setting,
-        // so the ratings and allocations are still shown, even when the activity is hidden
+        // so the ratings and allocations are still shown, even when the activity is hidden.
         $filteredraters = $info->filter_user_list($raters);
 
         return $filteredraters;
@@ -298,9 +298,9 @@ class ratingallocate {
                 get_string('error_deleting_all_insufficient_permission', RATINGALLOCATE_MOD_NAME));
             return;
         }
-        // Disallow deletion when there can't be new ratings submitted
+        // Disallow deletion when there can't be new ratings submitted.
         $status = $this->get_status();
-        if ($status !== self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS and $status !== self::DISTRIBUTION_STATUS_TOO_EARLY) {
+        if ($status !== self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS && $status !== self::DISTRIBUTION_STATUS_TOO_EARLY) {
             redirect(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id)),
                 get_string('error_deleting_all_no_rating_possible', RATINGALLOCATE_MOD_NAME));
             return;
@@ -314,7 +314,7 @@ class ratingallocate {
         global $CFG;
 
         $output = '';
-        /* @var mod_ratingallocate_renderer */
+        /* @var $renderer mod_ratingallocate_renderer */
         $renderer = $this->get_renderer();
         // Print data and controls for students, but not for admins.
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
@@ -1304,11 +1304,9 @@ class ratingallocate {
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
 
         $distributor = new solver_edmonds_karp();
-        // $distributor = new solver_ford_fulkerson();
         $timestart = microtime(true);
         $distributor->distribute_users($this);
         $timeneeded = (microtime(true) - $timestart);
-        // echo memory_get_peak_usage();
 
         // Set algorithm status to finished.
         $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::FINISHED;
@@ -1611,7 +1609,8 @@ class ratingallocate {
      * @return array
      */
     public function get_rating_data_for_user($userid) {
-        $sql = "SELECT c.id as choiceid, c.title, c.explanation, c.ratingallocateid, c.maxsize, c.usegroups, r.rating, r.id AS ratingid, r.userid
+        $sql = "SELECT c.id as choiceid, c.title, c.explanation, c.ratingallocateid,
+                            c.maxsize, c.usegroups, r.rating, r.id AS ratingid, r.userid
                 FROM {ratingallocate_choices} c
            LEFT JOIN {ratingallocate_ratings} r
                   ON c.id = r.choiceid and r.userid = :userid

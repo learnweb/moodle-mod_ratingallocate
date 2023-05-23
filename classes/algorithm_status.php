@@ -23,8 +23,8 @@ namespace mod_ratingallocate;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class algorithm_status {
-    const FAILURE = -1; // Algorithm did not finish correctly
-    const NOTSTARTED = 0; // Default status for new instances
-    const RUNNING = 1; // Algorithm is currently running
-    const FINISHED = 2; // Algorithm finished correctly
+    const FAILURE = -1; // Algorithm did not finish correctly.
+    const NOTSTARTED = 0; // Default status for new instances.
+    const RUNNING = 1; // Algorithm is currently running.
+    const FINISHED = 2; // Algorithm finished correctly.
 }
