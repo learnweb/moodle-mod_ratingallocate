@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+namespace mod_ratingallocate;
 /**
  * Contains unit tests for the distribution algorithm.
  *
@@ -24,8 +24,6 @@
  * @copyright  2014 M Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace mod_ratingallocate\tests;
 
 defined('MOODLE_INTERNAL') || die();
 

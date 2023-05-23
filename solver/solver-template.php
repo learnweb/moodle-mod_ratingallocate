@@ -91,7 +91,7 @@ class distributor {
         // Extend PHP time limit
         // core_php_time_limit::raise();
 
-        // Load data from database
+        // Load data from database.
         $choicerecords = $ratingallocate->get_rateable_choices();
         $ratings = $ratingallocate->get_ratings_for_rateable_choices();
 
@@ -102,7 +102,7 @@ class distributor {
 
         $distributions = $this->compute_distribution($choicerecords, $ratings, $usercount);
 
-        // perform all allocation manipulation / inserts in one transaction
+        // Perform all allocation manipulation / inserts in one transaction.
         $transaction = $ratingallocate->db->start_delegated_transaction();
 
         $ratingallocate->clear_all_allocations();
@@ -226,6 +226,7 @@ class distributor {
      * by distributing users to choices
      * Reverses all edges along $path in $graph
      * @param type $path path from t to s
+     * @throws moodle_exception
      */
     protected function augment_flow($path) {
         if (is_null($path) || count($path) < 2) {
@@ -248,7 +249,7 @@ class distributor {
             }
             // The second to last node in a path has to be a choice-node.
             // Reduce its space by one, because one user just got distributed into it.
-            if ($i == 1 and $edge->space > 1) {
+            if ($i == 1 && $edge->space > 1) {
                 $edge->space--;
             } else {
                 // Remove the edge.

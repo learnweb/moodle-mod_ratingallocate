@@ -55,7 +55,7 @@ class behat_mod_ratingallocate extends behat_base {
 
             if (!isset($record['ratingallocate'])) {
                 throw new coding_exception(
-            'ratingallocate must be present in behat_mod_ratingallocate::the_following_choices_exist() $data');
+                    'ratingallocate must be present in behat_mod_ratingallocate::the_following_choices_exist() $data');
             }
 
             $ratingallocate = $DB->get_record('ratingallocate', array('name' => $record['ratingallocate']));
@@ -518,8 +518,8 @@ class behat_mod_ratingallocate extends behat_base {
         $ratingdatehash = $ratingdata->getRowsHash();
         // The action depends on the field type.
         foreach ($ratingdatehash as $choice => $value) {
-            $fieldxpath =
-        "//a[normalize-space(.)=\"$choice\"]/ancestor::fieldset/descendant::input[@type='radio' and @checked and @value=$value]";
+            $fieldxpath = "//a[normalize-space(.)=\"$choice\"]/ancestor::fieldset/
+                       descendant::input[@type='radio' and @checked and @value=$value]";
             try {
                 $this->find('xpath', $fieldxpath);
             } catch (ElementNotFoundException $e) {

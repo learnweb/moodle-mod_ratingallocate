@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+namespace mod_ratingallocate;
 /**
  * Privacy provider tests.
  *
@@ -21,7 +21,6 @@
  * @copyright  2018 Tamara Gunkel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_ratingallocate\tests;
 use core_privacy\local\metadata\collection;
 use mod_ratingallocate\privacy\provider;
 
