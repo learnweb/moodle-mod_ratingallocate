@@ -939,6 +939,8 @@ class ratingallocate {
                     $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(),
                     $this->get_allocations(), $this);
 
+            $output = html_writer::div($output, 'ratingallocate_ratings_table_container');
+
             $output .= html_writer::empty_tag('br', array());
             $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array(
                     'id' => $this->coursemodule->id)), get_string('back'), 'get');
