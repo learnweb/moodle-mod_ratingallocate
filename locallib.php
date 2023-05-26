@@ -1054,9 +1054,6 @@ class ratingallocate {
     private function process_default() {
         global $OUTPUT;
         $output = '';
-        /**
-         * @var mod_ratingallocate_renderer
-         */
         $renderer = $this->get_renderer();
         $status = $this->get_status();
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
