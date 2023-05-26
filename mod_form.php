@@ -127,7 +127,9 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         foreach (\strategymanager::get_strategies() as $strategy) {
             // Load strategy class.
             $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
-            /** @var $strategyclass \strategytemplate */
+            /**
+             * @var $strategyclass \strategytemplate
+             */
             $strategyclass = new $strategyclassp();
 
             // Add options fields.
@@ -220,7 +222,9 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         foreach (\strategymanager::get_strategies() as $strategy) {
             // Load strategy class.
             $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
-            /** @var $strategyclass \strategytemplate */
+            /**
+             * @var $strategyclass \strategytemplate
+             */
             if (isset($allstrategyoptions) && array_key_exists($strategy, $allstrategyoptions)) {
                 $strategyclass = new $strategyclassp($allstrategyoptions[$strategy]);
             } else {

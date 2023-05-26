@@ -27,7 +27,7 @@ require_once(dirname(__FILE__) . '/../locallib.php');
  * @group mod_ratingallocate
  * @copyright  usener
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers mod_ratingallocate_generator
+ * @covers \mod_ratingallocate_generator
  */
 class mod_generator_test extends advanced_testcase {
 
@@ -47,7 +47,7 @@ class mod_generator_test extends advanced_testcase {
         $records = $DB->get_records('ratingallocate_choices', array(), 'id');
         $this->assertEquals(0, count($records));
 
-        // cCreate activity.
+        // Create activity.
         $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
                 array('course' => $course));
         $records = $DB->get_records('ratingallocate', array('course' => $course->id

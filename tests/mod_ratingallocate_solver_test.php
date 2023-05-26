@@ -136,7 +136,7 @@ class mod_ratingallocate_solver_test extends basic_testcase {
 
     /**
      * @return void
-     * @covers solver_edmonds_karp()
+     * @covers \solver_edmonds_karp
      */
     public function test_edmondskarp() {
         $choices = array();

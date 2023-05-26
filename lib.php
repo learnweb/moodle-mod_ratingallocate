@@ -122,7 +122,9 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
  * @return boolean Success/Fail
  */
 function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallocate_mod_form $mform = null) {
-    /** @var $DB moodle_database */
+    /**
+     * @var $DB moodle_database
+     */
     global $DB;
 
     $ratingallocate->timemodified = time();
