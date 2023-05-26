@@ -44,7 +44,7 @@ if ($id) {
     $course = get_course($ratingallocate->course);
     $cm = get_coursemodule_from_instance('ratingallocate', $ratingallocate->id, $course->id, false, MUST_EXIST);
 } else {
-    print_error('no_id_or_m_error', RATINGALLOCATE_MOD_NAME);
+    throw new \moodle_exception('no_id_or_m_error', RATINGALLOCATE_MOD_NAME);
 }
 
 require_login($course, true, $cm);

@@ -131,7 +131,7 @@ class solver_ford_fulkerson extends distributor {
 
         // A valid groupdistribution graph can't contain a negative edge
         if ($counter == $limit) {
-            print_error('negative_cycle', 'ratingallocate');
+            throw new \moodle_exception('negative_cycle', 'ratingallocate');
         }
 
         // If there is no path to $to, return null
