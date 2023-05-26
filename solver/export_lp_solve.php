@@ -46,9 +46,6 @@ require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/ratingallocate:export_ratings', $context);
 
-/**
- * @var $ratingallocateobj ratingallocate
- */
 $ratingallocateobj = new ratingallocate($ratingallocate, $course, $cm, $context);
 
 /**
@@ -209,7 +206,7 @@ foreach ($ratingscells as $userid => $userrating) {
         $nbkursakt .= ' +' . $usercoursevar;
     }
     $nbkurs[$choiceid] = $nbkursakt;
-    $variablenerkl = substr($variablenerkl, 0, strlen($variablenerkl) - 1); // strip komma
+    $variablenerkl = substr($variablenerkl, 0, strlen($variablenerkl) - 1); // Strip comma.
     $variablenerkl .= ";\r\n";
     $usernb .= " = 1;\r\n";
 }

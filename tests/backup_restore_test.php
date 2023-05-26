@@ -130,7 +130,6 @@ class backup_restore_test extends advanced_testcase {
                 array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $ratingid2),
                 this_db\ratingallocate_allocations::USERID);
         // Number of allocations is equal.
-        // $this->assertCount(count($allocations1), $allocations2);
         $this->assertCount(count($genmod->allocations), $allocations2);
         // Create function that can be used to replace.
         $mapallocationtochoicetitle = function(&$alloc, $choices) {

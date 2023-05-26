@@ -82,10 +82,10 @@ class solver_edmonds_karp extends distributor {
         for ($i = 0; $i < $count; $i++) { // For each vertex v in vertices.
             if ($i == $from) {// If v is source then weight[v] := 0.
                 $dists[$i] = 0;
-            } else {// Else weight[v] := infinity.
+            } else {// Else set weight[v] to infinity.
                 $dists[$i] = INF;
             }
-            $preds[$i] = null; // Set predecessor[v] := null.
+            $preds[$i] = null; // Set predecessor[v] to null.
         }
 
         // Step 2: relax edges repeatedly.
@@ -94,9 +94,6 @@ class solver_edmonds_karp extends distributor {
             foreach ($this->graph as $key => $edges) { // For each edge (u, v) with weight w in edges:.
                 if (is_array($edges)) {
                     foreach ($edges as $key2 => $edge) {
-                        /**
-                         * @var $edge edge
-                         */
                         if ($dists[$edge->from] + $edge->weight < $dists[$edge->to]) { // If weight[u] + w < weight[v]:.
                             $dists[$edge->to] = $dists[$edge->from] + $edge->weight; // Set weight[v] := weight[u] + w.
                             $preds[$edge->to] = $edge->from; // Set predecessor[v] := u.
@@ -109,18 +106,6 @@ class solver_edmonds_karp extends distributor {
                 break; // Leave.
             }
         }
-
-        // Step 3: check for negative-weight cycles.
-        /*foreach ($graph as $key => $edges) { // for each edge (u, v) with weight w in edges:
-            if (is_array($edges)) {
-                foreach ($edges as $key2 => $edge) {
-
-                    if ($dists[$edge->to] + $edge->weight < $dists[$edge->to]) { // if weight[u] + w < weight[v]:
-                        throw new \moodle_exception('negative_cycle', 'ratingallocate');
-                    }
-                }
-            }
-        }*/
 
         // If there is no path to $to, return null.
         if (is_null($preds[$to])) {

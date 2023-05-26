@@ -161,6 +161,5 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
     protected function after_execute() {
         // Add ratingallocate related files.
         $this->add_related_files('mod_' . RATINGALLOCATE_MOD_NAME, 'intro', null);
-        // $this->add_related_files('mod_' . RATINGALLOCATE_MOD_NAME, ratingallocate_FILEAREA_NAME, RATINGALLOCATE_MOD_NAME);
     }
 }
