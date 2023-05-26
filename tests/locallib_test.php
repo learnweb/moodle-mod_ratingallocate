@@ -30,6 +30,7 @@ use ratingallocate\db as this_db;
  * @group mod_ratingallocate
  * @copyright  usener
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \locallib
  */
 class locallib_test extends advanced_testcase {
 

@@ -94,7 +94,7 @@ class solver_edmonds_karp extends distributor {
             foreach ($this->graph as $key => $edges) { // For each edge (u, v) with weight w in edges:.
                 if (is_array($edges)) {
                     foreach ($edges as $key2 => $edge) {
-                        /* @var $edge edge */
+                        /** @var $edge edge */
                         if ($dists[$edge->from] + $edge->weight < $dists[$edge->to]) { // If weight[u] + w < weight[v]:.
                             $dists[$edge->to] = $dists[$edge->from] + $edge->weight; // Set weight[v] := weight[u] + w.
                             $preds[$edge->to] = $edge->from; // Set predecessor[v] := u.

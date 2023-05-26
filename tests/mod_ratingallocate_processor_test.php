@@ -37,6 +37,7 @@ class mod_ratingallocate_processor_test extends advanced_testcase {
     /**
      * Tests if process_publish_allocations is working after time runs out
      * Assert, that the ratingallocate can be published
+     * @covers ::publish_allocation()
      */
     public function test_publishing() {
         $ratingallocate = mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
@@ -48,6 +49,7 @@ class mod_ratingallocate_processor_test extends advanced_testcase {
     /**
      * Tests if process_action_allocation_to_grouping is working before time runs out
      * Assert, that the number of groupings does not change
+     * @covers ::synchronize_allocation_and_grouping()
      */
     public function test_grouping_before_accesstimestop() {
         global $DB;
@@ -60,6 +62,7 @@ class mod_ratingallocate_processor_test extends advanced_testcase {
     /**
      * Tests if process_action_allocation_to_grouping is working after time runs out
      * Assert, that the number of groupings changes as expected (1 Grouping should be created)
+     * @covers ::synchronize_allocation_and_grouping()
      */
     public function test_grouping_after_accesstimestop() {
         global $DB;
@@ -92,6 +95,7 @@ class mod_ratingallocate_processor_test extends advanced_testcase {
      * - 1 User with ratings and without allocations
      * - 1 User without ratings or allocations
      * - 1 User without ratings but with allocations
+     * @covers \classes\ratings_and_allocations_table
      */
     public function test_ratings_table_filter() {
         // Setup the ratingallocate instanz with 4 Students.

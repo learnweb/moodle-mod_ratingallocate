@@ -22,6 +22,7 @@ namespace mod_ratingallocate;
  * @group mod_ratingallocate
  * @copyright  reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers ::validate_settings()
  */
 
 class mod_ratingallocate_strategy_test extends advanced_testcase {

@@ -27,6 +27,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @copyright  2021 Catalyst IT
  * @author     David Thompson <david.thompson@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \classes\choice_importer
  */
 class mod_ratingallocate_choice_importer_test extends advanced_testcase {
 

@@ -33,6 +33,8 @@ class mod_ratingallocate_notification_test extends advanced_testcase {
 
     /**
      * Tests if publishing the allocation send messages with the right content to the right users.
+     *
+     * @covers ::send_distribution_notification()
      */
     public function test_allocation_notification() {
         $course = $this->getDataGenerator()->create_course();

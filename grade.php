@@ -23,8 +23,9 @@
  * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_login();
+
 require_once(__DIR__ . "/../../config.php");
+require_login();
 
 $id = required_param('id', PARAM_INT);          // Course module ID.
 $itemnumber = optional_param('itemnumber', 0,

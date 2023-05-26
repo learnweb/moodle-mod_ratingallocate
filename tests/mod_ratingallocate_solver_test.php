@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 namespace mod_ratingallocate;
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/mod/ratingallocate/locallib.php');
+require_once($CFG->dirroot . '/mod/ratingallocate/solver/edmonds-karp.php');
+require_once($CFG->dirroot . '/mod/ratingallocate/solver/ford-fulkerson-koegel.php');
+
 /**
  * Contains unit tests for the distribution algorithm.
  *
@@ -23,15 +30,8 @@ namespace mod_ratingallocate;
  * @copyright  original Version 2013 Stefan Koegel
  * @copyright  2014 M Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \solver
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/ratingallocate/locallib.php');
-require_once($CFG->dirroot . '/mod/ratingallocate/solver/edmonds-karp.php');
-require_once($CFG->dirroot . '/mod/ratingallocate/solver/ford-fulkerson-koegel.php');
-
 class mod_ratingallocate_solver_test extends basic_testcase {
 
     private function perform_race($groupsnum, $ratersnum) {
@@ -136,6 +136,7 @@ class mod_ratingallocate_solver_test extends basic_testcase {
 
     /**
      * @return void
+     * @covers solver_edmonds_karp()
      */
     public function test_edmondskarp() {
         $choices = array();

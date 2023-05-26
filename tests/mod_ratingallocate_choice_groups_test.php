@@ -127,6 +127,10 @@ class mod_ratingallocate_choice_groups_test extends advanced_testcase {
         parent::tearDown();
     }
 
+    /**
+     * @return void
+     * @covers ::get_group_selections
+     */
     public function test_setup() {
         $this->resetAfterTest();
 
@@ -142,6 +146,10 @@ class mod_ratingallocate_choice_groups_test extends advanced_testcase {
         $this->assertContains('Red Group', $groupselections);
     }
 
+    /**
+     * @return void
+     * @covers ::filter_choices_by_groups
+     */
     public function test_choice_groups() {
         $this->resetAfterTest();
 
@@ -214,6 +222,10 @@ class mod_ratingallocate_choice_groups_test extends advanced_testcase {
         $this->assertContains($choiceidmap['Choice E'], $s4choices);
     }
 
+    /**
+     * @return void
+     * @covers ::update_choice_groups
+     */
     public function test_update_choice_groups() {
         $this->resetAfterTest();
 

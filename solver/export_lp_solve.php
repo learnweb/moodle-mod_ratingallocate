@@ -46,7 +46,7 @@ require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/ratingallocate:export_ratings', $context);
 
-/* @var $ratingallocateobj ratingallocate */
+/** @var $ratingallocateobj ratingallocate */
 $ratingallocateobj = new ratingallocate($ratingallocate, $course, $cm, $context);
 
 /**

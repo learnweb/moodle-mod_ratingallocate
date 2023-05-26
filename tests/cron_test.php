@@ -33,6 +33,7 @@ use ratingallocate\db as this_db;
  * @group mod_ratingallocate
  * @copyright  T Reischmann 2015
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \classes\task\cron_task
  */
 class cron_test extends advanced_testcase {
 

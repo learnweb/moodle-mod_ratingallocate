@@ -128,7 +128,7 @@ class distributor {
             $group = $this->graph[$index];
             $distribution[$groupid] = array();
             foreach ($group as $assignment) {
-                /* @var $assignment edge */
+                /** @var $assignment edge */
                 $user = intval($assignment->to);
                 if (array_key_exists($user, $touserid)) {
                     $distribution[$groupid][] = $touserid[$user];
@@ -241,7 +241,7 @@ class distributor {
             $foundedgeid = -1;
             // Find the edge.
             foreach ($this->graph[$from] as $index => &$edge) {
-                /* @var $edge edge */
+                /** @var $edge edge */
                 if ($edge->to == $to) {
                     $foundedgeid = $index;
                     break;

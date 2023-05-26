@@ -27,6 +27,7 @@ require_once(dirname(__FILE__) . '/../locallib.php');
  * @group mod_ratingallocate
  * @copyright  usener
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers mod_ratingallocate_generator
  */
 class mod_generator_test extends advanced_testcase {
 
