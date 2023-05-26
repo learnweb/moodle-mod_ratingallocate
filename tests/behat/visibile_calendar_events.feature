@@ -27,15 +27,15 @@ Feature: Students should only see the ratingallocate calendar events if they are
       | activity       | course | idnumber | name               | accesstimestart | accesstimestop | accesstype |
       | ratingallocate | C1     | ra1      | My Fair Allocation | ##1 May 2023##  | ##2 May 2023## | group1     |
 
-    @javascript
-    Scenario: As a user that is able to rate, I should see the event
-      Given I log in as "student1"
-      And I view the calendar for "5" "2023"
-      Then I should see "My Fair Allocation opens"
-      And I should see "My Fair Allocation closes"
+  @javascript
+  Scenario: As a user that is able to rate, I should see the event
+    Given I log in as "student1"
+    And I view the calendar for "5" "2023"
+    Then I should see "My Fair Allocation opens"
+    And I should see "My Fair Allocation closes"
 
-    Scenario: As a user that is not able to rate, I should not see the event
-      Given I log in as "student2"
-      And I view the calendar for "5" "2023"
-      Then I should not see "My Fair Allocation begins"
-      And I should not see "My Fair Allocation ends"
+  Scenario: As a user that is not able to rate, I should not see the event
+    Given I log in as "student2"
+    And I view the calendar for "5" "2023"
+    Then I should not see "My Fair Allocation begins"
+    And I should not see "My Fair Allocation ends"
