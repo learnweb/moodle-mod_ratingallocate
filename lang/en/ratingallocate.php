@@ -127,12 +127,13 @@ $string['confirm_start_distribution'] =
 $string['delete_all_ratings'] = 'Delete all student ratings';
 $string['delete_all_ratings_explanation'] = 'Deletes all ratings that students have submitted so far and all allocations
         that may have been created based on these ratings. Use with caution.';
+$string['distribution_unallocated_already_running'] = 'The distribution of unallocated users is currently being processed. Please wait some time and reload the page to check if it has been finished.';
+$string['distributing_unallocated_users_started'] = 'The distribution of unallocated users has been started. Please wait some time and have a look at the distribution table.';
 $string['confirm_delete_all_ratings'] = 'Are you sure you want to delete all ratings students have submitted so far?';
 $string['error_deleting_all_insufficient_permission'] = 'You don\'t have the permission to do that';
 $string['error_deleting_all_no_rating_possible'] = 'You can\'t delete the ratings when the rating phase is already over';
 $string['success_deleting_all'] = 'Deleted all ratings';
 $string['unassigned_users'] = 'Unassigned Users';
-$string['unassigned_users_assigned'] = 'Unassigned users have been assigned as good as possible.';
 $string['invalid_dates'] = 'Dates are invalid. Starting date must be before ending date.';
 $string['invalid_publishdate'] = 'Publication date is invalid. Publication date must be after the end of rating.';
 $string['rated'] = 'rated {$a}';

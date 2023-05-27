@@ -28,6 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use core_availability\info_module;
+use mod_ratingallocate\task\distribute_unallocated_task;
 use ratingallocate\db as this_db;
 
 global $CFG;
@@ -900,6 +901,25 @@ class ratingallocate {
     }
 
     /**
+     * Wrapper function to queue an adhoc task for distributing unallocated users.
+     *
+     * @param string $distributionalgorithm one of the string constants ACTION_DISTRIBUTE_UNALLOCATED_FILL or ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY
+     * @return void
+     */
+    private function queue_distribution_of_users_without_choice(string $distributionalgorithm): void {
+        global $USER;
+        $task = new distribute_unallocated_task();
+        $data = new stdClass();
+        $data->courseid = $this->course->id;
+        $data->cmid = $this->coursemodule->id;
+        $data->distributionalgorithm = $distributionalgorithm;
+        $task->set_custom_data($data);
+        $task->set_userid($USER->id);
+
+        \core\task\manager::queue_adhoc_task($task, true);
+    }
+
+    /**
      * Try to distribute all currently unallocated users.
      *
      * @param string $distributionalgorithm the distributionalgorithm which should be used, you can choose between
@@ -1167,9 +1187,9 @@ class ratingallocate {
 
             case ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY:
             case ACTION_DISTRIBUTE_UNALLOCATED_FILL:
-                $this->distribute_users_without_choice($action);
+                $this->queue_distribution_of_users_without_choice($action);
                 redirect(new moodle_url('/mod/ratingallocate/view.php', ['id' => $this->coursemodule->id]),
-                    get_string('unassigned_users_assigned', RATINGALLOCATE_MOD_NAME),
+                    get_string('distributing_unallocated_users_started', RATINGALLOCATE_MOD_NAME),
                     null,
                     \core\output\notification::NOTIFY_SUCCESS);
                 break;
