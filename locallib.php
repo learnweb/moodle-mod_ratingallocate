@@ -254,6 +254,8 @@ class ratingallocate {
                 $this->ratingallocate->algorithmstatus = \mod_ratingallocate\algorithm_status::NOTSTARTED;
                 $this->origdbrecord->{this_db\ratingallocate::RUNALGORITHMBYCRON} = '1';
                 $this->origdbrecord->{this_db\ratingallocate::ALGORITHMSTATUS} = \mod_ratingallocate\algorithm_status::NOTSTARTED;
+                // Clear eventually scheduled distribution of unallocated users.
+                $this->clear_distribute_unallocated_tasks();
                 // Clear all previous allocations so cron job picks up this task and calculates new allocation.
                 $this->clear_all_allocations();
                 $DB->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
@@ -263,6 +265,7 @@ class ratingallocate {
                     null,
                     \core\output\notification::NOTIFY_INFO);
             } else {
+                $this->clear_distribute_unallocated_tasks();
                 $this->origdbrecord->{this_db\ratingallocate::ALGORITHMSTATUS} = \mod_ratingallocate\algorithm_status::RUNNING;
                 $DB->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
                 // Try to get some more memory, 500 users in 10 groups take about 15mb.
@@ -2208,6 +2211,49 @@ class ratingallocate {
             $files[] = $f;
         }
         return $files;
+    }
+
+    /**
+     * Clears adhoc tasks distributing unallocated users for the current ratingallocate instance.
+     *
+     * This method should be called whenever the distribution of unallocated users should be stopped, usually because the
+     * basic algorithm distributing the users with ratings should be run (again).
+     *
+     * @return bool true if all tasks could be cleared or no tasks have been found, false if already running tasks have been found
+     *  which cannot be removed.
+     * @throws dml_exception on database errors
+     */
+    public function clear_distribute_unallocated_tasks(): bool {
+        global $DB;
+        $queuedtasks = \core\task\manager::get_adhoc_tasks(\mod_ratingallocate\task\distribute_unallocated_task::class);
+        $tasksofcurrentmodule = array_filter($queuedtasks, fn($task) => $task->get_custom_data()->cmid === $this->coursemodule->id);
+        foreach ($tasksofcurrentmodule as $task) {
+            // In theory there should only be one task, but to make sure, we iterate over all of them.
+            // We remove all not yet running tasks.
+            $taskrecord = $DB->get_record('task_adhoc', ['id' => $task->get_id()]);
+            if (empty($taskrecord)) {
+                // We could not find a record, so there is nothing to clear, everything is already good.
+                return true;
+            }
+            if (empty($taskrecord->timestarted)) {
+                // If we found a record and 'timestarted' still is null the task has not been started yet, so we can delete him.
+                try {
+                    $DB->delete_records('task_adhoc', ['id' => $task->get_id()]);
+                } catch (dml_exception $exception) {
+                    // This is very unlikely to happen, but let's be extra safe here.
+                    mtrace('Could not delete adhoc task with id ' . $task->get_id() . ', it probably already has been '
+                        . 'finished or deleted.');
+                    debugging($exception);
+                }
+            } else {
+                mtrace('Adhoc task for distributing unallocated users for ratingallocate instance with id '
+                    . $this->coursemodule->id . ' is already running, cannot abort.');
+                // We exit here, because we found an already running task we cannot stop anymore.
+                return false;
+            }
+        }
+        // If we did not exit with 'false' before, we could clear all scheduled adhoc tasks or there was no task at all.
+        return true;
     }
 
 }
