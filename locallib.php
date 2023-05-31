@@ -909,7 +909,7 @@ class ratingallocate {
      * @param string $distributionalgorithm one of the string constants ACTION_DISTRIBUTE_UNALLOCATED_FILL or ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY
      * @return void
      */
-    private function queue_distribution_of_users_without_choice(string $distributionalgorithm): void {
+    public function queue_distribution_of_users_without_choice(string $distributionalgorithm): void {
         global $USER;
         $task = new distribute_unallocated_task();
         $data = new stdClass();
