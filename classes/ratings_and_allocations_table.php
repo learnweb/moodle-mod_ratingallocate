@@ -146,6 +146,14 @@ class ratings_and_allocations_table extends \table_sql {
                     $columns[] = 'idnumber';
                     $headers[] = get_string('idnumber');
                 }
+                if (in_array('department', $additionalfields)) {
+                    $columns[] = 'department';
+                    $headers[] = get_string('department');
+                }
+                if (in_array('institution', $additionalfields)) {
+                    $columns[] = 'institution';
+                    $headers[] = get_string('institution');
+                }
                 $columns[] = 'firstname';
                 $headers[] = get_string('firstname');
                 $columns[] = 'lastname';

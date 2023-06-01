@@ -34,12 +34,16 @@ if ($ADMIN->fulltree) {
             [
                     'id' => 1,
                     'username' => 1,
+                    'department' => 0,
+                    'institution' => 0,
                     'email' => 1
             ],
             [
                     'id' => new lang_string('userid', 'ratingallocate'),
                     'username' => new lang_string('username'),
                     'idnumber' => new lang_string('idnumber'),
+                    'department' => new lang_string('department'),
+                    'institution' => new lang_string('institution'),
                     'email' => new lang_string('email'),
             ]));
 
