@@ -440,8 +440,6 @@ function ratingallocate_refresh_events($courseid = 0, $instance = null, $cm = nu
 function ratingallocate_set_events($ratingallocate) {
     global $DB, $CFG;
 
-    var_dump($ratingallocate);
-
     require_once($CFG->dirroot.'/calendar/lib.php');
 
     // Get CMID if not sent as part of $ratingallocate.
