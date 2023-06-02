@@ -290,6 +290,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      */
     public function modify_allocation_group($ratingallocateid, $coursemoduleid,
             $status, $undistributeduserscount, $algorithmstatus, $runalgorithmbycron) {
+        $isdistributionrunning = $this->is_distribution_of_unallocated_users_running($coursemoduleid);
         $output = '';
         $output .= $this->heading(get_string('modify_allocation_group', RATINGALLOCATE_MOD_NAME), 2);
         $output .= $this->box_start();
@@ -310,7 +311,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $button = new single_button($starturl, get_string('start_distribution', RATINGALLOCATE_MOD_NAME), 'get');
         // Enable only if the instance is ready and the algorithm may run manually
-        $button->disabled = !($ratingover);
+        $button->disabled = !($ratingover) || $isdistributionrunning;
         $button->tooltip = get_string('start_distribution_explanation', RATINGALLOCATE_MOD_NAME);
         $button->add_action(new confirm_action(get_string('confirm_start_distribution', RATINGALLOCATE_MOD_NAME)));
 
@@ -318,17 +319,19 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $output .= $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
                 'action' => ACTION_MANUAL_ALLOCATION)), get_string('manual_allocation_form', RATINGALLOCATE_MOD_NAME), 'get',
-                array('disabled' => !$ratingover));
+                array('disabled' => !$ratingover || $isdistributionrunning));
 
         // Add delete all ratings button
         $deletebutton = new single_button($deleteurl, get_string('delete_all_ratings', RATINGALLOCATE_MOD_NAME, 'get'));
-        $deletebutton->disabled = $ratingover; // Only allow deletion if new submission is possible.
+        // Only allow deletion if new submission is possible and distribution currently not running.
+        $deletebutton->disabled = $ratingover || $isdistributionrunning;
         $deletebutton->tooltip = get_string('delete_all_ratings_explanation', RATINGALLOCATE_MOD_NAME);
         $deletebutton->add_action(new confirm_action(get_string('confirm_delete_all_ratings', RATINGALLOCATE_MOD_NAME)));
 
         $output .= $this->render($deletebutton);
 
         if (has_capability('mod/ratingallocate:distribute_unallocated', context_module::instance($coursemoduleid))) {
+
             $output .= html_writer::start_div('ratingallocate_distribute_unallocated');
 
             $distributeunallocatedurl = new moodle_url($this->page->url, array('action' => ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY));
@@ -336,7 +339,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $button = new single_button($distributeunallocatedurl,
                 get_string('distributeequally', RATINGALLOCATE_MOD_NAME), 'get');
             // Enable only if the instance is ready and the algorithm may run manually.
-            $button->disabled = !($ratingover) || $undistributeduserscount === 0;
+            $button->disabled = !($ratingover) || $undistributeduserscount === 0 || $isdistributionrunning;
             $button->add_action(new confirm_action(
                 get_string('distribute_unallocated_equally_confirm', RATINGALLOCATE_MOD_NAME)));
 
@@ -346,12 +349,18 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $button = new single_button($distributeunallocatedurl,
                 get_string('distributefill', RATINGALLOCATE_MOD_NAME), 'get');
             // Enable only if the instance is ready, there are users to distribute and the algorithm may run manually.
-            $button->disabled = !($ratingover) || $undistributeduserscount === 0;
+            $button->disabled = !($ratingover) || $undistributeduserscount === 0 || $isdistributionrunning;
             $button->add_action(new confirm_action(
                 get_string('distribute_unallocated_fill_confirm', RATINGALLOCATE_MOD_NAME)));
 
             $output .= $this->render($button);
             $output .= $this->help_icon('distribution_description', RATINGALLOCATE_MOD_NAME);
+            if ($isdistributionrunning) {
+                $output .= html_writer::div(
+                        get_string('distribution_unallocated_already_running', RATINGALLOCATE_MOD_NAME),
+                        'alert alert-info m-3'
+                );
+            }
             $output .= html_writer::end_div();
         }
 
@@ -781,5 +790,16 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $cell2 = new html_table_cell($second);
         $row->cells = array($cell1, $cell2);
         $table->data[] = $row;
+    }
+
+    /**
+     * Method to check if an adhoc task for distributing unallocated users has already been queued.
+     *
+     * @return bool true if an adhoc task for the current course module can be found, false otherwise
+     */
+    private function is_distribution_of_unallocated_users_running(int $coursemoduleid): bool {
+        $queuedtasks = \core\task\manager::get_adhoc_tasks(\mod_ratingallocate\task\distribute_unallocated_task::class);
+        $taskofcurrentmodule = array_filter($queuedtasks, fn($task) => intval($task->get_custom_data()->cmid) === $coursemoduleid);
+        return !empty($taskofcurrentmodule);
     }
 }
