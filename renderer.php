@@ -799,7 +799,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      */
     private function is_distribution_of_unallocated_users_running(int $coursemoduleid): bool {
         $queuedtasks = \core\task\manager::get_adhoc_tasks(\mod_ratingallocate\task\distribute_unallocated_task::class);
-        $taskofcurrentmodule = array_filter($queuedtasks, fn($task) => $task->get_custom_data()->cmid === $coursemoduleid);
+        $taskofcurrentmodule = array_filter($queuedtasks, fn($task) => intval($task->get_custom_data()->cmid) === $coursemoduleid);
         return !empty($taskofcurrentmodule);
     }
 }
