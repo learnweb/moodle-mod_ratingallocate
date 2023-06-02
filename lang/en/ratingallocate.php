@@ -53,6 +53,10 @@ $string['downloaduserfields'] = 'Additional user fields for download';
 $string['configdownloaduserfields'] =
         'When downloading a table with users in it, these fields may be shown in addition to the users\' first and last name.';
 $string['userid'] = 'User ID';
+$string['calendarstart'] = '{$a} opens';
+$string['calendarstop'] = '{$a} closes';
+$string['openafterclose'] = 'This activity must start before it ends.';
+$string['closebeforeopen'] = 'This activity must end after it begins.';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Rating Form for Users">
 $string['choicestatusheading'] = 'Status';

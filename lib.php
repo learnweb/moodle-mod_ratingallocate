@@ -35,6 +35,8 @@ defined('MOODLE_INTERNAL') || die();
  * example constant
  */
 define('RATINGALLOCATE_MOD_NAME', 'ratingallocate');
+define('RATINGALLOCATE_EVENT_TYPE_START', 'start');
+define('RATINGALLOCATE_EVENT_TYPE_STOP', 'stop');
 // define('NEWMODULE_ULTIMATE_ANSWER', 42);
 
 require_once(dirname(__FILE__) . '/db/db_structure.php');
@@ -97,9 +99,10 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
         $ratingallocate->{this_db\ratingallocate::SETTING} = json_encode($ratingallocate->strategyopt);
         // instanz einfuegen, damit wir die ID fuer die Kinder haben
         $id = $DB->insert_record(this_db\ratingallocate::TABLE, $ratingallocate);
+        $ratingallocate->id = $id;
 
+        ratingallocate_set_events($ratingallocate);
         $transaction->allow_commit();
-
         return $id;
     } catch (Exception $e) {
         $transaction->rollback($e);
@@ -128,10 +131,13 @@ function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallo
     try {
         $transaction = $DB->start_delegated_transaction();
 
-        // serialize strategy settings
+        // Serialize strategy settings.
         $ratingallocate->setting = json_encode($ratingallocate->strategyopt);
 
         $bool = $DB->update_record('ratingallocate', $ratingallocate);
+
+        // Create or update the new events.
+        ratingallocate_set_events($ratingallocate);
 
         $transaction->allow_commit();
         return $bool;
@@ -160,7 +166,7 @@ function ratingallocate_delete_instance($id) {
         return false;
     }
 
-    // Delete any dependent records here #
+    // Delete any dependent records here # .
     $DB->delete_records('ratingallocate_allocations', array(
             'ratingallocateid' => $ratingallocate->id
     ));
@@ -187,6 +193,9 @@ function ratingallocate_delete_instance($id) {
             'ratingallocateid' => $ratingallocate->id
     ));
 
+    // Delete associated events.
+    $DB->delete_records('event', array('modulename' => 'ratingallocate', 'instance' => $id));
+
     $DB->delete_records('ratingallocate', array(
             'id' => $ratingallocate->id
     ));
@@ -202,7 +211,7 @@ function ratingallocate_delete_instance($id) {
  * @return boolean
  */
 function ratingallocate_print_recent_activity($course, $viewfullnames, $timestart) {
-    return false; // True if anything was printed, otherwise false
+    return false; // True if anything was printed, otherwise false.
 }
 
 /**
@@ -374,4 +383,276 @@ function ratingallocate_extend_navigation(navigation_node $navref, stdclass $cou
  */
 function ratingallocate_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $ratingallocatenode = null) {
 
+}
+
+/**
+ * This standard function will check all instances of this module
+ * and make sure there are up-to-date events created for each of them.
+ * If courseid = 0, then every ratingallocate event in the site is checked, else
+ * only ratingallocate events belonging to the course specified are checked.
+ * This function is used, in its new format, by restore_refresh_events()
+ *
+ * @param int $courseid
+ * @param int|stdClass $instance Ratingallocate module instance or ID.
+ * @param int|stdClass $cm Course module object or ID (not used in this module).
+ * @return bool
+ * @throws coding_exception
+ * @throws dml_exception
+ * @throws moodle_exception
+ */
+function ratingallocate_refresh_events($courseid = 0, $instance = null, $cm = null): bool {
+    global $DB;
+
+    // If we have instance information then we can just update the one event instead of updating all events.
+    if (isset($instance)) {
+        if (!is_object($instance)) {
+            $instance = $DB->get_record('ratingallocate', array('id' => $instance), '*', MUST_EXIST);
+        }
+        ratingallocate_set_events($instance);
+        return true;
+    }
+
+    if ($courseid) {
+        if (! $ratingallocates = $DB->get_records('ratingallocate', array('course' => $courseid))) {
+            return true;
+        }
+    } else {
+        if (! $ratingallocates = $DB->get_records('ratingallocate')) {
+            return true;
+        }
+    }
+
+    foreach ($ratingallocates as $ratingallocate) {
+        ratingallocate_set_events($ratingallocate);
+    }
+    return true;
+}
+
+/**
+ * Creates events for accesstimestart and accestimestop of a ratingallocate instance
+ *
+ * @param $ratingallocate
+ * @return void
+ * @throws coding_exception
+ * @throws dml_exception
+ * @throws moodle_exception
+ */
+function ratingallocate_set_events($ratingallocate) {
+    global $DB, $CFG;
+
+    require_once($CFG->dirroot.'/calendar/lib.php');
+
+    // Get CMID if not sent as part of $ratingallocate.
+    if (!isset($ratingallocate->coursemodule)) {
+
+        $cm = get_fast_modinfo($ratingallocate->course)->instances['ratingallocate'][$ratingallocate->id];
+
+        $ratingallocate->coursemodule = $cm->id;
+    }
+
+    // Ratingallocate-accessstart calendar events.
+    $eventid = $DB->get_field('event', 'id',
+        array('modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_START));
+
+    $timestart = $DB->get_field('ratingallocate', 'accesstimestart', array('id' => $ratingallocate->id));
+
+    if (isset($timestart) && $timestart > 0) {
+        $event = new stdClass();
+        $event->eventtype = RATINGALLOCATE_EVENT_TYPE_START;
+        $event->type = CALENDAR_EVENT_TYPE_ACTION;
+        $event->name = get_string('calendarstart', RATINGALLOCATE_MOD_NAME, $ratingallocate->name);
+        $event->description = format_module_intro('ratingallocate', $ratingallocate, $ratingallocate->coursemodule, false);
+        $event->format = FORMAT_HTML;
+        $event->instance = $ratingallocate->id;
+        $event->timestart = $timestart;
+        $event->timesort = $timestart;
+        // Visibility should depend on the user.
+        $event->visible = $ratingallocate->visible;
+        $event->timeduration = 0;
+        if ($eventid) {
+            // Calendar event exists so update it.
+            $event->id = $eventid;
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->update($event, false);
+        } else {
+            // Event doesn't exist so create one.
+            $event->courseid = $ratingallocate->course;
+            $event->groupid = 0;
+            $event->userid = 0;
+            $event->modulename = 'ratingallocate';
+            $event->instance = $ratingallocate->id;
+            $event->eventtype = RATINGALLOCATE_EVENT_TYPE_START;
+            calendar_event::create($event, false);
+        }
+    } else if ($eventid) {
+        // Delete calendarevent as it is no longer needed.
+        $calendarevent = calendar_event::load($eventid);
+        $calendarevent->delete();
+    }
+
+    // Ratingallocate-accessstop calendar events.
+    $eventid = $DB->get_field('event', 'id',
+        array('modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_STOP));
+
+    $timestop = $DB->get_field('ratingallocate', 'accesstimestop', array('id' => $ratingallocate->id));
+
+    if (isset($timestop) && $timestop > 0) {
+        $event = new stdClass();
+        $event->eventtype = RATINGALLOCATE_EVENT_TYPE_STOP;
+        $event->type = CALENDAR_EVENT_TYPE_ACTION;
+        $event->name = get_string('calendarstop', RATINGALLOCATE_MOD_NAME, $ratingallocate->name);
+        $event->description = format_module_intro('ratingallocate', $ratingallocate, $ratingallocate->coursemodule, false);
+        $event->format = FORMAT_HTML;
+        $event->instance = $ratingallocate->id;
+        $event->timestart = $timestop;
+        $event->timesort = $timestop;
+        // Visibility should depend on the user.
+        $event->visible = $ratingallocate->visible;
+        $event->timeduration = 0;
+        if ($eventid) {
+            // Calendar event exists so update it.
+            $event->id = $eventid;
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->update($event, false);
+        } else {
+            // Event doesn't exist so create one.
+            $event->courseid = $ratingallocate->course;
+            $event->groupid = 0;
+            $event->userid = 0;
+            $event->modulename = 'ratingallocate';
+            $event->instance = $ratingallocate->id;
+            calendar_event::create($event, false);
+        }
+    } else if ($eventid) {
+        // Delete calendarevent as it is no longer needed.
+        $calendarevent = calendar_event::load($eventid);
+        $calendarevent->delete();
+    }
+}
+
+/**
+ * Is the event visible?
+ *
+ * @param calendar_event
+ * @return bool
+ * @throws moodle_exception
+ * @throws dml_exception
+ */
+function mod_ratingallocate_core_is_event_visible(calendar_event $event): bool {
+
+    global $DB, $USER;
+
+    $instance = $event->instance;
+    if (!$instance) {
+        return false;
+    }
+
+    $ratingallocaterecord = $DB->get_record('ratingallocate', ['id' => $instance]);
+    $modinfo = get_fast_modinfo($event->courseid)->instances['ratingallocate'][$instance];
+    $context = context_module::instance($modinfo->id);
+    $course = get_course($event->courseid);
+
+    $ratingallocate = new ratingallocate($ratingallocaterecord, $course, $modinfo, $context);
+    $raters = $ratingallocate->get_raters_in_course();
+
+    return in_array($USER, $raters);
+
+}
+
+/**
+ * This function will update the ratingallocate module according to the event that has been modified.
+ *
+ * @params calendar_event, stdClass
+ * @throws coding_exception
+ * @throws dml_exception
+ * @throws moodle_exception
+ */
+function mod_ratingallocate_core_calendar_event_timestart_updated (\calendar_event $event, \stdClass $ratingallocate) {
+
+    global $CFG, $DB;
+
+    if (empty($event->eventtype) || $event->modulename != 'ratingallocate') {
+        return;
+    }
+
+    if ($event->instance != $ratingallocate->id) {
+        return;
+    }
+
+    if (!in_array($event->eventtype, [RATINGALLOCATE_EVENT_TYPE_STOP, RATINGALLOCATE_EVENT_TYPE_START])) {
+        return;
+    }
+
+    $courseid = $event->courseid;
+    $modulename = $event->modulename;
+    $instanceid = $event->instance;
+    $modified = false;
+
+    $coursemodule = get_fast_modinfo($courseid)->instances[$modulename][$instanceid];
+    $context = context_module::instance($coursemodule->id);
+
+    // The user does not have the capability to modify this activity.
+    if (!has_capability('moodle/course:manageactivities', $context)) {
+        return;
+    }
+
+    $timeopen = $DB->get_field('ratingallocate', 'accesstimestart', ['id' => $ratingallocate->id]);
+    $timeclose = $DB->get_field('ratingallocate', 'accesstimestop', ['id' => $ratingallocate->id]);
+
+    // Modify the dates for accesstimestart and accesstimestop if the event was dragged.
+    if ($event->eventtype == RATINGALLOCATE_EVENT_TYPE_START) {
+        if ($timeopen != $event->timestart) {
+            $ratingallocate->accesstimestart = $event->timestart;
+            $modified = true;
+        }
+    } else if ($event->eventtype == RATINGALLOCATE_EVENT_TYPE_STOP) {
+        if ($timeclose != $event->timestart) {
+            $ratingallocate->accesstimestop = $event->timestart;
+            $publishtime = $DB->get_field('ratingallocate', 'publishdate', ['id' => $ratingallocate->id]);
+            // Modify the estimated publication date if it is now before the accesstimestop.
+            if ($publishtime && $publishtime <= $ratingallocate->accesstimestop) {
+                $ratingallocate->publishdate = $ratingallocate->accesstimestop + 2 * 24 * 60 * 60;
+            }
+            $modified = true;
+        }
+    }
+
+    if ($modified) {
+        $ratingallocate->timemodified = time();
+        $DB->update_record('ratingallocate', $ratingallocate);
+        $event = \core\event\course_module_updated::create_from_cm($coursemodule, $context);
+        $event->trigger();
+    }
+}
+
+/**
+ * Calculates the minimum and maximum range of dates this event can be in
+ * according to the settings of the ratingallocate instance.
+ *
+ * @param calendar_event $event
+ * @param stdClass $instance
+ * @return array
+ * @throws coding_exception
+ * @throws dml_exception
+ */
+function mod_ratingallocate_core_calendar_get_valid_event_timestart_range (\calendar_event $event, \stdClass $instance): array {
+
+    global $DB;
+
+    $mindate = null;
+    $maxdate = null;
+
+    $timeopen = $DB->get_field('ratingallocate', 'accesstimestart', ['id' => $instance->id]);
+    $timeclose = $DB->get_field('ratingallocate', 'accesstimestop', ['id' => $instance->id]);
+
+    if ($event->eventtype == RATINGALLOCATE_EVENT_TYPE_START) {
+        if (!empty($timeclose)) {
+            $maxdate = [$timeclose, get_string('openafterclose', RATINGALLOCATE_MOD_NAME)];
+        }
+    } else if ($event->eventtype == RATINGALLOCATE_EVENT_TYPE_STOP) {
+        if (!empty($timeopen)) {
+            $mindate = [$timeopen, get_string('closebeforeopen', RATINGALLOCATE_MOD_NAME)];
+        }
+    }
+    return [$mindate, $maxdate];
 }
