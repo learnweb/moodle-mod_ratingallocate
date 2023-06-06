@@ -26,7 +26,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @copyright  2018 T Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_notification_test extends advanced_testcase {
+class mod_ratingallocate_notification_test extends \advanced_testcase {
 
     const CHOICE1 = 'Choice 1';
     const CHOICE2 = 'Choice 2';

@@ -25,7 +25,7 @@ namespace mod_ratingallocate;
  * @covers ::validate_settings()
  */
 
-class mod_ratingallocate_strategy_test extends advanced_testcase {
+class mod_ratingallocate_strategy_test extends \advanced_testcase {
 
     /**
      * Test for correct validation of settings

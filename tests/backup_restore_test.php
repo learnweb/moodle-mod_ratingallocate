@@ -36,7 +36,7 @@ use ratingallocate\db as this_db;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \backup\moodle2
  */
-class backup_restore_test extends advanced_testcase {
+class backup_restore_test extends \advanced_testcase {
 
     public function test_backup_restore() {
         // TODO this test does not check if userids are correctly mapped.

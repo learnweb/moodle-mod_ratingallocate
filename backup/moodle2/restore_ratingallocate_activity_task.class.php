@@ -51,8 +51,6 @@ class restore_ratingallocate_activity_task extends restore_activity_task {
     public static function define_decode_contents() {
         $contents = array();
 
-        // $contents[] = new restore_decode_content('ratingallocate', array('intro'), 'ratingallocate');
-
         return $contents;
     }
 
@@ -62,9 +60,6 @@ class restore_ratingallocate_activity_task extends restore_activity_task {
      */
     public static function define_decode_rules() {
         $rules = array();
-
-        // $rules[] = new restore_decode_rule('RATINGALLOCATEVIEWBYID', '/mod/ratingallocate/view.php?id=$1', 'course_module');
-        // $rules[] = new restore_decode_rule('RATINGALLOCATEINDEX', '/mod/ratingallocate/index.php?id=$1', 'course');
 
         return $rules;
     }
@@ -78,13 +73,6 @@ class restore_ratingallocate_activity_task extends restore_activity_task {
      */
     public static function define_restore_log_rules() {
         $rules = array();
-
-        // $rules[] = new restore_log_rule('raitingallocate', 'add', 'view.php?id={course_module}', '{raitingallocate}');
-        // $rules[] = new restore_log_rule('raitingallocate', 'update', 'view.php?id={course_module}', '{raitingallocate}');
-        // $rules[] = new restore_log_rule('raitingallocate', 'view', 'view.php?id={course_module}', '{raitingallocate}');
-        // $rules[] = new restore_log_rule('raitingallocate', 'choose', 'view.php?id={course_module}', '{raitingallocate}');
-        // $rules[] = new restore_log_rule('raitingallocate', 'choose again', 'view.php?id={course_module}', '{raitingallocate}');
-        // $rules[] = new restore_log_rule('raitingallocate', 'report', 'report.php?id={course_module}', '{raitingallocate}');
 
         return $rules;
     }

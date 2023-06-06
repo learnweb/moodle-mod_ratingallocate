@@ -29,7 +29,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @copyright  reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_status_test extends advanced_testcase {
+class mod_ratingallocate_status_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $PAGE;

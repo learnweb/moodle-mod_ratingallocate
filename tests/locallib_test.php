@@ -32,7 +32,7 @@ use ratingallocate\db as this_db;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \locallib
  */
-class locallib_test extends advanced_testcase {
+class locallib_test extends \advanced_testcase {
 
     public function test_simple() {
         global $DB;
