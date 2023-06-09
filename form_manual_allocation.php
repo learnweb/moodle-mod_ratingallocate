@@ -94,7 +94,7 @@ class manual_alloc_form extends moodleform {
         }
         $groupsmenu[0] = get_string('allparticipants');
         $groupsmenu[-1] = get_string('nogroup', 'enrol');
-        foreach($allgroups as $gid => $unused) {
+        foreach ($allgroups as $gid => $unused) {
             $groupsmenu[$gid] = $allgroups[$gid]->name;
         }
         if (count($groupsmenu) > 1) {
@@ -145,7 +145,6 @@ class manual_alloc_form extends moodleform {
         $mform->getElement('show_alloc_necessary')->setChecked($filter['showallocnecessary']);
         $mform->setDefault('filtergroup', $filter['groupselect']);
         $mform->getElement('filtergroup')->setSelected($filter['groupselect']);
-
 
         $PAGE->requires->js_call_amd('mod_ratingallocate/radiobuttondeselect', 'init');
 
