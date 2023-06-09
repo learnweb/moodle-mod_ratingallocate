@@ -1812,6 +1812,19 @@ class ratingallocate {
     }
 
     /**
+     * Returns an array of choices with the given ids
+     *
+     * @param $ids array choiceids
+     * @return array choices
+     * @throws dml_exception
+     */
+    public function get_choices_by_id($ids) {
+        global $DB;
+        return $DB->get_records_list(this_db\ratingallocate_choices::TABLE,
+                'id', $ids);
+    }
+
+    /**
      * Returns all memberships of a user for rateable choices in this instance of ratingallocate
      */
     public function get_allocations_for_user($userid) {
