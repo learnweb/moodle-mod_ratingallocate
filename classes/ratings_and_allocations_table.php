@@ -182,7 +182,7 @@ class ratings_and_allocations_table extends \table_sql {
         }
 
         // Setup filter.
-        $this->setup_filter($hidenorating, $showallocnecessary,$groupselect);
+        $this->setup_filter($hidenorating, $showallocnecessary, $groupselect);
 
         $filteredchoices = $this->filter_choiceids(array_keys($this->choicenames));
         foreach ($filteredchoices as $choiceid) {
@@ -280,7 +280,12 @@ class ratings_and_allocations_table extends \table_sql {
      */
     private function add_group_row(): void {
         if ($this->is_downloading()) {
-            $choiceids = array_map(function ($c) {return $c->id;}, $this->ratingallocate->get_choices());
+            $choiceids = array_map(
+                function ($c) {
+                    return $c->id;
+                },
+                $this->ratingallocate->get_choices()
+            );
             $choices = $this->ratingallocate->get_choices_by_id($this->filter_choiceids($choiceids));
             $row = [];
             foreach ($choices as $choice) {
@@ -562,8 +567,7 @@ class ratings_and_allocations_table extends \table_sql {
      * @param $userids array ids, which should be filtered.
      * @return array of filtered user ids.
      */
-    private function filter_userids($userids)
-    {
+    private function filter_userids($userids) {
         global $DB;
         if (!$userids) {
             return $userids;
@@ -590,7 +594,13 @@ class ratings_and_allocations_table extends \table_sql {
         }
         if ($this->groupselect == -1) {
             $sql .= "AND u.id not in ( SELECT gm.userid FROM {groups_members} gm WHERE gm.groupid in (" .
-                implode(",", array_map(function($o) { return $o->id;}, $this->groupsofallchoices)) . ") ) ";
+                implode(",",
+                    array_map(
+                        function($o) {
+                            return $o->id;
+                        },
+                        $this->groupsofallchoices)) .
+                ") ) ";
         } else {
             $sql .= "AND u.id in ( SELECT gm.userid FROM {groups_members} gm WHERE gm.groupid= :groupselect ) ";
         }
@@ -608,14 +618,13 @@ class ratings_and_allocations_table extends \table_sql {
         );
     }
 
-    private function filter_choiceids($choiceids)
-    {
+    private function filter_choiceids($choiceids) {
         global $DB;
         if (!$choiceids) {
             return $choiceids;
         }
 
-        if ($this->groupselect == 0){
+        if ($this->groupselect == 0) {
             return $choiceids;
         }
 
