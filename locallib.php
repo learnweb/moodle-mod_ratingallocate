@@ -179,7 +179,7 @@ class ratingallocate {
     const NOTIFY_MESSAGE = 'notifymessage';
 
     /**
-     * Returns all users enrolled in the course the ratingallocate is in
+     * Returns all users enrolled in the course the ratingallocate is in, who were able to access the activity
      * @throws moodle_exception
      */
     public function get_raters_in_course(): array {
@@ -189,7 +189,7 @@ class ratingallocate {
 
         $raters = get_enrolled_users($this->context, 'mod/ratingallocate:give_rating');
         $info = new info_module($cm);
-        // Only show raters who had the ability to access this activity. This funktion ignores the visibility setting,
+        // Only show raters who had the ability to access this activity. This function ignores the visibility setting,
         // so the ratings and allocations are still shown, even when the activity is hidden
         $filteredraters = $info->filter_user_list($raters);
 
