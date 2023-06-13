@@ -195,7 +195,7 @@ class mod_ratingallocate_processor_test extends advanced_testcase {
             "Filtering the users to those in neither group should return 3 users.");
     }
 
-        /**
+    /**
      * Removes the allocation for one existing user in course.
      * Enrols one new user wihtout rating or allocations.
      * Enrols one new user and creates an allocation for her.
