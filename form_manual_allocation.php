@@ -123,6 +123,7 @@ class manual_alloc_form extends moodleform {
 
         $hidenorating = null;
         $showallocnecessary = null;
+        $groupselect = null;
         // Get filter settings.
         if ($this->is_submitted()) {
             $hidenorating = $mform->getSubmitValue('hide_users_without_rating');

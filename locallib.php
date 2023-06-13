@@ -179,7 +179,7 @@ class ratingallocate {
     const NOTIFY_MESSAGE = 'notifymessage';
 
     /**
-     * Returns all users enrolled in the course the ratingallocate is in
+     * Returns all users enrolled in the course the ratingallocate is in, who were able to access the activity
      * @throws moodle_exception
      */
     public function get_raters_in_course(): array {
