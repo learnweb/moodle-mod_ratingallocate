@@ -193,10 +193,10 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
         self::assertEquals(2, count($table->rawdata),
             "Filtering the users to those in group2 should return 2 users.");
 
-        // Count of users in neither group used in the ratingallocate activity should be equal to 3.
+        // Count of users in neither group used in the ratingallocate activity should be equal to 1.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false, -1);
-        self::assertEquals(3, count($table->rawdata),
-            "Filtering the users to those in neither group should return 3 users.");
+        self::assertEquals(1, count($table->rawdata),
+            "Filtering the users to those in neither group should return 1 user.");
     }
 
     /**
