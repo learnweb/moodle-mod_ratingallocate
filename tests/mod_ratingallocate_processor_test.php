@@ -138,10 +138,10 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
 
         // Create two groups.
         $group1 = $this->getDataGenerator()->create_group(array(
-            'courseid' => $course,
+            'courseid' => $course->id,
             'name' => 'group1'));
         $group2 = $this->getDataGenerator()->create_group(array(
-            'courseid' => $course,
+            'courseid' => $course->id,
             'name' => 'group2'));
 
         // Add 1 member to each group, and 1 member to both groups.
