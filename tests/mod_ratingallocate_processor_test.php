@@ -178,10 +178,10 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
 
         // Test the group filter only (set hidenorating and showalloccount to false).
 
-        // Count of users in total should be equal to 6.
+        // Count of participants in total should be equal to 4.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false, 0);
-        self::assertEquals(6, count($table->rawdata),
-            "Filtering the users to all course participants should return 6 users.");
+        self::assertEquals(4, count($table->rawdata),
+            "Filtering the users to all course participants who could access the activity should return 4 users.");
 
         // Count of users in group1 should be equal to 2.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false, $groupidmap['group1']);
