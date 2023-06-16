@@ -593,15 +593,16 @@ class ratings_and_allocations_table extends \table_sql {
             $sql .= "WHERE u.id in (" . implode(",", $userids) . ") ";
         }
         if ($this->groupselect == -1) {
-            $sql .= "AND u.id not in ( SELECT gm.userid FROM {groups_members} gm WHERE gm.groupid in (" .
-                implode(",",
-                    array_map(
-                        function($o) {
-                            return $o->id;
-                        },
-                        $this->groupsofallchoices)) .
-                ") ) ";
-        } else {
+            $sql .= "AND u.id not in ( SELECT distinct gm.userid FROM {groups_members} gm WHERE gm.groupid in (null";
+            if (!empty($gmgroupid = implode(",",
+                array_map(
+                    function($o) {
+                        return $o->id;
+                    },
+                    $this->groupsofallchoices)))) {
+                $sql .= "," . $gmgroupid . ") ) ";
+            }
+        } else if ($this->groupselect != 0) {
             $sql .= "AND u.id in ( SELECT gm.userid FROM {groups_members} gm WHERE gm.groupid= :groupselect ) ";
         }
         return array_map(
