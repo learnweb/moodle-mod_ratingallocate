@@ -99,6 +99,7 @@ class manual_alloc_form extends moodleform {
         }
         if (count($groupsmenu) > 1) {
             $mform->addElement('select', 'filtergroup', get_string('group'), $groupsmenu);
+            $mform->addHelpButton('filtergroup', 'filtergroup', RATINGALLOCATE_MOD_NAME);
         }
 
         $mform->addElement('submit', 'update_filter',

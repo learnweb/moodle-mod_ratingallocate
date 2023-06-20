@@ -374,7 +374,7 @@ class ratings_and_allocations_table extends \table_sql {
         }
 
         foreach ($this->choicesum as $choiceid => $sum) {
-            if (array_key_exists($choiceid, $this->filter_choiceids(array_keys($this->choicenames)))) {
+            if (in_array($choiceid, $this->filter_choiceids(array_keys($this->choicenames)))) {
                 $row[] = get_string(
                     'ratings_table_sum_allocations_value',
                     RATINGALLOCATE_MOD_NAME,
@@ -586,7 +586,7 @@ class ratings_and_allocations_table extends \table_sql {
         if ($this->showallocnecessary) {
             $sql .= "LEFT JOIN ({ratingallocate_allocations} a " .
                 "JOIN {ratingallocate_choices} c2 ON c2.id = a.choiceid AND c2.active=1 " .
-                "AND a.ratingallocateid = :ratingallocateid2 )" .
+                "AND a.ratingallocateid = :ratingallocateid )" .
                 "ON u.id=a.userid " .
                 "WHERE a.id is null AND u.id in (" . implode(",", $userids) . ") ";
         } else {
@@ -612,7 +612,6 @@ class ratings_and_allocations_table extends \table_sql {
                 $DB->get_records_sql($sql,
                         array(
                                 'ratingallocateid' => $this->ratingallocate->ratingallocate->id,
-                                'ratingallocateid2' => $this->ratingallocate->ratingallocate->id,
                                 'groupselect' => $this->groupselect
                         )
                 )

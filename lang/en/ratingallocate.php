@@ -452,3 +452,8 @@ $string['privacy:metadata:preference:flextable_manual_filter'] =
 
 $string['filtertabledesc'] = 'Describes the filters that are applied to the allocation table.';
 $string['filtermanualtabledesc'] = 'Describes the filters that are applied to the table of the manual allocation form.';
+$string['filtergroup'] = 'Group filter';
+$string['filtergroup_help'] = '* Select a group in order to filter course participants according to the groups they are in,
+and ratable choices by groups that had the ability to access them.
+* Only groups used in the *use groups* option can be selected.
+* If *no group* is selected, users that are in none of the groups used by a choice are shown.';
