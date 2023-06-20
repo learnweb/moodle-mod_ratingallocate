@@ -98,6 +98,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      * @covers \classes\ratings_and_allocations_table
      */
     public function test_ratings_table_filter() {
+
         $this->resetAfterTest();
 
         // Setup the ratingallocate instance with 4 Students.
