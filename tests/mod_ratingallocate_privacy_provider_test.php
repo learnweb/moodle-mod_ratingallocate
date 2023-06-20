@@ -45,7 +45,7 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
      */
     protected function setUp(): void {
         $this->resetAfterTest();
-        $this->testmodule = new mod_ratingallocate_generated_module($this);
+        $this->testmodule = new \mod_ratingallocate_generated_module($this);
     }
 
     /**
@@ -87,7 +87,7 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
         $contextlist = provider::get_contexts_for_userid($this->testmodule->students[0]->id);
         $this->assertCount(1, $contextlist);
         $contextforuser = $contextlist->current();
-        $cmcontext = context_module::instance($cm->id);
+        $cmcontext = \context_module::instance($cm->id);
         $this->assertEquals($cmcontext->id, $contextforuser->id);
     }
 
@@ -96,7 +96,7 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
      */
     public function test_export_for_context() {
         $cm = get_coursemodule_from_instance('ratingallocate', $this->testmodule->moddb->id);
-        $cmcontext = context_module::instance($cm->id);
+        $cmcontext = \context_module::instance($cm->id);
 
         // Export all of the data for the context.
         $this->export_context_data_for_user($this->testmodule->students[0]->id, $cmcontext, 'mod_ratingallocate');
@@ -118,7 +118,7 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
         $this->assertEquals(10, $count);
 
         // Delete data based on context.
-        $cmcontext = context_module::instance($cm->id);
+        $cmcontext = \context_module::instance($cm->id);
         provider::delete_data_for_all_users_in_context($cmcontext);
 
         // After deletion, the ratings and allocations for the ratingallocate activity should have been deleted.
@@ -135,8 +135,8 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
         global $DB;
 
         $cm = get_coursemodule_from_instance('ratingallocate', $this->testmodule->moddb->id);
-        $context = context_module::instance($cm->id);
-        $student = core_user::get_user(array_pop($this->testmodule->allocations)->userid);
+        $context = \context_module::instance($cm->id);
+        $student = \core_user::get_user(array_pop($this->testmodule->allocations)->userid);
 
         // Before deletion, we should have 2 responses.
         $count = $DB->count_records('ratingallocate_ratings');
@@ -173,7 +173,7 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
         $this->assertEquals(10, $count);
 
         // Get data based on context.
-        $cmcontext = context_module::instance($cm->id);
+        $cmcontext = \context_module::instance($cm->id);
 
         $userlist = new \core_privacy\local\request\userlist($cmcontext, 'mod_ratingallocate');
         provider::get_users_in_context($userlist);
@@ -181,7 +181,7 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
         // There are 20 students with ratings.
         $this->assertCount(20, $userlist, "There should be 20 students with data in the instance.");
 
-        mod_ratingallocate_generator::create_user_and_enrol($this, $this->testmodule->course);
+        \mod_ratingallocate_generator::create_user_and_enrol($this, $this->testmodule->course);
 
         $enrolledusers = get_enrolled_users($cmcontext);
 
@@ -198,8 +198,7 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
      */
     public function test_delete_for_users_in_context() {
         global $DB;
-        $testmodule2 = new mod_ratingallocate_generated_module($this);
-        $testmodule2->moddb->id;
+        $testmodule2 = new \mod_ratingallocate_generated_module($this);
         $cm = get_coursemodule_from_instance('ratingallocate', $this->testmodule->moddb->id);
 
         $params1 = array(
@@ -225,7 +224,7 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
         $this->assertEquals(10, $count);
 
         // Delete data based on context.
-        $cmcontext = context_module::instance($cm->id);
+        $cmcontext = \context_module::instance($cm->id);
 
         $userlist = array();
         // Select one unassigned student.

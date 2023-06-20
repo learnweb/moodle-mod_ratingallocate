@@ -40,7 +40,7 @@ class mod_ratingallocate_notification_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $students = array();
         for ($i = 1; $i <= 4; $i++) {
-            $students[$i] = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+            $students[$i] = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         }
         $choices = array(
                 array(
@@ -87,7 +87,7 @@ class mod_ratingallocate_notification_test extends \advanced_testcase {
                 )
         );
 
-        $ratingallocate = mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this, $choices,
+        $ratingallocate = \mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this, $choices,
                 $course, $ratings);
         $allocations = $ratingallocate->get_allocations();
         $this->assertArrayHasKey($students[1]->id, $allocations);
@@ -101,7 +101,7 @@ class mod_ratingallocate_notification_test extends \advanced_testcase {
         $messagesink = $this->redirectMessages();
 
         // Create a notification task.
-        $task = new mod_ratingallocate\task\send_distribution_notification();
+        $task = new \mod_ratingallocate\task\send_distribution_notification();
 
         // Add custom data.
         $task->set_component('mod_ratingallocate');
@@ -122,7 +122,7 @@ class mod_ratingallocate_notification_test extends \advanced_testcase {
 
     /**
      * Asserts that a message for a user exists and that it contains a certain search string
-     * @param $messages stdClass[] received messages
+     * @param $messages \stdClass[] received messages
      * @param $userid int id of the user
      * @param $needle string search string
      */
@@ -139,7 +139,7 @@ class mod_ratingallocate_notification_test extends \advanced_testcase {
 
     /**
      * Asserts that there is no message for a certain user.
-     * @param $messages stdClass[] received messages
+     * @param $messages \stdClass[] received messages
      * @param $userid int id of the user
      * @param $needle string search string
      */

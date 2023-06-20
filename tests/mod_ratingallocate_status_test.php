@@ -43,29 +43,29 @@ class mod_ratingallocate_status_test extends \advanced_testcase {
     public function ratingallocate_provider() {
         return [
                 'Rating phase is not started.' => [
-                        3, 6, false, false, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
+                        3, 6, false, false, \ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
                 'Rating phase is not started, but some allocations exist.' => [
-                        3, 6, false, true, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
+                        3, 6, false, true, \ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
                 'Rating phase is not started, but allocation is published.' => [
-                        3, 6, true, false, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
+                        3, 6, true, false, \ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
                 'Rating phase is not started, but allocations exist and are published.' => [
-                        3, 6, true, true, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
+                        3, 6, true, true, \ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
                 'The rating phase is running' => [
-                        -1, 6, false, false, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
+                        -1, 6, false, false, \ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
                 'The rating phase is running, but allocations exist.' => [
-                        -1, 6, false, true, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
+                        -1, 6, false, true, \ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
                 'The rating phase is running, but allocation is published.' => [
-                        -1, 6, true, false, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
+                        -1, 6, true, false, \ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
                 'The rating phase is running, but allocations exist and are published.' => [
-                        -1, 6, true, true, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
+                        -1, 6, true, true, \ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
                 'The rating phase is running.' => [
-                        -7, -6, false, false, ratingallocate::DISTRIBUTION_STATUS_READY],
+                        -7, -6, false, false, \ratingallocate::DISTRIBUTION_STATUS_READY],
                 'The rating phase is running and some allocations exist.' => [
-                        -7, -6, false, true, ratingallocate::DISTRIBUTION_STATUS_READY_ALLOC_STARTED],
+                        -7, -6, false, true, \ratingallocate::DISTRIBUTION_STATUS_READY_ALLOC_STARTED],
                 'The rating phase is running and allocation is published.' => [
-                        -7, -6, true, false, ratingallocate::DISTRIBUTION_STATUS_PUBLISHED],
+                        -7, -6, true, false, \ratingallocate::DISTRIBUTION_STATUS_PUBLISHED],
                 'The rating phase is running and allocations exist and are published.' => [
-                        -7, -6, true, true, ratingallocate::DISTRIBUTION_STATUS_PUBLISHED]
+                        -7, -6, true, true, \ratingallocate::DISTRIBUTION_STATUS_PUBLISHED]
         ];
     }
 
@@ -82,7 +82,7 @@ class mod_ratingallocate_status_test extends \advanced_testcase {
                 'strategyopt' => array('strategy_yesno' => array('maxcrossout' => '1')),
                 'strategy' => 'strategy_yesno');
         if ($hasallocations) {
-            $genmod = new mod_ratingallocate_generated_module($this, $record);
+            $genmod = new \mod_ratingallocate_generated_module($this, $record);
             $moddb = $genmod->moddb;
         } else {
             $course = $this->getDataGenerator()->create_course();
@@ -90,7 +90,7 @@ class mod_ratingallocate_status_test extends \advanced_testcase {
             $moddb = $this->getDataGenerator()->create_module(RATINGALLOCATE_MOD_NAME, $record);
         }
 
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate($moddb);
+        $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate($moddb);
         $ratingallocate->ratingallocate->published = $published;
 
         $status = $ratingallocate->get_status();

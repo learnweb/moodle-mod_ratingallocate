@@ -60,16 +60,16 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
 
         $course = $generator->create_course();
         $this->course = $course;
-        $this->teacher = mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
+        $this->teacher = \mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
 
         // Make test groups.
         $this->green = $generator->create_group(array('name' => 'Green Group', 'courseid' => $course->id));
         $this->blue = $generator->create_group(array('name' => 'Blue Group', 'courseid' => $course->id));
         $this->red = $generator->create_group(array('name' => 'Red Group', 'courseid' => $course->id));
 
-        $mod = mod_ratingallocate_generator::create_instance_with_choices($this, array('course' => $course));
+        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, array('course' => $course));
 
-        $this->ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
+        $this->ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
         $this->ratingallocateid = $mod->id;
     }
 

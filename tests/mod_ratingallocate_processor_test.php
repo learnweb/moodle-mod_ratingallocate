@@ -40,7 +40,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      * @covers ::publish_allocation()
      */
     public function test_publishing() {
-        $ratingallocate = mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
+        $ratingallocate = \mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $ratingallocate->ratingallocate->published);
         $ratingallocate->publish_allocation();
         $this->assertEquals(1, $ratingallocate->ratingallocate->published);
@@ -53,7 +53,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      */
     public function test_grouping_before_accesstimestop() {
         global $DB;
-        $ratingallocate = mod_ratingallocate_generator::get_open_ratingallocate_for_teacher($this);
+        $ratingallocate = \mod_ratingallocate_generator::get_open_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $DB->count_records('groupings'));
         $ratingallocate->synchronize_allocation_and_grouping();
         $this->assertEquals(1, $DB->count_records('groupings'));
@@ -66,7 +66,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      */
     public function test_grouping_after_accesstimestop() {
         global $DB;
-        $ratingallocate = mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
+        $ratingallocate = \mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $DB->count_records('groupings'));
         $ratingallocate->synchronize_allocation_and_grouping();
         $this->assertEquals(1, $DB->count_records('groupings'));
@@ -99,7 +99,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      */
     public function test_ratings_table_filter() {
         // Setup the ratingallocate instanz with 4 Students.
-        $ratingallocate = mod_ratingallocate_generator::get_small_ratingallocate_for_filter_tests($this);
+        $ratingallocate = \mod_ratingallocate_generator::get_small_ratingallocate_for_filter_tests($this);
 
         $this->alter_user_base_for_filter_test($ratingallocate);
 
@@ -131,7 +131,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      * Removes the allocation for one existing user in course.
      * Enrols one new user wihtout rating or allocations.
      * Enrols one new user and creates an allocation for her.
-     * @param $ratingallocate ratingallocate instance
+     * @param mixed $ratingallocate ratingallocate instance
      */
     private function alter_user_base_for_filter_test($ratingallocate) {
         // Remove the allocation of one user.
@@ -141,19 +141,19 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
         $ratingallocate->remove_allocation(reset($allocationsofuser)->choiceid, $userwithoutallocation->id);
 
         // Enrol a new user without ratings to the course.
-        mod_ratingallocate_generator::create_user_and_enrol($this,
+        \mod_ratingallocate_generator::create_user_and_enrol($this,
                 get_course($ratingallocate->ratingallocate->course));
 
         $choices = $ratingallocate->get_rateable_choices();
         // Enrol a new user without ratings to the course and create an allocation for her.
-        $userwithoutratingwithallocation = mod_ratingallocate_generator::create_user_and_enrol($this,
+        $userwithoutratingwithallocation = \mod_ratingallocate_generator::create_user_and_enrol($this,
                 get_course($ratingallocate->ratingallocate->course));
         $ratingallocate->add_allocation(reset($choices)->id, $userwithoutratingwithallocation->id);
     }
 
     /**
      * Creates a ratings and allocation table with specific filter options
-     * @param $ratingallocate ratingallocate
+     * @param mixed $ratingallocate ratingallocate
      * @param $hidenorating bool
      * @param $showallocnecessary bool
      * @return \mod_ratingallocate\ratings_and_allocations_table
@@ -161,7 +161,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
     private function setup_ratings_table_with_filter_options($ratingallocate, $hidenorating, $showallocnecessary) {
         // Create and set up the flextable for ratings and allocations.
         $choices = $ratingallocate->get_rateable_choices();
-        $table = new mod_ratingallocate\ratings_and_allocations_table($ratingallocate->get_renderer(),
+        $table = new \mod_ratingallocate\ratings_and_allocations_table($ratingallocate->get_renderer(),
                 array(), $ratingallocate, 'show_alloc_table', 'mod_ratingallocate_test', false);
         $table->setup_table($choices, $hidenorating, $showallocnecessary);
 
