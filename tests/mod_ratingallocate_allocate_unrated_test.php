@@ -401,7 +401,9 @@ class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase {
         $this->ratingallocate->add_allocation($this->get_choice_id_by_title('A'), $this->studentsnogroup[1]->id);
         $this->assertEquals(2, $this->get_allocation_count_for_choice('A'));
         $this->ratingallocate->queue_distribution_of_users_without_choice(ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY);
+        ob_start();
         $this->runAdhocTasks();
+        ob_end_clean();
         foreach (range('A', 'E') as $groupname) {
             $this->assertEquals(8, $this->get_allocation_count_for_choice($groupname));
         }
@@ -415,7 +417,9 @@ class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase {
         }
         $this->assertEquals(51, count(enrol_get_course_users($this->course->id)));
         $this->ratingallocate->queue_distribution_of_users_without_choice(ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY);
+        ob_start();
         $this->runAdhocTasks();
+        ob_end_clean();
         foreach (range('A', 'E') as $choicetitle) {
             // We still should have the maximum amount of students assigned to the choices.
             $this->assertEquals(8, $this->get_allocation_count_for_choice($choicetitle));
@@ -470,7 +474,9 @@ class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase {
         // Assign blue and green group to choice D. So D is only available to green and blue students.
         $this->ratingallocate->update_choice_groups($this->get_choice_id_by_title('D'), [$this->blue->id, $this->green->id]);
         $this->ratingallocate->queue_distribution_of_users_without_choice($algorithm);
+        ob_start();
         $this->runAdhocTasks();
+        ob_end_clean();
         // We could not distribute all users, but choices 'A' to 'D' should be properly filled.
         foreach (range('A', 'D') as $choicetitle) {
             $this->assertEquals(8, $this->get_allocation_count_for_choice($choicetitle));
@@ -485,7 +491,9 @@ class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase {
         $this->ratingallocate->clear_all_allocations();
         $this->ratingallocate->update_choice_groups($this->get_choice_id_by_title('E'), [$this->red->id]);
         $this->ratingallocate->queue_distribution_of_users_without_choice($algorithm);
+        ob_start();
         $this->runAdhocTasks();
+        ob_end_clean();
         foreach (range('A', 'E') as $groupname) {
             $this->assertEquals(8, $this->get_allocation_count_for_choice($groupname));
         }
@@ -540,7 +548,9 @@ class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase {
         }
         $this->assertEquals(51, count(enrol_get_course_users($this->course->id)));
         $this->ratingallocate->queue_distribution_of_users_without_choice($algorithm);
+        ob_start();
         $this->runAdhocTasks();
+        ob_end_clean();
         foreach (range('A', 'E') as $choicetitle) {
             // We still should have the maximum amount of students assigned to the choices.
             $this->assertEquals(8, $this->get_allocation_count_for_choice($choicetitle));
@@ -588,7 +598,9 @@ class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase {
         $this->allocate_random_users();
 
         $this->ratingallocate->queue_distribution_of_users_without_choice(ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY);
+        ob_start();
         $this->runAdhocTasks();
+        ob_end_clean();
         $i = 14;
         foreach ($letters as $groupname) {
             // All choices should be equally filled up. We have 50 places and 40 users, so every choice should have 2 places left
@@ -637,8 +649,9 @@ class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase {
         $this->allocate_random_users();
 
         $this->ratingallocate->queue_distribution_of_users_without_choice(ACTION_DISTRIBUTE_UNALLOCATED_FILL);
+        ob_start();
         $this->runAdhocTasks();
-
+        ob_end_clean();
         $i = 14;
         foreach ($letters as $groupname) {
             // A choice should be filled up completely before going for the next one by this algorithm. Choices with least places
