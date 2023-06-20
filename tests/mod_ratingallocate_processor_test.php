@@ -134,7 +134,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
-        $teacher = mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
+        $teacher = \mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
         $this->setUser($teacher);
 
         // Create two groups.
@@ -146,18 +146,18 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
             'name' => 'group2'));
 
         // Add 1 member to each group, and 1 member to both groups.
-        $student1 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $student1 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         groups_add_member($group1->id, $student1->id);
-        $student2 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $student2 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         groups_add_member($group2->id, $student2->id);
-        $student3 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $student3 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         groups_add_member($group1->id, $student3->id);
         groups_add_member($group2->id, $student3->id);
-        $student4 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $student4 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
 
         // Setup ratingallocate instance.
-        $mod = mod_ratingallocate_generator::create_instance_with_choices($this, array('course' => $course), $this->get_choice_data());
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $teacher);
+        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, array('course' => $course), $this->get_choice_data());
+        $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $teacher);
 
         // Map choice titles to choice IDs, group names to group IDs.
         $choices = $ratingallocate->get_rateable_choices();
