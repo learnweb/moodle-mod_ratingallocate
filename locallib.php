@@ -539,14 +539,13 @@ class ratingallocate {
                                 $choiceimporter->issue_notifications($importstatus->errors,
                                     \core\output\notification::NOTIFY_ERROR);
                         }
-
-                        redirect(new moodle_url('/mod/ratingallocate/view.php',
+                    }
+                }
+                redirect(new moodle_url('/mod/ratingallocate/view.php',
                             array(
                                 'id' => $this->coursemodule->id,
                                 'action' => ACTION_SHOW_CHOICES
                             )));
-                    }
-                }
             }
 
             $output .= $OUTPUT->heading(get_string('upload_choices', 'ratingallocate'), 2);
