@@ -542,10 +542,7 @@ class ratingallocate {
                     }
                 }
                 redirect(new moodle_url('/mod/ratingallocate/view.php',
-                            array(
-                                'id' => $this->coursemodule->id,
-                                'action' => ACTION_SHOW_CHOICES
-                            )));
+                        array('id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES)));
             }
 
             $output .= $OUTPUT->heading(get_string('upload_choices', 'ratingallocate'), 2);
