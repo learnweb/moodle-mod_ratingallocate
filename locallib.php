@@ -1562,7 +1562,7 @@ class ratingallocate {
                         'ratingallocate' => $this->ratingallocate->name,
                         'choice' => $choices[$allocchoiceid]->title,
                         'explanation' => format_text($choices[$allocchoiceid]->explanation)));
-            } else if (in_array($userid, $this->get_users_with_ratings())) {
+            } else if (array_key_exists($userid, $this->get_users_with_ratings())) {
                 $notificationtext = get_string('no_allocation_notification_message', 'ratingallocate', array(
                         'ratingallocate' => $this->ratingallocate->name));
             }
