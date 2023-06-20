@@ -33,7 +33,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
     public function create_instance($record = null, array $options = null) {
         $defaultvalues = self::get_default_values();
 
-        // set default values for unspecified attributes
+        // Set default values for unspecified attributes.
         foreach ($defaultvalues as $key => $value) {
             if (!isset($record[$key])) {
                 $record[$key] = $value;
@@ -119,7 +119,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
         if ($isteacher) {
             if (empty(self::$teacherrole)) {
                 global $DB;
-                // enrole teacher and student
+                // Enrol teacher and student.
                 self::$teacherrole = $DB->get_record('role',
                         array('shortname' => 'editingteacher'
                         ));
@@ -323,13 +323,13 @@ class mod_ratingallocate_generated_module {
             for ($i = 0; $i < $numstudents; $i++) {
                 $rating = json_decode(json_encode($prefersnon), true);
 
-                // create user's rating according to the modules specifications
+                // Create user's rating according to the modules specifications.
                 foreach ($this->ratings[$i] as $choicename => $preference) {
                     $choiceid = $choiceidbytitle[$choicename];
                     $rating[$choiceid][this_db\ratingallocate_ratings::RATING] = $preference;
                 }
 
-                // assign preferences
+                // Assign preferences.
                 mod_ratingallocate_generator::save_rating_for_user($tc, $this->moddb,
                         $this->students[$i], $rating);
                 if ($assertintermediateresult) {
@@ -348,7 +348,7 @@ class mod_ratingallocate_generated_module {
             }
         }
 
-        // allocate choices
+        // Allocate choices.
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($tc,
                 $this->moddb, $this->teacher);
         $timeneeded = $ratingallocate->distrubute_choices();

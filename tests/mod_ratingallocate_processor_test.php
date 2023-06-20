@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../locallib.php');
@@ -27,7 +27,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @copyright  reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_processor_test extends advanced_testcase {
+class mod_ratingallocate_processor_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $PAGE;
@@ -37,9 +37,10 @@ class mod_ratingallocate_processor_test extends advanced_testcase {
     /**
      * Tests if process_publish_allocations is working after time runs out
      * Assert, that the ratingallocate can be published
+     * @covers ::publish_allocation()
      */
     public function test_publishing() {
-        $ratingallocate = mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
+        $ratingallocate = \mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $ratingallocate->ratingallocate->published);
         $ratingallocate->publish_allocation();
         $this->assertEquals(1, $ratingallocate->ratingallocate->published);
@@ -48,10 +49,11 @@ class mod_ratingallocate_processor_test extends advanced_testcase {
     /**
      * Tests if process_action_allocation_to_grouping is working before time runs out
      * Assert, that the number of groupings does not change
+     * @covers ::synchronize_allocation_and_grouping()
      */
     public function test_grouping_before_accesstimestop() {
         global $DB;
-        $ratingallocate = mod_ratingallocate_generator::get_open_ratingallocate_for_teacher($this);
+        $ratingallocate = \mod_ratingallocate_generator::get_open_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $DB->count_records('groupings'));
         $ratingallocate->synchronize_allocation_and_grouping();
         $this->assertEquals(1, $DB->count_records('groupings'));
@@ -60,10 +62,11 @@ class mod_ratingallocate_processor_test extends advanced_testcase {
     /**
      * Tests if process_action_allocation_to_grouping is working after time runs out
      * Assert, that the number of groupings changes as expected (1 Grouping should be created)
+     * @covers ::synchronize_allocation_and_grouping()
      */
     public function test_grouping_after_accesstimestop() {
         global $DB;
-        $ratingallocate = mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
+        $ratingallocate = \mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $DB->count_records('groupings'));
         $ratingallocate->synchronize_allocation_and_grouping();
         $this->assertEquals(1, $DB->count_records('groupings'));
@@ -92,12 +95,14 @@ class mod_ratingallocate_processor_test extends advanced_testcase {
      * - 1 User with ratings and without allocations
      * - 1 User without ratings or allocations
      * - 1 User without ratings but with allocations
+     * @covers \classes\ratings_and_allocations_table
      */
     public function test_ratings_table_filter() {
+
         $this->resetAfterTest();
 
         // Setup the ratingallocate instance with 4 Students.
-        $ratingallocate = mod_ratingallocate_generator::get_small_ratingallocate_for_filter_tests($this);
+        $ratingallocate = \mod_ratingallocate_generator::get_small_ratingallocate_for_filter_tests($this);
 
         $this->alter_user_base_for_filter_test($ratingallocate);
 
@@ -199,7 +204,7 @@ class mod_ratingallocate_processor_test extends advanced_testcase {
      * Removes the allocation for one existing user in course.
      * Enrols one new user wihtout rating or allocations.
      * Enrols one new user and creates an allocation for her.
-     * @param $ratingallocate ratingallocate instance
+     * @param mixed $ratingallocate ratingallocate instance
      */
     private function alter_user_base_for_filter_test($ratingallocate) {
         // Remove the allocation of one user.
@@ -209,19 +214,19 @@ class mod_ratingallocate_processor_test extends advanced_testcase {
         $ratingallocate->remove_allocation(reset($allocationsofuser)->choiceid, $userwithoutallocation->id);
 
         // Enrol a new user without ratings to the course.
-        mod_ratingallocate_generator::create_user_and_enrol($this,
+        \mod_ratingallocate_generator::create_user_and_enrol($this,
                 get_course($ratingallocate->ratingallocate->course));
 
         $choices = $ratingallocate->get_rateable_choices();
         // Enrol a new user without ratings to the course and create an allocation for her.
-        $userwithoutratingwithallocation = mod_ratingallocate_generator::create_user_and_enrol($this,
+        $userwithoutratingwithallocation = \mod_ratingallocate_generator::create_user_and_enrol($this,
                 get_course($ratingallocate->ratingallocate->course));
         $ratingallocate->add_allocation(reset($choices)->id, $userwithoutratingwithallocation->id);
     }
 
     /**
      * Creates a ratings and allocation table with specific filter options
-     * @param $ratingallocate ratingallocate
+     * @param mixed $ratingallocate ratingallocate
      * @param $hidenorating bool
      * @param $showallocnecessary bool
      * @param $groupselect int
@@ -230,7 +235,7 @@ class mod_ratingallocate_processor_test extends advanced_testcase {
     private function setup_ratings_table_with_filter_options($ratingallocate, $hidenorating, $showallocnecessary, $groupselect) {
         // Create and set up the flextable for ratings and allocations.
         $choices = $ratingallocate->get_rateable_choices();
-        $table = new mod_ratingallocate\ratings_and_allocations_table($ratingallocate->get_renderer(),
+        $table = new \mod_ratingallocate\ratings_and_allocations_table($ratingallocate->get_renderer(),
                 array(), $ratingallocate, 'show_alloc_table', 'mod_ratingallocate_test', false);
         $table->setup_table($choices, $hidenorating, $showallocnecessary, $groupselect);
 

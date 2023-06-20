@@ -23,7 +23,6 @@
  */
 
 namespace mod_ratingallocate\event;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * The mod_ratingallocate distribution_triggered event class.

@@ -23,7 +23,7 @@
  */
 
 namespace mod_ratingallocate\event;
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * The mod_ratingallocate ratings_and_allocation_table_viewed event class.

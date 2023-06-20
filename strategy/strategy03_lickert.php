@@ -24,8 +24,8 @@
  * @copyright 2014 M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-// namespace is mandatory!
 
+// Namespace is mandatory!
 namespace ratingallocate\strategy_lickert;
 
 defined('MOODLE_INTERNAL') || die();
@@ -55,13 +55,13 @@ class strategy extends \strategytemplate_options {
 
     public function get_static_settingfields() {
         return array(
-                self::MAXNO => array(// maximale Anzahl 'kannnicht'
+                self::MAXNO => array(// Maximum count of 'No'.
                         'int',
                         get_string(self::STRATEGYID . '_setting_maxno', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::MAXNO),
                         null
                 ),
-                self::COUNTLICKERT => array(// wie viele Felder es gibt
+                self::COUNTLICKERT => array(// How many fields there are.
                         'int',
                         get_string(self::STRATEGYID . '_setting_maxlickert', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::COUNTLICKERT),
@@ -117,11 +117,11 @@ class strategy extends \strategytemplate_options {
     }
 }
 
-// register with the strategymanager
+// Register with the strategymanager.
 \strategymanager::add_strategy(strategy::STRATEGYID);
 
 class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform {
-    // Already specified by parent class
+    // Already specified by parent class.
 
     protected function construct_strategy($strategyoptions) {
         return new strategy($strategyoptions);

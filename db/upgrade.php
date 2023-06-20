@@ -29,8 +29,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Execute newmodule upgrade from the given old version
  *
@@ -39,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 function xmldb_ratingallocate_upgrade($oldversion) {
     global $DB;
-    $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
+    $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
     if ($oldversion < 2014103000) {
         try {

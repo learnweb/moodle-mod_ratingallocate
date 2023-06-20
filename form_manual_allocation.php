@@ -115,7 +115,7 @@ class manual_alloc_form extends moodleform {
 
         $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices();
         $differentratings = array();
-        // Add actual rating data to userdata
+        // Add actual rating data to userdata.
         foreach ($ratingdata as $rating) {
             if ($rating->rating != null) {
                 $differentratings[$rating->rating] = $rating->rating;
@@ -176,7 +176,7 @@ class manual_alloc_form extends moodleform {
 
         $mform = $this->_form;
 
-        // elements in a row need a group
+        // Elements in a row need a group.
         $buttonarray = array();
 
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton2', $submit2label);

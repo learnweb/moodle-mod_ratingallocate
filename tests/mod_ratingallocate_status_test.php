@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+namespace mod_ratingallocate;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -28,7 +29,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @copyright  reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_status_test extends advanced_testcase {
+class mod_ratingallocate_status_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $PAGE;
@@ -42,35 +43,36 @@ class mod_ratingallocate_status_test extends advanced_testcase {
     public function ratingallocate_provider() {
         return [
                 'Rating phase is not started.' => [
-                        3, 6, false, false, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
+                        3, 6, false, false, \ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
                 'Rating phase is not started, but some allocations exist.' => [
-                        3, 6, false, true, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
+                        3, 6, false, true, \ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
                 'Rating phase is not started, but allocation is published.' => [
-                        3, 6, true, false, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
+                        3, 6, true, false, \ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
                 'Rating phase is not started, but allocations exist and are published.' => [
-                        3, 6, true, true, ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
+                        3, 6, true, true, \ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
                 'The rating phase is running' => [
-                        -1, 6, false, false, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
+                        -1, 6, false, false, \ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
                 'The rating phase is running, but allocations exist.' => [
-                        -1, 6, false, true, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
+                        -1, 6, false, true, \ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
                 'The rating phase is running, but allocation is published.' => [
-                        -1, 6, true, false, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
+                        -1, 6, true, false, \ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
                 'The rating phase is running, but allocations exist and are published.' => [
-                        -1, 6, true, true, ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
+                        -1, 6, true, true, \ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS],
                 'The rating phase is running.' => [
-                        -7, -6, false, false, ratingallocate::DISTRIBUTION_STATUS_READY],
+                        -7, -6, false, false, \ratingallocate::DISTRIBUTION_STATUS_READY],
                 'The rating phase is running and some allocations exist.' => [
-                        -7, -6, false, true, ratingallocate::DISTRIBUTION_STATUS_READY_ALLOC_STARTED],
+                        -7, -6, false, true, \ratingallocate::DISTRIBUTION_STATUS_READY_ALLOC_STARTED],
                 'The rating phase is running and allocation is published.' => [
-                        -7, -6, true, false, ratingallocate::DISTRIBUTION_STATUS_PUBLISHED],
+                        -7, -6, true, false, \ratingallocate::DISTRIBUTION_STATUS_PUBLISHED],
                 'The rating phase is running and allocations exist and are published.' => [
-                        -7, -6, true, true, ratingallocate::DISTRIBUTION_STATUS_PUBLISHED]
+                        -7, -6, true, true, \ratingallocate::DISTRIBUTION_STATUS_PUBLISHED]
         ];
     }
 
     /**
      * Tests under different conditions if the returned status object is correct.
      * @dataProvider ratingallocate_provider
+     * @covers ::get_status()
      */
     public function test_get_status($addtostart, $addtostop, $published, $hasallocations, $expected) {
         $record = array(
@@ -80,7 +82,7 @@ class mod_ratingallocate_status_test extends advanced_testcase {
                 'strategyopt' => array('strategy_yesno' => array('maxcrossout' => '1')),
                 'strategy' => 'strategy_yesno');
         if ($hasallocations) {
-            $genmod = new mod_ratingallocate_generated_module($this, $record);
+            $genmod = new \mod_ratingallocate_generated_module($this, $record);
             $moddb = $genmod->moddb;
         } else {
             $course = $this->getDataGenerator()->create_course();
@@ -88,7 +90,7 @@ class mod_ratingallocate_status_test extends advanced_testcase {
             $moddb = $this->getDataGenerator()->create_module(RATINGALLOCATE_MOD_NAME, $record);
         }
 
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate($moddb);
+        $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate($moddb);
         $ratingallocate->ratingallocate->published = $published;
 
         $status = $ratingallocate->get_status();

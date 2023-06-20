@@ -32,8 +32,6 @@ use core_privacy\local\request\writer;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\approved_userlist;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Implementation of the privacy subsystem plugin provider for the ratingallocate activity module.
  *
@@ -288,7 +286,8 @@ class provider implements
             // Delete Choices.
             $DB->delete_records_select(
                     'ratingallocate_ratings',
-                    "choiceid IN (SELECT id FROM {ratingallocate_choices} WHERE ratingallocateid = :instanceid) AND userid = :userid",
+                    "choiceid IN (SELECT id FROM {ratingallocate_choices}
+                        WHERE ratingallocateid = :instanceid) AND userid = :userid",
                     [
                             'instanceid' => $instanceid,
                             'userid' => $userid
