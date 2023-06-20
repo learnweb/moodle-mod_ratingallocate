@@ -588,7 +588,7 @@ class ratings_and_allocations_table extends \table_sql {
         if ($this->showallocnecessary) {
             $sql .= "LEFT JOIN ({ratingallocate_allocations} a " .
                 "JOIN {ratingallocate_choices} c2 ON c2.id = a.choiceid AND c2.active=1 " .
-                "AND a.ratingallocateid = :ratingallocateid )" .
+                "AND a.ratingallocateid = :ratingallocateid2 )" .
                 "ON u.id=a.userid " .
                 "WHERE a.id is null AND u.id in (" . implode(",", $userids) . ") ";
         } else {
@@ -614,6 +614,7 @@ class ratings_and_allocations_table extends \table_sql {
                 $DB->get_records_sql($sql,
                         array(
                                 'ratingallocateid' => $this->ratingallocate->ratingallocate->id,
+                                'ratingallocateid2' => $this->ratingallocate->ratingallocate->id,
                                 'groupselect' => $this->groupselect
                         )
                 )
