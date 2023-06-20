@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 use ratingallocate\db as this_db;
 
 /**
@@ -163,6 +161,5 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
     protected function after_execute() {
         // Add ratingallocate related files.
         $this->add_related_files('mod_' . RATINGALLOCATE_MOD_NAME, 'intro', null);
-        // $this->add_related_files('mod_' . RATINGALLOCATE_MOD_NAME, ratingallocate_FILEAREA_NAME, RATINGALLOCATE_MOD_NAME);
     }
 }

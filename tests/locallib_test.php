@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -30,18 +30,19 @@ use ratingallocate\db as this_db;
  * @group mod_ratingallocate
  * @copyright  usener
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \locallib
  */
-class locallib_test extends advanced_testcase {
+class locallib_test extends \advanced_testcase {
 
     public function test_simple() {
         global $DB;
-        core_php_time_limit::raise();
+        \core_php_time_limit::raise();
         $this->resetAfterTest();
         $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course();
 
-        $teacher = mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
+        $teacher = \mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
         $this->setUser($teacher);
 
         // There should not be any module for that course first.
@@ -52,10 +53,10 @@ class locallib_test extends advanced_testcase {
         );
 
         // Set default data for category.
-        $moduledata = mod_ratingallocate_generator::get_default_values();
+        $moduledata = \mod_ratingallocate_generator::get_default_values();
         $moduledata['course'] = $course;
 
-        $choicedata = mod_ratingallocate_generator::get_default_choice_data();
+        $choicedata = \mod_ratingallocate_generator::get_default_choice_data();
         foreach ($choicedata as $id => $choice) {
             $choice['maxsize'] = 2;
             $choice['active'] = true;
@@ -63,16 +64,16 @@ class locallib_test extends advanced_testcase {
         }
 
         // Create activity.
-        $mod = mod_ratingallocate_generator::create_instance_with_choices($this, $moduledata, $choicedata);
+        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, $moduledata, $choicedata);
         $this->assertEquals(2, $DB->count_records(this_db\ratingallocate_choices::TABLE),
                 "Failure, debug info: " . implode(",", array(this_db\ratingallocate_choices::ID => $mod->id)));
 
-        $student1 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
-        $student2 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
-        $student3 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
-        $student4 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $student1 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $student2 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $student3 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $student4 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
 
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $teacher);
+        $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $teacher);
         $choices = $ratingallocate->get_rateable_choices();
 
         $choice1 = reset($choices);
@@ -91,13 +92,13 @@ class locallib_test extends advanced_testcase {
         $preferssecond[$choice2->{this_db\ratingallocate_choices::ID}][this_db\ratingallocate_ratings::RATING] = true;
 
         // Assign preferences.
-        mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student1, $prefersfirst);
-        mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student2, $prefersfirst);
-        mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student3, $preferssecond);
-        mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student4, $preferssecond);
+        \mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student1, $prefersfirst);
+        \mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student2, $prefersfirst);
+        \mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student3, $preferssecond);
+        \mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student4, $preferssecond);
 
         // Allocate choices.
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $teacher);
+        $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $teacher);
         $timeneeded = $ratingallocate->distrubute_choices();
         $this->assertGreaterThan(0, $timeneeded);
         $this->assertLessThan(0.1, $timeneeded, 'Allocation is very slow');
@@ -155,10 +156,10 @@ class locallib_test extends advanced_testcase {
      * Test if count of rateable choices is 1.
      */
     public function test_get_ratable_choices() {
-        $record = mod_ratingallocate_generator::get_default_values();
-        $testmodule = new mod_ratingallocate_generated_module($this, $record);
+        $record = \mod_ratingallocate_generator::get_default_values();
+        $testmodule = new \mod_ratingallocate_generated_module($this, $record);
         $ratingallocate =
-                mod_ratingallocate_generator::get_ratingallocate_for_user($this, $testmodule->moddb, $testmodule->teacher);
+                \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $testmodule->moddb, $testmodule->teacher);
         $this->assertCount(1, $ratingallocate->get_rateable_choices());
     }
 
@@ -169,9 +170,9 @@ class locallib_test extends advanced_testcase {
         $expectedresult = array(1 => 'Accept', 0 => 'Deny'); // Depends on language file.
         $ratings = array(0, 1, 1, 1, 0);
 
-        $record = mod_ratingallocate_generator::get_default_values();
-        $testmodule = new mod_ratingallocate_generated_module($this, $record);
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user(
+        $record = \mod_ratingallocate_generator::get_default_values();
+        $testmodule = new \mod_ratingallocate_generated_module($this, $record);
+        $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user(
                 $this, $testmodule->moddb, $testmodule->teacher);
 
         $result = $ratingallocate->get_options_titles($ratings);
@@ -185,10 +186,10 @@ class locallib_test extends advanced_testcase {
         $expectedresult = array(1 => 'Ja1234', 0 => 'Nein1234'); // Test data.
         $ratings = array(1, 1, 1, 0, 1, 1);
 
-        $record = mod_ratingallocate_generator::get_default_values();
+        $record = \mod_ratingallocate_generator::get_default_values();
         $record['strategyopt']['strategy_yesno'] = $expectedresult;
-        $testmodule = new mod_ratingallocate_generated_module($this, $record);
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user(
+        $testmodule = new \mod_ratingallocate_generated_module($this, $record);
+        $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user(
                 $this, $testmodule->moddb, $testmodule->teacher);
 
         $result = $ratingallocate->get_options_titles($ratings);
@@ -202,10 +203,10 @@ class locallib_test extends advanced_testcase {
         $expectedresult = array(1 => 'Ja1234'); // Test data.
         $ratings = array(1, 1, 1, 1, 1);
 
-        $record = mod_ratingallocate_generator::get_default_values();
+        $record = \mod_ratingallocate_generator::get_default_values();
         $record['strategyopt']['strategy_yesno'] = $expectedresult;
-        $testmodule = new mod_ratingallocate_generated_module($this, $record);
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user(
+        $testmodule = new \mod_ratingallocate_generated_module($this, $record);
+        $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user(
                 $this, $testmodule->moddb, $testmodule->teacher);
 
         $result = $ratingallocate->get_options_titles($ratings);
@@ -221,10 +222,10 @@ class locallib_test extends advanced_testcase {
         $expectedresult = $settings;
         $expectedresult[0] = 'Deny'; // Depends on language file.
 
-        $record = mod_ratingallocate_generator::get_default_values();
+        $record = \mod_ratingallocate_generator::get_default_values();
         $record['strategyopt']['strategy_yesno'] = $settings;
-        $testmodule = new mod_ratingallocate_generated_module($this, $record);
-        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user(
+        $testmodule = new \mod_ratingallocate_generated_module($this, $record);
+        $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user(
                 $this, $testmodule->moddb, $testmodule->teacher);
 
         $result = $ratingallocate->get_options_titles($ratings);

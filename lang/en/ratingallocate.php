@@ -338,7 +338,7 @@ $string['strategy_yesmaybeno_rating_no'] = 'Deny';
 $string['strategy_yesmaybeno_rating_maybe'] = 'Neutral';
 $string['strategy_yesmaybeno_rating_yes'] = 'Accept';
 
-// Specific to Strategy03, Likert
+// Specific to Strategy03, Likert.
 $string['strategy_lickert_name'] = 'Likert Scale';
 $string['strategy_lickert_setting_maxno'] = 'Maximum number of choices the user can rate with 0';
 $string['strategy_lickert_max_no'] = 'You may only assign 0 points to at most {$a} choice(s).';
@@ -346,7 +346,7 @@ $string['strategy_lickert_setting_maxlickert'] = 'Highest number on the likert s
 $string['strategy_lickert_rating_biggestwish'] = '{$a} - Highly appreciated';
 $string['strategy_lickert_rating_exclude'] = '{$a} - Exclude';
 
-// Specific to Strategy04, Points
+// Specific to Strategy04, Points.
 $string['strategy_points_name'] = 'Give Points';
 $string['strategy_points_setting_maxzero'] = 'Maximum number of choices to which the user can give 0 points';
 $string['strategy_points_explain_distribute_points'] =
@@ -357,7 +357,7 @@ $string['strategy_points_setting_totalpoints'] = 'Total number of points the use
 $string['strategy_points_max_count_zero'] = 'You may give 0 points to at most {$a} choice(s).';
 $string['strategy_points_illegal_entry'] = 'The points that you assign to a choice must be between 0 and {$a}.';
 
-// Specific to Strategy05, Order
+// Specific to Strategy05, Order.
 $string['strategy_order_name'] = 'Rank Choices';
 $string['strategy_order_no_choice'] = '{$a}. Choice';
 $string['strategy_order_use_only_once'] = 'Choices cannot be selected twice and must be unique.';
@@ -368,7 +368,7 @@ $string['strategy_order_setting_countoptions'] =
 $string['strategy_order_header_description'] = 'Available Choices';
 $string['strategy_order_choice_none'] = 'Please select a choice';
 
-// Specific to Strategy06, tickyes
+// Specific to Strategy06, tickyes.
 $string['strategy_tickyes_name'] = 'Tick Accept';
 $string['strategy_tickyes_accept'] = 'Accept';
 $string['strategy_tickyes_not_accept'] = '-';
@@ -376,7 +376,7 @@ $string['strategy_tickyes_setting_mintickyes'] = 'Minimum number of choices to a
 $string['strategy_tickyes_error_mintickyes'] = 'You have to tick at least {$a} boxes.';
 $string['strategy_tickyes_explain_mintickyes'] = 'You have to tick a minimum of {$a} boxes.';
 
-// As message provider, for the notification after allocation
+// As message provider, for the notification after allocation.
 $string['messageprovider:notifyalloc'] = 'Notification of option allocation';
 $string['allocation_notification_message_subject'] = 'Allocation published for {$a}';
 $string['allocation_notification_message'] =
@@ -384,7 +384,7 @@ $string['allocation_notification_message'] =
 $string['no_allocation_notification_message'] = 'Concerning the "{$a->ratingallocate}", you could not be assigned to any choice.';
 $string['messageprovider:allocation'] = 'Notification about published allocation';
 
-// Logging
+// Logging.
 $string['log_rating_saved'] = 'User rating saved';
 $string['log_rating_saved_description'] =
         'The user with id "{$a->userid}" saved his rating for the Fair Allocation with id "{$a->ratingallocateid}".';
@@ -433,7 +433,7 @@ $string['log_all_ratings_deleted_description'] = 'The user with id "{$a->userid}
 
 $string['no_id_or_m_error'] = 'You must specify a course_module ID or an instance ID';
 
-// Language strings for Privacy API
+// Language strings for Privacy API.
 $string['privacy:metadata:ratingallocate_ratings'] = 'Information about the user\'s ratings for given choices.';
 $string['privacy:metadata:ratingallocate_ratings:choiceid'] = 'The ID of the choice the user has rated';
 $string['privacy:metadata:ratingallocate_ratings:userid'] = 'The ID of the user rating this choice';

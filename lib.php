@@ -97,7 +97,7 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
     $transaction = $DB->start_delegated_transaction();
     try {
         $ratingallocate->{this_db\ratingallocate::SETTING} = json_encode($ratingallocate->strategyopt);
-        // instanz einfuegen, damit wir die ID fuer die Kinder haben
+        // Insert instance to get ID for children.
         $id = $DB->insert_record(this_db\ratingallocate::TABLE, $ratingallocate);
         $ratingallocate->id = $id;
 
@@ -122,7 +122,6 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
  * @return boolean Success/Fail
  */
 function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallocate_mod_form $mform = null) {
-    /* @var $DB moodle_database */
     global $DB;
 
     $ratingallocate->timemodified = time();

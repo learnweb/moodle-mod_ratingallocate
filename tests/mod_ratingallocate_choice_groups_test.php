@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/generator/lib.php');
 require_once(__DIR__ . '/../locallib.php');
@@ -28,7 +28,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @author     David Thompson <david.thompson@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_choice_groups_test extends advanced_testcase {
+class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
 
     /** Helper function - Create a range of choices.
      *
@@ -98,7 +98,7 @@ class mod_ratingallocate_choice_groups_test extends advanced_testcase {
 
         $course = $generator->create_course();
         $this->course = $course;
-        $this->teacher = mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
+        $this->teacher = \mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
         $this->setUser($this->teacher);
 
         // Make test groups and enrol students.
@@ -106,18 +106,18 @@ class mod_ratingallocate_choice_groups_test extends advanced_testcase {
         $blue = $generator->create_group(array('name' => 'Blue Group', 'courseid' => $course->id));
         $red = $generator->create_group(array('name' => 'Red Group', 'courseid' => $course->id));
 
-        $this->student1 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $this->student1 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         groups_add_member($green, $this->student1);
-        $this->student2 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $this->student2 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         groups_add_member($blue, $this->student2);
-        $this->student3 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $this->student3 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         groups_add_member($red, $this->student3);
-        $this->student4 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $this->student4 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         // No groups for student 4.
 
         $this->choicedata = $this->get_choice_data();
-        $mod = mod_ratingallocate_generator::create_instance_with_choices($this, array('course' => $course), $this->choicedata);
-        $this->ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
+        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, array('course' => $course), $this->choicedata);
+        $this->ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
     }
 
 
@@ -127,6 +127,10 @@ class mod_ratingallocate_choice_groups_test extends advanced_testcase {
         parent::tearDown();
     }
 
+    /**
+     * @return void
+     * @covers ::get_group_selections
+     */
     public function test_setup() {
         $this->resetAfterTest();
 
@@ -142,6 +146,10 @@ class mod_ratingallocate_choice_groups_test extends advanced_testcase {
         $this->assertContains('Red Group', $groupselections);
     }
 
+    /**
+     * @return void
+     * @covers ::filter_choices_by_groups
+     */
     public function test_choice_groups() {
         $this->resetAfterTest();
 
@@ -214,6 +222,10 @@ class mod_ratingallocate_choice_groups_test extends advanced_testcase {
         $this->assertContains($choiceidmap['Choice E'], $s4choices);
     }
 
+    /**
+     * @return void
+     * @covers ::update_choice_groups
+     */
     public function test_update_choice_groups() {
         $this->resetAfterTest();
 

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/generator/lib.php');
 require_once(__DIR__ . '/../locallib.php');
@@ -27,8 +27,9 @@ require_once(__DIR__ . '/../locallib.php');
  * @copyright  2021 Catalyst IT
  * @author     David Thompson <david.thompson@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \choice_importer
  */
-class mod_ratingallocate_choice_importer_test extends advanced_testcase {
+class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
 
     /**
      * Return lines of text for a sample CSV file.
@@ -59,16 +60,16 @@ class mod_ratingallocate_choice_importer_test extends advanced_testcase {
 
         $course = $generator->create_course();
         $this->course = $course;
-        $this->teacher = mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
+        $this->teacher = \mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
 
         // Make test groups.
         $this->green = $generator->create_group(array('name' => 'Green Group', 'courseid' => $course->id));
         $this->blue = $generator->create_group(array('name' => 'Blue Group', 'courseid' => $course->id));
         $this->red = $generator->create_group(array('name' => 'Red Group', 'courseid' => $course->id));
 
-        $mod = mod_ratingallocate_generator::create_instance_with_choices($this, array('course' => $course));
+        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, array('course' => $course));
 
-        $this->ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
+        $this->ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
         $this->ratingallocateid = $mod->id;
     }
 

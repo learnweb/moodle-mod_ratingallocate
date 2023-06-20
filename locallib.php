@@ -190,7 +190,7 @@ class ratingallocate {
         $raters = get_enrolled_users($this->context, 'mod/ratingallocate:give_rating');
         $info = new info_module($cm);
         // Only show raters who had the ability to access this activity. This funktion ignores the visibility setting,
-        // so the ratings and allocations are still shown, even when the activity is hidden
+        // so the ratings and allocations are still shown, even when the activity is hidden.
         $filteredraters = $info->filter_user_list($raters);
 
         return $filteredraters;
@@ -298,9 +298,9 @@ class ratingallocate {
                 get_string('error_deleting_all_insufficient_permission', RATINGALLOCATE_MOD_NAME));
             return;
         }
-        // Disallow deletion when there can't be new ratings submitted
+        // Disallow deletion when there can't be new ratings submitted.
         $status = $this->get_status();
-        if ($status !== self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS and $status !== self::DISTRIBUTION_STATUS_TOO_EARLY) {
+        if ($status !== self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS && $status !== self::DISTRIBUTION_STATUS_TOO_EARLY) {
             redirect(new moodle_url('/mod/ratingallocate/view.php', array('id' => $this->coursemodule->id)),
                 get_string('error_deleting_all_no_rating_possible', RATINGALLOCATE_MOD_NAME));
             return;
@@ -314,7 +314,6 @@ class ratingallocate {
         global $CFG;
 
         $output = '';
-        /* @var mod_ratingallocate_renderer */
         $renderer = $this->get_renderer();
         // Print data and controls for students, but not for admins.
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
@@ -330,7 +329,6 @@ class ratingallocate {
                 // Suche das richtige Formular nach Strategie.
                 $strategyform = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
 
-                /* @var $mform moodleform */
                 $mform = new $strategyform($PAGE->url->out(), $this);
                 $mform->add_action_buttons();
 
@@ -366,7 +364,6 @@ class ratingallocate {
      * Processes the action of a user deleting his rating.
      */
     private function process_action_delete_rating() {
-        /* @var mod_ratingallocate_renderer */
         $renderer = $this->get_renderer();
         // Print data and controls for students, but not for admins.
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
@@ -393,7 +390,6 @@ class ratingallocate {
 
         if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
             global $OUTPUT;
-            /* @var mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
 
             // Notifications if no choices exist or too few in comparison to strategy settings.
@@ -447,7 +443,6 @@ class ratingallocate {
                     )),
                     $this, $choice, array('attachment_data' => $data));
 
-            /* @var mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
 
             if ($mform->is_submitted() && $data = $mform->get_submitted_data()) {
@@ -627,7 +622,6 @@ class ratingallocate {
 
             if (!$mform->no_submit_button_pressed() && $data = $mform->get_submitted_data()) {
                 if (!$mform->is_cancelled()) {
-                    /* @var mod_ratingallocate_renderer */
                     $renderer = $this->get_renderer();
                     $status = $this->get_status();
                     if ($status === self::DISTRIBUTION_STATUS_TOO_EARLY ||
@@ -971,7 +965,6 @@ class ratingallocate {
         // Print ratings table.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             global $OUTPUT;
-            /* @var mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
             $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
                     $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(),
@@ -996,7 +989,6 @@ class ratingallocate {
         // Print ratings table.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             global $OUTPUT;
-            /* @var mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
 
             $output .= $renderer->allocation_table_for_ratingallocate($this);
@@ -1017,7 +1009,6 @@ class ratingallocate {
         // Print ratings table.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             global $OUTPUT;
-            /* @var mod_ratingallocate_renderer */
             $renderer = $this->get_renderer();
 
             $output .= $renderer->statistics_table_for_ratingallocate($this);
@@ -1063,7 +1054,6 @@ class ratingallocate {
     private function process_default() {
         global $OUTPUT;
         $output = '';
-        /* @var mod_ratingallocate_renderer */
         $renderer = $this->get_renderer();
         $status = $this->get_status();
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
@@ -1121,7 +1111,6 @@ class ratingallocate {
         // Output starts here.
         $output = '';
 
-        /* @var mod_ratingallocate_renderer */
         $renderer = $this->get_renderer();
 
         switch ($action) {
@@ -1304,11 +1293,9 @@ class ratingallocate {
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
 
         $distributor = new solver_edmonds_karp();
-        // $distributor = new solver_ford_fulkerson();
         $timestart = microtime(true);
         $distributor->distribute_users($this);
         $timeneeded = (microtime(true) - $timestart);
-        // echo memory_get_peak_usage();
 
         // Set algorithm status to finished.
         $this->origdbrecord->algorithmstatus = \mod_ratingallocate\algorithm_status::FINISHED;
@@ -1611,7 +1598,8 @@ class ratingallocate {
      * @return array
      */
     public function get_rating_data_for_user($userid) {
-        $sql = "SELECT c.id as choiceid, c.title, c.explanation, c.ratingallocateid, c.maxsize, c.usegroups, r.rating, r.id AS ratingid, r.userid
+        $sql = "SELECT c.id as choiceid, c.title, c.explanation, c.ratingallocateid,
+                            c.maxsize, c.usegroups, r.rating, r.id AS ratingid, r.userid
                 FROM {ratingallocate_choices} c
            LEFT JOIN {ratingallocate_ratings} r
                   ON c.id = r.choiceid and r.userid = :userid
@@ -1712,7 +1700,6 @@ class ratingallocate {
      * @param array $data
      */
     public function save_ratings_to_db($userid, array $data) {
-        /* @var moodle_database */
         global $DB;
         $transaction = $DB->start_delegated_transaction();
         $loggingdata = array();
@@ -1898,11 +1885,6 @@ class ratingallocate {
                 // Update choiceid for pass through to file attachments.
                 $data->choiceid = $DB->insert_record(this_db\ratingallocate_choices::TABLE, $choice->dbrecord);
             }
-
-            // Logging.
-            // $event = \mod_ratingallocate\event\choice_saved::create_simple(
-            // context_course::instance($this->course->id), $this->ratingallocateid, );
-            // $event->trigger();
 
             $transaction->allow_commit();
         } catch (Exception $e) {

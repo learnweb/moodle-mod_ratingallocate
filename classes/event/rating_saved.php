@@ -23,7 +23,6 @@
  */
 
 namespace mod_ratingallocate\event;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * The mod_ratingallocate rating_saved event class.
@@ -41,8 +40,9 @@ defined('MOODLE_INTERNAL') || die();
 class rating_saved extends \core\event\base {
 
     public static function create_simple($modulecontext, $ratingallocateid, $rating) {
-        // the values of other need to be encoded since the base checks for equality of a decoded encoded other instance with the original.
-        // this is not given for nested arrays
+        // The values of other need to be encoded since the base checks for equality
+        // of a decoded encoded other instance with the original
+        // this is not given for nested arrays.
         $ratingjsonvalid = json_decode(json_encode($rating), true);
         return self::create(array('context' => $modulecontext, 'objectid' => $ratingallocateid,
                 'other' => array('ratings' => $ratingjsonvalid)));

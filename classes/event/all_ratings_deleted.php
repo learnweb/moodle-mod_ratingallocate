@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_ratingallocate\event;
-defined('MOODLE_INTERNAL') || die();
+
 /**
  * The mod_ratingallocate rating_deleted event class.
  *

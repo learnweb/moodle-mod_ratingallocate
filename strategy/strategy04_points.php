@@ -25,8 +25,8 @@
  * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-// namespace is mandatory!
 
+// Namespace is mandatory!
 namespace ratingallocate\strategy_points;
 
 defined('MOODLE_INTERNAL') || die();
@@ -46,13 +46,13 @@ class strategy extends \strategytemplate {
 
     public function get_static_settingfields() {
         return array(
-                self::MAXZERO => array( // maximale Anzahl 'kannnicht'
+                self::MAXZERO => array( // Maximum count of 'No'.
                         'int',
                         get_string(self::STRATEGYID . '_setting_maxzero', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::MAXZERO),
                         null
                 ),
-                self::TOTALPOINTS => array( // wie viele Felder es gibt
+                self::TOTALPOINTS => array( // Amount of fields.
                         'int',
                         get_string(self::STRATEGYID . '_setting_totalpoints', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::TOTALPOINTS),
@@ -80,7 +80,7 @@ class strategy extends \strategytemplate {
 
 }
 
-// register with the strategymanager
+// Register with the strategymanager.
 \strategymanager::add_strategy(strategy::STRATEGYID);
 
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
@@ -105,11 +105,11 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             $ratingelem = $elemprefix . '[rating]';
             $groupsidelem = $elemprefix . '[choiceid]';
 
-            // choiceid ablegen
+            // Set choiceid.
             $mform->addElement('hidden', $groupsidelem, $data->choiceid);
             $mform->setType($groupsidelem, PARAM_INT);
 
-            // title anzeigen
+            // Show title.
             $mform->addElement('header', $headerelem, $data->title);
             $mform->setExpanded($headerelem);
 
@@ -128,7 +128,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             $attachments = $this->ratingallocate->get_file_attachments_for_choice($data->choiceid);
             $mform->addElement('html', $this->ratingallocate->get_renderer()->render_attachments($attachments));
 
-            // try to restore previous ratings
+            // Try to restore previous ratings.
             if (is_numeric($data->rating) && $data->rating >= 0) {
                 $mform->setDefault($ratingelem, $data->rating);
             } else {
@@ -151,7 +151,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         $totalpoints = $this->get_strategysetting(strategy::TOTALPOINTS);
         $errors = parent::validation($data, $files);
 
-        if (!array_key_exists('data', $data) or count($data['data']) < 2) {
+        if (!array_key_exists('data', $data) || count($data['data']) < 2) {
             return $errors;
         }
 

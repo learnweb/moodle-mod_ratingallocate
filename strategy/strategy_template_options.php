@@ -120,7 +120,6 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             } else {
                 $mform->setDefault($ratingelem, $defaultrating);
             }
-            // $mform->setType($ratingelem, PARAM_INT);
         }
     }
 
@@ -132,7 +131,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
         $maxno = $this->get_max_amount_of_nos();
         $errors = parent::validation($data, $files);
 
-        if (!array_key_exists('data', $data) or count($data['data']) < 2) {
+        if (!array_key_exists('data', $data) || count($data['data']) < 2) {
             return $errors;
         }
 
