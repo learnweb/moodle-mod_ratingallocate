@@ -41,20 +41,20 @@ class backup_restore_test extends \advanced_testcase {
     public function test_backup_restore() {
         // TODO this test does not check if userids are correctly mapped.
         global $CFG, $DB;
-        core_php_time_limit::raise();
+        \core_php_time_limit::raise();
         // Set to admin user.
         $this->setAdminUser();
 
-        $genmod = new mod_ratingallocate_generated_module($this);
+        $genmod = new \mod_ratingallocate_generated_module($this);
         $course1 = $genmod->course;
         // Create backup file and save it to the backup location.
-        $bc = new backup_controller(backup::TYPE_1ACTIVITY, $genmod->moddb->cmid, backup::FORMAT_MOODLE,
-                backup::INTERACTIVE_NO, backup::MODE_GENERAL, 2);
+        $bc = new \backup_controller(\backup::TYPE_1ACTIVITY, $genmod->moddb->cmid, \backup::FORMAT_MOODLE,
+                \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, 2);
         $bc->execute_plan();
         $results = $bc->get_results();
         $file = $results['backup_destination'];
         // TODO: Necessary to ensure backward compatibility.
-        if (tgz_packer::is_tgz_file($file)) {
+        if (\tgz_packer::is_tgz_file($file)) {
             $fp = get_file_packer('application/x-gzip');
         } else {
             $fp = get_file_packer();
@@ -67,8 +67,8 @@ class backup_restore_test extends \advanced_testcase {
         // Create a course that we are going to restore the other course to.
         $course2 = $this->getDataGenerator()->create_course();
         // Now restore the course.
-        $rc = new restore_controller('test-restore-course', $course2->id, backup::INTERACTIVE_NO,
-                backup::MODE_GENERAL, 2, backup::TARGET_NEW_COURSE);
+        $rc = new \restore_controller('test-restore-course', $course2->id, \backup::INTERACTIVE_NO,
+                \backup::MODE_GENERAL, 2, \backup::TARGET_NEW_COURSE);
         $rc->execute_precheck();
         $rc->execute_plan();
 
