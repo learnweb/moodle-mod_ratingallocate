@@ -1531,7 +1531,12 @@ class ratingallocate {
             return;
         }
 
-        $users = $this->get_users_with_ratings();
+        $users = array_map(
+            function ($u) {
+                return $u->id;
+            },
+            $this->get_raters_in_course()
+        );
         $choices = $this->get_choices_with_allocationcount();
         $allocations = $this->get_allocations();
         foreach ($users as $userid => $allocobj) {
