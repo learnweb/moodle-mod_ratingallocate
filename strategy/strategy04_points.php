@@ -39,6 +39,7 @@ class strategy extends \strategytemplate {
     const STRATEGYID = 'strategy_points';
     const MAXZERO = 'maxzero';
     const TOTALPOINTS = 'totalpoints';
+    const MAXPERCHOICE = 'maxperchoice';
 
     public function get_strategyid() {
         return self::STRATEGYID;
@@ -57,6 +58,12 @@ class strategy extends \strategytemplate {
                         get_string(self::STRATEGYID . '_setting_totalpoints', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::TOTALPOINTS),
                         null
+                ),
+                self::MAXPERCHOICE => array( // Maximum amount of points the student can give per choice.
+                    'int',
+                    get_string(self::STRATEGYID . '_setting_maxperchoice', RATINGALLOCATE_MOD_NAME),
+                    $this->get_settings_value(self::MAXPERCHOICE),
+                    null
                 )
         );
     }
@@ -68,13 +75,15 @@ class strategy extends \strategytemplate {
     public function get_default_settings() {
         return array(
                 self::MAXZERO => 3,
-                self::TOTALPOINTS => 100
+                self::TOTALPOINTS => 100,
+                self::MAXPERCHOICE => 100
         );
     }
 
     protected function getvalidationinfo() {
         return array(self::MAXZERO => array(true, 0),
-                self::TOTALPOINTS => array(true, 1)
+                self::TOTALPOINTS => array(true, 1),
+                self::MAXPERCHOICE => array(true, 1)
         );
     }
 
@@ -132,7 +141,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             if (is_numeric($data->rating) && $data->rating >= 0) {
                 $mform->setDefault($ratingelem, $data->rating);
             } else {
-                $mform->setDefault($ratingelem, 1);
+                $mform->setDefault($ratingelem, 0);
             }
         }
     }
@@ -143,12 +152,15 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         $output .= '<br />';
         $output .= get_string(strategy::STRATEGYID . '_explain_max_zero', RATINGALLOCATE_MOD_NAME,
                 $this->get_strategysetting(strategy::MAXZERO));
+        $output .= '<br />';
+        $output .= get_string(strategy::STRATEGYID . '_explain_max_per_choice', RATINGALLOCATE_MOD_NAME, $this->get_strategysetting(strategy::MAXPERCHOICE));
         return $output;
     }
 
     public function validation($data, $files) {
         $maxcrossout = $this->get_strategysetting(strategy::MAXZERO);
         $totalpoints = $this->get_strategysetting(strategy::TOTALPOINTS);
+        $maxperchoice = $this->get_strategysetting(strategy::MAXPERCHOICE);
         $errors = parent::validation($data, $files);
 
         if (!array_key_exists('data', $data) || count($data['data']) < 2) {
@@ -159,9 +171,10 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         $ratings = $data['data'];
         $currentpoints = 0;
         foreach ($ratings as $cid => $rating) {
-            if ($rating['rating'] < 0 || $rating['rating'] > $totalpoints) {
+            if ($rating['rating'] < 0 || $rating['rating'] > $totalpoints || $rating['rating'] > $maxperchoice) {
+                $maxpoints = min($maxperchoice, $totalpoints);
                 $errors['data[' . $cid . '][rating]'] =
-                        get_string(strategy::STRATEGYID . '_illegal_entry', RATINGALLOCATE_MOD_NAME, $totalpoints);
+                        get_string(strategy::STRATEGYID . '_illegal_entry', RATINGALLOCATE_MOD_NAME, $maxpoints);
             } else if ($rating['rating'] == 0) {
                 $impossibles++;
             }
