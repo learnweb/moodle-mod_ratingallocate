@@ -179,7 +179,7 @@ class ratingallocate {
     const NOTIFY_MESSAGE = 'notifymessage';
 
     /**
-     * Returns all users enrolled in the course the ratingallocate is in
+     * Returns all users enrolled in the course the ratingallocate is in, who were able to access the activity
      * @throws moodle_exception
      */
     public function get_raters_in_course(): array {
@@ -189,6 +189,7 @@ class ratingallocate {
 
         $raters = get_enrolled_users($this->context, 'mod/ratingallocate:give_rating');
         $info = new info_module($cm);
+
         // Only show raters who had the ability to access this activity. This funktion ignores the visibility setting,
         // so the ratings and allocations are still shown, even when the activity is hidden.
         $filteredraters = $info->filter_user_list($raters);
@@ -1805,6 +1806,19 @@ class ratingallocate {
         return $DB->get_records(this_db\ratingallocate_choices::TABLE,
                 array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->ratingallocateid,
                 ), this_db\ratingallocate_choices::TITLE);
+    }
+
+    /**
+     * Returns an array of choices with the given ids
+     *
+     * @param $ids array choiceids
+     * @return array choices
+     * @throws dml_exception
+     */
+    public function get_choices_by_id($ids) {
+        global $DB;
+        return $DB->get_records_list(this_db\ratingallocate_choices::TABLE,
+                'id', $ids);
     }
 
     /**

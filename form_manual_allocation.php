@@ -73,6 +73,7 @@ class manual_alloc_form extends moodleform {
     }
 
     protected function render_filter() {
+        global $COURSE;
         $mform = &$this->_form;
 
         $mform->addElement('advcheckbox', 'hide_users_without_rating',
@@ -84,6 +85,22 @@ class manual_alloc_form extends moodleform {
                 get_string('filter_show_alloc_necessary', RATINGALLOCATE_MOD_NAME),
                 null, array(0, 1));
         $mform->setType('show_alloc_necessary', PARAM_BOOL);
+
+        // Filter by group.
+        $choicegroups = $this->ratingallocate->get_all_groups_of_choices();
+        $allgroups = array();
+        foreach ($choicegroups as $choicegroup) {
+            $allgroups[$choicegroup] = groups_get_group($choicegroup);
+        }
+        $groupsmenu[0] = get_string('allparticipants');
+        $groupsmenu[-1] = get_string('nogroup', 'enrol');
+        foreach ($allgroups as $gid => $unused) {
+            $groupsmenu[$gid] = $allgroups[$gid]->name;
+        }
+        if (count($groupsmenu) > 1) {
+            $mform->addElement('select', 'filtergroup', get_string('group'), $groupsmenu);
+            $mform->addHelpButton('filtergroup', 'filtergroup', RATINGALLOCATE_MOD_NAME);
+        }
 
         $mform->addElement('submit', 'update_filter',
                 get_string('update_filter', RATINGALLOCATE_MOD_NAME));
@@ -107,10 +124,12 @@ class manual_alloc_form extends moodleform {
 
         $hidenorating = null;
         $showallocnecessary = null;
+        $groupselect = null;
         // Get filter settings.
         if ($this->is_submitted()) {
             $hidenorating = $mform->getSubmitValue('hide_users_without_rating');
             $showallocnecessary = $mform->getSubmitValue('show_alloc_necessary');
+            $groupselect = $mform->getSubmitValue('filtergroup');
         }
 
         // Create and set up the flextable for ratings and allocations.
@@ -118,7 +137,7 @@ class manual_alloc_form extends moodleform {
                 $this->ratingallocate->get_options_titles($differentratings), $this->ratingallocate,
                 'manual_allocation', 'mod_ratingallocate_manual_allocation', false);
         $table->setup_table($this->ratingallocate->get_rateable_choices(),
-                $hidenorating, $showallocnecessary);
+                $hidenorating, $showallocnecessary, $groupselect);
 
         $filter = $table->get_filter();
 
@@ -126,6 +145,8 @@ class manual_alloc_form extends moodleform {
         $mform->getElement('hide_users_without_rating')->setChecked($filter['hidenorating']);
         $mform->setDefault('show_alloc_necessary', $filter['showallocnecessary']);
         $mform->getElement('show_alloc_necessary')->setChecked($filter['showallocnecessary']);
+        $mform->setDefault('filtergroup', $filter['groupselect']);
+        $mform->getElement('filtergroup')->setSelected($filter['groupselect']);
 
         $PAGE->requires->js_call_amd('mod_ratingallocate/radiobuttondeselect', 'init');
 

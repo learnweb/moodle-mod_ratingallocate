@@ -98,33 +98,106 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      * @covers \classes\ratings_and_allocations_table
      */
     public function test_ratings_table_filter() {
-        // Setup the ratingallocate instanz with 4 Students.
+
+        $this->resetAfterTest();
+
+        // Setup the ratingallocate instance with 4 Students.
         $ratingallocate = \mod_ratingallocate_generator::get_small_ratingallocate_for_filter_tests($this);
 
         $this->alter_user_base_for_filter_test($ratingallocate);
 
         // Count of users with ratings should equal to 4.
-        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, true, false);
+        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, true, false, 0);
         self::assertEquals(4, count($table->rawdata),
                 "Filtering the users to those with ratings should return 4 users.");
 
         // Count of users in total should be equal to 6.
-        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false);
+        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false, 0);
         self::assertEquals(6, count($table->rawdata),
                 "Filtering the users to those with or without ratings should return 6 users.");
 
         // Count of users with ratings where a allocation is necessary equal to 1.
-        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, true, true);
+        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, true, true, 0);
         self::assertEquals(1, count($table->rawdata),
                 'Filtering the users to those with ratings and' .
                 'where a allocation is necessary should return 1 user.');
 
         // Count of users with or without ratings where a allocation is necessary equal to 1.
-        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, true);
+        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, true, 0);
         self::assertEquals(2, count($table->rawdata),
                 'Filtering the users to those with or without ratings and' .
                 'where a allocation is necessary should return 2 users.');
 
+    }
+
+    public function test_ratings_table_groupfilter() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = \mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
+        $this->setUser($teacher);
+
+        // Create two groups.
+        $group1 = $this->getDataGenerator()->create_group(array(
+            'courseid' => $course->id,
+            'name' => 'group1'));
+        $group2 = $this->getDataGenerator()->create_group(array(
+            'courseid' => $course->id,
+            'name' => 'group2'));
+
+        // Add 1 member to each group, and 1 member to both groups.
+        $student1 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        groups_add_member($group1->id, $student1->id);
+        $student2 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        groups_add_member($group2->id, $student2->id);
+        $student3 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        groups_add_member($group1->id, $student3->id);
+        groups_add_member($group2->id, $student3->id);
+        $student4 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+
+        // Setup ratingallocate instance.
+        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, array('course' => $course), $this->get_choice_data());
+        $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $teacher);
+
+        // Map choice titles to choice IDs, group names to group IDs.
+        $choices = $ratingallocate->get_rateable_choices();
+        $choiceidmap = $this->get_choice_map($ratingallocate, $choices);
+        $groupselections = $ratingallocate->get_group_selections();
+        $groupidmap = $this->get_group_map($ratingallocate, $groupselections);
+
+        /* Update choices with constraints depending on group:
+         * Choice A: only ratable by group1
+         * Choice B: only rateable by group2
+         * Choice C: ratable by all students
+         */
+        $ratingallocate->update_choice_groups($choiceidmap['Choice A'], array(
+            $groupidmap['group1']
+        ));
+        $ratingallocate->update_choice_groups($choiceidmap['Choice B'], array(
+            $groupidmap['group2']
+        ));
+
+        // Test the group filter only (set hidenorating and showalloccount to false).
+
+        // Count of participants in total should be equal to 4.
+        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false, 0);
+        self::assertEquals(4, count($table->rawdata),
+            "Filtering the users to all course participants who could access the activity should return 4 users.");
+
+        // Count of users in group1 should be equal to 2.
+        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false, $groupidmap['group1']);
+        self::assertEquals(2, count($table->rawdata),
+            "Filtering the users to those in group1 should return 2 users.");
+
+        // Count of users in group1 should be equal to 2.
+        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false, $groupidmap['group2']);
+        self::assertEquals(2, count($table->rawdata),
+            "Filtering the users to those in group2 should return 2 users.");
+
+        // Count of users in neither group used in the ratingallocate activity should be equal to 1.
+        $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false, -1);
+        self::assertEquals(1, count($table->rawdata),
+            "Filtering the users to those in neither group should return 1 user.");
     }
 
     /**
@@ -156,16 +229,84 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      * @param mixed $ratingallocate ratingallocate
      * @param $hidenorating bool
      * @param $showallocnecessary bool
+     * @param $groupselect int
      * @return \mod_ratingallocate\ratings_and_allocations_table
      */
-    private function setup_ratings_table_with_filter_options($ratingallocate, $hidenorating, $showallocnecessary) {
+    private function setup_ratings_table_with_filter_options($ratingallocate, $hidenorating, $showallocnecessary, $groupselect) {
         // Create and set up the flextable for ratings and allocations.
         $choices = $ratingallocate->get_rateable_choices();
         $table = new \mod_ratingallocate\ratings_and_allocations_table($ratingallocate->get_renderer(),
                 array(), $ratingallocate, 'show_alloc_table', 'mod_ratingallocate_test', false);
-        $table->setup_table($choices, $hidenorating, $showallocnecessary);
+        $table->setup_table($choices, $hidenorating, $showallocnecessary, $groupselect);
 
         return $table;
     }
 
+    /**
+     * Define custom choices for the ratingallocate activity
+     *
+     * @return array
+     */
+    private function get_choice_data() {
+        $choicedata = array();
+        $choice1 = array(
+            'title' => "Choice A",
+            'explanation' => "Ratable by group1",
+            'maxsize' => 10,
+            'active' => true,
+            'usegroups' => true
+        );
+        $choicedata[] = $choice1;
+        $choice2 = array(
+            'title' => "Choice B",
+            'explanation' => "Ratable by group2",
+            'maxsize' => 10,
+            'active' => true,
+            'usegroups' => true
+        );
+        $choicedata[] = $choice2;
+        $choice3 = array(
+            'title' => "Choice C",
+            'explanation' => "Ratable by all students",
+            'maxsize' => 10,
+            'active' => true,
+            'usegroups' => false
+        );
+        $choicedata[] = $choice3;
+        return $choicedata;
+    }
+
+    /**
+     * Helper function - Map choice titles to IDs
+     *
+     * @param array $choices
+     *
+     * @return array
+     */
+    private function get_choice_map($ratingallocate, $choices = null) {
+        if (!$choices) {
+            $choices = $ratingallocate->get_rateable_choices();
+        }
+        $choiceidmap = array_flip(array_map(
+            function($a) {
+                return $a->title;
+            },
+            $choices));
+        return $choiceidmap;
+    }
+
+    /**
+     * Helper function - Map group selection names to IDs
+     *
+     * @param array $groups
+     *
+     * @return array
+     */
+    private function get_group_map($ratingallocate, $groupselections = null) {
+        if (!$groupselections) {
+            $groupselections = $ratingallocate->get_group_selections();
+        }
+        $groupidmap = array_flip($groupselections);
+        return $groupidmap;
+    }
 }
