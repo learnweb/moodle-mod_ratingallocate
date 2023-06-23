@@ -410,6 +410,14 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $output .= $this->heading(get_string('reports_group', RATINGALLOCATE_MOD_NAME), 2);
         $output .= $this->box_start();
 
+        /*
+        $output .= $this->single_select($this->page->url, 'select_report', array(
+            'show_table' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE,
+            'show_allocation_table' => ACTION_SHOW_ALLOCATION_TABLE,
+            'show_allocation_statistics' => ACTION_SHOW_CHOICES
+        ));
+        */
+
         $tableurl = new moodle_url($this->page->url, array('action' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE));
 
         // Button with link to display information about the allocations and ratings.

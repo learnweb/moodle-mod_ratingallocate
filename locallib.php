@@ -392,6 +392,7 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
             global $OUTPUT;
             $renderer = $this->get_renderer();
+            $status = $this->get_status();
 
             // Notifications if no choices exist or too few in comparison to strategy settings.
             $availablechoices = $this->get_rateable_choices();
@@ -408,6 +409,11 @@ class ratingallocate {
 
             echo $renderer->render_header($this->ratingallocate, $this->context, $this->coursemodule->id);
             echo $OUTPUT->heading(get_string('show_choices_header', RATINGALLOCATE_MOD_NAME));
+
+            // Get description dependent on status
+            $descriptionbaseid = 'modify_choices_group_desc_';
+            $description = get_string($descriptionbaseid . $status, RATINGALLOCATE_MOD_NAME);
+            echo $renderer->format_text($description);
 
             $renderer->ratingallocate_show_choices_table($this, true);
             echo $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
@@ -1070,10 +1076,11 @@ class ratingallocate {
                 }
             }
         }
-        // Print data and controls to edit the choices.
+        /* Print data and controls to edit the choices.
         if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
             $output .= $renderer->modify_choices_group($this->ratingallocateid, $this->coursemodule->id, $status);
         }
+        */
 
         // Print data and controls for teachers.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
