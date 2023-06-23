@@ -965,19 +965,19 @@ class ratingallocate {
 
     private function process_action_show_ratings_and_alloc_table() {
         $output = '';
+
         // Print ratings table.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             global $OUTPUT;
             $renderer = $this->get_renderer();
+            $status = $this->get_status();
+            $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context, ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE);
+
             $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
                     $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(),
                     $this->get_allocations(), $this);
 
             $output = html_writer::div($output, 'ratingallocate_ratings_table_container');
-
-            $output .= html_writer::empty_tag('br', array());
-            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php', array(
-                    'id' => $this->coursemodule->id)), get_string('back'), 'get');
 
             // Logging.
             $event = \mod_ratingallocate\event\ratings_and_allocation_table_viewed::create_simple(
@@ -989,16 +989,16 @@ class ratingallocate {
 
     private function process_action_show_allocation_table() {
         $output = '';
+
         // Print ratings table.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             global $OUTPUT;
             $renderer = $this->get_renderer();
+            $status = $this->get_status();
+            $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context, ACTION_SHOW_ALLOCATION_TABLE);
 
             $output .= $renderer->allocation_table_for_ratingallocate($this);
 
-            $output .= html_writer::empty_tag('br', array());
-            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
-                    array('id' => $this->coursemodule->id)), get_string('back'), 'get');
             // Logging.
             $event = \mod_ratingallocate\event\allocation_table_viewed::create_simple(
                     context_module::instance($this->coursemodule->id), $this->ratingallocateid);
@@ -1013,12 +1013,11 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             global $OUTPUT;
             $renderer = $this->get_renderer();
+            $status = $this->get_status();
+            $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context, ACTION_SHOW_STATISTICS);
 
             $output .= $renderer->statistics_table_for_ratingallocate($this);
 
-            $output .= html_writer::empty_tag('br', array());
-            $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
-                    array('id' => $this->coursemodule->id)), get_string('back'), 'get');
             // Logging.
             $event = \mod_ratingallocate\event\allocation_statistics_viewed::create_simple(
                     context_module::instance($this->coursemodule->id), $this->ratingallocateid);
@@ -1076,11 +1075,6 @@ class ratingallocate {
                 }
             }
         }
-        /* Print data and controls to edit the choices.
-        if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
-            $output .= $renderer->modify_choices_group($this->ratingallocateid, $this->coursemodule->id, $status);
-        }
-        */
 
         // Print data and controls for teachers.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
@@ -1089,7 +1083,7 @@ class ratingallocate {
                 $undistributeduserscount, (int) $this->ratingallocate->algorithmstatus,
                 (boolean) $this->ratingallocate->runalgorithmbycron);
             $output .= $renderer->publish_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
-            $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context);
+            // $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context);
         }
 
         // Logging.

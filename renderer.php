@@ -405,33 +405,20 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * Output the ratingallocate modfify allocation
      */
-    public function reports_group($ratingallocateid, $coursemoduleid, $status, $context) {
+    public function reports_group($ratingallocateid, $coursemoduleid, $status, $context, $action = '') {
         $output = '';
         $output .= $this->heading(get_string('reports_group', RATINGALLOCATE_MOD_NAME), 2);
         $output .= $this->box_start();
 
-        /*
-        $output .= $this->single_select($this->page->url, 'select_report', array(
-            'show_table' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE,
-            'show_allocation_table' => ACTION_SHOW_ALLOCATION_TABLE,
-            'show_allocation_statistics' => ACTION_SHOW_CHOICES
-        ));
-        */
-
-        $tableurl = new moodle_url($this->page->url, array('action' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE));
-
-        // Button with link to display information about the allocations and ratings.
-        $output .= $this->single_button($tableurl, get_string('show_table', RATINGALLOCATE_MOD_NAME), 'get');
-
-        $tableurl = new moodle_url($this->page->url, array('action' => ACTION_SHOW_ALLOCATION_TABLE));
-
-        // Button with link to display information about the allocations and ratings.
-        $output .= $this->single_button($tableurl, get_string('show_allocation_table', RATINGALLOCATE_MOD_NAME), 'get');
-
-        $tableurl = new moodle_url($this->page->url, array('action' => ACTION_SHOW_STATISTICS));
-
-        // Buttton with link to display statistical information about the allocations.
-        $output .= $this->single_button($tableurl, get_string('show_allocation_statistics', RATINGALLOCATE_MOD_NAME), 'get');
+        $output .= $this->output->single_select(
+            new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid)),
+            'action', array(
+                ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE =>get_string('show_table', RATINGALLOCATE_MOD_NAME),
+                ACTION_SHOW_ALLOCATION_TABLE => get_string('show_allocation_table', RATINGALLOCATE_MOD_NAME),
+                ACTION_SHOW_STATISTICS => get_string('show_allocation_statistics', RATINGALLOCATE_MOD_NAME)
+            ),
+            $action
+        );
 
         /* TODO: File not readable
         $output .= html_writer::empty_tag('br', array());
