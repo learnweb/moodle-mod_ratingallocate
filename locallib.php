@@ -1515,7 +1515,12 @@ class ratingallocate {
             return;
         }
 
-        $users = $this->get_users_with_ratings();
+        $users = array_map(
+            function ($u) {
+                return $u->id;
+            },
+            $this->get_raters_in_course()
+        );
         $choices = $this->get_choices_with_allocationcount();
         $allocations = $this->get_allocations();
         foreach ($users as $userid => $allocobj) {
@@ -1532,6 +1537,7 @@ class ratingallocate {
                     get_string('allocation_notification_message_subject', 'ratingallocate',
                             $this->ratingallocate->name);
 
+            $notificationtext = '';
             if (array_key_exists($userid, $allocations) && $allocobj = $allocations[$userid]) {
                 // Get the assigned choice_id.
                 $allocchoiceid = $allocobj->choiceid;
@@ -1540,35 +1546,39 @@ class ratingallocate {
                         'ratingallocate' => $this->ratingallocate->name,
                         'choice' => $choices[$allocchoiceid]->title,
                         'explanation' => format_text($choices[$allocchoiceid]->explanation)));
-            } else {
+            } else if (array_key_exists($userid, $this->get_users_with_ratings())) {
                 $notificationtext = get_string('no_allocation_notification_message', 'ratingallocate', array(
                         'ratingallocate' => $this->ratingallocate->name));
             }
 
-            // Prepare the message.
-            $eventdata = new \core\message\message();
-            $eventdata->courseid = $this->course->id;
-            $eventdata->component = 'mod_ratingallocate';
-            $eventdata->name = 'allocation';
-            $eventdata->notification = 1;
+            // Send message to all users with an allocation or a rating.
+            if (!empty($notificationtext)) {
 
-            $eventdata->userfrom = core_user::get_noreply_user();
-            $eventdata->userto = $userid;
-            $eventdata->subject = $notificationsubject;
-            $eventdata->fullmessage = $notificationtext;
-            $eventdata->fullmessageformat = FORMAT_PLAIN;
-            $eventdata->fullmessagehtml = '';
+                // Prepare the message.
+                $eventdata = new \core\message\message();
+                $eventdata->courseid = $this->course->id;
+                $eventdata->component = 'mod_ratingallocate';
+                $eventdata->name = 'allocation';
+                $eventdata->notification = 1;
 
-            $eventdata->smallmessage = '';
-            $eventdata->contexturl = new moodle_url('/mod/ratingallocate/view.php',
-                    array('id' => $this->coursemodule->id));
-            $eventdata->contexturlname = $this->ratingallocate->name;
+                $eventdata->userfrom = core_user::get_noreply_user();
+                $eventdata->userto = $userid;
+                $eventdata->subject = $notificationsubject;
+                $eventdata->fullmessage = $notificationtext;
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml = '';
 
-            $mailresult = message_send($eventdata);
-            if (!$mailresult) {
-                mtrace(
+                $eventdata->smallmessage = '';
+                $eventdata->contexturl = new moodle_url('/mod/ratingallocate/view.php',
+                        array('id' => $this->coursemodule->id));
+                $eventdata->contexturlname = $this->ratingallocate->name;
+
+                $mailresult = message_send($eventdata);
+                if (!$mailresult) {
+                    mtrace(
                         "ERROR: mod/ratingallocate/locallib.php: Could not send notification to user $userto->id " .
                         "... not trying again.");
+                }
             }
         }
 
