@@ -193,7 +193,7 @@ function ratingallocate_delete_instance($id) {
     ));
 
     // Delete associated events.
-    $DB->delete_records('event', array('modulename' => 'ratingallocate', 'instance' => $id));
+    $DB->delete_records('event', array('modulename' => 'ratingallocate', 'instance' => $ratingallocate->id));
 
     $DB->delete_records('ratingallocate', array(
             'id' => $ratingallocate->id
@@ -466,7 +466,11 @@ function ratingallocate_set_events($ratingallocate) {
         $event->timestart = $timestart;
         $event->timesort = $timestart;
         // Visibility should depend on the user.
-        $event->visible = $ratingallocate->visible;
+        if (isset($ratingallocate->visible)) {
+            $event->visible = $ratingallocate->visible;
+        } else {
+            $event->visible = instance_is_visible('ratingallocate', $ratingallocate);
+        }
         $event->timeduration = 0;
         if ($eventid) {
             // Calendar event exists so update it.
@@ -506,7 +510,11 @@ function ratingallocate_set_events($ratingallocate) {
         $event->timestart = $timestop;
         $event->timesort = $timestop;
         // Visibility should depend on the user.
-        $event->visible = $ratingallocate->visible;
+        if (isset($ratingallocate->visible)) {
+            $event->visible = $ratingallocate->visible;
+        } else {
+            $event->visible = instance_is_visible('ratingallocate', $ratingallocate);
+        }
         $event->timeduration = 0;
         if ($eventid) {
             // Calendar event exists so update it.
