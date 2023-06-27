@@ -413,7 +413,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $output .= $this->output->single_select(
             new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid)),
             'action', array(
-                ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE =>get_string('show_table', RATINGALLOCATE_MOD_NAME),
+                ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE => get_string('show_table', RATINGALLOCATE_MOD_NAME),
                 ACTION_SHOW_ALLOCATION_TABLE => get_string('show_allocation_table', RATINGALLOCATE_MOD_NAME),
                 ACTION_SHOW_STATISTICS => get_string('show_allocation_statistics', RATINGALLOCATE_MOD_NAME)
             ),

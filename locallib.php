@@ -390,7 +390,8 @@ class ratingallocate {
     private function process_action_show_choices() {
 
         if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
-            global $OUTPUT;
+            global $OUTPUT, $PAGE;
+            $PAGE->set_secondary_active_tab('mod_ratingallocate_choices');
             $renderer = $this->get_renderer();
             $status = $this->get_status();
 
@@ -428,7 +429,8 @@ class ratingallocate {
 
         $output = '';
         if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
-            global $OUTPUT;
+            global $OUTPUT, $PAGE;
+            $PAGE->set_secondary_active_tab('mod_ratingallocate_choices');
             $choiceid = optional_param('choiceid', 0, PARAM_INT);
 
             if ($choiceid) {
@@ -512,6 +514,7 @@ class ratingallocate {
         $output = '';
         if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
             global $OUTPUT;
+            $PAGE->set_secondary_active_tab('mod_ratingallocate_choices');
 
             $url = new moodle_url('/mod/ratingallocate/view.php',
                 array('id' => $this->coursemodule->id,
@@ -968,7 +971,8 @@ class ratingallocate {
 
         // Print ratings table.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
-            global $OUTPUT;
+            global $OUTPUT, $PAGE;
+            $PAGE->set_secondary_active_tab('mod_ratingallocate_reports');
             $renderer = $this->get_renderer();
             $status = $this->get_status();
             $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context, ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE);
@@ -992,7 +996,8 @@ class ratingallocate {
 
         // Print ratings table.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
-            global $OUTPUT;
+            global $OUTPUT, $PAGE;
+            $PAGE->set_secondary_active_tab('mod_ratingallocate_reports');
             $renderer = $this->get_renderer();
             $status = $this->get_status();
             $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context, ACTION_SHOW_ALLOCATION_TABLE);
@@ -1011,7 +1016,8 @@ class ratingallocate {
         $output = '';
         // Print ratings table.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
-            global $OUTPUT;
+            global $OUTPUT, $PAGE;
+            $PAGE->set_secondary_active_tab('mod_ratingallocate_reports');
             $renderer = $this->get_renderer();
             $status = $this->get_status();
             $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context, ACTION_SHOW_STATISTICS);

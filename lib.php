@@ -388,14 +388,14 @@ function ratingallocate_extend_settings_navigation(settings_navigation $settings
     if (has_capability('mod/ratingallocate:modify_choices', $context)) {
         $choicenode = navigation_node::create(get_string('choice_navigation', RATINGALLOCATE_MOD_NAME),
             new moodle_url('/mod/ratingallocate/view.php', ['id' => $settingsnav->get_page()->cm->id, 'action' => ACTION_SHOW_CHOICES]),
-            navigation_node::TYPE_CUSTOM, null);
+            navigation_node::TYPE_CUSTOM, null, 'mod_ratingallocate_choices');
         $ratingallocatenode->add_node($choicenode);
     }
 
     if (has_capability('mod/ratingallocate:start_distribution', $context)) {
         $reportsnode = navigation_node::create(get_string('reports_group', RATINGALLOCATE_MOD_NAME),
             new moodle_url('/mod/ratingallocate/view.php', ['id' => $settingsnav->get_page()->cm->id, 'action' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE]),
-            navigation_node::TYPE_CUSTOM, null);
+            navigation_node::TYPE_CUSTOM, null, 'mod_ratingallocate_reports');
         $ratingallocatenode->add_node($reportsnode);
     }
 
