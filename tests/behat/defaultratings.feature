@@ -19,7 +19,6 @@ Feature: When a student starts a rating the default values of all choices
       | ratingallocate | C1     | ra1      | My Fair Allocation |
     And I log in as "teacher1"
     And I am on the "My Fair Allocation" "mod_ratingallocate > Choices" page
-    And I press "Edit Choices"
     And I add a new choice with the values:
       | title                  | My first choice |
       | Description (optional) | Test 1          |

@@ -19,7 +19,6 @@ Feature: Creating a new rating allocation, where new choices need to
     And I add a "Fair Allocation" to section "0" and I fill the form with:
       | id_name | My Fair Allocation |
     And I am on the "My Fair Allocation" "mod_ratingallocate > Choices" page
-    And I press "Edit Choices"
     And I add a new choice with the values:
       | title                  | My first choice |
       | Description (optional) | Test 1          |

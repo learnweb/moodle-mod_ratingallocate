@@ -573,6 +573,23 @@ class behat_mod_ratingallocate extends behat_base {
     }
 
     /**
+     * Convert page names to URLs for steps like 'When I am on the "mod_ratingallocate > [page name]" page'.
+     *
+     * Recognised page names are:
+     * | None so far!      |                                                              |
+     *
+     * @param string $page name of the page, with the component name removed e.g. 'Edit'.
+     * @return moodle_url the corresponding URL.
+     * @throws Exception with a meaningful error message if the specified page cannot be found.
+     */
+    protected function resolve_page_url(string $page): moodle_url {
+        switch (strtolower($page)) {
+            default:
+                throw new Exception('Unrecognised mod_ratingallocate page type "' . $page . '."');
+        }
+    }
+
+    /**
      * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
      *
      * Recognised page names are:
@@ -582,7 +599,7 @@ class behat_mod_ratingallocate extends behat_base {
      * | Choices           | Ratingallocate name                         | The page for editing choices                 |
      * | Reports           | Ratingallocate name                         | The page for reports and statistics          |
      *
-     * @param string $type identifies which type of page this is, e.g. 'Choices'.
+     * @param string $type identifies which type of page this is, e.g. 'mod_ratingallocate > Choices'.
      * @param string $identifier identifies the particular page, e.g. 'My Fair Allocation'.
      * @return moodle_url the corresponding URL.
      * @throws Exception with a meaningful error message if the specified page cannot be found.
