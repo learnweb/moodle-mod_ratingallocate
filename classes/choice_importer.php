@@ -173,6 +173,13 @@ class choice_importer {
                                 continue;
                             }
 
+                            if ($fieldname === 'title' && strlen($cell) > 255) {
+                                $importstatus->status = self::IMPORT_STATUS_DATA_ERROR;
+                                $importstatus->errors[] = get_string('csvupload_too_long_title',
+                                        RATINGALLOCATE_MOD_NAME, $cell);
+                                break;
+                            }
+
                             if ($fieldname == 'groups') {
                                 $groups = array();
 
