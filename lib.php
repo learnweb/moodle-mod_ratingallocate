@@ -663,3 +663,75 @@ function mod_ratingallocate_core_calendar_get_valid_event_timestart_range (\cale
     }
     return [$mindate, $maxdate];
 }
+
+/**
+ * This function is used by the reset_course_userdata function in moodlelib.
+ * This function will remove all ratings and allocations
+ * and clean up any related data.
+ *
+ * @global object
+ * @global object
+ * @param $data the data submitted from the reset course.
+ * @return array status array
+ */
+function ratingallocate_reset_userdata($data) {
+    global $CFG, $DB;
+
+    $componentstr = get_string('modulenameplural', RATINGALLOCATE_MOD_NAME);
+    $status = [];
+
+    $params = array('courseid' => $data->courseid);
+
+    if (!empty($data->reset_ratings_and_allocations)) {
+
+        // Delete all ratings.
+        $ratingidssql = "SELECT r.id FROM {ratingallocate_ratings} r
+                      INNER JOIN {ratingallocate_choices} c ON r.choiceid=c.id
+                      INNER JOIN {ratingallocate} ra ON c.ratingallocateid=ra.id
+                      WHERE ra.course= :courseid";
+        $DB->delete_records_select('ratingallocate_ratings', "id IN ($ratingidssql)", $params);
+
+        // Delete all allocations.
+        $allocationidssql = "SELECT a.id FROM {ratingallocate_allocations} a
+                            INNER JOIN {ratingallocate} r ON a.ratingallocateid=r.id
+                            WHERE r.course= :courseid";
+        $DB->delete_records_select('ratingallocate_allocations', "id IN ($allocationidssql)", $params);
+
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('ratings_and_allocations_deleted', RATINGALLOCATE_MOD_NAME),
+            'error' => false];
+    }
+
+    // updating dates - shift may be negative too
+    if ($data->timeshift) {
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
+        shift_course_mod_dates(RATINGALLOCATE_MOD_NAME, array('assesstimestart', 'assesstimestop'), $data->timeshift, $data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+    }
+
+    return $status;
+}
+
+/**
+ * Called by course/reset.php
+ *
+ * @param MoodleQuickForm $mform form passed by reference
+ */
+function ratingallocate_reset_course_form_definition($mform) {
+
+    $mform->addElement('header', 'ratingallocateheader', get_string('modulenameplural', RATINGALLOCATE_MOD_NAME));
+    $mform->addElement('advcheckbox', 'reset_ratings_and_allocations',
+        get_string('remove_ratings_and_allocations', RATINGALLOCATE_MOD_NAME));
+
+}
+
+/**
+ * Course reset form defaults.
+ * @return array the defaults.
+ */
+function ratingallocate_reset_course_form_defaults($course) {
+    return ['reset_ratings_and_allocations' => 1];
+}
+
