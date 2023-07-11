@@ -708,7 +708,7 @@ function ratingallocate_reset_userdata($data) {
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
         shift_course_mod_dates(RATINGALLOCATE_MOD_NAME, array('assesstimestart', 'assesstimestop'), $data->timeshift, $data->courseid);
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+        $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
     }
 
     return $status;
@@ -734,4 +734,3 @@ function ratingallocate_reset_course_form_definition($mform) {
 function ratingallocate_reset_course_form_defaults($course) {
     return ['reset_ratings_and_allocations' => 1];
 }
-
