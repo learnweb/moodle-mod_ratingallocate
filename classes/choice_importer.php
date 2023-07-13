@@ -162,6 +162,8 @@ class choice_importer {
                     $reader->init();
                     while ($record = $reader->next()) {
                         $importstatus->rowcount++;
+                        // Unless we hear otherwise.
+                        $ischoiceimportable = true;
                         $recordmap = new \stdClass();
 
                         // Map cell contents to field names.
@@ -173,11 +175,11 @@ class choice_importer {
                                 continue;
                             }
 
-                            if ($fieldname === 'title' && strlen($cell) > 255) {
+                            if ($fieldname === 'title' && mb_strlen($cell, 'UTF-8') > 255) {
                                 $importstatus->status = self::IMPORT_STATUS_DATA_ERROR;
                                 $importstatus->errors[] = get_string('csvupload_too_long_title',
                                         RATINGALLOCATE_MOD_NAME, $cell);
-                                break;
+                                $ischoiceimportable = false;
                             }
 
                             if ($fieldname == 'groups') {
@@ -204,6 +206,11 @@ class choice_importer {
                             } else {
                                 $recordmap->{$fieldname} = $cell;
                             }
+                        }
+
+                        if (!$ischoiceimportable) {
+                            // Parsed data of this choice has critical errors, so we will not add the choice.
+                            continue;
                         }
 
                         // Create and insert a choice record.
