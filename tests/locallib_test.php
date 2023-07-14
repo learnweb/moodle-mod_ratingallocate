@@ -303,7 +303,8 @@ class locallib_test extends \advanced_testcase {
         $status = ratingallocate_reset_userdata($data);
 
         // Reload the instance data.
-        $ratingallocate = $DB->get_record('ratingallocate', array('id' => $ratingallocate->get_ratingallocateid()));
+        $ra = $DB->get_record('ratingallocate', array('id' => $ratingallocate->get_ratingallocateid()));
+        $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate($ra);
 
         // There should be no ratings and allocations anymore.
         $this->assertEquals(0, count($ratingallocate->get_allocations()));
@@ -311,8 +312,8 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals(false, $status['error']);
 
         // Check if the timeshift happened successfully.
-        $this->assertEquals($accesstimestart + (2 * DAYSECS), $ratingallocate->accesstimestart);
-        $this->assertEquals($accesstimestop + (2 * DAYSECS), $ratingallocate->accesstimestop);
+        $this->assertEquals($accesstimestart + (2 * DAYSECS), $ra->accesstimestart);
+        $this->assertEquals($accesstimestop + (2 * DAYSECS), $ra->accesstimestop);
     }
 
 }
