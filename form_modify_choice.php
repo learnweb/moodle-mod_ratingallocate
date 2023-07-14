@@ -78,6 +78,8 @@ class modify_choice_form extends moodleform {
         $mform->setType($elementname, PARAM_TEXT);
         $mform->addHelpButton($elementname, 'choice_title', RATINGALLOCATE_MOD_NAME);
         $mform->addRule($elementname, get_string('err_required', 'form'), 'required', null, 'server');
+        $mform->addRule($elementname, get_string('title_too_long_error', RATINGALLOCATE_MOD_NAME),
+            'maxlength', '255');
 
         $elementname = 'explanation';
         $editoroptions = array(

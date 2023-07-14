@@ -219,6 +219,7 @@ $string['delete_choice'] = 'Delete choice';
 $string['deleteconfirm'] = 'Do you really want to delete the choice "{$a}"?';
 $string['choice_deleted_notification'] = 'Choice "{$a}" was deleted.';
 $string['choice_deleted_notification_error'] = 'Choice requested for deletion could not be found.';
+$string['title_too_long_error'] = 'The title of the choice has too many characters, only 255 are allowed.';
 $string['modify_choices_group'] = 'Choices';
 $string['modify_choices'] = 'Edit Choices';
 $string['modify_choices_explanation'] = 'Shows the list of all choices. Here, the choices can be hidden, altered and deleted.';
@@ -259,6 +260,7 @@ $string['csvupload_test_problems'] = 'Problems found in CSV import test: {$a}';
 $string['csvupload_test_success'] = 'CSV import test successful. {$a->importcount} choices can be imported.';
 $string['csvupload_test_upload'] = 'Test upload';
 $string['csvupload_test_upload_help'] = 'When checked: test the uploaded CSV file for data problems, but do not commit to the database.';
+$string['csvupload_too_long_title'] = 'Too long title (> 255 characters): {$a}';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Form to edit the instance(administrator)">
 $string['choice_active'] = 'Choice is active';
