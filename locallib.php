@@ -1819,6 +1819,13 @@ class ratingallocate {
     }
 
     /**
+     * Returns the id of the ratingallocate instance.
+     */
+    public function get_ratingallocateid() {
+        return $this->ratingallocateid;
+    }
+
+    /**
      * Returns an array of choices with the given ids
      *
      * @param $ids array choiceids

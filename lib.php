@@ -671,7 +671,7 @@ function mod_ratingallocate_core_calendar_get_valid_event_timestart_range (\cale
  *
  * @global object
  * @global object
- * @param $data the data submitted from the reset course.
+ * @param $data stdClass the data submitted from the reset course.
  * @return array status array
  */
 function ratingallocate_reset_userdata($data) {
@@ -703,7 +703,7 @@ function ratingallocate_reset_userdata($data) {
             'error' => false];
     }
 
-    // updating dates - shift may be negative too
+    // Updating dates - shift may be negative too.
     if ($data->timeshift) {
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
@@ -715,7 +715,7 @@ function ratingallocate_reset_userdata($data) {
 }
 
 /**
- * Called by course/reset.php
+ * Called by course/reset.php.
  *
  * @param MoodleQuickForm $mform form passed by reference
  */
