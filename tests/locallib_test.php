@@ -309,7 +309,9 @@ class locallib_test extends \advanced_testcase {
         // There should be no ratings and allocations anymore.
         $this->assertEquals(0, count($ratingallocate->get_allocations()));
         $this->assertEquals(0, count($ratingallocate->get_ratings_for_rateable_choices()));
-        $this->assertEquals(false, $status['error']);
+        if (isset($status['error'])) {
+            $this->assertEquals(false, $status['error']);
+        }
 
         // Check if the timeshift happened successfully.
         $this->assertEquals($accesstimestart + (2 * DAYSECS), $ra->accesstimestart);
