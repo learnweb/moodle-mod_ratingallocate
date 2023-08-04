@@ -291,8 +291,8 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals(2, count($ratingallocate->get_allocations()));
 
         // Keep dates for comparison.
-        $accesstimestart = $DB->get_record('ratingallocate', ['id' => $ratingallocate->get_ratingallocateid()], 'accesstimestart');
-        $accesstimestop = $DB->get_record('ratingallocate', ['id' => $ratingallocate->get_ratingallocateid()], 'accesstimestop');
+        $accesstimestart = $DB->get_record('ratingallocate', ['id' => $ratingallocate->get_ratingallocateid()], 'accesstimestart')->accesstimestart;
+        $accesstimestop = $DB->get_record('ratingallocate', ['id' => $ratingallocate->get_ratingallocateid()], 'accesstimestop')->accesstimestop;
 
         // Now try and reset.
         $data = new \stdClass();
