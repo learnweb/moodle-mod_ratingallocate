@@ -174,13 +174,13 @@ function ratingallocate_delete_instance($id) {
         'ratingallocateid' => $ratingallocate->id
             ), '', 'id'));
 
-    list ($insql, $params) = $DB->get_in_or_equal($deleteids);
-
-    $DB->delete_records_select('ratingallocate_group_choices',
+    if (!empty($deleteids)) {
+        list ($insql, $params) = $DB->get_in_or_equal($deleteids);
+        $DB->delete_records_select('ratingallocate_group_choices',
             'choiceid ' . $insql, $params);
-
-    $DB->delete_records_select('ratingallocate_ch_gengroups',
-        'choiceid ' . $insql, $params);
+        $DB->delete_records_select('ratingallocate_ch_gengroups',
+            'choiceid ' . $insql, $params);
+    }
 
     $DB->delete_records('ratingallocate_groupings', array(
         'ratingallocateid' => $ratingallocate->id
