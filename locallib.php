@@ -1207,25 +1207,25 @@ class ratingallocate {
             $choicestatus->accesstimestart = $this->ratingallocate->accesstimestart;
             $choicestatus->accesstimestop = $this->ratingallocate->accesstimestop;
             $choicestatus->publishdate = $this->ratingallocate->publishdate;
-            $choicestatus->is_published = $this->ratingallocate->published;
-            $choicestatus->available_choices = $this->get_rateable_choices();
+            $choicestatus->ispublished = $this->ratingallocate->published;
+            $choicestatus->availablechoices = $this->get_rateable_choices();
             // Filter choices to display by groups, where 'usegroups' is true.
-            $choicestatus->available_choices = $this->filter_choices_by_groups($choicestatus->available_choices, $USER->id);
+            $choicestatus->availablechoices = $this->filter_choices_by_groups($choicestatus->availablechoices, $USER->id);
 
             $strategysettings = $this->get_strategy_class()->get_static_settingfields();
             if (array_key_exists(ratingallocate\strategy_order\strategy::COUNTOPTIONS, $strategysettings)) {
-                $choicestatus->necessary_choices =
+                $choicestatus->necessarychoices =
                         $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
             } else {
-                $choicestatus->necessary_choices = 0;
+                $choicestatus->necessarychoices = 0;
             }
-            $choicestatus->own_choices = $this->get_rating_data_for_user($USER->id);
+            $choicestatus->ownchoices = $this->get_rating_data_for_user($USER->id);
             // Filter choices to display by groups, where 'usegroups' is true.
-            $choicestatus->own_choices = $this->filter_choices_by_groups($choicestatus->own_choices, $USER->id);
+            $choicestatus->ownchoices = $this->filter_choices_by_groups($choicestatus->ownchoices, $USER->id);
             $choicestatus->allocations = $this->get_allocations_for_user($USER->id);
             $choicestatus->strategy = $this->get_strategy_class();
-            $choicestatus->show_distribution_info = has_capability('mod/ratingallocate:start_distribution', $this->context);
-            $choicestatus->show_user_info = has_capability('mod/ratingallocate:give_rating', $this->context, null, false);
+            $choicestatus->showdistributioninfo = has_capability('mod/ratingallocate:start_distribution', $this->context);
+            $choicestatus->showuserinfo = has_capability('mod/ratingallocate:give_rating', $this->context, null, false);
             $choicestatus->algorithmstarttime = $this->ratingallocate->algorithmstarttime;
             $choicestatus->algorithmstatus = $this->get_algorithm_status();
             $choicestatusoutput = $renderer->render($choicestatus);
