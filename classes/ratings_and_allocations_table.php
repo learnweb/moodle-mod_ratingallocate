@@ -603,6 +603,8 @@ class ratings_and_allocations_table extends \table_sql {
                     },
                     $this->groupsofallchoices)))) {
                 $sql .= "," . $gmgroupid . ") ) ";
+            } else {
+                $sql .= "))";
             }
         } else if ($this->groupselect != 0) {
             $sql .= "AND u.id in ( SELECT gm.userid FROM {groups_members} gm WHERE gm.groupid= :groupselect ) ";
