@@ -40,6 +40,7 @@ define('RATINGALLOCATE_EVENT_TYPE_STOP', 'stop');
 // define('NEWMODULE_ULTIMATE_ANSWER', 42);
 
 require_once(dirname(__FILE__) . '/db/db_structure.php');
+require_once(dirname(__FILE__) . '/locallib.php');
 
 use ratingallocate\db as this_db;
 
