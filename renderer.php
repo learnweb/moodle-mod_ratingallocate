@@ -102,7 +102,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $descriptionbaseid = 'modify_allocation_group_desc_';
         $description = get_string($descriptionbaseid . $status, RATINGALLOCATE_MOD_NAME);
 
-        // Create start algorithm button
+        // Create start algorithm button.
         $button = new single_button($starturl, get_string('start_distribution', RATINGALLOCATE_MOD_NAME), 'get');
         // Enable only if the instance is ready and the algorithm may run manually.
         $button->disabled = !($ratingover) || $isdistributionrunning;
@@ -121,9 +121,16 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         // Add status, buttons for manual and algorithmic allocation and delete all ratings buuton to the table.
         $this->add_table_row_triple($table,
             $this->format_text($description),
-            $this->render($button) . '<br/>' . '<br/>' . $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
-                'action' => ACTION_MANUAL_ALLOCATION)), get_string('manual_allocation_form', RATINGALLOCATE_MOD_NAME), 'get',
-                array('disabled' => !$ratingover || $isdistributionrunning)),
+            $this->render($button) . '<br/>' . '<br/>' . $this->single_button(
+                new moodle_url(
+                    '/mod/ratingallocate/view.php',
+                    array('id' => $coursemoduleid,
+                    'action' => ACTION_MANUAL_ALLOCATION)),
+                    get_string('manual_allocation_form',
+                        RATINGALLOCATE_MOD_NAME),
+                    'get',
+                    array('disabled' => !$ratingover || $isdistributionrunning)
+                ),
             $this->render($deletebutton)
         );
 
@@ -134,13 +141,19 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 // Add empty row.
                 $this->add_table_row_triple($table, '', '', '');
 
-                $distributeunallocatedurleq = new moodle_url($this->page->url, array('action' => ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY));
+                $distributeunallocatedurleq = new moodle_url(
+                    $this->page->url,
+                    array('action' => ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY)
+                );
                 $buttondisteq = new single_button($distributeunallocatedurleq,
                     get_string('distributeequally', RATINGALLOCATE_MOD_NAME), 'get');
                 $buttondisteq->add_action(new confirm_action(
                     get_string('distribute_unallocated_equally_confirm', RATINGALLOCATE_MOD_NAME)));
 
-                $distributeunallocatedurlfill = new moodle_url($this->page->url, array('action' => ACTION_DISTRIBUTE_UNALLOCATED_FILL));
+                $distributeunallocatedurlfill = new moodle_url(
+                    $this->page->url,
+                    array('action' => ACTION_DISTRIBUTE_UNALLOCATED_FILL)
+                );
                 $buttondistfill = new single_button($distributeunallocatedurlfill,
                     get_string('distributefill', RATINGALLOCATE_MOD_NAME), 'get');
                 $buttondistfill->add_action(new confirm_action(
@@ -148,7 +161,9 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
                 // Add Amount of users that are unallocated and buttons to allocate them manually.
                 $this->add_table_row_triple($table,
-                    get_string('unallocated_user_count', RATINGALLOCATE_MOD_NAME, ['count' => $undistributeduserscount]) . $this->help_icon('distribution_description', RATINGALLOCATE_MOD_NAME),
+                    get_string('unallocated_user_count',
+                        RATINGALLOCATE_MOD_NAME,
+                        ['count' => $undistributeduserscount]) . $this->help_icon('distribution_description', RATINGALLOCATE_MOD_NAME),
                     $this->render($buttondisteq),
                     $this->render($buttondistfill)
                 );
