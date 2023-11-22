@@ -99,6 +99,7 @@ $string['distribute_unallocated_fill_confirm'] = 'All currently unallocated user
  Each choice will be filled up to its maximum before assigning users to the next choice.';
 $string['distribute_unallocated_equally_confirm'] = 'All currently unallocated users will be distributed to the choices.
  The choices will be filled up equally, so all of them have about the same amount of places left.';
+$string['unallocated_user_count'] = 'There are {$a->count} users unallocated';
 $string['no_user_to_allocate'] = 'There is no user you could allocate';
 $string['ratings_table'] = 'Ratings and Allocations';
 $string['ratings_table_sum_allocations'] = 'Number of allocations / Maximum';

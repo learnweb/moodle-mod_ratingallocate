@@ -1078,10 +1078,8 @@ class ratingallocate {
         // Print data and controls for teachers.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             $undistributeduserscount = count($this->get_undistributed_users());
-            $output .= $renderer->modify_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status,
-                $undistributeduserscount, (int) $this->ratingallocate->algorithmstatus,
-                (boolean) $this->ratingallocate->runalgorithmbycron);
-            $output .= $renderer->publish_allocation_group($this->ratingallocateid, $this->coursemodule->id, $status);
+            $output .= $renderer->render_ratingallocate_allocation_status($this->coursemodule->id, $status, $undistributeduserscount);
+            $output .= $renderer->render_ratingallocate_publish_allocation($this->ratingallocateid, $this->coursemodule->id, $status);
             $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context);
         }
 
