@@ -116,7 +116,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $deletebutton->tooltip = get_string('delete_all_ratings_explanation', RATINGALLOCATE_MOD_NAME);
         $deletebutton->add_action(new confirm_action(get_string('confirm_delete_all_ratings', RATINGALLOCATE_MOD_NAME)));
 
-
         $table = new html_table();
 
         // Add status, buttons for manual and algorithmic allocation and delete all ratings buuton to the table.
