@@ -147,6 +147,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 );
                 $buttondisteq = new single_button($distributeunallocatedurleq,
                     get_string('distributeequally', RATINGALLOCATE_MOD_NAME), 'get');
+                $buttondisteq->class = 'ratingallocate_front_page_buttons';
+
                 $buttondisteq->add_action(new confirm_action(
                     get_string('distribute_unallocated_equally_confirm', RATINGALLOCATE_MOD_NAME)));
 
@@ -156,6 +158,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 );
                 $buttondistfill = new single_button($distributeunallocatedurlfill,
                     get_string('distributefill', RATINGALLOCATE_MOD_NAME), 'get');
+                $buttondistfill->class = 'ratingallocate_front_page_buttons';
                 $buttondistfill->add_action(new confirm_action(
                     get_string('distribute_unallocated_fill_confirm', RATINGALLOCATE_MOD_NAME)));
 
@@ -213,8 +216,14 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $descriptionbaseid = 'publish_allocation_group_desc_';
         $description = get_string($descriptionbaseid . $status, RATINGALLOCATE_MOD_NAME);
 
+        if ($isready) {
+            $description = $this->format_text($description) . $this->help_icon('publish_allocation_group_desc_' . $status, RATINGALLOCATE_MOD_NAME);
+        } else {
+            $description = $this->format_text($description);
+        }
+
         $this->add_table_row_triple($table,
-            $this->format_text($description),
+            $description,
             $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
                 'ratingallocateid' => $ratingallocateid,
                 'action' => ACTION_PUBLISH_ALLOCATIONS)), get_string('publish_allocation', RATINGALLOCATE_MOD_NAME), 'get',
@@ -818,7 +827,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $cell = new html_table_cell();
         $usersinchoice = $ratingallocate->get_raters_in_course();
-        $cell->text = count($usersinchoice) - count($memberships);
+        $cell->text = count($ratingallocate->get_undistributed_users());
         $allocationrow[] = $cell;
 
         $cell = new html_table_cell();
@@ -969,8 +978,11 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     private function add_table_row_triple(html_table $table, $first, $second, $third) {
         $row = new html_table_row();
         $cell1 = new html_table_cell($first);
+        $cell1->attributes['class'] = 'ratingallocate_front_page_table_1';
         $cell2 = new html_table_cell($second);
+        $cell2->attributes['class'] = 'ratingallocate_front_page_table_23';
         $cell3 = new html_table_cell($third);
+        $cell3->attributes['class'] = 'ratingallocate_front_page_table_23';
         $row->cells = array($cell1, $cell2, $cell3);
         $table->data[] = $row;
     }

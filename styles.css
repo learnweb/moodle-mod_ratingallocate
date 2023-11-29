@@ -124,3 +124,20 @@
 .ratingallocate_ratings_table_container .no-overflow {
     overflow: unset;
 }
+
+.ratingallocate_front_page_table_1 {
+    margin: auto;
+    width: 40%;
+}
+
+.ratingallocate_front_page_table_23 {
+    margin: auto;
+    width: 30%;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.ratingallocate_front_page_buttons {
+    margin: auto;
+    width: fit-content;
+}
