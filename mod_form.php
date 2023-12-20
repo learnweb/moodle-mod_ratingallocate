@@ -324,4 +324,42 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     private function get_settingsfield_identifier($strategy, $key) {
         return self::STRATEGY_OPTIONS . '[' . $strategy . '][' . $key . ']';
     }
+
+    /**
+     * Add elements for setting the custom completion rules.
+     *
+     * @return array List of added element names.
+     */
+    public function add_completion_rules() {
+        $mform = $this->_form;
+        $suffix = $this->get_suffix();
+
+        $mform->addElement('checkbox', $this->get_suffixed_name('vote'), ' ', get_string('completionvote', RATINGALLOCATE_MOD_NAME));
+        $mform->addElement('checkbox', $this->get_suffixed_name('allocation'), ' ', get_string('completionallocation', RATINGALLOCATE_MOD_NAME));
+
+        //Set default to not checked.
+        $mform->setDefault($this->get_suffixed_name('vote'), 0);
+        $mform->setDefault($this->get_suffixed_name('allocation'), 0);
+
+        //Add help buttons.
+        $mform->addHelpButton($this->get_suffixed_name('vote'), 'completionvote', RATINGALLOCATE_MOD_NAME);
+        $mform->addHelpButton($this->get_suffixed_name('allocation'), 'completionallocation', RATINGALLOCATE_MOD_NAME);
+
+        return [$this->get_suffixed_name('vote'), $this->get_suffixed_name('allocation')];
+    }
+
+    protected function get_suffixed_name(string $fieldname): string {
+        return $fieldname . $this->get_suffix();
+    }
+
+    /**
+     * Called during validaiton to see wether some activitiy-specific completion rules are selected.
+     *
+     * @param array $data Input data not yet validated.
+     * @return bool True if one or more rules are enabled, false if none are.
+     */
+    public function completion_rule_enabled($data) {
+        return ($data[$this->get_suffixed_name('vote')] == 1 || $data[$this->get_suffixed_name('allocation')] == 1);
+    }
+
 }

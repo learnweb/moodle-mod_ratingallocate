@@ -187,6 +187,7 @@ class ratingallocate {
 
     /**
      * Returns all users enrolled in the course the ratingallocate is in, who were able to access the activity
+     * @returns Array of user records
      * @throws moodle_exception
      */
     public function get_raters_in_course(): array {
@@ -1402,6 +1403,15 @@ class ratingallocate {
         $distributor = new solver_edmonds_karp();
         $timestart = microtime(true);
         $distributor->distribute_users($this);
+
+        $completion = new completion_info($this->course);
+        $raters = $this->get_raters_in_course();
+        if ($completion->is_enabled($this->coursemodule)) {
+            foreach ($raters as $rater) {
+                $completion->update_state($this->coursemodule, COMPLETION_COMPLETE, $rater->id);
+            }
+
+        }
         $timeneeded = (microtime(true) - $timestart);
 
         // Set algorithm status to finished.
@@ -1611,8 +1621,16 @@ class ratingallocate {
      * Removes all allocations for choices in $ratingallocateid
      */
     public function clear_all_allocations() {
-        $this->db->delete_records('ratingallocate_allocations', ['ratingallocateid' => intval
-        ($this->ratingallocateid)]);
+        $this->db->delete_records('ratingallocate_allocations', ['ratingallocateid' => intval($this->ratingallocateid)]);
+        $raters = $this->get_raters_in_course();
+
+        $completion = new completion_info($this->course);
+        if ($completion->is_enabled($this->coursemodule)) {
+            foreach ($raters as $rater) {
+                $completion->update_state($this->coursemodule, COMPLETION_INCOMPLETE, $rater->id);
+            }
+        }
+
     }
 
     /**
@@ -1751,7 +1769,7 @@ class ratingallocate {
      * Deletes all ratings in this ratingallocate
      */
     public function delete_all_ratings() {
-        global $DB;
+        global $DB, $USER;
 
         $transaction = $DB->start_delegated_transaction();
 
@@ -1771,6 +1789,11 @@ class ratingallocate {
             }
 
             $transaction->allow_commit();
+
+            $completion = new completion_info($this->course);
+            if ($completion->is_enabled($this->coursemodule)) {
+                $completion->update_state($this->coursemodule, COMPLETION_INCOMPLETE, $USER->id);
+            }
 
             // Logging.
             $event = \mod_ratingallocate\event\all_ratings_deleted::create_simple(
@@ -1805,6 +1828,11 @@ class ratingallocate {
             }
 
             $transaction->allow_commit();
+
+            $completion = new completion_info($this->course);
+            if ($completion->is_enabled($this->coursemodule)) {
+                $completion->update_state($this->coursemodule, COMPLETION_INCOMPLETE, $userid);
+            }
 
             // Logging.
             $event = \mod_ratingallocate\event\rating_deleted::create_simple(
@@ -1862,7 +1890,10 @@ class ratingallocate {
             $transaction->allow_commit();
 
             $completion = new completion_info($this->course);
-            $completion->set_module_viewed($this->coursemodule);
+            if ($completion->is_enabled()) {
+                $completion->set_module_viewed($this->coursemodule, $userid);
+                $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $userid);
+            }
 
             // Logging.
             $event = \mod_ratingallocate\event\rating_saved::create_simple(
@@ -2054,6 +2085,10 @@ class ratingallocate {
                 'choiceid' => $choiceid,
                 'userid' => $userid,
         ]);
+        $completion = new completion_info($this->course);
+        if ($completion->is_enabled($this->coursemodule)) {
+            $completion->update_state($this->coursemodule, COMPLETION_INCOMPLETE, $userid);
+        }
         return true;
     }
 
@@ -2067,6 +2102,10 @@ class ratingallocate {
                 'userid' => $userid,
                 'ratingallocateid' => $this->ratingallocateid,
         ]);
+        $completion = new completion_info($this->course);
+        if ($completion->is_enabled($this->coursemodule)) {
+            $completion->update_state($this->coursemodule, COMPLETION_INCOMPLETE, $userid);
+        }
     }
 
     /**
@@ -2081,6 +2120,10 @@ class ratingallocate {
                 'userid' => $userid,
                 'ratingallocateid' => $this->ratingallocateid,
         ]);
+        $completion = new completion_info($this->course);
+        if ($completion->is_enabled($this->coursemodule)) {
+            $completion->update_state($this->coursemodule, COMPLETION_COMPLETE, $userid);
+        }
         return true;
     }
 
