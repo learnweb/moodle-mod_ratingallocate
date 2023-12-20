@@ -332,9 +332,10 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      */
     public function add_completion_rules() {
         $mform = $this->_form;
+        $suffix = $this->get_suffix();
 
-        $mform->addElement('advcheckbox', $this->get_suffixed_name('vote'), ' ', get_string('completionvote', RATINGALLOCATE_MOD_NAME));
-        $mform->addElement('advcheckbox', $this->get_suffixed_name('allocation'), ' ', get_string('completionallocation', RATINGALLOCATE_MOD_NAME));
+        $mform->addElement('checkbox', $this->get_suffixed_name('vote'), ' ', get_string('completionvote', RATINGALLOCATE_MOD_NAME));
+        $mform->addElement('checkbox', $this->get_suffixed_name('allocation'), ' ', get_string('completionallocation', RATINGALLOCATE_MOD_NAME));
 
         // Set default to not checked.
         $mform->setDefault($this->get_suffixed_name('vote'), 0);
