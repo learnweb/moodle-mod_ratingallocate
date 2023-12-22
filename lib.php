@@ -721,7 +721,8 @@ function ratingallocate_reset_userdata($data) {
  */
 function ratingallocate_reset_course_form_definition($mform) {
 
-    $mform->addElement('header', 'ratingallocateheader', get_string('modulenameplural', RATINGALLOCATE_MOD_NAME));
+    $mform->addElement('header', 'ratingallocateheader', get_string('modulenameplural',
+        RATINGALLOCATE_MOD_NAME));
     $mform->addElement('advcheckbox', 'reset_ratings_and_allocations',
         get_string('remove_ratings_and_allocations', RATINGALLOCATE_MOD_NAME));
 
@@ -749,7 +750,7 @@ function ratingallocate_reset_course_form_defaults($course) {
 function ratingallocate_get_coursemodule_info($coursemodule) {
     global $DB;
 
-    $dbparams = array('id'=>$coursemodule->instance);
+    $dbparams = array('id' => $coursemodule->instance);
     if (! $ratingallocate = $DB->get_record('ratingallocate', $dbparams)) {
         return false;
     }

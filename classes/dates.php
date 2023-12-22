@@ -34,8 +34,7 @@ use core\activity_dates;
  * @copyright 2022 Jakob Mischke <jakob.mischke@univie.ac.at>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dates extends activity_dates {
-    
+class dates extends activity_dates{
     /**
      * Returns a list of important dates in mod_ratingallocate
      *
