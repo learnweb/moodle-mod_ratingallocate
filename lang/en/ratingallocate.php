@@ -99,6 +99,7 @@ $string['distribute_unallocated_fill_confirm'] = 'All currently unallocated user
  Each choice will be filled up to its maximum before assigning users to the next choice.';
 $string['distribute_unallocated_equally_confirm'] = 'All currently unallocated users will be distributed to the choices.
  The choices will be filled up equally, so all of them have about the same amount of places left.';
+$string['unallocated_user_count'] = 'There are {$a->count} users unallocated';
 $string['no_user_to_allocate'] = 'There is no user you could allocate';
 $string['ratings_table'] = 'Ratings and Allocations';
 $string['ratings_table_sum_allocations'] = 'Number of allocations / Maximum';
@@ -174,12 +175,11 @@ $string['publish_allocation_group_desc_too_early'] =
 $string['publish_allocation_group_desc_rating_in_progress'] =
         'The rating phase is in progress. Please wait till the rating phase has ended and then start to create allocations, first.';
 $string['publish_allocation_group_desc_ready'] = 'There are no allocations yet. Please see the modify allocation section.';
-$string['publish_allocation_group_desc_ready_alloc_started'] = 'The allocations can now be published.
-After publishing the allocations they can no longer be altered.
-Please have a look at the current allocations by following the link in the reports section.
-You can choose to create groups within your course for all allocations.
+$string['publish_allocation_group_desc_ready_alloc_started'] = 'The allocations can now be published and you can choose to create groups within your course for all allocations.';
+$string['publish_allocation_group_desc_ready_alloc_started_help'] = 'After publishing the allocations they can no longer be altered.
+Please have a look at the current allocations by following the link in the reports section. <br/><br/>
 If the same groups have already been created by this plugin, they will be purged before refilling them.
-This can be done before and after publishing the allocations.';
+Creating groups can be done before and after publishing the allocations.';
 $string['publish_allocation_group_desc_published'] = 'The allocations are already published.
 You can choose to create groups within your course for all allocations.
 If the same groups have already been created by this plugin, they will be purged before refilling them.';
