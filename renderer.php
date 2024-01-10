@@ -855,7 +855,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                             'notrated' => $notrated,
                             'rated' => $activeraters,
                             'rating' => $titles[max(array_keys($distributiondata))],
-                            'unassigned' => count($usersinchoice) - count($memberships))));
+                            'unassigned' => count($ratingallocate->get_undistributed_users()))));
             $output .= html_writer::table($allocationtable);
         }
         $output .= $this->box_end();
