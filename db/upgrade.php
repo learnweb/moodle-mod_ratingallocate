@@ -218,7 +218,7 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2023050900, 'ratingallocate');
     }
 
-    if ($oldversion < 2023122000) {
+    if ($oldversion < 2024011700) {
 
         // Define completionrules fields to be added to ratingallocate.
         $table = new xmldb_table('ratingallocate');
@@ -234,7 +234,7 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         }
 
         // Ratingallocate savepoint reached.
-        upgrade_mod_savepoint(true, 2023121300, 'ratingallocate');
+        upgrade_mod_savepoint(true, 2024011700, 'ratingallocate');
     }
 
     return true;

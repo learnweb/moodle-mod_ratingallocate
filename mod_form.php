@@ -334,8 +334,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform = $this->_form;
         $suffix = $this->get_suffix();
 
-        $mform->addElement('checkbox', $this->get_suffixed_name('vote'), ' ', get_string('completionvote', RATINGALLOCATE_MOD_NAME));
-        $mform->addElement('checkbox', $this->get_suffixed_name('allocation'), ' ', get_string('completionallocation', RATINGALLOCATE_MOD_NAME));
+        $mform->addElement('advcheckbox', $this->get_suffixed_name('vote'), ' ', get_string('completionvote', RATINGALLOCATE_MOD_NAME));
+        $mform->addElement('advcheckbox', $this->get_suffixed_name('allocation'), ' ', get_string('completionallocation', RATINGALLOCATE_MOD_NAME));
 
         //Set default to not checked.
         $mform->setDefault($this->get_suffixed_name('vote'), 0);
@@ -349,7 +349,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     }
 
     protected function get_suffixed_name(string $fieldname): string {
-        return $fieldname . $this->get_suffix();
+        return 'completion' . $fieldname;
     }
 
     /**

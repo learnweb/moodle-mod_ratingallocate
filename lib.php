@@ -781,7 +781,7 @@ function ratingallocate_get_coursemodule_info($coursemodule) {
     }
 
     // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
-    if ($ratingallocate->completion == COMPLETION_TRACKING_AUTOMATIC) {
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
         $result->customdata['customcompletionrules']['completionvote'] = $ratingallocate->completionvote;
         $result->customdata['customcompletionrules']['completionallocation'] = $ratingallocate->completionallocation;
     }
