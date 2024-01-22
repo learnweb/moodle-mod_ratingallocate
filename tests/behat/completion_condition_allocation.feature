@@ -19,8 +19,13 @@ Feature: Set a ratingallocate activity marked as completed when a user has been 
       | student1 | C1     | student        |
       | student2 | C1     | student        |
     And the following "activities" exist:
-      | activity       | course | idnumber | name               | completion |
-      | ratingallocate | C1     | ra1      | My Fair Allocation | 3          |
+      | activity       | course | idnumber | name               |
+      | ratingallocate | C1     | ra1      | My Fair Allocation |
+    And I am on the "My Fair Allocation" "ratingallocate activity editing" page
+    And I expand "Completion conditions" node
+    And I select the radio "id_completion_2"
+    And I check "id_completionallocation"
+    And I press "id_submitbutton"
     And the following choices exist:
       | title | explanation | maxsize | ratingallocate     |
       | C1    | Test        | 1       | My Fair Allocation |
