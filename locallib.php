@@ -742,6 +742,13 @@ class ratingallocate {
                         $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $rater->id);
                     }
                 }
+                $raters = $this->get_raters_in_course();
+                $completion = new completion_info($this->course);
+                if ($completion->is_enabled($this->coursemodule)) {
+                    foreach ($raters as $rater) {
+                        $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $rater->id);
+                    }
+                }
             }
             $output .= $OUTPUT->heading(get_string('manual_allocation', RATINGALLOCATE_MOD_NAME), 2);
 
