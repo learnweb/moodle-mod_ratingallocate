@@ -304,6 +304,13 @@ class ratingallocate {
                         \core\output\notification::NOTIFY_SUCCESS);
             }
         }
+        $raters = $this->get_raters_in_course();
+        $completion = new completion_info($this->course);
+        if ($completion->is_enabled($this->coursemodule)) {
+            foreach ($raters as $rater) {
+                $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $rater->id);
+            }
+        }
         redirect(new moodle_url('/mod/ratingallocate/view.php',
                 ['id' => $this->coursemodule->id]));
         return;
@@ -726,6 +733,13 @@ class ratingallocate {
                     } else {
                         redirect(new moodle_url('/mod/ratingallocate/view.php',
                                 ['id' => $this->coursemodule->id, 'action' => ACTION_MANUAL_ALLOCATION]));
+                    }
+                }
+                $raters = $this->get_raters_in_course();
+                $completion = new completion_info($this->course);
+                if ($completion->is_enabled($this->coursemodule)) {
+                    foreach ($raters as $rater) {
+                        $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $rater->id);
                     }
                 }
             }
