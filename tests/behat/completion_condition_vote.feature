@@ -19,8 +19,8 @@ Feature: Set a ratingallocate activity marked as completed when a user submits a
       | student1 | C1     | student        |
       | student2 | C1     | student        |
     And the following "activities" exist:
-      | activity       | course | idnumber | name               |
-      | ratingallocate | C1     | ra1      | My Fair Allocation |
+      | activity       | course | idnumber | name               | completion | completionvote |
+      | ratingallocate | C1     | ra1      | My Fair Allocation | 2          | 1              |
     And I log in as "teacher1"
     And I am on the "My Fair Allocation" "ratingallocate activity" page
     And I press "Edit Choices"
@@ -28,11 +28,6 @@ Feature: Set a ratingallocate activity marked as completed when a user submits a
       | title                  | My first choice |
       | Description (optional) | Test 1          |
       | maxsize                | 2               |
-    And I am on the "My Fair Allocation" "ratingallocate activity editing" page
-    And I expand "Completion conditions" node
-    And I select the radio "id_completion_2"
-    And I check "id_completionvote"
-    And I press "id_submitbutton"
 
   @javascript
   Scenario: User completes ratingallocate only if they voted
