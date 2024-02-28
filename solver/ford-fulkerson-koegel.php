@@ -42,36 +42,75 @@ class solver_ford_fulkerson extends distributor {
      * according to the computed distriution.
      *
      */
-    public function compute_distribution($choicerecords, $ratings, $usercount) {
-        $groupdata = array();
-        foreach ($choicerecords as $record) {
-            $groupdata[$record->id] = $record;
-        }
+    public function compute_distribution($choicerecords, $ratings, $usercount, $teamvote) {
 
-        $groupcount = count($groupdata);
-        // Index of source and sink in the graph.
-        $source = 0;
-        $sink = $groupcount + $usercount + 1;
-        list($fromuserid, $touserid, $fromgroupid, $togroupid) = $this->setup_id_conversions($usercount, $ratings);
+        if (!$teamvote) {
 
-        $this->setup_graph($groupcount, $usercount, $fromuserid, $fromgroupid, $ratings, $groupdata, $source, $sink);
-
-        // Now that the datastructure is complete, we can start the algorithm
-        // This is an adaptation of the Ford-Fulkerson algorithm
-        // (http://en.wikipedia.org/wiki/Ford%E2%80%93Fulkerson_algorithm).
-        for ($i = 1; $i <= $usercount; $i++) {
-            // Look for an augmenting path (a shortest path from the source to the sink).
-            $path = $this->find_shortest_path_bellmanf_koegel($source, $sink);
-            // If there is no such path, it is impossible to fit any more users into groups.
-            if (is_null($path)) {
-                // Stop the algorithm.
-                continue;
+            $groupdata = array();
+            foreach ($choicerecords as $record) {
+                $groupdata[$record->id] = $record;
             }
-            // Reverse the augmenting path, thereby distributing a user into a group.
-            $this->augment_flow($path);
+
+            $groupcount = count($groupdata);
+            // Index of source and sink in the graph.
+            $source = 0;
+            $sink = $groupcount + $usercount + 1;
+            list($fromuserid, $touserid, $fromgroupid, $togroupid) = $this->setup_id_conversions($usercount, $ratings);
+
+            $this->setup_graph($groupcount, $usercount, $fromuserid, $fromgroupid, $ratings, $groupdata, $source, $sink);
+
+            // Now that the datastructure is complete, we can start the algorithm
+            // This is an adaptation of the Ford-Fulkerson algorithm
+            // (http://en.wikipedia.org/wiki/Ford%E2%80%93Fulkerson_algorithm).
+            for ($i = 1; $i <= $usercount; $i++) {
+                // Look for an augmenting path (a shortest path from the source to the sink).
+                $path = $this->find_shortest_path_bellmanf_koegel($source, $sink);
+                // If there is no such path, it is impossible to fit any more users into groups.
+                if (is_null($path)) {
+                    // Stop the algorithm.
+                    continue;
+                }
+                // Reverse the augmenting path, thereby distributing a user into a group.
+                $this->augment_flow($path);
+            }
+
+            return $this->extract_allocation($touserid, $togroupid);
+
+        } else {
+
+            $groupdata = array();
+            foreach ($choicerecords as $record) {
+                $groupdata[$record->id] = $record;
+            }
+
+            $groupcount = count($groupdata);
+            // Index of source and sink in the graph.
+            $source = 0;
+            $teamcount = count($teamvote);
+            $sink = $groupcount + $teamcount + 1;
+            list($fromteamid, $toteamid, $fromgroupid, $togroupid) = $this->setup_id_conversions($usercount, $ratings);
+
+            $this->setup_graph_for_teamvote($groupcount, $teamcount, $fromteamid, $fromgroupid, $ratings, $groupdata, $source, $sink);
+
+            // Now that the datastructure is complete, we can start the algorithm
+            // This is an adaptation of the Ford-Fulkerson algorithm
+            // (http://en.wikipedia.org/wiki/Ford%E2%80%93Fulkerson_algorithm).
+            for ($i = 1; $i <= $teamcount; $i++) {
+                // Look for an augmenting path (a shortest path from the source to the sink).
+                $path = $this->find_shortest_path_bellmanf_koegel($source, $sink);
+                // If there is no such path, it is impossible to fit any more users into groups.
+                if (is_null($path)) {
+                    // Stop the algorithm.
+                    continue;
+                }
+                // Reverse the augmenting path, thereby distributing a user into a group.
+                $this->augment_flow($path, $teamvote, $toteamid);
+            }
+
+            return $this->extract_allocation($toteamid, $togroupid, $teamvote);
+
         }
 
-        return $this->extract_allocation($touserid, $togroupid);
     }
 
     /**

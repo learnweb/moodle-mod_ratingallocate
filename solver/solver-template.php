@@ -98,14 +98,31 @@ class distributor {
 
         $usercount = count($ratingallocate->get_raters_in_course());
 
-        $distributions = $this->compute_distribution($choicerecords, $ratings, $usercount);
+        $teamvote = $ratingallocate->get_teamvote_goups();
+
+        $distributions = $this->compute_distribution($choicerecords, $ratings, $usercount, $teamvote);
 
         // Perform all allocation manipulation / inserts in one transaction.
         $transaction = $ratingallocate->db->start_delegated_transaction();
 
         $ratingallocate->clear_all_allocations();
 
-        foreach ($distributions as $choiceid => $users) {
+        $userdistributions = array();
+
+        if (!$teamvote) {
+            $userdistributions = $distributions;
+        } else {
+            // Map choiceids to every user of the team it is mapped to.
+            $userids = array();
+            foreach ($distributions as $choiceid => $teamids) {
+                foreach ($teamids as $teamid) {
+                    $userids[$teamid] = groups_get_members($teamid, 'id');
+                }
+                $userdistributions[$choiceid] = array_merge($userids);
+            }
+        }
+
+        foreach ($userdistributions as $choiceid => $users) {
             foreach ($users as $userid) {
                 $ratingallocate->add_allocation($choiceid, $userid, $ratingallocate->ratingallocate->id);
             }
@@ -116,7 +133,7 @@ class distributor {
     /**
      * Extracts a distribution/allocation from the graph.
      *
-     * @param $touserid a map mapping from indexes in the graph to userids
+     * @param $touserid a map mapping from indexes in the graph to userids (or teamids)
      * @param $tochoiceid a map mapping from indexes in the graph to choiceids
      * @return an array of the form array(groupid => array(userid, ...), ...)
      */
@@ -174,6 +191,44 @@ class distributor {
     }
 
     /**
+     * Setup conversions between ids of teams and choices to their node-ids in the graph
+     * @param type $teamcount
+     * @param type $ratings
+     * @return array($fromteamid, $toteamid, $fromchoiceid, $tochoiceid);
+     */
+    public static function setup_id_conversions_for_teamvote($teamcount, $ratings) {
+        // These tables convert teamids to their index in the graph
+        // The range is [1..$teamcount].
+        $fromteamid = array();
+        $toteamid = array();
+        // These tables convert choiceids to their index in the graph
+        // The range is [$teamcount + 1 .. $teamcount + $choicecount].
+        $fromchoiceid = array();
+        $tochoiceid = array();
+
+        // Team counter.
+        $ti = 1;
+        // Group counter.
+        $gi = $teamcount + 1;
+
+        // Fill the conversion tables for group and team ids.
+        foreach ($ratings as $rating) {
+            if (!array_key_exists($rating->groupid, $fromteamid)) {
+                $fromteamid[$rating->groupid] = $ti;
+                $toteamid[$ti] = $rating->groupid;
+                $ti++;
+            }
+            if (!array_key_exists($rating->choiceid, $fromchoiceid)) {
+                $fromchoiceid[$rating->choiceid] = $gi;
+                $tochoiceid[$gi] = $rating->choiceid;
+                $gi++;
+            }
+        }
+
+        return array($fromteamid, $toteamid, $fromchoiceid, $tochoiceid);
+    }
+
+    /**
      * Sets up $this->graph
      * @param type $choicecount
      * @param type $usercount
@@ -221,13 +276,62 @@ class distributor {
     }
 
     /**
+     * Sets up $this->graph
+     * @param type $choicecount
+     * @param type $teamcount
+     * @param type $fromteamid
+     * @param type $fromchoiceid
+     * @param type $ratings
+     * @param type $choicedata
+     * @param type $source
+     * @param type $sink
+     */
+    protected function setup_graph_for_teamvote($choicecount, $teamcount, $fromteamid, $fromchoiceid, $ratings, $choicedata, $source, $sink,
+                                   $weightmult = 1) {
+        // Construct the datastructures for the algorithm
+        // A directed weighted bipartite graph.
+        // A source is connected to all users with unit cost.
+        // The teams are connected to their choices with cost equal to their rating.
+        // The choices are connected to a sink with 0 cost.
+        $this->graph = array();
+        // Add source, sink and number of nodes to the graph.
+        $this->graph[$source] = array();
+        $this->graph[$sink] = array();
+        $this->graph['count'] = $choicecount + $teamcount + 2;
+
+        // Add teams and choices to the graph and connect them to the source and sink.
+        foreach ($fromteamid as $id => $team) {
+            $this->graph[$team] = array();
+            $this->graph[$source][] = new edge($source, $team, 0);
+        }
+        foreach ($fromchoiceid as $id => $choice) {
+            $this->graph[$choice] = array();
+            if ($choicedata[$id]->maxsize > 0) {
+                $this->graph[$choice][] = new edge($choice, $sink, 0, $choicedata[$id]->maxsize);
+            }
+        }
+
+        // Add the edges representing the ratings to the graph.
+        foreach ($ratings as $id => $rating) {
+            $team = $fromteamid[$rating->groupid];
+            $choice = $fromchoiceid[$rating->choiceid];
+            $weight = $rating->rating;
+            if ($weight > 0) {
+                $this->graph[$team][] = new edge($team, $choice, $weightmult * $weight);
+            }
+        }
+
+        // Andere Kanten noch entsprechend groupmembers gewichten?
+    }
+
+    /**
      * Augments the flow in the network, i.e. augments the overall 'satisfaction'
-     * by distributing users to choices
+     * by distributing users (or teams) to choices
      * Reverses all edges along $path in $graph
      * @param type $path path from t to s
      * @throws moodle_exception
      */
-    protected function augment_flow($path) {
+    protected function augment_flow($path, $teamvote=false, $toteamid=null) {
         if (is_null($path) || count($path) < 2) {
             throw new \moodle_exception('invalid_path', 'ratingallocate');
         }
@@ -246,9 +350,17 @@ class distributor {
                 }
             }
             // The second to last node in a path has to be a choice-node.
-            // Reduce its space by one, because one user just got distributed into it.
-            if ($i == 1 && $edge->space > 1) {
-                $edge->space--;
+            // The node before that has to be a teamnode (or usernode), distribute them to this choice.
+            if (!$teamvote) {
+                // If teamvote=false, reduce its space by one, because one user just got distributed into it.
+                $space = 1;
+            } else {
+                // If teamvote is enabled, reduce its space by amount of groupmembers.
+                $space = $teamvote[$toteamid[$path[$i+1]]];
+            }
+
+            if ($i == 1 && $edge->space > $space) {
+                $edge->space = $edge->space - $space;
             } else {
                 // Remove the edge.
                 array_splice($this->graph[$from], $foundedgeid, 1);

@@ -1278,6 +1278,36 @@ class ratingallocate {
     }
 
     /**
+     * Returns the groups in the teamvote grouping with the amount of groupmembers
+     *
+     * @return array|false Array of the form groupid => membercount if teamvote is enabled, false if not
+     * @throws dml_exception
+     */
+    public function get_teamvote_goups() {
+        if ($this->db->get_field(this_db\ratingallocate::TABLE, 'teamvote', ['id' => $this->ratingallocateid]) == 1) {
+
+            // Get the groups that are in the teamvote grouping and their amount of groupmembers.
+            $sql = 'SELECT m.groupid as groupid, COUNT(m.userid) AS members
+                FROM {groupings_groups} g INNER JOIN {groups_members} m ON g.groupid=m.groupid
+                WHERE g.groupingid = :groupingid
+                GROUP BY groupid';
+            $groupingid = $this->db->get_field(this_db\ratingallocate::TABLE, 'teamvotegroupingid', ['id' => $this->ratingallocateid]);
+
+            // Return array should have the form groupid => membercount.
+            $groups = array_map(function ($record) {
+                return $record->members;
+            }, $this->db->get_records_sql($sql, ['groupingid' => $groupingid]));
+            return $groups;
+        }
+        // Anderen Default return überlegen? passend zu Graphenkanten.
+        return false;
+    }
+
+    public function get_users_in_teams() {
+
+    }
+
+    /**
      * distribution of choices for each user
      * take care about max_execution_time and memory_limit
      */

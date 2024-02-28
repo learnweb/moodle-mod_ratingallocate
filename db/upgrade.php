@@ -218,5 +218,33 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2023050900, 'ratingallocate');
     }
 
+    if ($oldversion < 2024020500) {
+
+        // Define fields teamvote and teamvotegroupingid to be added to ratingallocate.
+        $table = new xmldb_table('ratingallocate');
+        $field_teamvote = new xmldb_field('teamvote', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $field_teamvotegroupingid = new xmldb_field('teamvotegroupingid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Conditionally launch add fields to ratingallocate table.
+        if (!$dbman->field_exists($table, $field_teamvote)) {
+            $dbman->add_field($table, $field_teamvote);
+        }
+        if (!$dbman->field_exists($table, $field_teamvotegroupingid)) {
+            $dbman->add_field($table, $field_teamvotegroupingid);
+        }
+
+        // Define field groupid to be added to ratingallocate_ratings.
+        $ratingstable = new xmldb_table('ratingallocate_ratings');
+        $field_groupid = new xmldb_field('groupid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Conditionally launch add field.
+        if (!$dbman->field_exists($ratingstable, $field_groupid)) {
+            $dbman->add_field($ratingstable, $field_groupid);
+        }
+
+        // Ratingallocate savepoint reached.
+        upgrade_mod_savepoint(true, 2024020500, 'ratingallocate');
+    }
+
     return true;
 }

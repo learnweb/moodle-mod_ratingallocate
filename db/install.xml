@@ -23,12 +23,15 @@
         <FIELD NAME="runalgorithmbycron" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="0 don't run algorithm by cron; 1 run algorithm by cron"/>
         <FIELD NAME="algorithmstarttime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="only set while running"/>
         <FIELD NAME="algorithmstatus" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="-1 failure while running algorithm; 0 algorithm has not been running; 1 algorithm running; 2 algorithm finished"/>
+        <FIELD NAME="teamvote" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Do students vote in teams?"/>
+        <FIELD NAME="teamvotegroupingid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="A grouping id to get groups for team votings"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+        <INDEX NAME="teamvotegroupingid" UNIQUE="false" FIELDS="teamvotegroupingid" COMMENT="The grouping id for team votings"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="ratingallocate_choices" COMMENT="A choice option within a ratingallocation activity.">
@@ -52,6 +55,7 @@
         <FIELD NAME="choiceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="rating" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="rating given"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The group id for team votings"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

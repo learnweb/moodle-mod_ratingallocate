@@ -66,7 +66,9 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         global $CFG, $PAGE;
         $mform = $this->_form;
 
-        $disablestrategy = $this->get_disable_strategy();
+        $info = $this->get_disable_strategy(true);
+        $disablestrategy = $info['disable_strategy'];
+        $ratingallocate = $info['ratingallocate'];
 
         // Adding the "general" fieldset, where all the common settings are showed.
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -137,6 +139,39 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $mform->addElement('static', self::STRATEGY_OPTIONS_PLACEHOLDER . '[' . $strategy . ']', '', '');
         }
 
+        // Add settings for voting in groups
+        $mform->addElement('header', 'groupvotesettings', get_string('groupvotesettings', RATINGALLOCATE_MOD_NAME));
+
+        $name = get_string('teamvote', RATINGALLOCATE_MOD_NAME);
+        $mform->addElement('selectyesno', 'teamvote', $name);
+        $mform->addHelpButton('teamvote', 'teamvote', RATINGALLOCATE_MOD_NAME);
+        if ($disablestrategy) {
+            $mform->freeze('teamvote');
+        }
+
+        $name = get_string('preventvotenotingroup', RATINGALLOCATE_MOD_NAME);
+        $mform->addElement('selectyesno', 'preventvotenotingroup', $name);
+        $mform->addHelpButton('preventvotenotingroup',
+            'preventvotenotingroup',
+            RATINGALLOCATE_MOD_NAME);
+        $mform->setType('preventvotenotingroup', PARAM_BOOL);
+        $mform->hideIf('preventvotenotingroup', 'teamvote', 'eq', 0);
+
+        $groupings = groups_get_all_groupings($ratingallocate->ratingallocate->dbrecord->course);
+        $options = array();
+        $options[0] = get_string('none');
+        foreach ($groupings as $grouping) {
+            $options[$grouping->id] = $grouping->name;
+        }
+
+        $name = get_string('teamvotegroupingid', RATINGALLOCATE_MOD_NAME);
+        $mform->addElement('select', 'teamvotegroupingid', $name, $options);
+        $mform->addHelpButton('teamvotegroupingid', 'teamvotegroupingid', RATINGALLOCATE_MOD_NAME);
+        $mform->hideIf('teamvotegroupingid', 'teamvote', 'eq', 0);
+        if ($disablestrategy) {
+            $mform->freeze('teamsubmissiongroupingid');
+        }
+
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
 
@@ -144,6 +179,15 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
+    /**
+     * Returns wether strategy and teamvote settings should be disabled.
+     * (True, if there are already ratings for this instance, False if there are not).
+     *
+     * @param $includeratingallocate Bool Wether to also return the ratingallocate instance.
+     * @return array|bool
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function get_disable_strategy($includeratingallocate = false) {
         $update = $this->optional_param('update', 0, PARAM_INT);
         if ($update != 0) {
@@ -269,6 +313,9 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             // If strategy selection is disabled make sure the user didn't change it.
             if ($ratingallocate->ratingallocate->dbrecord->strategy !== $data['strategy']) {
                 $errors['strategy'] = get_string('strategy_altered_after_preferences', self::MOD_NAME);
+            }
+            if($ratingallocate->ratingallocate->dbrecord->teamvote !== $data['teamvote']) {
+                $errors['teamvote'] = get_string('teamvote_altered_after_preferences', self::MOD_NAME);
             }
         }
 
