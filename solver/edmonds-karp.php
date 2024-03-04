@@ -34,32 +34,60 @@ class solver_edmonds_karp extends distributor {
         return 'edmonds_karp';
     }
 
-    public function compute_distribution($choicerecords, $ratings, $usercount) {
+    public function compute_distribution($choicerecords, $ratings, $usercount, $teamvote) {
         $choicedata = array();
         foreach ($choicerecords as $record) {
             $choicedata[$record->id] = $record;
         }
 
         $choicecount = count($choicedata);
+
         // Index of source and sink in the graph.
         $source = 0;
-        $sink = $choicecount + $usercount + 1;
 
-        list($fromuserid, $touserid, $fromchoiceid, $tochoiceid) = $this->setup_id_conversions($usercount, $ratings);
+        if (!$teamvote) {
 
-        $this->setup_graph($choicecount, $usercount, $fromuserid, $fromchoiceid, $ratings, $choicedata, $source, $sink, -1);
+            $sink = $choicecount + $usercount + 1;
 
-        // Now that the datastructure is complete, we can start the algorithm
-        // This is an adaptation of the Ford-Fulkerson algorithm
-        // with Bellman-Ford as search function (see: Edmonds-Karp in Introduction to Algorithms)
-        // http://stackoverflow.com/questions/6681075/while-loop-in-php-with-assignment-operator
-        // Look for an augmenting path (a shortest path from the source to the sink).
-        while ($path = $this->find_shortest_path_bellf($source, $sink)) { // If the function returns null, the while will stop.
-            // Reverse the augmentin path, thereby distributing a user into a group.
-            $this->augment_flow($path);
-            unset($path); // Clear up old path.
+            list($fromuserid, $touserid, $fromchoiceid, $tochoiceid) = $this->setup_id_conversions($usercount, $ratings);
+
+            $this->setup_graph($choicecount, $usercount, $fromuserid, $fromchoiceid, $ratings, $choicedata, $source, $sink, -1);
+
+            // Now that the datastructure is complete, we can start the algorithm
+            // This is an adaptation of the Ford-Fulkerson algorithm
+            // with Bellman-Ford as search function (see: Edmonds-Karp in Introduction to Algorithms)
+            // http://stackoverflow.com/questions/6681075/while-loop-in-php-with-assignment-operator
+            // Look for an augmenting path (a shortest path from the source to the sink).
+            while ($path = $this->find_shortest_path_bellf($source, $sink)) { // If the function returns null, the while will stop.
+                // Reverse the augmentin path, thereby distributing a user into a group.
+                $this->augment_flow($path);
+                unset($path); // Clear up old path.
+            }
+            return $this->extract_allocation($touserid, $tochoiceid);
+
+        } else {
+
+            $teamcount = count($teamvote);
+            $sink = $choicecount + $teamcount + 1;
+
+            list($fromteamid, $toteamid, $fromchoiceid, $tochoiceid) = $this->setup_id_conversions_for_teamvote($teamcount, $ratings);
+
+            $this->setup_graph_for_teamvote($choicecount, $teamcount, $fromteamid, $fromchoiceid, $ratings, $choicedata, $source, $sink, -1);
+
+            // Now that the datastructure is complete, we can start the algorithm
+            // This is an adaptation of the Ford-Fulkerson algorithm
+            // with Bellman-Ford as search function (see: Edmonds-Karp in Introduction to Algorithms)
+            // http://stackoverflow.com/questions/6681075/while-loop-in-php-with-assignment-operator
+            // Look for an augmenting path (a shortest path from the source to the sink).
+            while ($path = $this->find_shortest_path_bellf($source, $sink)) { // If the function returns null, the while will stop.
+                // Reverse the augmentin path, thereby distributing a user into a group.
+                $this->augment_flow($path);
+                unset($path); // Clear up old path.
+            }
+            return $this->extract_allocation($toteamid, $tochoiceid);
+
         }
-        return $this->extract_allocation($touserid, $tochoiceid);
+
     }
 
     /**

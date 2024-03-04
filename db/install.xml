@@ -25,6 +25,7 @@
         <FIELD NAME="algorithmstatus" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="-1 failure while running algorithm; 0 algorithm has not been running; 1 algorithm running; 2 algorithm finished"/>
         <FIELD NAME="teamvote" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Do students vote in teams?"/>
         <FIELD NAME="teamvotegroupingid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="A grouping id to get groups for team votings"/>
+        <FIELD NAME="preventvotenotingroup" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If enabled a user will be unable to give a rating unless they are a member of a group in the given grouping"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

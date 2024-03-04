@@ -1286,12 +1286,39 @@ class ratingallocate {
     public function get_teamvote_goups() {
         if ($this->db->get_field(this_db\ratingallocate::TABLE, 'teamvote', ['id' => $this->ratingallocateid]) == 1) {
 
+            $groupingid = $this->db->get_field(this_db\ratingallocate::TABLE, 'teamvotegroupingid', ['id' => $this->ratingallocateid]);
+
+            // If voting for users not in groups is not disabled, we have to also consider the users that do not have a group.
+            if ($this->db->get_field(this_db\ratingallocate::TABLE, 'preventvotenotingroup', ['id' => $this->ratingallocateid]) == 0) {
+                // Get all users not in a group of the teamvote grouping.
+                $usersnogroup = array_diff($this->get_raters_in_course(), groups_get_grouping_members($groupingid));
+
+                $groupdata = new stdClass();
+                $groupdata->courseid =$this->course->id;
+                $groupdata->idnumber = $this->ratingallocateid;
+                $groupdata->name = 'delete after algorithm run';
+
+                foreach ($usersnogroup as $user) {
+
+                    // Create group and add user. Group will be deleted after distributing the users
+                    $groupid = groups_create_group($groupdata);
+                    groups_add_member($groupid, $user);
+
+                    // Add group to grouping.
+                    $this->db->insert_record('groupings_groups', ['groupingid' => $groupingid, 'groupid' => $groupid]);
+
+                    // Add groupid to ratings of this user.
+                    $this->add_groupid_to_ratings($user->id, $groupid);
+
+                }
+            }
+
             // Get the groups that are in the teamvote grouping and their amount of groupmembers.
             $sql = 'SELECT m.groupid as groupid, COUNT(m.userid) AS members
                 FROM {groupings_groups} g INNER JOIN {groups_members} m ON g.groupid=m.groupid
                 WHERE g.groupingid = :groupingid
                 GROUP BY groupid';
-            $groupingid = $this->db->get_field(this_db\ratingallocate::TABLE, 'teamvotegroupingid', ['id' => $this->ratingallocateid]);
+
 
             // Return array should have the form groupid => membercount.
             $groups = array_map(function ($record) {
@@ -1299,11 +1326,41 @@ class ratingallocate {
             }, $this->db->get_records_sql($sql, ['groupingid' => $groupingid]));
             return $groups;
         }
-        // Anderen Default return überlegen? passend zu Graphenkanten.
+
         return false;
     }
 
-    public function get_users_in_teams() {
+    /**
+     * Adds the groupid to all rating records with this userid. Should only be used for ratings with groupid 0.
+     *
+     * @param $userid
+     * @param $groupid
+     * @return void
+     * @throws dml_exception
+     */
+    public function add_groupid_to_ratings($userid, $groupid) {
+
+        $sql = 'SELECT ra.* FROM {ratingallocate_ratings} ra INNER JOIN {ratingallocate_choices} c
+            ON ra.choiceid=c.id WHERE c.ratingallocateid = :ratingallocateid AND ra.userid = :userid';
+        $ratings = $this->db->get_records_sql($sql, ['ratingallocateid' => $this->ratingallocateid, 'userid' => $userid]);
+        foreach ($ratings as $rating) {
+            $rating->groupid = $groupid;
+            $this->db->update_record('ratingallocate_ratings', $rating);
+        }
+
+    }
+
+    public function delete_groups_for_usersnogroup($usergroups) {
+
+        $sql = 'SELECT id FROM {groups} WHERE id IN ( :groups ) AND idnumber = :ratingallocateid AND name = :name';
+        $delgroups = $this->db->get_records_sql($sql, [
+            'groups' => implode(" , ", array_keys($usergroups)),
+            'ratingallocateid' => $this->ratingallocateid,
+            'name' => 'delete after algorithm run'
+        ]);
+        foreach ($delgroups as $group) {
+            groups_delete_group($group);
+        }
 
     }
 
@@ -1635,17 +1692,20 @@ class ratingallocate {
      * @return array
      */
     public function get_rating_data_for_user($userid) {
+
         $sql = "SELECT c.id as choiceid, c.title, c.explanation, c.ratingallocateid,
-                            c.maxsize, c.usegroups, r.rating, r.id AS ratingid, r.userid
-                FROM {ratingallocate_choices} c
-           LEFT JOIN {ratingallocate_ratings} r
-                  ON c.id = r.choiceid and r.userid = :userid
-               WHERE c.ratingallocateid = :ratingallocateid AND c.active = 1
-               ORDER by c.title";
+                        c.maxsize, c.usegroups, r.rating, r.id AS ratingid, r.userid
+            FROM {ratingallocate_choices} c
+        LEFT JOIN {ratingallocate_ratings} r
+              ON c.id = r.choiceid and r.userid = :userid
+           WHERE c.ratingallocateid = :ratingallocateid AND c.active = 1
+           ORDER by c.title";
+
         return $this->db->get_records_sql($sql, array(
-                'ratingallocateid' => $this->ratingallocateid,
-                'userid' => $userid
+            'ratingallocateid' => $this->ratingallocateid,
+            'userid' => $userid
         ));
+
     }
 
     /**
@@ -1698,7 +1758,7 @@ class ratingallocate {
     }
 
     /**
-     * Delete all ratings of a users
+     * Delete all ratings of a users and if teamvote is enabled also the ratings of all groupmembers
      * @param int $userid
      */
     public function delete_ratings_of_user($userid) {
@@ -1710,14 +1770,33 @@ class ratingallocate {
 
             $choices = $this->get_choices();
 
-            foreach ($choices as $id => $choice) {
-                $data = array(
+            $teamvote = ($DB->get_field('ratingallocate', 'teamvote', ['id' => $this->ratingallocateid]) == 1);
+            if ($teamvote && $votegroup=$this->get_vote_group($userid)) {
+
+                // If teamvote is enabled, delete ratings for this group.
+                foreach ($choices as $id => $choice) {
+                    $data = array(
+                        'groupid' => $votegroup->id,
+                        'choiceid' => $id
+                    );
+
+                    // Actually delete the rating.
+                    $DB->delete_records('ratingallocate_ratings', $data);
+                }
+
+            } else {
+
+                // Delete rating for just this user.
+                foreach ($choices as $id => $choice) {
+                    $data = array(
                         'userid' => $userid,
                         'choiceid' => $id
-                );
+                    );
 
-                // Actually delete the rating.
-                $DB->delete_records('ratingallocate_ratings', $data);
+                    // Actually delete the rating.
+                    $DB->delete_records('ratingallocate_ratings', $data);
+                }
+
             }
 
             $transaction->allow_commit();
@@ -1741,22 +1820,43 @@ class ratingallocate {
         $transaction = $DB->start_delegated_transaction();
         $loggingdata = array();
         try {
+
+            $teamvote = ($DB->get_field('ratingallocate', 'teamvote', ['id' => $this->ratingallocateid]) == 1);
+            if ($teamvote && $votegroup=$this->get_vote_group($userid)) {
+                $votegroupid = $votegroup->id;
+                $ratingexists = array(
+                    'groupid' => $votegroupid
+                );
+            } else {
+                $votegroupid = 0;
+                $ratingexists = array(
+                    'userid' => $userid
+                );
+            }
+
             foreach ($data as $id => $rdata) {
                 $rating = new stdClass ();
                 $rating->rating = $rdata['rating'];
 
-                $ratingexists = array(
-                        'choiceid' => $rdata['choiceid'],
-                        'userid' => $userid
-                );
+                $ratingexists['choiceid'] = $rdata['choiceid'];
                 if ($DB->record_exists('ratingallocate_ratings', $ratingexists)) {
                     // The rating exists, we need to update its value
-                    // We get the id from the database.
+                    // We get the id from the database. (There are records for each userid so ignore multiple).
 
-                    $oldrating = $DB->get_record('ratingallocate_ratings', $ratingexists);
+                    $oldrating = $DB->get_record('ratingallocate_ratings', $ratingexists, IGNORE_MULTIPLE);
                     if ($oldrating->{this_db\ratingallocate_ratings::RATING} != $rating->rating) {
                         $rating->id = $oldrating->id;
+                        $rating->groupid = $votegroupid;
                         $DB->update_record('ratingallocate_ratings', $rating);
+
+                        // If teamvote is enabled, update the ratings for all groupmembers.
+                        if ($teamvote && $votegroup) {
+                            $teammembers = groups_get_members($votegroupid, 'u.id');
+                            foreach ($teammembers as $member) {
+                                $rating->userid = $member->id;
+                                $DB->update_record('ratingallocate_ratings', $rating);
+                            }
+                        }
 
                         // Logging.
                         array_push($loggingdata,
@@ -1768,7 +1868,17 @@ class ratingallocate {
                     $rating->userid = $userid;
                     $rating->choiceid = $rdata['choiceid'];
                     $rating->ratingallocateid = $this->ratingallocateid;
+                    $rating->groupid = $votegroupid;
                     $DB->insert_record('ratingallocate_ratings', $rating);
+
+                    // If teamvote is enabled, create ratings for all groupmembers.
+                    if ($teamvote && $votegroup) {
+                        $teammembers = groups_get_members($votegroupid, 'u.id');
+                        foreach ($teammembers as $member) {
+                            $rating->userid = $member->id;
+                            $DB->insert_record('ratingallocate_ratings', $rating);
+                        }
+                    }
 
                     // Logging.
                     array_push($loggingdata,
@@ -1787,6 +1897,28 @@ class ratingallocate {
         } catch (Exception $e) {
             $transaction->rollback($e);
         }
+    }
+
+    /**
+     * This is used for team votings to get the group for the specified user.
+     * If the user is a member of multiple or no groups this will return false
+     *
+     * @param int $userid The id of the user whose rating we want
+     * @return mixed The group or false
+     */
+    public function get_vote_group($userid) {
+
+        global $DB;
+
+        $teamgroupingid = $DB->get_field('ratingallocate', 'teamvotegroupingid', ['id' => $this->ratingallocateid]);
+        $usergroups = groups_get_all_groups($this->course->id, $userid, $teamgroupingid, 'g.*', false, true);
+        if (count($usergroups) != 1) {
+            $return = false;
+        } else {
+            $return = array_pop($usergroups);
+        }
+
+        return $return;
     }
 
     /**

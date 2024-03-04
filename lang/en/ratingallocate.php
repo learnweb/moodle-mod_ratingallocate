@@ -300,6 +300,15 @@ $string['strategy_not_specified'] = 'You have to select a strategy.';
 $string['strategyspecificoptions'] = 'Strategy specific options';
 $string['strategy_altered_after_preferences'] = 'Strategy cannot be changed after preferences where submitted';
 
+$string['groupvotesettings'] = 'Group Voting Settings';
+$string['teamvote'] = 'Students rate in groups';
+$string['teamvote_help'] = 'If enabled, students will be divided into groups based on the default set of groups or a custom grouping. A group rating will count for all group members.';
+$string['teamvotegroupingid'] = 'Grouping for student groups';
+$string['teamvotegroupingid_help'] = 'This is the grouping that the assignment will use to find groups for student groups. If not set, the default set of groups will be used.';
+$string['teamvote_altered_after_preferences'] = 'Group Voting settings cannot be changed after preferences were submitted';
+$string['preventvotenotingroup'] = 'Require group to vote';
+$string['preventvotenotingroup_help'] = 'If enabled, users who are not members of a group will be unable to give a rating.';
+
 $string['err_required'] = 'You need to provide a value for this field.';
 $string['err_minimum'] = 'The minimum value for this field is {$a}.';
 $string['err_maximum'] = 'The maximum value for this field is {$a}.';

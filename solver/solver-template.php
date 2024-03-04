@@ -89,6 +89,8 @@ class distributor {
      */
     public function distribute_users(\ratingallocate $ratingallocate) {
 
+        $teamvote = $ratingallocate->get_teamvote_goups();
+
         // Load data from database.
         $choicerecords = $ratingallocate->get_rateable_choices();
         $ratings = $ratingallocate->get_ratings_for_rateable_choices();
@@ -97,8 +99,6 @@ class distributor {
         shuffle($ratings);
 
         $usercount = count($ratingallocate->get_raters_in_course());
-
-        $teamvote = $ratingallocate->get_teamvote_goups();
 
         $distributions = $this->compute_distribution($choicerecords, $ratings, $usercount, $teamvote);
 
@@ -120,6 +120,10 @@ class distributor {
                 }
                 $userdistributions[$choiceid] = array_merge($userids);
             }
+
+            // We have to delete the provisionally groups containing only one user
+            $ratingallocate->delete_groups_for_usersnogroup($teamvote);
+
         }
 
         foreach ($userdistributions as $choiceid => $users) {

@@ -44,16 +44,19 @@ class solver_ford_fulkerson extends distributor {
      */
     public function compute_distribution($choicerecords, $ratings, $usercount, $teamvote) {
 
+
+
+        $groupdata = array();
+        foreach ($choicerecords as $record) {
+            $groupdata[$record->id] = $record;
+        }
+
+        $groupcount = count($groupdata);
+        // Index of source and sink in the graph.
+        $source = 0;
+
         if (!$teamvote) {
 
-            $groupdata = array();
-            foreach ($choicerecords as $record) {
-                $groupdata[$record->id] = $record;
-            }
-
-            $groupcount = count($groupdata);
-            // Index of source and sink in the graph.
-            $source = 0;
             $sink = $groupcount + $usercount + 1;
             list($fromuserid, $touserid, $fromgroupid, $togroupid) = $this->setup_id_conversions($usercount, $ratings);
 
@@ -78,17 +81,9 @@ class solver_ford_fulkerson extends distributor {
 
         } else {
 
-            $groupdata = array();
-            foreach ($choicerecords as $record) {
-                $groupdata[$record->id] = $record;
-            }
-
-            $groupcount = count($groupdata);
-            // Index of source and sink in the graph.
-            $source = 0;
             $teamcount = count($teamvote);
             $sink = $groupcount + $teamcount + 1;
-            list($fromteamid, $toteamid, $fromgroupid, $togroupid) = $this->setup_id_conversions($usercount, $ratings);
+            list($fromteamid, $toteamid, $fromgroupid, $togroupid) = $this->setup_id_conversions_for_teamvote($usercount, $ratings);
 
             $this->setup_graph_for_teamvote($groupcount, $teamcount, $fromteamid, $fromgroupid, $ratings, $groupdata, $source, $sink);
 
@@ -107,7 +102,7 @@ class solver_ford_fulkerson extends distributor {
                 $this->augment_flow($path, $teamvote, $toteamid);
             }
 
-            return $this->extract_allocation($toteamid, $togroupid, $teamvote);
+            return $this->extract_allocation($toteamid, $togroupid);
 
         }
 
