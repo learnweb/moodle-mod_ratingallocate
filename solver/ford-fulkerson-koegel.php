@@ -44,8 +44,6 @@ class solver_ford_fulkerson extends distributor {
      */
     public function compute_distribution($choicerecords, $ratings, $usercount, $teamvote) {
 
-
-
         $groupdata = array();
         foreach ($choicerecords as $record) {
             $groupdata[$record->id] = $record;

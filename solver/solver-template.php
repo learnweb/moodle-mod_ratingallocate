@@ -121,7 +121,7 @@ class distributor {
                 $userdistributions[$choiceid] = array_merge($userids);
             }
 
-            // We have to delete the provisionally groups containing only one user
+            // We have to delete the provisionally groups containing only one user.
             $ratingallocate->delete_groups_for_usersnogroup($teamvote);
 
         }
@@ -360,7 +360,7 @@ class distributor {
                 $space = 1;
             } else {
                 // If teamvote is enabled, reduce its space by amount of groupmembers.
-                $space = $teamvote[$toteamid[$path[$i+1]]];
+                $space = $teamvote[$toteamid[$path[$i + 1]]];
             }
 
             if ($i == 1 && $edge->space > $space) {

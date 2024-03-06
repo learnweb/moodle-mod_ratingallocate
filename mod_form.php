@@ -139,7 +139,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $mform->addElement('static', self::STRATEGY_OPTIONS_PLACEHOLDER . '[' . $strategy . ']', '', '');
         }
 
-        // Add settings for voting in groups
+        // Add settings for voting in groups.
         $mform->addElement('header', 'groupvotesettings', get_string('groupvotesettings', RATINGALLOCATE_MOD_NAME));
 
         $name = get_string('teamvote', RATINGALLOCATE_MOD_NAME);
@@ -169,7 +169,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addHelpButton('teamvotegroupingid', 'teamvotegroupingid', RATINGALLOCATE_MOD_NAME);
         $mform->hideIf('teamvotegroupingid', 'teamvote', 'eq', 0);
         if ($disablestrategy) {
-            $mform->freeze('teamsubmissiongroupingid');
+            $mform->freeze('teamvotegroupingid');
         }
 
         // Add standard elements, common to all modules.
@@ -314,7 +314,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             if ($ratingallocate->ratingallocate->dbrecord->strategy !== $data['strategy']) {
                 $errors['strategy'] = get_string('strategy_altered_after_preferences', self::MOD_NAME);
             }
-            if($ratingallocate->ratingallocate->dbrecord->teamvote !== $data['teamvote']) {
+            if ($ratingallocate->ratingallocate->dbrecord->teamvote !== $data['teamvote']) {
                 $errors['teamvote'] = get_string('teamvote_altered_after_preferences', self::MOD_NAME);
             }
         }

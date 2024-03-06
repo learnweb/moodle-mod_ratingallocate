@@ -1294,7 +1294,7 @@ class ratingallocate {
                 $usersnogroup = array_diff($this->get_raters_in_course(), groups_get_grouping_members($groupingid));
 
                 $groupdata = new stdClass();
-                $groupdata->courseid =$this->course->id;
+                $groupdata->courseid = $this->course->id;
                 $groupdata->idnumber = $this->ratingallocateid;
                 $groupdata->name = 'delete after algorithm run';
 
@@ -1318,7 +1318,6 @@ class ratingallocate {
                 FROM {groupings_groups} g INNER JOIN {groups_members} m ON g.groupid=m.groupid
                 WHERE g.groupingid = :groupingid
                 GROUP BY groupid';
-
 
             // Return array should have the form groupid => membercount.
             $groups = array_map(function ($record) {
@@ -1771,7 +1770,7 @@ class ratingallocate {
             $choices = $this->get_choices();
 
             $teamvote = ($DB->get_field('ratingallocate', 'teamvote', ['id' => $this->ratingallocateid]) == 1);
-            if ($teamvote && $votegroup=$this->get_vote_group($userid)) {
+            if ($teamvote && $votegroup = $this->get_vote_group($userid)) {
 
                 // If teamvote is enabled, delete ratings for this group.
                 foreach ($choices as $id => $choice) {
@@ -1822,7 +1821,7 @@ class ratingallocate {
         try {
 
             $teamvote = ($DB->get_field('ratingallocate', 'teamvote', ['id' => $this->ratingallocateid]) == 1);
-            if ($teamvote && $votegroup=$this->get_vote_group($userid)) {
+            if ($teamvote && $votegroup = $this->get_vote_group($userid)) {
                 $votegroupid = $votegroup->id;
                 $ratingexists = array(
                     'groupid' => $votegroupid

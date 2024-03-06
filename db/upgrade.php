@@ -222,19 +222,21 @@ function xmldb_ratingallocate_upgrade($oldversion) {
 
         // Define fields teamvote and teamvotegroupingid to be added to ratingallocate.
         $table = new xmldb_table('ratingallocate');
-        $field_teamvote = new xmldb_field('teamvote', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
-        $field_teamvotegroupingid = new xmldb_field('teamvotegroupingid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $field_preventvotenotingroup = new xmldb_field('preventvotenotingroup', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $fieldteamvote = new xmldb_field('teamvote', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $fieldteamvotegroupingid = new xmldb_field('teamvotegroupingid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $fieldpreventvotenotingroup = new xmldb_field(
+            'preventvotenotingroup', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0'
+        );
 
         // Conditionally launch add fields to ratingallocate table.
-        if (!$dbman->field_exists($table, $field_teamvote)) {
-            $dbman->add_field($table, $field_teamvote);
+        if (!$dbman->field_exists($table, $fieldteamvote)) {
+            $dbman->add_field($table, $fieldteamvote);
         }
-        if (!$dbman->field_exists($table, $field_teamvotegroupingid)) {
-            $dbman->add_field($table, $field_teamvotegroupingid);
+        if (!$dbman->field_exists($table, $fieldteamvotegroupingid)) {
+            $dbman->add_field($table, $fieldteamvotegroupingid);
         }
-        if (!$dbman->field_exists($table, $field_preventvotenotingroup)) {
-            $dbman->add_field($table, $field_preventvotenotingroup);
+        if (!$dbman->field_exists($table, $fieldpreventvotenotingroup)) {
+            $dbman->add_field($table, $fieldpreventvotenotingroup);
         }
 
         // Define field groupid to be added to ratingallocate_ratings.
