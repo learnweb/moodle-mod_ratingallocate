@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_ratingallocate;
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 defined('MOODLE_INTERNAL') || die();
 
