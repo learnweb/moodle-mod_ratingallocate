@@ -328,7 +328,7 @@ class ratingallocate {
                 // Rating is possible...
 
                 // Suche das richtige Formular nach Strategie.
-                $strategyform = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
+                $strategyform = 'mod_ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
 
                 $mform = new $strategyform($PAGE->url->out(), $this);
                 $mform->add_action_buttons();
@@ -2047,7 +2047,7 @@ class ratingallocate {
      * Returns the strategy class for the ratingallocate
      */
     private function get_strategy_class() {
-        $strategyclassp = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\strategy';
+        $strategyclassp = 'mod_ratingallocate\\' . $this->ratingallocate->strategy . '\\strategy';
         $allsettings = json_decode($this->ratingallocate->setting, true);
         if (array_key_exists($this->ratingallocate->strategy, $allsettings)) {
             return new $strategyclassp($allsettings[$this->ratingallocate->strategy]);
