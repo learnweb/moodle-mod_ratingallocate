@@ -26,7 +26,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 // Namespace is mandatory!
-namespace ratingallocate\strategy_order;
+namespace mod_ratingallocate\strategy_order;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
