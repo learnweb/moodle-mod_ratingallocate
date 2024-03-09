@@ -41,7 +41,7 @@ define('RATINGALLOCATE_EVENT_TYPE_STOP', 'stop');
 
 require_once(dirname(__FILE__) . '/db/db_structure.php');
 
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 // //////////////////////////////////////////////////////////////////////////////
 // Moodle core API //

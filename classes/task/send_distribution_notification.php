@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__) . '/../../db/db_structure.php');
 
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 class send_distribution_notification extends \core\task\adhoc_task {
     // Gets executed by the task runner. Will lookup the ratingallocation object and

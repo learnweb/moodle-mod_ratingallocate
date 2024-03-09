@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_availability\info_module;
 use mod_ratingallocate\task\distribute_unallocated_task;
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 global $CFG;
 
@@ -328,7 +328,7 @@ class ratingallocate {
                 // Rating is possible...
 
                 // Suche das richtige Formular nach Strategie.
-                $strategyform = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
+                $strategyform = 'mod_ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
 
                 $mform = new $strategyform($PAGE->url->out(), $this);
                 $mform->add_action_buttons();
@@ -396,9 +396,9 @@ class ratingallocate {
             // Notifications if no choices exist or too few in comparison to strategy settings.
             $availablechoices = $this->get_rateable_choices();
             $strategysettings = $this->get_strategy_class()->get_static_settingfields();
-            if (array_key_exists(ratingallocate\strategy_order\strategy::COUNTOPTIONS, $strategysettings)) {
+            if (array_key_exists(mod_ratingallocate\strategy_order\strategy::COUNTOPTIONS, $strategysettings)) {
                 $necessarychoices =
-                        $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
+                        $strategysettings[mod_ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
             } else {
                 $necessarychoices = 0;
             }
@@ -1213,9 +1213,9 @@ class ratingallocate {
             $choicestatus->availablechoices = $this->filter_choices_by_groups($choicestatus->availablechoices, $USER->id);
 
             $strategysettings = $this->get_strategy_class()->get_static_settingfields();
-            if (array_key_exists(ratingallocate\strategy_order\strategy::COUNTOPTIONS, $strategysettings)) {
+            if (array_key_exists(mod_ratingallocate\strategy_order\strategy::COUNTOPTIONS, $strategysettings)) {
                 $choicestatus->necessarychoices =
-                        $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
+                        $strategysettings[mod_ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
             } else {
                 $choicestatus->necessarychoices = 0;
             }
@@ -2047,7 +2047,7 @@ class ratingallocate {
      * Returns the strategy class for the ratingallocate
      */
     private function get_strategy_class() {
-        $strategyclassp = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\strategy';
+        $strategyclassp = 'mod_ratingallocate\\' . $this->ratingallocate->strategy . '\\strategy';
         $allsettings = json_decode($this->ratingallocate->setting, true);
         if (array_key_exists($this->ratingallocate->strategy, $allsettings)) {
             return new $strategyclassp($allsettings[$this->ratingallocate->strategy]);
@@ -2197,7 +2197,7 @@ class ratingallocate {
             $choicecount = count($this->get_rateable_choices());
             $strategyclass = $this->get_strategy_class();
             $strategysettings = $strategyclass->get_static_settingfields();
-            $necessarychoices = $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
+            $necessarychoices = $strategysettings[mod_ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
             if ($choicecount < $necessarychoices) {
                 return false;
             }

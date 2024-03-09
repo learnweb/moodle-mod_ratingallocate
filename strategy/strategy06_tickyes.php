@@ -27,7 +27,7 @@
  */
 
 // Namespace is mandatory!
-namespace ratingallocate\strategy_tickyes;
+namespace mod_ratingallocate\strategy_tickyes;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
