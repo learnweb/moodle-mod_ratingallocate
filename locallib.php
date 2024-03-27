@@ -327,6 +327,8 @@ class ratingallocate {
             } else if ($status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
                 // Rating is possible...
 
+                // Adde votegroup name zu form.
+
                 // Suche das richtige Formular nach Strategie.
                 $strategyform = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
 
@@ -1290,8 +1292,14 @@ class ratingallocate {
 
             // If voting for users not in groups is not disabled, we have to also consider the users that do not have a group.
             if ($this->db->get_field(this_db\ratingallocate::TABLE, 'preventvotenotingroup', ['id' => $this->ratingallocateid]) == 0) {
+
                 // Get all users not in a group of the teamvote grouping.
-                $usersnogroup = array_diff($this->get_raters_in_course(), groups_get_grouping_members($groupingid));
+                $usersnogroup = array();
+                foreach ($this->get_raters_in_course() as $rater) {
+                    if (!in_array($rater, groups_get_grouping_members($groupingid))) {
+                        $usersnogroup[] = $rater;
+                    }
+                }
 
                 $groupdata = new stdClass();
                 $groupdata->courseid = $this->course->id;

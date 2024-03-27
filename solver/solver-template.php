@@ -116,7 +116,7 @@ class distributor {
             $userids = array();
             foreach ($distributions as $choiceid => $teamids) {
                 foreach ($teamids as $teamid) {
-                    $userids[$teamid] = groups_get_members($teamid, 'id');
+                    $userids[$teamid] = groups_get_members($teamid, 'u.id');
                 }
                 $userdistributions[$choiceid] = array_merge($userids);
             }

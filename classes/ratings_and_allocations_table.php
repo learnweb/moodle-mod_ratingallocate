@@ -57,6 +57,11 @@ class ratings_and_allocations_table extends \table_sql {
     private $showgroups;
 
     /**
+     * @var bool if true the table should show a column with the teams of the teamvote grouping.
+     */
+    private $showteams;
+
+    /**
      * @var bool if true the cells are rendered as radio buttons
      */
     private $writeable;
@@ -95,6 +100,7 @@ class ratings_and_allocations_table extends \table_sql {
         $this->shownames = true;
         // We only show the group column if at least one group is being used in at least one active restriction setting of a choice.
         $this->showgroups = !empty($allgroupsofchoices);
+        $this->showteams = (bool) $this->ratingallocate->get_teamvote_goups();
     }
 
     /**
@@ -181,6 +187,10 @@ class ratings_and_allocations_table extends \table_sql {
                             $this->ratingallocate->get_choice_groups($choice->id));
                 }
             }
+            if ($this->showteams) {
+                $columns[] = 'teams';
+                $headers[] = get_string('teams');
+            }
         }
 
         // Setup filter.
@@ -211,11 +221,19 @@ class ratings_and_allocations_table extends \table_sql {
         $this->define_headers($headers);
 
         // Set additional table settings.
+        if ($this->showteams) {
+            //$this->sortable(true, 'teams');
+        } else {
+
+        }
         $this->sortable(true, 'lastname');
         $tableclasses = 'ratingallocate_ratings_table';
         if ($this->showgroups) {
             $tableclasses .= ' includegroups';
             $this->no_sorting('groups');
+        }
+        if ($this->showteams) {
+            $this->no_sorting('teams');
         }
         $this->set_attribute('class', $tableclasses);
 
@@ -326,6 +344,18 @@ class ratings_and_allocations_table extends \table_sql {
                     return $group->name;
                 }, $groupsofuser);
                 $row['groups'] = implode(';', $groupnames);
+            }
+            if ($this->showteams) {
+                $teamofuser = array_filter(array_keys($this->ratingallocate->get_teamvote_goups()),
+                    function($groupid) use ($user) {
+                        return groups_is_member($groupid,$user->id);
+                    }
+                );
+                $teamname = array_map(function ($team) {
+                    return $team->name;
+                }, $teamofuser);
+                // We should only have one team for each user, but we cant ensure that at this point.
+                $row['teams'] = implode(';', $teamname);
             }
         }
 
@@ -662,6 +692,10 @@ class ratings_and_allocations_table extends \table_sql {
 
     }
 
+    private function sort_by_teams ($teams) {
+
+    }
+
     /**
      * Sets up the sql statement for querying the table data.
      */
@@ -673,6 +707,7 @@ class ratings_and_allocations_table extends \table_sql {
         $userids = $this->filter_userids($userids);
 
         $sortfields = $this->get_sort_columns();
+        var_dump($sortfields);
         $fields = "u.*";
         if ($userids) {
             $where = "u.id in (" . implode(",", $userids) . ")";
@@ -690,6 +725,8 @@ class ratings_and_allocations_table extends \table_sql {
                 $from .= " LEFT JOIN {ratingallocate_ratings} r$i ON u.id = r$i.userid AND r$i.choiceid = :choiceid$i ";
                 $fields .= ", r$i.rating as $key";
                 $params["choiceid$i"] = $id;
+            } else if (substr($key, 0, 5) == "teams") {
+                //$from .=
             }
         }
 
