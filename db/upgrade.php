@@ -218,5 +218,39 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2023050900, 'ratingallocate');
     }
 
+    if ($oldversion < 2024030100) {
+
+        // Define fields teamvote and teamvotegroupingid to be added to ratingallocate.
+        $table = new xmldb_table('ratingallocate');
+        $fieldteamvote = new xmldb_field('teamvote', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $fieldteamvotegroupingid = new xmldb_field('teamvotegroupingid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $fieldpreventvotenotingroup = new xmldb_field(
+            'preventvotenotingroup', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0'
+        );
+
+        // Conditionally launch add fields to ratingallocate table.
+        if (!$dbman->field_exists($table, $fieldteamvote)) {
+            $dbman->add_field($table, $fieldteamvote);
+        }
+        if (!$dbman->field_exists($table, $fieldteamvotegroupingid)) {
+            $dbman->add_field($table, $fieldteamvotegroupingid);
+        }
+        if (!$dbman->field_exists($table, $fieldpreventvotenotingroup)) {
+            $dbman->add_field($table, $fieldpreventvotenotingroup);
+        }
+
+        // Define field groupid to be added to ratingallocate_ratings.
+        $ratingstable = new xmldb_table('ratingallocate_ratings');
+        $field_groupid = new xmldb_field('groupid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Conditionally launch add field.
+        if (!$dbman->field_exists($ratingstable, $field_groupid)) {
+            $dbman->add_field($ratingstable, $field_groupid);
+        }
+
+        // Ratingallocate savepoint reached.
+        upgrade_mod_savepoint(true, 2024030100, 'ratingallocate');
+    }
+
     return true;
 }

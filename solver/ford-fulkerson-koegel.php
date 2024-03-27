@@ -42,7 +42,8 @@ class solver_ford_fulkerson extends distributor {
      * according to the computed distriution.
      *
      */
-    public function compute_distribution($choicerecords, $ratings, $usercount) {
+    public function compute_distribution($choicerecords, $ratings, $usercount, $teamvote) {
+
         $groupdata = array();
         foreach ($choicerecords as $record) {
             $groupdata[$record->id] = $record;
@@ -51,27 +52,58 @@ class solver_ford_fulkerson extends distributor {
         $groupcount = count($groupdata);
         // Index of source and sink in the graph.
         $source = 0;
-        $sink = $groupcount + $usercount + 1;
-        list($fromuserid, $touserid, $fromgroupid, $togroupid) = $this->setup_id_conversions($usercount, $ratings);
 
-        $this->setup_graph($groupcount, $usercount, $fromuserid, $fromgroupid, $ratings, $groupdata, $source, $sink);
+        if (!$teamvote) {
 
-        // Now that the datastructure is complete, we can start the algorithm
-        // This is an adaptation of the Ford-Fulkerson algorithm
-        // (http://en.wikipedia.org/wiki/Ford%E2%80%93Fulkerson_algorithm).
-        for ($i = 1; $i <= $usercount; $i++) {
-            // Look for an augmenting path (a shortest path from the source to the sink).
-            $path = $this->find_shortest_path_bellmanf_koegel($source, $sink);
-            // If there is no such path, it is impossible to fit any more users into groups.
-            if (is_null($path)) {
-                // Stop the algorithm.
-                continue;
+            $sink = $groupcount + $usercount + 1;
+            list($fromuserid, $touserid, $fromgroupid, $togroupid) = $this->setup_id_conversions($usercount, $ratings);
+
+            $this->setup_graph($groupcount, $usercount, $fromuserid, $fromgroupid, $ratings, $groupdata, $source, $sink);
+
+            // Now that the datastructure is complete, we can start the algorithm
+            // This is an adaptation of the Ford-Fulkerson algorithm
+            // (http://en.wikipedia.org/wiki/Ford%E2%80%93Fulkerson_algorithm).
+            for ($i = 1; $i <= $usercount; $i++) {
+                // Look for an augmenting path (a shortest path from the source to the sink).
+                $path = $this->find_shortest_path_bellmanf_koegel($source, $sink);
+                // If there is no such path, it is impossible to fit any more users into groups.
+                if (is_null($path)) {
+                    // Stop the algorithm.
+                    continue;
+                }
+                // Reverse the augmenting path, thereby distributing a user into a group.
+                $this->augment_flow($path);
             }
-            // Reverse the augmenting path, thereby distributing a user into a group.
-            $this->augment_flow($path);
+
+            return $this->extract_allocation($touserid, $togroupid);
+
+        } else {
+
+            $teamcount = count($teamvote);
+            $sink = $groupcount + $teamcount + 1;
+            list($fromteamid, $toteamid, $fromgroupid, $togroupid) = $this->setup_id_conversions_for_teamvote($usercount, $ratings);
+
+            $this->setup_graph_for_teamvote($groupcount, $teamcount, $fromteamid, $fromgroupid, $ratings, $groupdata, $source, $sink);
+
+            // Now that the datastructure is complete, we can start the algorithm
+            // This is an adaptation of the Ford-Fulkerson algorithm
+            // (http://en.wikipedia.org/wiki/Ford%E2%80%93Fulkerson_algorithm).
+            for ($i = 1; $i <= $teamcount; $i++) {
+                // Look for an augmenting path (a shortest path from the source to the sink).
+                $path = $this->find_shortest_path_bellmanf_koegel($source, $sink);
+                // If there is no such path, it is impossible to fit any more users into groups.
+                if (is_null($path)) {
+                    // Stop the algorithm.
+                    continue;
+                }
+                // Reverse the augmenting path, thereby distributing a user into a group.
+                $this->augment_flow($path, $teamvote, $toteamid);
+            }
+
+            return $this->extract_allocation($toteamid, $togroupid);
+
         }
 
-        return $this->extract_allocation($touserid, $togroupid);
     }
 
     /**

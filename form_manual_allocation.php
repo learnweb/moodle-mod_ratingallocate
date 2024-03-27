@@ -148,6 +148,10 @@ class manual_alloc_form extends moodleform {
         $mform->setDefault('filtergroup', $filter['groupselect']);
         $mform->getElement('filtergroup')->setSelected($filter['groupselect']);
 
+        if ($this->ratingallocate->get_teamvote_goups()) {
+
+        }
+
         $PAGE->requires->js_call_amd('mod_ratingallocate/radiobuttondeselect', 'init');
 
         // The rest must be done through output buffering due to the way flextable works.
