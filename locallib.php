@@ -1619,18 +1619,27 @@ class ratingallocate {
     }
 
     /**
-     * Returns all ids of users who handed in a rating to any choice of the instance.
+     * Returns all ids of users in this course who handed in a rating to any choice of the instance.
      * @return array of userids
      */
     public function get_users_with_ratings() {
+
         $sql = "SELECT DISTINCT r.userid
                 FROM {ratingallocate_choices} c
                 JOIN {ratingallocate_ratings} r
                   ON c.id = r.choiceid
-               WHERE c.ratingallocateid = :ratingallocateid AND c.active = 1";
+               WHERE c.ratingallocateid = :ratingallocateid AND c.active = 1 AND r.userid IN ( :ratersincourse )";
+
         return $this->db->get_records_sql($sql, array(
-                'ratingallocateid' => $this->ratingallocateid
+                'ratingallocateid' => $this->ratingallocateid,
+                'ratersincourse' => implode(
+                    " , ",
+                    array_map(function ($rater) {
+                        return $rater->id;
+                    }, $this-> get_raters_in_course())
+                )
         ));
+
     }
 
     /**
