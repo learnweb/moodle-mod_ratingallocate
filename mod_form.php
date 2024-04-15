@@ -63,7 +63,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $COURSE;
         $mform = $this->_form;
 
         $info = $this->get_disable_strategy(true);
@@ -157,7 +157,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->setType('preventvotenotingroup', PARAM_BOOL);
         $mform->hideIf('preventvotenotingroup', 'teamvote', 'eq', 0);
 
-        $groupings = groups_get_all_groupings($ratingallocate->ratingallocate->dbrecord->course);
+        $groupings = groups_get_all_groupings($COURSE->id);
         $options = array();
         $options[0] = get_string('none');
         foreach ($groupings as $grouping) {

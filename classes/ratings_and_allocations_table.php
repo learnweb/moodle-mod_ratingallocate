@@ -189,7 +189,7 @@ class ratings_and_allocations_table extends \table_sql {
             }
             if ($this->showteams) {
                 $columns[] = 'teams';
-                $headers[] = get_string('teams');
+                $headers[] = get_string('teams', 'mod_ratingallocate');
             }
         }
 
@@ -222,19 +222,20 @@ class ratings_and_allocations_table extends \table_sql {
 
         // Set additional table settings.
         if ($this->showteams) {
-            //$this->sortable(true, 'teams');
+            $this->sortable(true, 'teams');
         } else {
-
+            $this->sortable(true, 'lastname');
         }
-        $this->sortable(true, 'lastname');
+
         $tableclasses = 'ratingallocate_ratings_table';
         if ($this->showgroups) {
             $tableclasses .= ' includegroups';
             $this->no_sorting('groups');
         }
         if ($this->showteams) {
-            $this->no_sorting('teams');
+            $tableclasses .= ' includeteams';
         }
+
         $this->set_attribute('class', $tableclasses);
 
         $this->initialbars(true);
@@ -352,7 +353,7 @@ class ratings_and_allocations_table extends \table_sql {
                     }
                 );
                 $teamname = array_map(function ($team) {
-                    return $team->name;
+                    return groups_get_group($team, 'name')->name;
                 }, $teamofuser);
                 // We should only have one team for each user, but we cant ensure that at this point.
                 $row['teams'] = implode(';', $teamname);
@@ -401,6 +402,10 @@ class ratings_and_allocations_table extends \table_sql {
             $row[] = get_string('ratings_table_sum_allocations', RATINGALLOCATE_MOD_NAME);
             if ($this->showgroups) {
                 // In case we are showing groups, the second column is the group column and needs to be skipped in summary row.
+                $row[] = '';
+            }
+            if ($this->showteams) {
+                // In case we are showing teams, the third (second) column is the teams column and needs to be skipped in summary row.
                 $row[] = '';
             }
         }
@@ -707,7 +712,45 @@ class ratings_and_allocations_table extends \table_sql {
         $userids = $this->filter_userids($userids);
 
         $sortfields = $this->get_sort_columns();
+
+
+        // To do vardumps entfernen.
         var_dump($sortfields);
+        var_dump("</br> sortdata: ");
+        var_dump($this->sortdata);
+        var_dump("</br> sortorder: ");
+        var_dump($this->get_sort_order());
+
+        // If we have teamvote enabled, always order by team first, in order to always show users in their teams.
+        if ($this->showteams) {
+
+            $sortdata = array([
+                'sortby' => 'teams',
+                'sortorder' => SORT_ASC
+            ]);
+
+            foreach (array_keys($sortfields) as $column) {
+                if (substr($column, 0, 5) != "teams") {
+                    $sortdata[] =[
+                        'sortby' => $column,
+                        'sortorder' => SORT_ASC
+                    ];
+                }
+            }
+            $this->set_sortdata($sortdata);
+            $this->set_sorting_preferences();
+
+        }
+        $sortfields = $this->get_sort_columns();
+
+        var_dump("</br> sortdata nach preferences: ");
+        var_dump($this->sortdata);
+        var_dump("</br> sortcolumns nach preferences: ");
+        var_dump($this->get_sort_columns());
+        var_dump("</br> sortorder nach preferences: ");
+        var_dump($this->get_sort_order());
+
+
         $fields = "u.*";
         if ($userids) {
             $where = "u.id in (" . implode(",", $userids) . ")";
@@ -720,13 +763,19 @@ class ratings_and_allocations_table extends \table_sql {
         $params = array();
         for ($i = 0; $i < count($sortfields); $i++) {
             $key = array_keys($sortfields)[$i];
+
+            // If sortfields contain 'teams', it is always on first position.
             if (substr($key, 0, 6) == "choice") {
                 $id = substr($key, 7);
                 $from .= " LEFT JOIN {ratingallocate_ratings} r$i ON u.id = r$i.userid AND r$i.choiceid = :choiceid$i ";
                 $fields .= ", r$i.rating as $key";
                 $params["choiceid$i"] = $id;
             } else if (substr($key, 0, 5) == "teams") {
-                //$from .=
+                $fields .= ", gm.groupid as teams";
+                $from .= " LEFT JOIN {groups_members} gm ON u.id=gm.userid LEFT JOIN {groupings_groups} gg ON gm.groupid=gg.groupid
+                  LEFT JOIN {ratingallocate} r ON gg.groupingid=r.teamvotegroupingid";
+                $where .= " AND r.id = :ratingallocateid";
+                $params["ratingallocateid"] = $this->ratingallocate->get_ratingallocateid();
             }
         }
 

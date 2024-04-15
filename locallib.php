@@ -1372,6 +1372,24 @@ class ratingallocate {
     }
 
     /**
+     * Returns the group in the teamvotegrouping this user is a member of.
+     * (Should return only one groupid, please only call if teamvote is enabled).
+     *
+     * @param $userid
+     * @return false|mixed The groupid
+     * @throws dml_exception
+     */
+    public function get_teamvotegroup_for_user($userid) {
+
+        $sql = 'SELECT gm.groupid FROM {groups_members} gm INNER JOIN {groupings_groups} gg ON gm.groupid=gg.groupid
+                  INNER JOIN {ratingallocate} r ON gg.groupingid=r.teamvotegroupingid
+                  WHERE gm.userid = :userid AND r.id = :ratingallocateid';
+        $groupid = $this->db->get_record_sql($sql, ['userid' => $userid, 'ratingallocateid' => $this->ratingallocateid]);
+        return $groupid->groupid;
+
+    }
+
+    /**
      * distribution of choices for each user
      * take care about max_execution_time and memory_limit
      */
