@@ -1634,9 +1634,11 @@ class ratingallocate {
                 'ratingallocateid' => $this->ratingallocateid,
                 'ratersincourse' => implode(
                     " , ",
-                    array_map(function ($rater) {
-                        return $rater->id;
-                    }, $this-> get_raters_in_course())
+                    array_map(
+                        function ($rater) {
+                            return $rater->id;
+                        },
+                        $this->get_raters_in_course())
                 )
         ));
 
