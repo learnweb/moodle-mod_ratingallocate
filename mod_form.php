@@ -126,7 +126,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         foreach (\strategymanager::get_strategies() as $strategy) {
             // Load strategy class.
-            $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
+            $strategyclassp = 'mod_ratingallocate\\' . $strategy . '\\strategy';
             $strategyclass = new $strategyclassp();
 
             // Add options fields.
@@ -218,7 +218,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         // Add dynamic settings fields.
         foreach (\strategymanager::get_strategies() as $strategy) {
             // Load strategy class.
-            $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
+            $strategyclassp = 'mod_ratingallocate\\' . $strategy . '\\strategy';
             if (isset($allstrategyoptions) && array_key_exists($strategy, $allstrategyoptions)) {
                 $strategyclass = new $strategyclassp($allstrategyoptions[$strategy]);
             } else {
@@ -276,7 +276,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             // User has to select one strategy.
             $errors['strategy'] = get_string('strategy_not_specified', self::MOD_NAME);
         } else {
-            $strategyclassp = 'ratingallocate\\' . $data['strategy'] . '\\strategy';
+            $strategyclassp = 'mod_ratingallocate\\' . $data['strategy'] . '\\strategy';
             if (array_key_exists($data['strategy'], $data['strategyopt'])) {
                 $strategyclass = new $strategyclassp($data['strategyopt'][$data['strategy']]);
                 $settingerrors = $strategyclass->validate_settings();
