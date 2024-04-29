@@ -50,4 +50,33 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('ratingallocate_algorithm_force_background_execution',
         new lang_string('algorithmforcebackground', 'ratingallocate'),
         new lang_string('configalgorithmforcebackground', 'ratingallocate'), 0));
+
+    $name = new lang_string('teamvote', 'ratingallocate');
+    $description = new lang_string('teamvote_help', 'ratingallocate');
+    $setting = new admin_setting_configcheckbox('ratingallocate/teamvote',
+        $name,
+        $description,
+        0);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    $name = new lang_string('preventvotenotingroup', 'ratingallocate');
+    $description = new lang_string('preventvotenotingroup_help', 'ratingallocate');
+    $setting = new admin_setting_configcheckbox('ratingallocate/preventvotenotingroup',
+        $name,
+        $description,
+        0);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    $name = new lang_string('teamvotegroupingid', 'ratingallocate');
+    $description = new lang_string('teamvotegroupingid_help', 'ratingallocate');
+    $setting = new admin_setting_configempty('ratingallocate/teamvotegroupingid',
+        $name,
+        $description);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
 }
