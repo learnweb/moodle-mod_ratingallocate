@@ -144,7 +144,7 @@ jobs:
         run: moodle-plugin-ci behat --profile chrome --auto-rerun 0
 
       # This step allows to upload Behat faildump (screenshots) as workflow artifact,
-      # so it can be downloaded and inspected. You don't need this step if you
+      # so it can be downloaded and inspected. You do not need this step if you
       # are not running Behat test. Artifact will be retained for 7 days.
       - name: Upload Behat Faildump
         if: ${{ failure() && steps.behat.outcome == 'failure' }}
