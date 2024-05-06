@@ -196,12 +196,16 @@ abstract class ratingallocate_strategyform extends \moodleform {
 
     private $strategy;
 
+    private $teamid;
+
     /**
      *
      * @param string $url The page url
      * @param \ratingallocate $ratingallocate The calling ratingallocate instance
      */
     public function __construct($url, \ratingallocate $ratingallocate) {
+        global $USER;
+
         $this->ratingallocate = $ratingallocate;
         // Load strategy options.
         $allstrategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);
@@ -212,6 +216,7 @@ abstract class ratingallocate_strategyform extends \moodleform {
             $this->strategyoptions = array();
         }
         $this->strategy = $this->construct_strategy($this->strategyoptions);
+        $this->teamid = $ratingallocate->get_vote_group($USER->id)->id;
         parent::__construct($url);
     }
 
@@ -226,6 +231,10 @@ abstract class ratingallocate_strategyform extends \moodleform {
      */
     protected function get_strategy() {
         return $this->strategy;
+    }
+
+    public function get_teamid() {
+        return $this->teamid;
     }
 
     /**

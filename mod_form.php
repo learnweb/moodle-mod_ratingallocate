@@ -295,6 +295,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      * Checks that accesstimestart is before accesstimestop
      */
     public function validation($data, $files) {
+        global $COURSE;
         $errors = parent::validation($data, $files);
 
         if ($data['accesstimestop'] <= $data['accesstimestart']) {
@@ -332,6 +333,20 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
                 }
             }
         }
+
+        // Check if group-user allocation in teamvotegrouping is 1:1.
+        $usersingrouping = groups_get_grouping_members($data['teamvotegroupingid'], 'u.id');
+        $userinmultipleteams = false;
+        foreach ($usersingrouping as $user) {
+            if (count(groups_get_user_groups($COURSE->id, $user)[$data['teamvotegroupingid']]) > 1) {
+                $userinmultipleteams = true;
+                break;
+            }
+        }
+        if ($userinmultipleteams) {
+            $errors['teamvotegroupingid'] = get_string('user_with_multiple_groups', self::MOD_NAME);
+        }
+
         return $errors;
     }
 

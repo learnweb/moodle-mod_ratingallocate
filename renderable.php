@@ -65,4 +65,5 @@ class ratingallocate_choice_status implements renderable {
     public $showuserinfo;
     public $algorithmstarttime;
     public $algorithmstatus;
+    public $teamid;
 }

@@ -73,6 +73,7 @@ $string['too_early_to_rate'] = 'It is too early to rate.';
 $string['your_allocated_choice'] = 'Your Allocation';
 $string['you_are_not_allocated'] = 'You were not allocated to any choice!';
 $string['your_rating'] = 'Your Rating';
+$string['rating_for_team'] = 'Rating for Group {$a}';
 $string['edit_rating'] = 'Edit Rating';
 $string['delete_rating'] = 'Delete Rating';
 $string['results_not_yet_published'] = 'Results have not yet been published.';
@@ -80,6 +81,7 @@ $string['no_choice_to_rate'] = 'There are no choices to rate!';
 $string['too_few_choices_to_rate'] = 'There are too few choices to rate! Students have to rank at least {$a} choices!';
 $string['at_least_one_rateable_choices_needed'] = 'You need at least one rateable choice.';
 $string['no_rating_possible'] = 'Currently, there is no rating possible!';
+$string['no_member_of_team'] = 'This Ratingallocate requires voting in groups. You are not a member of any group, so you cannot submit a rating. Please contact your teacher to be added to a group.';
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Administrator View">
 $string['allocation_manual_explain_only_raters'] = 'Select a choice to be assigned to a user.
@@ -305,9 +307,11 @@ $string['teamvote'] = 'Students rate in groups';
 $string['teamvote_help'] = 'If enabled, students will be divided into groups based on the default set of groups or a custom grouping. A group rating will count for all group members.';
 $string['teamvotegroupingid'] = 'Grouping for student groups';
 $string['teamvotegroupingid_help'] = 'This is the grouping that the activity will use to find groups for student groups. If not set, the default set of groups will be used.';
+$string['user_with_multiple_groups'] = 'Users have to be uniquely mapped to a group in a Group-Voting grouping. There might be users who are members of multiple groups in the selected grouping. Please modify the groups in the course settings or choose another grouping.';
 $string['teamvote_altered_after_preferences'] = 'Group Voting settings cannot be changed after preferences were submitted';
 $string['preventvotenotingroup'] = 'Require group to vote';
 $string['preventvotenotingroup_help'] = 'If enabled, users who are not members of a group will be unable to give a rating.';
+$string['teams'] = 'Team';
 
 $string['err_required'] = 'You need to provide a value for this field.';
 $string['err_minimum'] = 'The minimum value for this field is {$a}.';

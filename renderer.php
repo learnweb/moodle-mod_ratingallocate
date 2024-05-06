@@ -64,7 +64,13 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      */
     public function render_ratingallocate_strategyform($mform) {
         $o = '';
-        $o .= $this->heading(get_string('your_rating', RATINGALLOCATE_MOD_NAME), 2);
+
+        if ($teamid = $mform->get_teamid()) {
+            $o .= $this->heading(get_string('rating_for_team', RATINGALLOCATE_MOD_NAME, groups_get_group_name($teamid)), 2);
+        } else {
+            var_dump($teamid);
+            $o .= $this->heading(get_string('your_rating', RATINGALLOCATE_MOD_NAME), 2);
+        }
         $o .= $this->format_text($mform->get_strategy_description_header() . '<br/>' . $mform->describe_strategy());
         $o .= $mform->to_html();
 
@@ -134,7 +140,12 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         // Print own choices or full list of available choices.
         if (!empty($status->ownchoices) && $status->showuserinfo && $accesstimestart < $time) {
             $row = new html_table_row();
-            $cell1 = new html_table_cell(get_string('your_rating', RATINGALLOCATE_MOD_NAME));
+
+            if ($status->teamid) {
+                $cell1 = new html_table_cell(get_string('rating_for_team', RATINGALLOCATE_MOD_NAME, groups_get_group_name($status->teamid)));
+            } else {
+                $cell1 = new html_table_cell(get_string('your_rating', RATINGALLOCATE_MOD_NAME));
+            }
 
             $choiceshtml = array();
             foreach ($status->ownchoices as $choice) {

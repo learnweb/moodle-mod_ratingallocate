@@ -325,39 +325,43 @@ class ratingallocate {
             if (!$DB->record_exists('ratingallocate_choices', array('ratingallocateid' => $this->ratingallocateid))) {
                 $renderer->add_notification(get_string('no_choice_to_rate', RATINGALLOCATE_MOD_NAME));
             } else if ($status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
-                // Rating is possible...
 
-                // Adde votegroup name zu form.
+                if ($this->db->get_field(this_db\ratingallocate::TABLE, 'preventvotenotingroup', ['id' => $this->ratingallocateid]) == 1
+                    && !$this->get_vote_group($USER->id)) {
+                    $renderer->add_notification(get_string('no_member_of_team', RATINGALLOCATE_MOD_NAME));
+                } else {
+                    // Rating is possible...
 
-                // Suche das richtige Formular nach Strategie.
-                $strategyform = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
+                    // Suche das richtige Formular nach Strategie.
+                    $strategyform = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
 
-                $mform = new $strategyform($PAGE->url->out(), $this);
-                $mform->add_action_buttons();
+                    $mform = new $strategyform($PAGE->url->out(), $this);
+                    $mform->add_action_buttons();
 
-                if ($mform->is_cancelled()) {
-                    // Return to view.
-                    redirect("$CFG->wwwroot/mod/ratingallocate/view.php?id=" . $this->coursemodule->id);
-                    return "";
-                } else if ($mform->is_submitted() && $mform->is_validated() && $data = $mform->get_data()) {
-                    // Save submitted data and call default page.
-                    $this->save_ratings_to_db($USER->id, $data->data);
+                    if ($mform->is_cancelled()) {
+                        // Return to view.
+                        redirect("$CFG->wwwroot/mod/ratingallocate/view.php?id=" . $this->coursemodule->id);
+                        return "";
+                    } else if ($mform->is_submitted() && $mform->is_validated() && $data = $mform->get_data()) {
+                        // Save submitted data and call default page.
+                        $this->save_ratings_to_db($USER->id, $data->data);
 
-                    // Return to view.
-                    redirect(
+                        // Return to view.
+                        redirect(
                             "$CFG->wwwroot/mod/ratingallocate/view.php?id=" . $this->coursemodule->id,
                             get_string('ratings_saved', RATINGALLOCATE_MOD_NAME),
                             null, \core\output\notification::NOTIFY_SUCCESS
-                    );
-                }
+                        );
+                    }
 
-                $mform->definition_after_data();
+                    $mform->definition_after_data();
 
-                $output .= $renderer->render_ratingallocate_strategyform($mform);
-                // Logging.
-                $event = \mod_ratingallocate\event\rating_viewed::create_simple(
+                    $output .= $renderer->render_ratingallocate_strategyform($mform);
+                    // Logging.
+                    $event = \mod_ratingallocate\event\rating_viewed::create_simple(
                         context_module::instance($this->coursemodule->id), $this->ratingallocateid);
-                $event->trigger();
+                    $event->trigger();
+                }
             }
         }
         return $output;
@@ -1230,6 +1234,7 @@ class ratingallocate {
             $choicestatus->showuserinfo = has_capability('mod/ratingallocate:give_rating', $this->context, null, false);
             $choicestatus->algorithmstarttime = $this->ratingallocate->algorithmstarttime;
             $choicestatus->algorithmstatus = $this->get_algorithm_status();
+            $choicestatus->teamid = $this->get_vote_group($USER->id)->id;
             $choicestatusoutput = $renderer->render($choicestatus);
         } else {
             $choicestatusoutput = "";
@@ -1359,33 +1364,16 @@ class ratingallocate {
 
     public function delete_groups_for_usersnogroup($usergroups) {
 
-        $sql = 'SELECT id FROM {groups} WHERE id IN ( :groups ) AND idnumber = :ratingallocateid AND name = :name';
+        $sql = 'SELECT id FROM {groups} WHERE id IN ( :groups ) AND idnumber = :ratingallocateid AND name = :name AND courseid = :courseid';
         $delgroups = $this->db->get_records_sql($sql, [
             'groups' => implode(" , ", array_keys($usergroups)),
             'ratingallocateid' => $this->ratingallocateid,
-            'name' => 'delete after algorithm run'
+            'name' => 'delete after algorithm run',
+            'courseid' => $this->ratingallocate->course
         ]);
         foreach ($delgroups as $group) {
             groups_delete_group($group);
         }
-
-    }
-
-    /**
-     * Returns the group in the teamvotegrouping this user is a member of.
-     * (Should return only one groupid, please only call if teamvote is enabled).
-     *
-     * @param $userid
-     * @return false|mixed The groupid
-     * @throws dml_exception
-     */
-    public function get_teamvotegroup_for_user($userid) {
-
-        $sql = 'SELECT gm.groupid FROM {groups_members} gm INNER JOIN {groupings_groups} gg ON gm.groupid=gg.groupid
-                  INNER JOIN {ratingallocate} r ON gg.groupingid=r.teamvotegroupingid
-                  WHERE gm.userid = :userid AND r.id = :ratingallocateid';
-        $groupid = $this->db->get_record_sql($sql, ['userid' => $userid, 'ratingallocateid' => $this->ratingallocateid]);
-        return $groupid->groupid;
 
     }
 
