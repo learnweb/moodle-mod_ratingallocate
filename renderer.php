@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 
 defined('MOODLE_INTERNAL') || die();
@@ -112,14 +112,14 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $t->data[] = $row;
             }
         }
-        if ($status->is_published && $status->publishdate) {
+        if ($status->ispublished && $status->publishdate) {
             $this->add_table_row_tuple($t, get_string('publishdate', RATINGALLOCATE_MOD_NAME), userdate($status->publishdate));
         } else if ($status->publishdate) {
             $this->add_table_row_tuple($t, get_string('publishdate_estimated', RATINGALLOCATE_MOD_NAME),
                     userdate($status->publishdate));
         }
 
-        if ($status->show_distribution_info && $status->accesstimestop < $time) {
+        if ($status->showdistributioninfo && $status->accesstimestop < $time) {
             // Print algorithm status and last run time.
             if ($status->algorithmstarttime) {
                 $this->add_table_row_tuple($t, get_string('last_algorithm_run_date', RATINGALLOCATE_MOD_NAME),
@@ -132,12 +132,12 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         }
 
         // Print own choices or full list of available choices.
-        if (!empty($status->own_choices) && $status->show_user_info && $accesstimestart < $time) {
+        if (!empty($status->ownchoices) && $status->showuserinfo && $accesstimestart < $time) {
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('your_rating', RATINGALLOCATE_MOD_NAME));
 
             $choiceshtml = array();
-            foreach ($status->own_choices as $choice) {
+            foreach ($status->ownchoices as $choice) {
                 array_push($choiceshtml, format_string($choice->title) .
                         ' (' . s($this->get_option_title($choice->rating, $status->strategy)) . ')');
             }
@@ -148,12 +148,12 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                     $cell2
             );
             $t->data[] = $row;
-        } else if (!empty($status->available_choices)) {
+        } else if (!empty($status->availablechoices)) {
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('rateable_choices', RATINGALLOCATE_MOD_NAME));
 
             $choiceshtml = array();
-            foreach ($status->own_choices as $choice) {
+            foreach ($status->ownchoices as $choice) {
                 array_push($choiceshtml, format_string($choice->title));
             }
 
@@ -167,14 +167,14 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $hasrating = false;
         // Check if the user has rated at least one choice.
-        foreach ($status->own_choices as $choice) {
+        foreach ($status->ownchoices as $choice) {
             if (object_property_exists($choice, 'ratingid') && $choice->ratingid != null) {
                 $hasrating = true;
                 break;
             }
         }
 
-        if ($status->is_published) {
+        if ($status->ispublished) {
             if (!empty($status->allocations)) {
                 $row = new html_table_row();
                 $cell1 = new html_table_cell(
@@ -189,7 +189,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $cell2 = new html_table_cell($allocationhtml);
                 $row->cells = array($cell1, $cell2);
                 $t->data[] = $row;
-            } else if (!empty($status->own_choices)) {
+            } else if (!empty($status->ownchoices)) {
                 // Only print warning that user is not allocated if she has any rating.
                 if ($hasrating) {
                     $row = new html_table_row();
@@ -209,11 +209,11 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $o .= $this->output->box_end();
 
         // Notifications if no choices exist or too few in comparison to strategy settings.
-        if (empty($status->available_choices)) {
+        if (empty($status->availablechoices)) {
             $this->add_notification(get_string('no_choice_to_rate', RATINGALLOCATE_MOD_NAME));
-        } else if ($status->necessary_choices > count($status->available_choices)) {
-            if ($status->show_distribution_info) {
-                $this->add_notification(get_string('too_few_choices_to_rate', RATINGALLOCATE_MOD_NAME, $status->necessary_choices));
+        } else if ($status->necessarychoices > count($status->availablechoices)) {
+            if ($status->showdistributioninfo) {
+                $this->add_notification(get_string('too_few_choices_to_rate', RATINGALLOCATE_MOD_NAME, $status->necessarychoices));
             }
         }
 
@@ -222,7 +222,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $this->add_notification(get_string('too_early_to_rate', RATINGALLOCATE_MOD_NAME), 'notifymessage');
         } else if ($status->accesstimestop < $time) { // Too late to rate.
             // If results already published.
-            if ($status->is_published == true) {
+            if ($status->ispublished == true) {
                 if (count($status->allocations) > 0) {
                     $this->add_notification(get_string('rating_is_over_with_allocation', RATINGALLOCATE_MOD_NAME,
                             array_pop($status->allocations)->title), 'notifysuccess');

@@ -42,7 +42,7 @@ define('RATINGALLOCATE_EVENT_TYPE_STOP', 'stop');
 require_once(dirname(__FILE__) . '/db/db_structure.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 // //////////////////////////////////////////////////////////////////////////////
 // Moodle core API //
@@ -175,13 +175,13 @@ function ratingallocate_delete_instance($id) {
         'ratingallocateid' => $ratingallocate->id
             ), '', 'id'));
 
-    list ($insql, $params) = $DB->get_in_or_equal($deleteids);
-
-    $DB->delete_records_select('ratingallocate_group_choices',
+    if (!empty($deleteids)) {
+        list ($insql, $params) = $DB->get_in_or_equal($deleteids);
+        $DB->delete_records_select('ratingallocate_group_choices',
             'choiceid ' . $insql, $params);
-
-    $DB->delete_records_select('ratingallocate_ch_gengroups',
-        'choiceid ' . $insql, $params);
+        $DB->delete_records_select('ratingallocate_ch_gengroups',
+            'choiceid ' . $insql, $params);
+    }
 
     $DB->delete_records('ratingallocate_groupings', array(
         'ratingallocateid' => $ratingallocate->id
@@ -194,7 +194,7 @@ function ratingallocate_delete_instance($id) {
     ));
 
     // Delete associated events.
-    $DB->delete_records('event', array('modulename' => 'ratingallocate', 'instance' => $id));
+    $DB->delete_records('event', array('modulename' => 'ratingallocate', 'instance' => $ratingallocate->id));
 
     $DB->delete_records('ratingallocate', array(
             'id' => $ratingallocate->id
@@ -484,7 +484,11 @@ function ratingallocate_set_events($ratingallocate) {
         $event->timestart = $timestart;
         $event->timesort = $timestart;
         // Visibility should depend on the user.
-        $event->visible = $ratingallocate->visible;
+        if (isset($ratingallocate->visible)) {
+            $event->visible = $ratingallocate->visible;
+        } else {
+            $event->visible = instance_is_visible('ratingallocate', $ratingallocate);
+        }
         $event->timeduration = 0;
         if ($eventid) {
             // Calendar event exists so update it.
@@ -524,7 +528,11 @@ function ratingallocate_set_events($ratingallocate) {
         $event->timestart = $timestop;
         $event->timesort = $timestop;
         // Visibility should depend on the user.
-        $event->visible = $ratingallocate->visible;
+        if (isset($ratingallocate->visible)) {
+            $event->visible = $ratingallocate->visible;
+        } else {
+            $event->visible = instance_is_visible('ratingallocate', $ratingallocate);
+        }
         $event->timeduration = 0;
         if ($eventid) {
             // Calendar event exists so update it.
@@ -672,4 +680,113 @@ function mod_ratingallocate_core_calendar_get_valid_event_timestart_range (\cale
         }
     }
     return [$mindate, $maxdate];
+}
+
+/**
+ * This function is used by the reset_course_userdata function in moodlelib.
+ * This function will remove all ratings and allocations
+ * and clean up any related data.
+ *
+ * @global object
+ * @global object
+ * @param $data stdClass the data submitted from the reset course.
+ * @return array status array
+ */
+function ratingallocate_reset_userdata($data) {
+    global $CFG, $DB;
+
+    $componentstr = get_string('modulenameplural', RATINGALLOCATE_MOD_NAME);
+    $status = [];
+
+    $params = array('courseid' => $data->courseid);
+
+    if (!empty($data->reset_ratings_and_allocations)) {
+
+        // Delete all ratings.
+        $ratingidssql = "SELECT r.id FROM {ratingallocate_ratings} r
+                      INNER JOIN {ratingallocate_choices} c ON r.choiceid=c.id
+                      INNER JOIN {ratingallocate} ra ON c.ratingallocateid=ra.id
+                      WHERE ra.course= :courseid";
+        $DB->delete_records_select('ratingallocate_ratings', "id IN ($ratingidssql)", $params);
+
+        // Delete all allocations.
+        $allocationidssql = "SELECT a.id FROM {ratingallocate_allocations} a
+                            INNER JOIN {ratingallocate} r ON a.ratingallocateid=r.id
+                            WHERE r.course= :courseid";
+        $DB->delete_records_select('ratingallocate_allocations', "id IN ($allocationidssql)", $params);
+
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('ratings_and_allocations_deleted', RATINGALLOCATE_MOD_NAME),
+            'error' => false];
+    }
+
+    // Updating dates - shift may be negative too.
+    if ($data->timeshift) {
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
+        shift_course_mod_dates(RATINGALLOCATE_MOD_NAME, array('accesstimestart', 'accesstimestop'), $data->timeshift, $data->courseid);
+        $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
+    }
+
+    return $status;
+}
+
+/**
+ * Called by course/reset.php.
+ *
+ * @param MoodleQuickForm $mform form passed by reference
+ */
+function ratingallocate_reset_course_form_definition($mform) {
+
+    $mform->addElement('header', 'ratingallocateheader', get_string('modulenameplural', RATINGALLOCATE_MOD_NAME));
+    $mform->addElement('advcheckbox', 'reset_ratings_and_allocations',
+        get_string('remove_ratings_and_allocations', RATINGALLOCATE_MOD_NAME));
+
+}
+
+/**
+ * Course reset form defaults.
+ * @return array the defaults.
+ */
+function ratingallocate_reset_course_form_defaults($course) {
+    return ['reset_ratings_and_allocations' => 1];
+}
+
+/**
+ * Add a get_coursemodule_info function in case any ratingallocate type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function ratingallocate_get_coursemodule_info($coursemodule) {
+    global $DB;
+
+    $dbparams = array('id' => $coursemodule->instance);
+    if (! $ratingallocate = $DB->get_record('ratingallocate', $dbparams)) {
+        return false;
+    }
+
+    $result = new cached_cm_info();
+    $result->name = $ratingallocate->name;
+
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $result->content = format_module_intro('ratingallocate', $ratingallocate, $coursemodule->id, false);
+    }
+
+    // Populate some other values that can be used in calendar or on dashboard.
+    if ($ratingallocate->accesstimestart) {
+        $result->customdata['accesstimestart'] = $ratingallocate->accesstimestart;
+    }
+    if ($ratingallocate->accesstimestop) {
+        $result->customdata['accesstimestop'] = $ratingallocate->accesstimestop;
+    }
+
+    return $result;
 }

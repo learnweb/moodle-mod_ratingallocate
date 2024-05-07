@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_availability\info_module;
 use mod_ratingallocate\task\distribute_unallocated_task;
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 global $CFG;
 
@@ -328,7 +328,7 @@ class ratingallocate {
                 // Rating is possible...
 
                 // Suche das richtige Formular nach Strategie.
-                $strategyform = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
+                $strategyform = 'mod_ratingallocate\\' . $this->ratingallocate->strategy . '\\mod_ratingallocate_view_form';
 
                 $mform = new $strategyform($PAGE->url->out(), $this);
                 $mform->add_action_buttons();
@@ -398,9 +398,9 @@ class ratingallocate {
             // Notifications if no choices exist or too few in comparison to strategy settings.
             $availablechoices = $this->get_rateable_choices();
             $strategysettings = $this->get_strategy_class()->get_static_settingfields();
-            if (array_key_exists(ratingallocate\strategy_order\strategy::COUNTOPTIONS, $strategysettings)) {
+            if (array_key_exists(mod_ratingallocate\strategy_order\strategy::COUNTOPTIONS, $strategysettings)) {
                 $necessarychoices =
-                        $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
+                        $strategysettings[mod_ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
             } else {
                 $necessarychoices = 0;
             }
@@ -1214,25 +1214,25 @@ class ratingallocate {
             $choicestatus->accesstimestart = $this->ratingallocate->accesstimestart;
             $choicestatus->accesstimestop = $this->ratingallocate->accesstimestop;
             $choicestatus->publishdate = $this->ratingallocate->publishdate;
-            $choicestatus->is_published = $this->ratingallocate->published;
-            $choicestatus->available_choices = $this->get_rateable_choices();
+            $choicestatus->ispublished = $this->ratingallocate->published;
+            $choicestatus->availablechoices = $this->get_rateable_choices();
             // Filter choices to display by groups, where 'usegroups' is true.
-            $choicestatus->available_choices = $this->filter_choices_by_groups($choicestatus->available_choices, $USER->id);
+            $choicestatus->availablechoices = $this->filter_choices_by_groups($choicestatus->availablechoices, $USER->id);
 
             $strategysettings = $this->get_strategy_class()->get_static_settingfields();
-            if (array_key_exists(ratingallocate\strategy_order\strategy::COUNTOPTIONS, $strategysettings)) {
-                $choicestatus->necessary_choices =
-                        $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
+            if (array_key_exists(mod_ratingallocate\strategy_order\strategy::COUNTOPTIONS, $strategysettings)) {
+                $choicestatus->necessarychoices =
+                        $strategysettings[mod_ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
             } else {
-                $choicestatus->necessary_choices = 0;
+                $choicestatus->necessarychoices = 0;
             }
-            $choicestatus->own_choices = $this->get_rating_data_for_user($USER->id);
+            $choicestatus->ownchoices = $this->get_rating_data_for_user($USER->id);
             // Filter choices to display by groups, where 'usegroups' is true.
-            $choicestatus->own_choices = $this->filter_choices_by_groups($choicestatus->own_choices, $USER->id);
+            $choicestatus->ownchoices = $this->filter_choices_by_groups($choicestatus->ownchoices, $USER->id);
             $choicestatus->allocations = $this->get_allocations_for_user($USER->id);
             $choicestatus->strategy = $this->get_strategy_class();
-            $choicestatus->show_distribution_info = has_capability('mod/ratingallocate:start_distribution', $this->context);
-            $choicestatus->show_user_info = has_capability('mod/ratingallocate:give_rating', $this->context, null, false);
+            $choicestatus->showdistributioninfo = has_capability('mod/ratingallocate:start_distribution', $this->context);
+            $choicestatus->showuserinfo = has_capability('mod/ratingallocate:give_rating', $this->context, null, false);
             $choicestatus->algorithmstarttime = $this->ratingallocate->algorithmstarttime;
             $choicestatus->algorithmstatus = $this->get_algorithm_status();
             $choicestatusoutput = $renderer->render($choicestatus);
@@ -1522,7 +1522,12 @@ class ratingallocate {
             return;
         }
 
-        $users = $this->get_users_with_ratings();
+        $users = array_map(
+            function ($u) {
+                return $u->id;
+            },
+            $this->get_raters_in_course()
+        );
         $choices = $this->get_choices_with_allocationcount();
         $allocations = $this->get_allocations();
         foreach ($users as $userid => $allocobj) {
@@ -1539,6 +1544,7 @@ class ratingallocate {
                     get_string('allocation_notification_message_subject', 'ratingallocate',
                             $this->ratingallocate->name);
 
+            $notificationtext = '';
             if (array_key_exists($userid, $allocations) && $allocobj = $allocations[$userid]) {
                 // Get the assigned choice_id.
                 $allocchoiceid = $allocobj->choiceid;
@@ -1547,35 +1553,39 @@ class ratingallocate {
                         'ratingallocate' => $this->ratingallocate->name,
                         'choice' => $choices[$allocchoiceid]->title,
                         'explanation' => format_text($choices[$allocchoiceid]->explanation)));
-            } else {
+            } else if (array_key_exists($userid, $this->get_users_with_ratings())) {
                 $notificationtext = get_string('no_allocation_notification_message', 'ratingallocate', array(
                         'ratingallocate' => $this->ratingallocate->name));
             }
 
-            // Prepare the message.
-            $eventdata = new \core\message\message();
-            $eventdata->courseid = $this->course->id;
-            $eventdata->component = 'mod_ratingallocate';
-            $eventdata->name = 'allocation';
-            $eventdata->notification = 1;
+            // Send message to all users with an allocation or a rating.
+            if (!empty($notificationtext)) {
 
-            $eventdata->userfrom = core_user::get_noreply_user();
-            $eventdata->userto = $userid;
-            $eventdata->subject = $notificationsubject;
-            $eventdata->fullmessage = $notificationtext;
-            $eventdata->fullmessageformat = FORMAT_PLAIN;
-            $eventdata->fullmessagehtml = '';
+                // Prepare the message.
+                $eventdata = new \core\message\message();
+                $eventdata->courseid = $this->course->id;
+                $eventdata->component = 'mod_ratingallocate';
+                $eventdata->name = 'allocation';
+                $eventdata->notification = 1;
 
-            $eventdata->smallmessage = '';
-            $eventdata->contexturl = new moodle_url('/mod/ratingallocate/view.php',
-                    array('id' => $this->coursemodule->id));
-            $eventdata->contexturlname = $this->ratingallocate->name;
+                $eventdata->userfrom = core_user::get_noreply_user();
+                $eventdata->userto = $userid;
+                $eventdata->subject = $notificationsubject;
+                $eventdata->fullmessage = $notificationtext;
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml = '';
 
-            $mailresult = message_send($eventdata);
-            if (!$mailresult) {
-                mtrace(
+                $eventdata->smallmessage = '';
+                $eventdata->contexturl = new moodle_url('/mod/ratingallocate/view.php',
+                        array('id' => $this->coursemodule->id));
+                $eventdata->contexturlname = $this->ratingallocate->name;
+
+                $mailresult = message_send($eventdata);
+                if (!$mailresult) {
+                    mtrace(
                         "ERROR: mod/ratingallocate/locallib.php: Could not send notification to user $userto->id " .
                         "... not trying again.");
+                }
             }
         }
 
@@ -1816,6 +1826,13 @@ class ratingallocate {
     }
 
     /**
+     * Returns the id of the ratingallocate instance.
+     */
+    public function get_ratingallocateid() {
+        return $this->ratingallocateid;
+    }
+
+    /**
      * Returns an array of choices with the given ids
      *
      * @param $ids array choiceids
@@ -2037,7 +2054,7 @@ class ratingallocate {
      * Returns the strategy class for the ratingallocate
      */
     private function get_strategy_class() {
-        $strategyclassp = 'ratingallocate\\' . $this->ratingallocate->strategy . '\\strategy';
+        $strategyclassp = 'mod_ratingallocate\\' . $this->ratingallocate->strategy . '\\strategy';
         $allsettings = json_decode($this->ratingallocate->setting, true);
         if (array_key_exists($this->ratingallocate->strategy, $allsettings)) {
             return new $strategyclassp($allsettings[$this->ratingallocate->strategy]);
@@ -2187,7 +2204,7 @@ class ratingallocate {
             $choicecount = count($this->get_rateable_choices());
             $strategyclass = $this->get_strategy_class();
             $strategysettings = $strategyclass->get_static_settingfields();
-            $necessarychoices = $strategysettings[ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
+            $necessarychoices = $strategysettings[mod_ratingallocate\strategy_order\strategy::COUNTOPTIONS][2];
             if ($choicecount < $necessarychoices) {
                 return false;
             }

@@ -16,7 +16,7 @@
 
 namespace mod_ratingallocate\task;
 
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 defined('MOODLE_INTERNAL') || die();
 

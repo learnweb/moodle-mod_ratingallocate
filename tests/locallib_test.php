@@ -20,7 +20,7 @@ global $CFG;
 require_once(dirname(__FILE__) . '/generator/lib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 /**
  * mod_ratingallocate generator tests
@@ -231,4 +231,91 @@ class locallib_test extends \advanced_testcase {
         $result = $ratingallocate->get_options_titles($ratings);
         $this->assertEquals($expectedresult, $result);
     }
+
+    public function test_reset_userdata() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = \mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
+        $student1 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $student2 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+
+        $this->setUser($teacher);
+
+        $choices = array(
+            array(
+                'title' => 'C1',
+                'maxsize' => '1',
+                'active' => '1',
+            ),
+            array(
+                'title' => 'C2',
+                'maxsize' => '1',
+                'active' => '1',
+            )
+        );
+        $ratings = array(
+            $student1->id => array(
+                array(
+                    'choice' => 'C1',
+                    'rating' => 1
+                ),
+                array(
+                    'choice' => 'C2',
+                    'rating' => 0
+                )
+            ),
+            $student2->id => array(
+                array(
+                    'choice' => 'C1',
+                    'rating' => 0
+                ),
+                array(
+                    'choice' => 'C2',
+                    'rating' => 1
+                )
+            )
+        );
+
+        // Create ratingallocate instance.
+        $ratingallocate = \mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this, $choices,
+            $course, $ratings);
+
+        // Simulate Allocation.
+        $ratingallocate->distrubute_choices();
+
+        // There should be two ratings in the course.
+        $this->assertEquals(2, count($ratingallocate->get_users_with_ratings()));
+        $this->assertEquals(2, count($ratingallocate->get_allocations()));
+
+        // Keep dates for comparison.
+        $accesstimestart = $DB->get_record('ratingallocate', ['id' => $ratingallocate->get_ratingallocateid()], 'accesstimestart')->accesstimestart;
+        $accesstimestop = $DB->get_record('ratingallocate', ['id' => $ratingallocate->get_ratingallocateid()], 'accesstimestop')->accesstimestop;
+
+        // Now try and reset.
+        $data = new \stdClass();
+        $data->reset_ratings_and_allocations = 1;
+        $data->courseid = $course->id;
+        $data->timeshift = (2 * DAYSECS);
+        $this->setUser($teacher);
+        $status = ratingallocate_reset_userdata($data);
+
+        // Reload the instance data.
+        $ra = $DB->get_record('ratingallocate', array('id' => $ratingallocate->get_ratingallocateid()));
+        $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate($ra);
+
+        // There should be no ratings and allocations anymore.
+        $this->assertEquals(0, count($ratingallocate->get_allocations()));
+        $this->assertEquals(0, count($ratingallocate->get_ratings_for_rateable_choices()));
+        if (isset($status['error'])) {
+            $this->assertEquals(false, $status['error']);
+        }
+
+        // Check if the timeshift happened successfully.
+        $this->assertEquals($accesstimestart + (2 * DAYSECS), $ra->accesstimestart);
+        $this->assertEquals($accesstimestop + (2 * DAYSECS), $ra->accesstimestop);
+    }
+
 }
