@@ -278,6 +278,7 @@ $string['choice_groupselect'] = 'Groups';
 $string['edit_choice'] = 'Edit choice';
 $string['rating_endtime'] = 'Rating ends at';
 $string['rating_begintime'] = 'Rating begins at';
+$string['choice_navigation'] = 'Choices';
 $string['newchoicetitle'] = 'New choice {$a}';
 $string['deletechoice'] = 'Delete choice';
 $string['publishdate'] = 'Estimated publication date';
