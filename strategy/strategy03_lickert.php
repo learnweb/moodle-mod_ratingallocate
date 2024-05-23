@@ -26,7 +26,7 @@
  */
 
 // Namespace is mandatory!
-namespace ratingallocate\strategy_lickert;
+namespace mod_ratingallocate\strategy_lickert;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');

@@ -45,7 +45,10 @@ class distribute_unallocated_task extends adhoc_task {
      * @throws moodle_exception
      */
     public function execute(): void {
-        global $DB;
+        global $CFG, $DB;
+        // Make sure to include the global definitions of constants defined in locallib.
+        require_once($CFG->dirroot . '/mod/ratingallocate/locallib.php');
+
         $data = $this->get_custom_data();
         if (empty($data->distributionalgorithm) ||
             !in_array($data->distributionalgorithm, [ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY, ACTION_DISTRIBUTE_UNALLOCATED_FILL])) {

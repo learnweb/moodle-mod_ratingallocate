@@ -38,6 +38,27 @@ require_once(__DIR__ . '/../locallib.php');
  */
 class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase {
 
+    /** @var stdClass Course object. */
+    private stdClass $course;
+    /** @var stdClass Enrolled teacher. */
+    private stdClass $teacher;
+    /** @var stdClass Green group. */
+    private stdClass $green;
+    /** @var stdClass Blue group. */
+    private stdClass $blue;
+    /** @var stdClass Red group. */
+    private stdClass $red;
+    /** @var array Students in the green group. */
+    private array $studentsgreen = [];
+    /** @var array Students in the blue group. */
+    private array $studentsblue = [];
+    /** @var array Students in the red group. */
+    private array $studentsred = [];
+    /** @var array Students belonging to no group. */
+    private array $studentsnogroup = [];
+    /** @var object Rating allocate object. */
+    private object $ratingallocate;
+
     protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest(true);

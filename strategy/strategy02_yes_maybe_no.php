@@ -27,7 +27,7 @@
  */
 
 // Namespace is mandatory!
-namespace ratingallocate\strategy_yesmaybeno;
+namespace mod_ratingallocate\strategy_yesmaybeno;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
