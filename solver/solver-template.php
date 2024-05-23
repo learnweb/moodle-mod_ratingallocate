@@ -204,7 +204,9 @@ class distributor {
         }
         foreach ($fromchoiceid as $id => $choice) {
             $this->graph[$choice] = array();
-            $this->graph[$choice][] = new edge($choice, $sink, 0, $choicedata[$id]->maxsize);
+            if ($choicedata[$id]->maxsize > 0) {
+                $this->graph[$choice][] = new edge($choice, $sink, 0, $choicedata[$id]->maxsize);
+            }
         }
 
         // Add the edges representing the ratings to the graph.

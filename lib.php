@@ -40,8 +40,9 @@ define('RATINGALLOCATE_EVENT_TYPE_STOP', 'stop');
 // define('NEWMODULE_ULTIMATE_ANSWER', 42);
 
 require_once(dirname(__FILE__) . '/db/db_structure.php');
+require_once(dirname(__FILE__) . '/locallib.php');
 
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 // //////////////////////////////////////////////////////////////////////////////
 // Moodle core API //
@@ -381,6 +382,23 @@ function ratingallocate_extend_navigation(navigation_node $navref, stdclass $cou
  *            {@link navigation_node}
  */
 function ratingallocate_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $ratingallocatenode = null) {
+    $hassecondary = $settingsnav->get_page()->has_secondary_navigation();
+    if (!$context = context_module::instance($settingsnav->get_page()->cm->id, IGNORE_MISSING)) {
+        throw new \moodle_exception('badcontext');
+    }
+    if (has_capability('mod/ratingallocate:modify_choices', $context)) {
+        $choicenode = navigation_node::create(get_string('choice_navigation', RATINGALLOCATE_MOD_NAME),
+            new moodle_url('/mod/ratingallocate/view.php', ['id' => $settingsnav->get_page()->cm->id, 'action' => ACTION_SHOW_CHOICES]),
+            navigation_node::TYPE_CUSTOM, null, 'mod_ratingallocate_choices');
+        $ratingallocatenode->add_node($choicenode);
+    }
+
+    if (has_capability('mod/ratingallocate:start_distribution', $context)) {
+        $reportsnode = navigation_node::create(get_string('reports_group', RATINGALLOCATE_MOD_NAME),
+            new moodle_url('/mod/ratingallocate/view.php', ['id' => $settingsnav->get_page()->cm->id, 'action' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE]),
+            navigation_node::TYPE_CUSTOM, null, 'mod_ratingallocate_reports');
+        $ratingallocatenode->add_node($reportsnode);
+    }
 
 }
 
@@ -733,4 +751,42 @@ function ratingallocate_reset_course_form_definition($mform) {
  */
 function ratingallocate_reset_course_form_defaults($course) {
     return ['reset_ratings_and_allocations' => 1];
+}
+
+/**
+ * Add a get_coursemodule_info function in case any ratingallocate type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function ratingallocate_get_coursemodule_info($coursemodule) {
+    global $DB;
+
+    $dbparams = array('id' => $coursemodule->instance);
+    if (! $ratingallocate = $DB->get_record('ratingallocate', $dbparams)) {
+        return false;
+    }
+
+    $result = new cached_cm_info();
+    $result->name = $ratingallocate->name;
+
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $result->content = format_module_intro('ratingallocate', $ratingallocate, $coursemodule->id, false);
+    }
+
+    // Populate some other values that can be used in calendar or on dashboard.
+    if ($ratingallocate->accesstimestart) {
+        $result->customdata['accesstimestart'] = $ratingallocate->accesstimestart;
+    }
+    if ($ratingallocate->accesstimestop) {
+        $result->customdata['accesstimestop'] = $ratingallocate->accesstimestop;
+    }
+
+    return $result;
 }
