@@ -20,20 +20,21 @@ Feature: Manually mark a ratingallocate activity as completed
       | activity       | course | idnumber | name               | completion |
       | ratingallocate | C1     | ra1      | My Fair Allocation | 1          |
     And I log in as "teacher1"
-    And I am on the "My Fair Allocation" "ratingallocate activity" page
-    And I press "Edit Choices"
+    And I am on the "My Fair Allocation" "mod_ratingallocate > Choices" page
     And I add a new choice with the values:
       | title                  | My first choice |
       | Description (optional) | Test 1          |
       | maxsize                | 2               |
 
   @javascript
-  Scenario: Use manual completion
-    Given I am on the "My Fair Allocation" "ratingallocate activity" page logged in as teacher1
-    And the manual completion button for "My Fair Allocation" should be disabled
-    And I log out
-    # Student view.
-    When I am on the "My Fair Allocation" "ratingallocate activity" page logged in as student1
+  Scenario: Use manual completion as teacher
+    When I log in as "teacher1"
+    And I am on the "My Fair Allocation" "mod_ratingallocate > View" page
+    Then the manual completion button for "My Fair Allocation" should be disabled
+
+  Scenario: Use manual completion student view
+    When I log in as "student1"
+    And I am on the "My Fair Allocation" "mod_ratingallocate > View" page
     Then the manual completion button of "My Fair Allocation" is displayed as "Mark as done"
     And I toggle the manual completion state of "My Fair Allocation"
     And the manual completion button of "My Fair Allocation" is displayed as "Done"
