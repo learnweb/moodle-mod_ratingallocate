@@ -653,6 +653,14 @@ class ratingallocate {
                     $DB->delete_records(this_db\ratingallocate_ch_gengroups::TABLE, ['choiceid' => $choiceid]);
                     $DB->delete_records(this_db\ratingallocate_choices::TABLE, ['id' => $choiceid]);
 
+                    $raters = $this->get_raters_in_course();
+                    $completion = new completion_info($this->course);
+                    if ($completion->is_enabled($this->coursemodule)) {
+                        foreach ($raters as $rater) {
+                            $completion->update_state($this->coursemodule, COMPLETION_INCOMPLETE, $rater->id);
+                        }
+                    }
+
                     redirect(new moodle_url('/mod/ratingallocate/view.php',
                             ['id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES]),
                             get_string('choice_deleted_notification', RATINGALLOCATE_MOD_NAME,
@@ -1042,6 +1050,13 @@ class ratingallocate {
         // At this point we tried to assign all the users. It is possible that users remain undistributed, though.
 
         $transaction->allow_commit();
+
+        $completion = new completion_info($this->course);
+        if ($completion->is_enabled($this->coursemodule)) {
+            foreach ($possibleusers as $userid) {
+                $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $userid);
+            }
+        }
     }
 
     /**
@@ -1429,7 +1444,7 @@ class ratingallocate {
         $raters = $this->get_raters_in_course();
         if ($completion->is_enabled($this->coursemodule)) {
             foreach ($raters as $rater) {
-                $completion->update_state($this->coursemodule, COMPLETION_COMPLETE, $rater->id);
+                $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $rater->id);
             }
 
         }
@@ -2052,6 +2067,14 @@ class ratingallocate {
             $event->trigger();
 
             $transaction->allow_commit();
+
+            $completion = new completion_info($this->course);
+            if ($completion->is_enabled($this->coursemodule)) {
+                foreach ($allusers as $rater) {
+                    $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $rater->id);
+                }
+            }
+
         } catch (Exception $e) {
             if (isset($transaction)) {
                 $transaction->rollback($e);

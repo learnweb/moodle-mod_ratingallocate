@@ -22,8 +22,7 @@ Feature: Set a ratingallocate activity marked as completed when a user submits a
       | activity       | course | idnumber | name               | completion | completionvote |
       | ratingallocate | C1     | ra1      | My Fair Allocation | 2          | 1              |
     And I log in as "teacher1"
-    And I am on the "My Fair Allocation" "ratingallocate activity" page
-    And I press "Edit Choices"
+    And I am on the "My Fair Allocation" "mod_ratingallocate > Choices" page
     And I add a new choice with the values:
       | title                  | My first choice |
       | Description (optional) | Test 1          |
@@ -32,7 +31,7 @@ Feature: Set a ratingallocate activity marked as completed when a user submits a
   @javascript
   Scenario: User completes ratingallocate only if they voted
     When I log in as "student1"
-    And I am on the "My Fair Allocation" "ratingallocate activity" page
+    And I am on the "My Fair Allocation" "mod_ratingallocate > View" page
     And I press "Edit Rating"
     And I press "Save changes"
     And I log out
