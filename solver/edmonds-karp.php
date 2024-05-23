@@ -35,7 +35,7 @@ class solver_edmonds_karp extends distributor {
     }
 
     public function compute_distribution($choicerecords, $ratings, $usercount) {
-        $choicedata = array();
+        $choicedata =[];
         foreach ($choicerecords as $record) {
             $choicedata[$record->id] = $record;
         }
@@ -71,9 +71,9 @@ class solver_edmonds_karp extends distributor {
      */
     private function find_shortest_path_bellf($from, $to) {
         // Table of distances known so far.
-        $dists = array();
+        $dists =[];
         // Table of predecessors (used to reconstruct the shortest path later).
-        $preds = array();
+        $preds =[];
 
         // Number of nodes in the graph.
         $count = $this->graph['count'];
@@ -116,7 +116,7 @@ class solver_edmonds_karp extends distributor {
         unset($dists);
 
         // Use the preds table to reconstruct the shortest path.
-        $path = array();
+        $path =[];
         $p = $to;
         while ($p != $from) {
             $path[] = $p;

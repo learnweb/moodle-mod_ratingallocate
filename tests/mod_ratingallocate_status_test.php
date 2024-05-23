@@ -75,12 +75,12 @@ class mod_ratingallocate_status_test extends \advanced_testcase {
      * @covers ::get_status()
      */
     public function test_get_status($addtostart, $addtostop, $published, $hasallocations, $expected) {
-        $record = array(
+        $record =[
                 'name' => 'Rating Allocation',
                 'accesstimestart' => time() + ($addtostart * 24 * 60 * 60),
                 'accesstimestop' => time() + ($addtostop * 24 * 60 * 60),
-                'strategyopt' => array('strategy_yesno' => array('maxcrossout' => '1')),
-                'strategy' => 'strategy_yesno');
+                'strategyopt' => ['strategy_yesno' => ['maxcrossout' => '1']],
+                'strategy' => 'strategy_yesno'];
         if ($hasallocations) {
             $genmod = new \mod_ratingallocate_generated_module($this, $record);
             $moddb = $genmod->moddb;

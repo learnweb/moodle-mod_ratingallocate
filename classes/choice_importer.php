@@ -29,7 +29,7 @@ require_once($CFG->libdir . '/csvlib.class.php');
 
 
 class choice_importer {
-    const REQUIRED_FIELDS = array("title", "explanation", "maxsize", "active", "groups");
+    const REQUIRED_FIELDS = ["title", "explanation", "maxsize", "active", "groups"];
 
     // The import process worked as expected.
     const IMPORT_STATUS_OK = 'csvupload_ok';
@@ -122,7 +122,7 @@ class choice_importer {
         $importstatus = new \stdClass;
         $importstatus->status = self::IMPORT_STATUS_OK;  // Unless we hear otherwise.
         $importstatus->live = $live;  // Only commit live transactions.
-        $importstatus->errors = array();
+        $importstatus->errors = [];
         $importstatus->importcount = 0;
         $importstatus->rowcount = 1;  // Start at 1 for header.
 
@@ -183,7 +183,7 @@ class choice_importer {
                             }
 
                             if ($fieldname == 'groups') {
-                                $groups = array();
+                                $groups = [];
 
                                 // Turn off 'usegroups' if no groups specified.
                                 if (empty(trim($cell))) {
@@ -229,10 +229,10 @@ class choice_importer {
                             // Note for warnings.
                             if (!empty($invalidgroups)) {
                                 $importstatus->status = self::IMPORT_STATUS_DATA_ERROR;
-                                $warningmessage = get_string('csvupload_missing_groups', 'ratingallocate', array(
+                                $warningmessage = get_string('csvupload_missing_groups', 'ratingallocate', [
                                     'row' => $importstatus->rowcount,
                                     'invalidgroups' => join(', ', $invalidgroups),
-                                ));
+                                ]);
                                 $importstatus->errors[] = $warningmessage;
                             }
 

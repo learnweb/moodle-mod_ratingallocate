@@ -72,9 +72,9 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field.
-        $mform->addElement('text', 'name', get_string('ratingallocatename', self::MOD_NAME), array(
+        $mform->addElement('text', 'name', get_string('ratingallocatename', self::MOD_NAME),[
                 'size' => '64'
-        ));
+        ]);
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -90,7 +90,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         // -------------------------------------------------------------------------------
         $elementname = 'strategy';
         // Define options for select.
-        $selectoptions = array();
+        $selectoptions =[];
         foreach (\strategymanager::get_strategies() as $strategy) {
             $selectoptions[$strategy] = get_string($strategy . '_name', self::MOD_NAME);
         }
@@ -112,11 +112,11 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         $elementname = 'publishdate';
         $mform->addElement('date_time_selector', $elementname, get_string($elementname, self::MOD_NAME),
-                array('optional' => true));
+               ['optional' => true]);
         $mform->setDefault($elementname, time() + 9 * 24 * 60 * 60);
 
         $elementname = 'runalgorithmbycron';
-        $mform->addElement('advcheckbox', $elementname, get_string($elementname, self::MOD_NAME), null, null, array(0, 1));
+        $mform->addElement('advcheckbox', $elementname, get_string($elementname, self::MOD_NAME), null, null,[0, 1]);
         $mform->addHelpButton($elementname, $elementname, self::MOD_NAME);
         $mform->setDefault($elementname, 1);
 
@@ -151,7 +151,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $courseid = $update;
             $cm         = get_coursemodule_from_id('ratingallocate', $courseid, 0, false, MUST_EXIST);
             $course     = get_course($cm->course);
-            $ratingallocatedb  = $DB->get_record('ratingallocate', array('id' => $cm->instance), '*', MUST_EXIST);
+            $ratingallocatedb  = $DB->get_record('ratingallocate',['id' => $cm->instance], '*', MUST_EXIST);
             $context = context_module::instance($cm->id);
             $ratingallocate = new ratingallocate($ratingallocatedb, $course, $cm, $context);
             $disablestrategy = $ratingallocate->get_number_of_active_raters() > 0;

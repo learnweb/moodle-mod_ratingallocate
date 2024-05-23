@@ -34,9 +34,9 @@ $action = optional_param('action', '', PARAM_ACTION);
 if ($id) {
     $cm = get_coursemodule_from_id('ratingallocate', $id, 0, false, MUST_EXIST);
     $course = get_course($cm->course);
-    $ratingallocate = $DB->get_record('ratingallocate', array(
+    $ratingallocate = $DB->get_record('ratingallocate', [
             'id' => $cm->instance
-    ), '*', MUST_EXIST);
+    ], '*', MUST_EXIST);
 } else {
     error('You must specify a course_module ID');
 }
@@ -180,10 +180,10 @@ $writer->set_filename("lp_solve_export_course_" . $ratingallocate->id);
 $choices = $ratingallocateobj->get_rateable_choices();
 
 $ratings = $ratingallocateobj->get_ratings_for_rateable_choices();
-$ratingscells = array();
+$ratingscells = [];
 foreach ($ratings as $rating) {
     if (!array_key_exists($rating->userid, $ratingscells)) {
-        $ratingscells[$rating->userid] = array();
+        $ratingscells[$rating->userid] = [];
     }
     $ratingscells[$rating->userid][$rating->choiceid] = $rating->rating;
 }
@@ -191,7 +191,7 @@ foreach ($ratings as $rating) {
 $zielfkt = 'max '; // The function to maximise.
 $usernb = ''; // Constraint for each user, to be only allocated to one choice.
 $variablenerkl = '';
-$nbkurs = array(); // Constraint for each course.
+$nbkurs = []; // Constraint for each course.
 foreach ($ratingscells as $userid => $userrating) {
     $variablenerkl .= 'bin';
     $nbkursakt = '';

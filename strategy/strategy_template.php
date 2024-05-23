@@ -122,7 +122,7 @@ abstract class strategytemplate {
      * @return array of rating titles
      */
     public function translate_ratings_to_titles(array $ratings) {
-        $result = array();
+        $result = [];
         foreach ($ratings as $id => $rating) {
             $result[$rating] = $this->translate_rating_to_titles($rating);
         }
@@ -149,7 +149,7 @@ abstract class strategytemplate {
      */
     public function validate_settings() {
         $validationinfo = $this->getValidationInfo();
-        $errors = array();
+        $errors = [];
         foreach ($validationinfo as $key => $info) {
             if (isset($info[0]) && $info[0] === true) {
                 if (array_key_exists($key, $this->_strategy_settings) &&
@@ -209,7 +209,7 @@ abstract class ratingallocate_strategyform extends \moodleform {
         if (array_key_exists($strategyid, $allstrategyoptions)) {
             $this->strategyoptions = $allstrategyoptions[$strategyid];
         } else {
-            $this->strategyoptions = array();
+            $this->strategyoptions = [];
         }
         $this->strategy = $this->construct_strategy($this->strategyoptions);
         parent::__construct($url);

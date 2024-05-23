@@ -42,8 +42,8 @@ class distribution_triggered extends \core\event\base {
 
     public static function create_simple($modulecontext, $ratingallocateid, $timeneeded) {
         $timeneededjsonvalid = json_decode(json_encode($timeneeded), true);
-        return self::create(array('context' => $modulecontext, 'objectid' => $ratingallocateid,
-                'other' => array('time_needed' => $timeneededjsonvalid)));
+        return self::create(['context' => $modulecontext, 'objectid' => $ratingallocateid,
+                'other' => ['time_needed' => $timeneededjsonvalid]]);
     }
 
     protected function init() {
@@ -58,17 +58,17 @@ class distribution_triggered extends \core\event\base {
 
     public function get_description() {
         return get_string('log_distribution_triggered_description', 'mod_ratingallocate',
-                array('userid' => $this->userid,
+                ['userid' => $this->userid,
                         'ratingallocateid' => $this->objectid,
-                        'time_needed' => $this->other['time_needed']));
+                        'time_needed' => $this->other['time_needed']]);
     }
 
     public function get_url() {
-        return new \moodle_url('/mod/ratingallocate/view.php', array('m' => $this->objectid));
+        return new \moodle_url('/mod/ratingallocate/view.php', ['m' => $this->objectid]);
     }
 
     public static function get_objectid_mapping() {
-        return array('db' => 'ratingallocate', 'restore' => 'ratingallocate');
+        return ['db' => 'ratingallocate', 'restore' => 'ratingallocate'];
     }
 
     public static function get_other_mapping() {

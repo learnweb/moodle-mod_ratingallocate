@@ -43,7 +43,7 @@ class send_distribution_notification extends \core\task\adhoc_task {
 
         // Get instance of ratingallocate.
         $ratingallocate =
-                $DB->get_record(this_db\ratingallocate::TABLE, array(this_db\ratingallocate::ID => $ratingallocateid), '*',
+                $DB->get_record(this_db\ratingallocate::TABLE, [this_db\ratingallocate::ID => $ratingallocateid], '*',
                         MUST_EXIST);
 
         $courseid = $ratingallocate->course;

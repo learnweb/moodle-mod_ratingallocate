@@ -29,9 +29,9 @@ defined('MOODLE_INTERNAL') || die();
 
 global $DB;
 
-$logs = array(
-        array('module' => 'ratingallocate', 'action' => 'add', 'mtable' => 'ratingallocate', 'field' => 'name'),
-        array('module' => 'ratingallocate', 'action' => 'update', 'mtable' => 'ratingallocate', 'field' => 'name'),
-        array('module' => 'ratingallocate', 'action' => 'view', 'mtable' => 'ratingallocate', 'field' => 'name'),
-        array('module' => 'ratingallocate', 'action' => 'view all', 'mtable' => 'ratingallocate', 'field' => 'name')
-);
+$logs =[
+        ['module' => 'ratingallocate', 'action' => 'add', 'mtable' => 'ratingallocate', 'field' => 'name'],
+        ['module' => 'ratingallocate', 'action' => 'update', 'mtable' => 'ratingallocate', 'field' => 'name'],
+        ['module' => 'ratingallocate', 'action' => 'view', 'mtable' => 'ratingallocate', 'field' => 'name'],
+        ['module' => 'ratingallocate', 'action' => 'view all', 'mtable' => 'ratingallocate', 'field' => 'name']
+];

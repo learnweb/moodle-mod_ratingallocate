@@ -121,10 +121,10 @@ class distributor {
      * @return an array of the form array(groupid => array(userid, ...), ...)
      */
     protected function extract_allocation($touserid, $tochoiceid) {
-        $distribution = array();
+        $distribution =[];
         foreach ($tochoiceid as $index => $groupid) {
             $group = $this->graph[$index];
-            $distribution[$groupid] = array();
+            $distribution[$groupid] =[];
             foreach ($group as $assignment) {
                 $user = intval($assignment->to);
                 if (array_key_exists($user, $touserid)) {
@@ -144,12 +144,12 @@ class distributor {
     public static function setup_id_conversions($usercount, $ratings) {
         // These tables convert userids to their index in the graph
         // The range is [1..$usercount].
-        $fromuserid = array();
-        $touserid = array();
+        $fromuserid =[];
+        $touserid =[];
         // These tables convert choiceids to their index in the graph
         // The range is [$usercount + 1 .. $usercount + $choicecount].
-        $fromchoiceid = array();
-        $tochoiceid = array();
+        $fromchoiceid =[];
+        $tochoiceid =[];
 
         // User counter.
         $ui = 1;
@@ -170,7 +170,7 @@ class distributor {
             }
         }
 
-        return array($fromuserid, $touserid, $fromchoiceid, $tochoiceid);
+        return[$fromuserid, $touserid, $fromchoiceid, $tochoiceid];
     }
 
     /**
@@ -191,19 +191,19 @@ class distributor {
         // A source is connected to all users with unit cost.
         // The users are connected to their choices with cost equal to their rating.
         // The choices are connected to a sink with 0 cost.
-        $this->graph = array();
+        $this->graph =[];
         // Add source, sink and number of nodes to the graph.
-        $this->graph[$source] = array();
-        $this->graph[$sink] = array();
+        $this->graph[$source] =[];
+        $this->graph[$sink] =[];
         $this->graph['count'] = $choicecount + $usercount + 2;
 
         // Add users and choices to the graph and connect them to the source and sink.
         foreach ($fromuserid as $id => $user) {
-            $this->graph[$user] = array();
+            $this->graph[$user] =[];
             $this->graph[$source][] = new edge($source, $user, 0);
         }
         foreach ($fromchoiceid as $id => $choice) {
-            $this->graph[$choice] = array();
+            $this->graph[$choice] =[];
             if ($choicedata[$id]->maxsize > 0) {
                 $this->graph[$choice][] = new edge($choice, $sink, 0, $choicedata[$id]->maxsize);
             }

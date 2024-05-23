@@ -46,45 +46,45 @@ class strategy extends \strategytemplate {
     }
 
     public function get_static_settingfields() {
-        return array(
-                self::MAXZERO => array( // Maximum count of 'No'.
+        return [
+                self::MAXZERO => [ // Maximum count of 'No'.
                         'int',
                         get_string(self::STRATEGYID . '_setting_maxzero', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::MAXZERO),
                         null
-                ),
-                self::TOTALPOINTS => array( // Amount of fields.
+                ],
+                self::TOTALPOINTS => [ // Amount of fields.
                         'int',
                         get_string(self::STRATEGYID . '_setting_totalpoints', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::TOTALPOINTS),
                         null
-                ),
-                self::MAXPERCHOICE => array( // Maximum amount of points the student can give per choice.
+                ],
+                self::MAXPERCHOICE =>  [// Maximum amount of points the student can give per choice.
                     'int',
                     get_string(self::STRATEGYID . '_setting_maxperchoice', RATINGALLOCATE_MOD_NAME),
                     $this->get_settings_value(self::MAXPERCHOICE),
                     null
-                )
-        );
+                ]
+        ];
     }
 
     public function get_dynamic_settingfields() {
-        return array();
+        return [];
     }
 
     public function get_default_settings() {
-        return array(
+        return [
                 self::MAXZERO => 3,
                 self::TOTALPOINTS => 100,
                 self::MAXPERCHOICE => 100
-        );
+        ];
     }
 
     protected function getvalidationinfo() {
-        return array(self::MAXZERO => array(true, 0),
-                self::TOTALPOINTS => array(true, 1),
-                self::MAXPERCHOICE => array(true, 1)
-        );
+        return [self::MAXZERO => [true, 0],
+                self::TOTALPOINTS => [true, 1],
+                self::MAXPERCHOICE => [true, 1]
+        ];
     }
 
 }

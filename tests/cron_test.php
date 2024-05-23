@@ -123,11 +123,11 @@ class cron_test extends \advanced_testcase {
      */
     private function assert_not_started() {
         global $DB;
-        $record = $DB->get_record(this_db\ratingallocate::TABLE, array());
+        $record = $DB->get_record(this_db\ratingallocate::TABLE, []);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
         $this->assertEquals(\mod_ratingallocate\algorithm_status::NOTSTARTED, $ratingallocate->get_algorithm_status());
         $this->assertEquals(0, $DB->count_records(this_db\ratingallocate_allocations::TABLE,
-                array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id)));
+                [this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id]));
     }
 
     /**
@@ -135,11 +135,11 @@ class cron_test extends \advanced_testcase {
      */
     private function assert_running() {
         global $DB;
-        $record = $DB->get_record(this_db\ratingallocate::TABLE, array());
+        $record = $DB->get_record(this_db\ratingallocate::TABLE, []);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
         $this->assertEquals(\mod_ratingallocate\algorithm_status::RUNNING, $ratingallocate->get_algorithm_status());
         $this->assertEquals(0, $DB->count_records(this_db\ratingallocate_allocations::TABLE,
-                array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id)));
+                [this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id]));
     }
 
     /**
@@ -147,11 +147,11 @@ class cron_test extends \advanced_testcase {
      */
     private function assert_failure() {
         global $DB;
-        $record = $DB->get_record(this_db\ratingallocate::TABLE, array());
+        $record = $DB->get_record(this_db\ratingallocate::TABLE, []);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
         $this->assertEquals(\mod_ratingallocate\algorithm_status::FAILURE, $ratingallocate->get_algorithm_status());
         $this->assertEquals(0, $DB->count_records(this_db\ratingallocate_allocations::TABLE,
-                array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id)));
+                [this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id]));
     }
 
     /**
@@ -159,11 +159,11 @@ class cron_test extends \advanced_testcase {
      */
     private function assert_finish() {
         global $DB;
-        $record = $DB->get_record(this_db\ratingallocate::TABLE, array());
+        $record = $DB->get_record(this_db\ratingallocate::TABLE, []);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
         $this->assertEquals(\mod_ratingallocate\algorithm_status::FINISHED, $ratingallocate->get_algorithm_status());
         $this->assertEquals(4, $DB->count_records(this_db\ratingallocate_allocations::TABLE,
-                array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id)));
+                [this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id]));
     }
 
     /**
@@ -171,11 +171,11 @@ class cron_test extends \advanced_testcase {
      */
     private function assert_already_finish() {
         global $DB;
-        $record = $DB->get_record(this_db\ratingallocate::TABLE, array());
+        $record = $DB->get_record(this_db\ratingallocate::TABLE, []);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
         $this->assertEquals(\mod_ratingallocate\algorithm_status::FINISHED, $ratingallocate->get_algorithm_status());
         $this->assertEquals(0, $DB->count_records(this_db\ratingallocate_allocations::TABLE,
-                array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id)));
+                [this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id]));
     }
 
     /**
@@ -197,8 +197,8 @@ class cron_test extends \advanced_testcase {
 
         // There should not be any module for that course first.
         $this->assertFalse(
-                $DB->record_exists(this_db\ratingallocate::TABLE, array(this_db\ratingallocate::COURSE => $course->id
-                )));
+                $DB->record_exists(this_db\ratingallocate::TABLE, [this_db\ratingallocate::COURSE => $course->id
+                ]));
         $data = \mod_ratingallocate_generator::get_default_values();
         $data['course'] = $course;
         // Shift the rating period depending on its ending.
@@ -217,7 +217,7 @@ class cron_test extends \advanced_testcase {
         // Create activity.
         $this->mod = \mod_ratingallocate_generator::create_instance_with_choices($this, $data);
         $this->assertEquals(2, $DB->count_records(this_db\ratingallocate_choices::TABLE,
-                array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->mod->id)));
+                [this_db\ratingallocate_choices::RATINGALLOCATEID => $this->mod->id]));
 
         $student1 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         $student2 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
@@ -231,11 +231,11 @@ class cron_test extends \advanced_testcase {
         $choice2 = end($choices);
 
         // Create preferences.
-        $prefersnon = array();
+        $prefersnon = [];
         foreach ($choices as $choice) {
-            $prefersnon[$choice->{this_db\ratingallocate_choices::ID}] = array(
+            $prefersnon[$choice->{this_db\ratingallocate_choices::ID}] = [
                     this_db\ratingallocate_ratings::CHOICEID => $choice->{this_db\ratingallocate_choices::ID},
-                    this_db\ratingallocate_ratings::RATING => 0);
+                    this_db\ratingallocate_ratings::RATING => 0];
         }
         $prefersfirst = json_decode(json_encode($prefersnon), true);
         $prefersfirst[$choice1->{this_db\ratingallocate_choices::ID}][this_db\ratingallocate_ratings::RATING] = true;
@@ -249,7 +249,7 @@ class cron_test extends \advanced_testcase {
         \mod_ratingallocate_generator::save_rating_for_user($this, $this->mod, $student4, $preferssecond);
 
         $this->assertEquals(0, $DB->count_records(this_db\ratingallocate_allocations::TABLE,
-                array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id)));
+                [this_db\ratingallocate_allocations::RATINGALLOCATEID => $this->mod->id]));
     }
     // </editor-fold>
 

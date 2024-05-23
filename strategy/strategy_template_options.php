@@ -43,13 +43,13 @@ abstract class strategytemplate_options extends \strategytemplate {
      * @return array
      */
     protected function get_default_strategy_option() {
-        return ['default' => array(
+        return ['default' => [
                 'select',
                 get_string('strategy_settings_default', RATINGALLOCATE_MOD_NAME),
                 $this->get_settings_value('default'),
                 $this->get_choiceoptions(),
                 'strategy_settings_default'
-        )];
+        ]];
     }
 }
 
@@ -97,7 +97,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             // Options for each choice.
             $choiceoptions = $this->get_choiceoptions();
 
-            $radioarray = array();
+            $radioarray = [];
             foreach ($choiceoptions as $id => $option) {
                 $radioarray[] =& $mform->createElement('radio', $ratingelem, '', $option, $id);
             }

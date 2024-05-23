@@ -25,9 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$messageproviders = array(
+$messageproviders =[
     // Notify student about published allocation.
-        'allocation' => array(
+        'allocation' => [
                 'capability' => 'mod/ratingallocate:give_rating'
-        )
-);
+        ]
+];

@@ -141,7 +141,7 @@ class provider implements
 
         $params = ['modname' => 'ratingallocate', 'contextlevel' => CONTEXT_MODULE, 'userid' => $user->id] + $contextparams;
         $choiceanswers = $DB->get_recordset_sql($sql, $params);
-        $choices = array();
+        $choices = [];
         foreach ($choiceanswers as $choiceanswer) {
             $choicedata = new \stdClass();
             $choicedata->choice = $choiceanswer->choice;
@@ -155,7 +155,7 @@ class provider implements
         $choiceanswers->close();
 
         foreach ($choices as $key => $value) {
-            $area = array('ratings');
+            $area = ['ratings'];
             $context = \context_module::instance($key);
 
             // Fetch the generic module data for the choice.
@@ -184,7 +184,7 @@ class provider implements
 
         $params = ['modname' => 'ratingallocate', 'contextlevel' => CONTEXT_MODULE, 'userid' => $user->id] + $contextparams;
         $alloc = $DB->get_recordset_sql($sql, $params);
-        $allocations = array();
+        $allocations = [];
         foreach ($alloc as $allocation) {
             $allocationdata = new \stdClass();
             $allocationdata->choice = $allocation->choice;
@@ -197,7 +197,7 @@ class provider implements
         $alloc->close();
 
         foreach ($allocations as $key => $value) {
-            $area = array('allocations');
+            $area = ['allocations'];
             $context = \context_module::instance($key);
 
             // Fetch the generic module data for the choice.

@@ -29,17 +29,17 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$handlers = array();
+$handlers =[];
 
 // List of observers for group_deleted and grouping_deleted.
 
-$observers = array(
-    array(
+$observers =[
+    [
         'eventname' => '\core\event\group_deleted',
         'callback'  => 'mod_ratingallocate\ratingallocate_observer::ch_gengroups_delete',
-    ),
-    array(
+    ],
+   [
         'eventname' => '\core\event\grouping_deleted',
         'callback'  => 'mod_ratingallocate\ratingallocate_observer::ra_groupings_delete'
-    )
-);
+    ]
+];

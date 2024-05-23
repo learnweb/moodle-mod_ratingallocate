@@ -43,49 +43,49 @@ class strategy extends \strategytemplate_options {
     }
 
     public function get_static_settingfields() {
-        $output = array(
-                self::MAXCROSSOUT => array(
+        $output = [
+                self::MAXCROSSOUT => [
                         'int',
                         get_string(self::STRATEGYID . '_setting_crossout', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::MAXCROSSOUT),
                         null
-                )
-        );
+                ]
+        ];
         foreach (array_keys($this->get_choiceoptions()) as $id) {
-            $output[$id] = array(
+            $output[$id] = [
                     'text',
                     get_string('strategy_settings_label', RATINGALLOCATE_MOD_NAME, $this->get_settings_default_value($id)),
                     null,
                     $this->get_settings_default_value($id)
-            );
+            ];
         }
         $output += $this->get_default_strategy_option();
         return $output;
     }
 
     public function get_dynamic_settingfields() {
-        return array();
+        return [];
     }
 
     public function get_choiceoptions() {
-        $options = array(
+        $options = [
                 0 => $this->get_settings_value(0),
                 1 => $this->get_settings_value(1)
-        );
+        ];
         return $options;
     }
 
     public function get_default_settings() {
-        return array(
+        return [
                 self::MAXCROSSOUT => 3,
                 0 => get_string(self::STRATEGYID . '_rating_crossout', RATINGALLOCATE_MOD_NAME),
                 1 => get_string(self::STRATEGYID . '_rating_choose', RATINGALLOCATE_MOD_NAME),
                 'default' => 1,
-        );
+        ];
     }
 
     protected function getvalidationinfo() {
-        return array(self::MAXCROSSOUT => array(true, 0));
+        return [self::MAXCROSSOUT => [true, 0]];
     }
 }
 

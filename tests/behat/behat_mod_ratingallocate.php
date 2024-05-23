@@ -58,7 +58,7 @@ class behat_mod_ratingallocate extends behat_base {
                     'ratingallocate must be present in behat_mod_ratingallocate::the_following_choices_exist() $data');
             }
 
-            $ratingallocate = $DB->get_record('ratingallocate', array('name' => $record['ratingallocate']));
+            $ratingallocate = $DB->get_record('ratingallocate', ['name' => $record['ratingallocate']]);
 
             $record['ratingallocateid'] = $ratingallocate->id;
 
@@ -99,8 +99,8 @@ class behat_mod_ratingallocate extends behat_base {
                     'rating must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data');
             }
 
-            $user = $DB->get_record('user', array('username' => $record['user']));
-            $choice = $DB->get_record('ratingallocate_choices', array('title' => $record['choice']));
+            $user = $DB->get_record('user', ['username' => $record['user']]);
+            $choice = $DB->get_record('ratingallocate_choices', ['title' => $record['choice']]);
 
             $record['userid'] = $user->id;
             $record['choiceid'] = $choice->id;
@@ -131,7 +131,7 @@ class behat_mod_ratingallocate extends behat_base {
                     $this->execute('behat_mod_ratingallocate::i_uncheck_the_active_checkbox');
                 }
             } else {
-                $this->execute('behat_forms::i_set_the_field_to', array($locator, $value));
+                $this->execute('behat_forms::i_set_the_field_to', [$locator, $value]);
             }
         }
     }
@@ -146,7 +146,7 @@ class behat_mod_ratingallocate extends behat_base {
     public function i_add_a_new_choice_with_the_values(TableNode $choicedata) {
         $this->i_add_a_new_choice();
         $this->i_set_the_values_of_the_choice_to($choicedata);
-        $this->execute('behat_forms::press_button', array("id_submitbutton"));
+        $this->execute('behat_forms::press_button', ["id_submitbutton"]);
     }
 
     /**
@@ -161,9 +161,9 @@ class behat_mod_ratingallocate extends behat_base {
         $this->i_add_a_new_choice();
         $choicedatahash = $choicedata->getHash();
         foreach ($choicedatahash as $entry) {
-            $newrows = array();
+            $newrows = [];
             foreach ($entry as $key => $val) {
-                array_push($newrows, array($key, $val));
+                array_push($newrows, [$key, $val]);
             }
             // TODO: Ensure backward-compatibility after changed TableNode constructor in Moodle 3.1.
             if ($CFG->version < 2016052300) {
@@ -174,7 +174,7 @@ class behat_mod_ratingallocate extends behat_base {
             $this->i_add_a_next_choice();
         }
 
-        $this->execute('behat_forms::press_button', array("id_cancel"));
+        $this->execute('behat_forms::press_button', ["id_cancel"]);
     }
 
     /**
@@ -189,7 +189,7 @@ class behat_mod_ratingallocate extends behat_base {
                 "//following-sibling::td/a[@title='Delete choice']";
         $link = $this->find('xpath', $fieldxpath);
         $link->click();
-        $this->execute('behat_general::i_click_on', array("Yes", "button"));
+        $this->execute('behat_general::i_click_on', ["Yes", "button"]);
     }
 
     /**
@@ -204,8 +204,8 @@ class behat_mod_ratingallocate extends behat_base {
      */
     public function i_should_see_assigned_to($firstname, $choicetitle) {
         global $DB;
-        $choice = $DB->get_record('ratingallocate_choices', array('title' => $choicetitle));
-        $user = $DB->get_record('user', array('firstname' => $firstname));
+        $choice = $DB->get_record('ratingallocate_choices', ['title' => $choicetitle]);
+        $user = $DB->get_record('user', ['firstname' => $firstname]);
 
         $fieldxpath = "//table[contains(concat(\" \", normalize-space(@class), \" \"), \" ratingallocate_ratings_table \")]";
         $fieldxpath .= "//td//input[@id='user_{$user->id}_alloc_{$choice->id}' and @checked]";
@@ -229,8 +229,8 @@ class behat_mod_ratingallocate extends behat_base {
      */
     public function i_should_see_not_assigned_to($firstname, $choicetitle) {
         global $DB;
-        $choice = $DB->get_record('ratingallocate_choices', array('title' => $choicetitle));
-        $user = $DB->get_record('user', array('firstname' => $firstname));
+        $choice = $DB->get_record('ratingallocate_choices', ['title' => $choicetitle]);
+        $user = $DB->get_record('user', ['firstname' => $firstname]);
 
         $fieldxpath = "//table[contains(concat(\" \", normalize-space(@class), \" \"), \" ratingallocate_ratings_table \")]";
         $checkbox = $fieldxpath . "//td//input[@id='user_{$user->id}_alloc_{$choice->id}']";
@@ -262,8 +262,8 @@ class behat_mod_ratingallocate extends behat_base {
     public function i_assign_to_choice($firstname, $choicetitle) {
         global $DB;
 
-        $choice = $DB->get_record('ratingallocate_choices', array('title' => $choicetitle));
-        $user = $DB->get_record('user', array('firstname' => $firstname));
+        $choice = $DB->get_record('ratingallocate_choices', ['title' => $choicetitle]);
+        $user = $DB->get_record('user', ['firstname' => $firstname]);
 
         $fieldxpath = "//input[@name='allocdata[{$user->id}]']";
         $elements = $this->find_all('xpath', $fieldxpath);
@@ -333,7 +333,7 @@ class behat_mod_ratingallocate extends behat_base {
      * @Given /^I add a new choice$/
      */
     public function i_add_a_new_choice() {
-        $this->execute("behat_forms::press_button", array(get_string('newchoice', "ratingallocate")));
+        $this->execute("behat_forms::press_button", [get_string('newchoice', "ratingallocate")]);
     }
 
     /**
@@ -342,7 +342,7 @@ class behat_mod_ratingallocate extends behat_base {
      * @Given /^I add a next choice$/
      */
     public function i_add_a_next_choice() {
-        $this->execute("behat_forms::press_button", array("id_submitbutton2"));
+        $this->execute("behat_forms::press_button", ["id_submitbutton2"]);
     }
 
     /**
@@ -455,7 +455,7 @@ class behat_mod_ratingallocate extends behat_base {
     private function get_ratings_for_username($username) {
         global $DB;
         $user = \core_user::get_user_by_username($username);
-        return $DB->get_records("ratingallocate_ratings", array('userid' => $user->id));
+        return $DB->get_records("ratingallocate_ratings", ['userid' => $user->id]);
     }
 
     /**
@@ -486,7 +486,7 @@ class behat_mod_ratingallocate extends behat_base {
      */
     private function get_choice($title) {
         global $DB;
-        $choices = $DB->get_records("ratingallocate_choices", array('title' => $title));
+        $choices = $DB->get_records("ratingallocate_choices", ['title' => $title]);
         if (count($choices) != 1) {
             throw new ExpectationException('Excatly one choice with the name "' . $title .
                     '" is expected but ' . count($choices) . ' found.', $this->getSession());

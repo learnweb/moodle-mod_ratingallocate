@@ -44,7 +44,7 @@ class allocations_table extends \table_sql {
         parent::__construct('mod_ratingallocate_allocation_table');
         global $PAGE;
         $url = $PAGE->url;
-        $url->params(array("action" => ACTION_SHOW_ALLOCATION_TABLE));
+        $url->params(["action" => ACTION_SHOW_ALLOCATION_TABLE]);
         $PAGE->set_url($url);
         $this->ratingallocate = $ratingallocate;
         if (has_capability('mod/ratingallocate:export_ratings', $ratingallocate->get_context())) {
@@ -203,10 +203,10 @@ class allocations_table extends \table_sql {
         $name = fullname($user);
 
         if ($COURSE->id == SITEID) {
-            $profileurl = new \moodle_url('/user/profile.php', array('id' => $user->id));
+            $profileurl = new \moodle_url('/user/profile.php',['id' => $user->id]);
         } else {
             $profileurl = new \moodle_url('/user/view.php',
-                    array('id' => $user->id, 'course' => $COURSE->id));
+                   ['id' => $user->id, 'course' => $COURSE->id]);
         }
         return \html_writer::link($profileurl, $name);
     }
@@ -229,7 +229,7 @@ class allocations_table extends \table_sql {
 
         $where = "c.ratingallocateid = :ratingallocateid";
 
-        $params = array();
+        $params =[];
         $params['ratingallocateid'] = $this->ratingallocate->ratingallocate->id;
 
         $this->set_sql($fields, $from, $where, $params);

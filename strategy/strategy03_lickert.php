@@ -54,38 +54,38 @@ class strategy extends \strategytemplate_options {
     }
 
     public function get_static_settingfields() {
-        return array(
-                self::MAXNO => array(// Maximum count of 'No'.
+        return [
+                self::MAXNO => [// Maximum count of 'No'.
                         'int',
                         get_string(self::STRATEGYID . '_setting_maxno', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::MAXNO),
                         null
-                ),
-                self::COUNTLICKERT => array(// How many fields there are.
+                ],
+                self::COUNTLICKERT => [// How many fields there are.
                         'int',
                         get_string(self::STRATEGYID . '_setting_maxlickert', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::COUNTLICKERT),
                         null
-                )
-        );
+                ]
+        ];
     }
 
     public function get_dynamic_settingfields() {
-        $output = array();
+        $output = [];
         foreach (array_keys($this->get_choiceoptions()) as $id) {
-            $output[$id] = array(
+            $output[$id] = [
                     'text',
                     get_string('strategy_settings_label', RATINGALLOCATE_MOD_NAME, $this->get_settings_default_value($id)),
                     null,
                     $this->get_settings_default_value($id)
-            );
+            ];
         }
         $output += $this->get_default_strategy_option();
         return $output;
     }
 
     public function get_choiceoptions() {
-        $options = array();
+        $options = [];
         for ($i = 0; $i <= $this->maxlickert; $i++) {
             $options[$i] = $this->get_settings_value($i);
         }
@@ -93,12 +93,12 @@ class strategy extends \strategytemplate_options {
     }
 
     public function get_default_settings() {
-        $defaults = array(
+        $defaults = [
                 self::MAXNO => 3,
                 self::COUNTLICKERT => 4,
                 0 => get_string(self::STRATEGYID . '_rating_exclude', RATINGALLOCATE_MOD_NAME, "0"),
                 'default' => $this->maxlickert,
-        );
+        ];
 
         for ($i = 1; $i <= $this->maxlickert; $i++) {
             if ($i == $this->maxlickert) {
@@ -111,9 +111,9 @@ class strategy extends \strategytemplate_options {
     }
 
     protected function getvalidationinfo() {
-        return array(self::MAXNO => array(true, 0),
-                self::COUNTLICKERT => array(true, 2)
-        );
+        return [self::MAXNO => [true, 0],
+                self::COUNTLICKERT => [true, 2]
+        ];
     }
 }
 

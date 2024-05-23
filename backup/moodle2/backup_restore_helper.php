@@ -24,9 +24,9 @@
 function get_fields_for_tableclass($class) {
     $class = new ReflectionClass($class);
     $constants = $class->getConstants();
-    $keystoremove = array('ID', 'TABLE');
+    $keystoremove = ['ID', 'TABLE'];
     foreach ($constants as $key => $value) {
-        if (count(array_intersect(array($key), $keystoremove)) > 0) {
+        if (count(array_intersect([$key], $keystoremove)) > 0) {
             unset($constants[$key]);
         }
     }
@@ -42,5 +42,5 @@ function get_tablename_for_tableclass($class) {
 function get_id_for_tableclass($class) {
     $class = new ReflectionClass($class);
     $constants = $class->getConstants();
-    return array($constants['ID']);
+    return [$constants['ID']];
 }

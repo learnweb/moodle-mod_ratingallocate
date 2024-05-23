@@ -93,9 +93,9 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
 
         // Define sources.
         $ratingallocate->set_source_table(get_tablename_for_tableClass('ratingallocate\db\ratingallocate'),
-                array(this_db\ratingallocate::ID => backup::VAR_ACTIVITYID), this_db\ratingallocate_choices::ID . ' ASC');
+                [this_db\ratingallocate::ID => backup::VAR_ACTIVITYID], this_db\ratingallocate_choices::ID . ' ASC');
         $ratingallocatechoice->set_source_table(get_tablename_for_tableClass('ratingallocate\db\ratingallocate_choices'),
-                array(this_db\ratingallocate_choices::RATINGALLOCATEID => backup::VAR_PARENTID),
+                [this_db\ratingallocate_choices::RATINGALLOCATEID => backup::VAR_PARENTID],
                 this_db\ratingallocate_choices::ID . ' ASC');
         $groupchoice->set_source_table(get_tablename_for_tableClass($groupchoiceclass), ['choiceid' => backup::VAR_PARENTID]);
         $ratingallocatechoicegroup->set_source_table(
@@ -106,13 +106,13 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
         if ($userinfo) {
             $ratingallocaterating->set_source_table(get_tablename_for_tableClass(
                     'ratingallocate\db\ratingallocate_ratings'),
-                    array(this_db\ratingallocate_ratings::CHOICEID => backup::VAR_PARENTID),
+                    [this_db\ratingallocate_ratings::CHOICEID => backup::VAR_PARENTID],
                     this_db\ratingallocate_ratings::ID . ' ASC');
             $ratingallocateallocation->set_source_table(
                     get_tablename_for_tableClass('ratingallocate\db\ratingallocate_allocations'),
-                    array(
+                    [
                             this_db\ratingallocate_allocations::RATINGALLOCATEID => backup::VAR_ACTIVITYID,
-                            this_db\ratingallocate_allocations::CHOICEID => backup::VAR_PARENTID),
+                            this_db\ratingallocate_allocations::CHOICEID => backup::VAR_PARENTID],
                     this_db\ratingallocate_allocations::ID . ' ASC'
             );
         }

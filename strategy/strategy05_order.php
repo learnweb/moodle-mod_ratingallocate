@@ -43,25 +43,25 @@ class strategy extends \strategytemplate {
     }
 
     public function get_static_settingfields() {
-        return array(
-                self::COUNTOPTIONS => array(// Amount of fields.
+        return [
+                self::COUNTOPTIONS => [// Amount of fields.
                         'int',
                         get_string(self::STRATEGYID . '_setting_countoptions', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::COUNTOPTIONS),
                         null
-                )
-        );
+                ]
+        ];
     }
 
     public function get_dynamic_settingfields() {
-        return array();
+        return [];
     }
 
     public function get_default_settings() {
         $defaultcountoptions = 2;
-        $output = array(
+        $output = [
                 self::COUNTOPTIONS => $defaultcountoptions
-        );
+        ];
         $countoptions = $this->get_settings_value(self::COUNTOPTIONS, false);
         if (is_null($countoptions)) {
             $countoptions = $defaultcountoptions;
@@ -74,8 +74,7 @@ class strategy extends \strategytemplate {
     }
 
     protected function getvalidationinfo() {
-        return array(self::COUNTOPTIONS => array(true, 1)
-        );
+        return [self::COUNTOPTIONS => [true, 1]];
     }
 
 }
@@ -107,7 +106,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         // If we have less options because of group restrictions than configured for the strategy,
         // we have to limit it, because user cannot vote for one option multiple times.
         $choicecounter = min($this->get_strategysetting(strategy::COUNTOPTIONS), count($ratingdata));
-        $choices = array();
+        $choices = [];
 
         foreach ($ratingdata as $data) {
             $choices[$data->choiceid] = $data->title;
@@ -159,7 +158,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         $select->setName('choice[' . $i . ']');
         $select->setLabel(get_string(strategy::STRATEGYID . '_no_choice', RATINGALLOCATE_MOD_NAME, $i));
         $select->addOption(get_string(strategy::STRATEGYID . '_choice_none', RATINGALLOCATE_MOD_NAME, $i),
-                '', array('disabled' => 'disabled'));
+                '', ['disabled' => 'disabled']);
         foreach ($choices as $id => $name) {
             $select->addOption($name, $id);
         }
@@ -177,7 +176,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
      */
     public function get_data() {
         $data = parent::get_data();
-        $data->data = array();
+        $data->data = [];
 
         // Necessary to initialize an empty entry for every choice to enable the deletion of ratings.
         $choices = $this->ratingallocate->get_rateable_choices();
@@ -199,7 +198,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        $usedchoices = array();
+        $usedchoices = [];
 
         // No data exists, so skip.
         if (!array_key_exists('choice', $data)) {

@@ -33,7 +33,7 @@ namespace mod_ratingallocate\event;
 class index_viewed extends \core\event\base {
 
     public static function create_simple($coursecontext) {
-        return self::create(array('context' => $coursecontext));
+        return self::create(['context' => $coursecontext]);
     }
 
     protected function init() {
@@ -46,15 +46,15 @@ class index_viewed extends \core\event\base {
     }
 
     public function get_description() {
-        return get_string('log_index_viewed_description', 'mod_ratingallocate', array('userid' => $this->userid));
+        return get_string('log_index_viewed_description', 'mod_ratingallocate', ['userid' => $this->userid]);
     }
 
     public function get_url() {
-        return new \moodle_url('/mod/ratingallocate/index.php', array('id' => $this->courseid));
+        return new \moodle_url('/mod/ratingallocate/index.php', ['id' => $this->courseid]);
     }
 
     public static function get_objectid_mapping() {
-        return array();
+        return [];
     }
 
     public static function get_other_mapping() {

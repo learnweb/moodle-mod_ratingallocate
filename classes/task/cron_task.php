@@ -58,7 +58,7 @@ class cron_task extends \core\task\scheduled_task {
             $cm = get_coursemodule_from_instance(this_db\ratingallocate::TABLE, $record->{this_db\ratingallocate::ID});
             // Fetch the data for the course, if is has changed.
             if (!$course || $course->id != $record->{this_db\ratingallocate::COURSE}) {
-                $course = $DB->get_record('course', array('id' => $record->{this_db\ratingallocate::COURSE}), '*', MUST_EXIST);
+                $course = $DB->get_record('course', ['id' => $record->{this_db\ratingallocate::COURSE}], '*', MUST_EXIST);
             }
             // Create ratingallocate instance from record.
             $ratingallocate = new \ratingallocate($record, $course, $cm, \context_module::instance($cm->id));
