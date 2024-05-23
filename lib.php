@@ -755,6 +755,18 @@ function ratingallocate_reset_course_form_defaults($course) {
     return ['reset_ratings_and_allocations' => 1];
 }
 
+/**
+ * Add a get_coursemodule_info function in case any ratingallocate type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+
 function ratingallocate_get_coursemodule_info($coursemodule) {
     global $DB;
 
