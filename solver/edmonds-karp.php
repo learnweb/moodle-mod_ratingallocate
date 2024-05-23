@@ -80,7 +80,7 @@ class solver_edmonds_karp extends distributor {
             // with Bellman-Ford as search function (see: Edmonds-Karp in Introduction to Algorithms)
             // http://stackoverflow.com/questions/6681075/while-loop-in-php-with-assignment-operator
             // Look for an augmenting path (a shortest path from the source to the sink).
-            while ($path = $this->find_shortest_path_bellf_cspf($source, $sink, $teamvote, $toteamid)) { // If the function returns null, the while will stop.
+            while ($path = $this->find_shortest_path_bellf_cspf2($source, $sink, $teamvote, $toteamid)) { // If the function returns null, the while will stop.
                 // Reverse the augmentin path, thereby distributing a user into a group.
                 $this->augment_flow($path);
                 unset($path); // Clear up old path.
@@ -93,7 +93,56 @@ class solver_edmonds_karp extends distributor {
 
     /**
      * Find the shortest path with constraint (enough space for all teammembers in choice).
-     * This is a modified version of the Yen Algorithm for the consstrained shortest path first problem.
+     * This is a modified version of the Yen Algorithm for the constrained shortest path first problem.
+     *
+     * @param $from
+     * @param $to
+     * @param $teamvote
+     * @param $toteamid
+     * @return array|mixed|null array of the nodes in the path, null if no path found.
+     */
+    private function find_shortest_path_bellf_cspf2 ($from, $to, $teamvote, $toteamid) {
+
+        // Stop if no shortest path is found.
+        $i=1;
+        while ($pathcandidate = $this->find_shortest_path_bellf($from, $to)) {
+            // var_dump($this->graph);
+            var_dump($i);
+            var_dump($pathcandidate);
+            $foundedge = null;
+
+            foreach ($this->graph[$pathcandidate[1]] as $index => $edge) {
+                if ($edge->to == $pathcandidate[0]) {
+                    $foundedge = $edge;
+                    $foundedgeid = $index;
+                    break;
+                }
+            }
+            if ($foundedge->space > $teamvote[$toteamid[$pathcandidate[2]]]) {
+                // We just found the shortest path fulfilling the constraint.
+                return $pathcandidate;
+            } else {
+                // Remove the edge since this path is impossible.
+                array_splice($this->graph[1], $foundedgeid, 1);
+                // Add a new edge in the opposite direction whose weight has an opposite sign
+                // array_push($this->graph[$to], new edge($to, $from, -1 * $edge->weight));
+                // according to php doc, this is faster.
+                // $this->graph[2][] = new edge(2, 1, -1 * $edge->weight);
+            }
+            unset($pathcandidate);
+            $i++;
+        }
+        var_dump("nix gefunden");
+        return null;
+
+    }
+
+
+
+
+    /**
+     * Find the shortest path with constraint (enough space for all teammembers in choice).
+     * This is a modified version of the Yen Algorithm for the constrained shortest path first problem.
      *
      * @param $from
      * @param $to
@@ -103,30 +152,38 @@ class solver_edmonds_karp extends distributor {
      */
     private function find_shortest_path_bellf_cspf ($from, $to, $teamvote, $toteamid) {
 
+        var_dump("find shortest path cspf");
+        var_dump($this->graph);
         // Find the first shortest path.
         $pathcandidates = array();
         $pathcandidates[0] = $this->find_shortest_path_bellf($from, $to);
 
         $nopathfound = is_null($pathcandidates[0]);
 
-        // Check if the path fulfills our constraint: space in choice left >= teammembers.
-        $constraintflag = true;
-        $foundedge = null;
-        foreach ($this->graph[$pathcandidates[0][1]] as $edge) {
-            if ($edge->to == $pathcandidates[0][0]) {
-                $foundedge = $edge;
-                break;
+
+        // If the path exists, check if the path fulfills our constraint: space in choice left >= teammembers.
+        if (!$nopathfound) {
+            $constraintflag = true;
+            $foundedge = null;
+
+            $pclenth = count($pathcandidates[0]);
+            foreach ($this->graph[$pathcandidates[0][1]] as $edge) {
+                if ($edge->to == $pathcandidates[0][0]) {
+                    $foundedge = $edge;
+                    break;
+                }
             }
-        }
-        if ($foundedge->space <= $teamvote[$toteamid[$pathcandidates[0][2]]]) {
-            $constraintflag = false;
+            if ($foundedge->space <= $teamvote[$toteamid[$pathcandidates[0][2]]]) {
+                $constraintflag = false;
+            }
+
+            if ($constraintflag) {
+                // We just found the shortest path fulfilling the constraint.
+                return $pathcandidates[0];
+            }
+            $constraintflag = true;
         }
 
-        if ($constraintflag) {
-            // We just found the shortest path fulfilling the constraint.
-            return $pathcandidates[0];
-        }
-        $constraintflag = true;
 
         // Array of the potential next shortest paths.
         $nextpaths = array();
@@ -177,6 +234,11 @@ class solver_edmonds_karp extends distributor {
 
                     // Calculate the spur path from the spur node to the sink.
                     $spurpath = $this->find_shortest_path_bellf($i, $to);
+                    if (is_null($spurpath)) {
+                        var_dump("No spurpath");
+                        $nopathfound = true;
+                        break;
+                    }
 
                     // Entire path is made up of the root path and spur path.
                     $totalpath = array_merge($rootpath, $spurpath);
@@ -210,13 +272,14 @@ class solver_edmonds_karp extends distributor {
                 var_dump($nextpaths);
 
                 // Check if the next best path fullfillst our constraint.
-                foreach ($this->graph[$nextpaths[0][1]] as $edge) {
-                    if ($edge->to == $nextpaths[0][0]) {
+                $pclenth = count($pathcandidates[0]);
+                foreach ($this->graph[$pathcandidates[0][1]] as $edge) {
+                    if ($edge->to == $pathcandidates[0][0]) {
                         $foundedge = $edge;
                         break;
                     }
                 }
-                if ($foundedge->space <= $teamvote[$toteamid[$nextpaths[0][2]]]) {
+                if ($foundedge->space <= $teamvote[$toteamid[$pathcandidates[0][2]]]) {
                     $constraintflag = false;
                 }
 
@@ -225,6 +288,7 @@ class solver_edmonds_karp extends distributor {
                     return $nextpaths[0];
                 }
 
+                // Not sure if saving all the paths is even necessary...
                 $pathcandidates[$k] = $nextpaths[0];
 
                 // Reset flag condition.
@@ -234,6 +298,7 @@ class solver_edmonds_karp extends distributor {
             }
             $k++;
         }
+        var_dump("Path not found");
         return null;
     }
 
@@ -247,7 +312,7 @@ class solver_edmonds_karp extends distributor {
 
         $cost = 0;
 
-        for ($i = count($path) - 1; $i > 0; $i--) {
+        for ($i = count($path)-1; $i > 0; $i--) {
             $from = $path[$i];
             $to = $path[$i - 1];
             $edge = null;

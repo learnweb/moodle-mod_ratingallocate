@@ -1285,6 +1285,33 @@ class ratingallocate {
     }
 
     /**
+     * Returns all ratings for active choices but takes teamvote into consideration
+     */
+    public function get_ratings_for_rateable_choices_with_teamvote() {
+        $sql = 'SELECT ra.*
+                FROM {ratingallocate_choices} c
+                JOIN ( SELECT min(r.id) as id, r.choiceid, r.rating, r.groupid
+                  FROM {ratingallocate_ratings} r
+                  GROUP BY r.choiceid, r.rating, r.groupid ) ra
+                ON c.id = ra.choiceid
+                WHERE c.ratingallocateid = :ratingallocateid AND c.active = 1';
+
+        $ratings = $this->db->get_records_sql($sql, array(
+            'ratingallocateid' => $this->ratingallocateid
+        ));
+        /*
+        $raters = $this->get_raters_in_course();
+
+        // Filter out everyone who can't give ratings.
+        $fromraters = array_filter($ratings, function($rating) use ($raters) {
+            return array_key_exists($rating->userid, $raters);
+        });
+        */
+
+        return $ratings;
+    }
+
+    /**
      * Returns the groups in the teamvote grouping with the amount of groupmembers
      *
      * @return array|false Array of the form groupid => membercount if teamvote is enabled, false if not

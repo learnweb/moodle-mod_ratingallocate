@@ -73,7 +73,17 @@ class cron_task extends \core\task\scheduled_task {
                 return true;
             }
 
+            // For testing purpsoses
+
+                // Clear eventually scheduled distribution of unallocated users.
+                $ratingallocate->clear_distribute_unallocated_tasks();
+                // Run allocation.
+                $ratingallocate->distrubute_choices();
+
+
+            // To do wieder alte funktion...
             // Only start the algorithm, if it should be run by the cron and hasn't been started somehow, yet.
+            /*
             if ($ratingallocate->ratingallocate->runalgorithmbycron === "1" &&
                     $ratingallocate->get_algorithm_status() === \mod_ratingallocate\algorithm_status::NOTSTARTED) {
                 // Clear eventually scheduled distribution of unallocated users.
@@ -81,6 +91,7 @@ class cron_task extends \core\task\scheduled_task {
                 // Run allocation.
                 $ratingallocate->distrubute_choices();
             }
+            */
         }
         return true;
     }

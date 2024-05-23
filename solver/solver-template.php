@@ -93,7 +93,11 @@ class distributor {
 
         // Load data from database.
         $choicerecords = $ratingallocate->get_rateable_choices();
-        $ratings = $ratingallocate->get_ratings_for_rateable_choices();
+        if ($teamvote) {
+            $ratings = $ratingallocate->get_ratings_for_rateable_choices_with_teamvote();
+        } else {
+            $ratings = $ratingallocate->get_ratings_for_rateable_choices();
+        }
 
         // Randomize the order of the entries to prevent advantages for early entry.
         shuffle($ratings);
@@ -116,9 +120,9 @@ class distributor {
             $userids = array();
             foreach ($distributions as $choiceid => $teamids) {
                 foreach ($teamids as $teamid) {
-                    $userids[$teamid] = groups_get_members($teamid, 'u.id');
+                    array_merge($userids, groups_get_members($teamid, 'u.id'));
                 }
-                $userdistributions[$choiceid] = array_merge($userids);
+                $userdistributions[$choiceid] = $userids;
             }
 
             // We have to delete the provisionally groups containing only one user.
