@@ -45,7 +45,7 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities =[
+$capabilities = [
 
         'mod/ratingallocate:addinstance' => [
                 'riskbitmask' => RISK_XSS | RISK_PERSONAL,
@@ -53,11 +53,11 @@ $capabilities =[
                 'captype' => 'write',
                 'archetypes' => [
                         'editingteacher' => CAP_ALLOW,
-                        'manager' => CAP_ALLOW
+                        'manager' => CAP_ALLOW,
                 ],
-                'clonepermissionsfrom' => 'moodle/course:manageactivities'
+                'clonepermissionsfrom' => 'moodle/course:manageactivities',
         ],
-        'mod/ratingallocate:view' =>[
+        'mod/ratingallocate:view' => [
                 'captype' => 'read',
                 'contextlevel' => CONTEXT_MODULE,
                 'legacy' => [
@@ -65,50 +65,50 @@ $capabilities =[
                         'student' => CAP_ALLOW,
                         'teacher' => CAP_ALLOW,
                         'editingteacher' => CAP_ALLOW,
-                        'manager' => CAP_ALLOW
-                ]
+                        'manager' => CAP_ALLOW,
+                ],
         ],
-        'mod/ratingallocate:give_rating' =>[
+        'mod/ratingallocate:give_rating' => [
                 'contextlevel' => CONTEXT_MODULE,
                 'captype' => 'write',
                 'archetypes' => [
-                        'student' => CAP_ALLOW
-                ]
+                        'student' => CAP_ALLOW,
+                ],
         ],
-        'mod/ratingallocate:start_distribution' =>[
+        'mod/ratingallocate:start_distribution' => [
                 'contextlevel' => CONTEXT_MODULE,
                 'riskbitmask' => RISK_PERSONAL,
                 'captype' => 'write',
                 'archetypes' => [
                         'editingteacher' => CAP_ALLOW,
-                        'manager' => CAP_ALLOW
-                ]
+                        'manager' => CAP_ALLOW,
+                ],
         ],
-        'mod/ratingallocate:modify_choices' =>[
+        'mod/ratingallocate:modify_choices' => [
                 'contextlevel' => CONTEXT_MODULE,
                 'captype' => 'write',
                 'archetypes' => [
                         'editingteacher' => CAP_ALLOW,
-                        'manager' => CAP_ALLOW
-                ]
+                        'manager' => CAP_ALLOW,
+                ],
         ],
-        'mod/ratingallocate:export_ratings' =>[
+        'mod/ratingallocate:export_ratings' => [
                 'contextlevel' => CONTEXT_MODULE,
                 'riskbitmask' => RISK_PERSONAL,
                 'captype' => 'read',
                 'archetypes' => [
                         'editingteacher' => CAP_ALLOW,
-                        'manager' => CAP_ALLOW
-                ]
+                        'manager' => CAP_ALLOW,
+                ],
         ],
-        'mod/ratingallocate:distribute_unallocated' =>[
+        'mod/ratingallocate:distribute_unallocated' => [
             'contextlevel' => CONTEXT_MODULE,
             'riskbitmask' => RISK_PERSONAL,
             'captype' => 'write',
             'archetypes' => [
                 'editingteacher' => CAP_ALLOW,
-                'manager' => CAP_ALLOW
-            ]
+                'manager' => CAP_ALLOW,
+            ],
         ],
 ];
 

@@ -128,6 +128,8 @@ class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
     }
 
     /**
+     * Test the setup.
+     *
      * @return void
      * @covers ::get_group_selections
      */
@@ -147,6 +149,8 @@ class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
     }
 
     /**
+     * Test choice groups.
+     *
      * @return void
      * @covers ::filter_choices_by_groups
      */
@@ -168,13 +172,13 @@ class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
          * Choice E: 'usegroups' is not selected; always available.
          */
         $this->ratingallocate->update_choice_groups($choiceidmap['Choice A'], [
-            $groupidmap['Green Group']
+            $groupidmap['Green Group'],
         ]);
         $this->ratingallocate->update_choice_groups($choiceidmap['Choice B'], [
-            $groupidmap['Green Group'], $groupidmap['Blue Group']
+            $groupidmap['Green Group'], $groupidmap['Blue Group'],
         ]);
         $this->ratingallocate->update_choice_groups($choiceidmap['Choice C'], [
-            $groupidmap['Red Group']
+            $groupidmap['Red Group'],
         ]);
 
         // Teacher context: all choices shown in teacher view.
@@ -238,14 +242,14 @@ class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
 
         // Add one.
         $this->ratingallocate->update_choice_groups($choiceidmap['Choice A'], [
-            $groupidmap['Green Group']
+            $groupidmap['Green Group'],
         ]);
         $groups = $this->ratingallocate->get_choice_groups($choiceidmap['Choice A']);
         $this->assertContains($groupidmap['Green Group'], array_keys($groups));
 
         // Update to two.
         $this->ratingallocate->update_choice_groups($choiceidmap['Choice A'], [
-            $groupidmap['Green Group'], $groupidmap['Blue Group']
+            $groupidmap['Green Group'], $groupidmap['Blue Group'],
         ]);
         $groups = $this->ratingallocate->get_choice_groups($choiceidmap['Choice A']);
         $this->assertContains($groupidmap['Green Group'], array_keys($groups));
@@ -253,7 +257,7 @@ class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
 
         // Remove one.
         $this->ratingallocate->update_choice_groups($choiceidmap['Choice A'], [
-            $groupidmap['Blue Group']
+            $groupidmap['Blue Group'],
         ]);
         $groups = $this->ratingallocate->get_choice_groups($choiceidmap['Choice A']);
         $this->assertNotContains($groupidmap['Green Group'], array_keys($groups));

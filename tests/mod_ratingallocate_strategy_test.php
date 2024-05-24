@@ -25,6 +25,11 @@ namespace mod_ratingallocate;
  * @covers ::validate_settings()
  */
 
+/**
+ * Strategy test
+ *
+ * @package mod_ratingallocate
+ */
 class mod_ratingallocate_strategy_test extends \advanced_testcase {
 
     /**

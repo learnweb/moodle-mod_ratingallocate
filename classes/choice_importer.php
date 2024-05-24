@@ -27,18 +27,27 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/csvlib.class.php');
 
-
+/**
+ * @class choice_importer
+ */
 class choice_importer {
+    /**
+     * Required fields.
+     */
     const REQUIRED_FIELDS = ["title", "explanation", "maxsize", "active", "groups"];
 
-    // The import process worked as expected.
+    /**
+     * The import process worked as expected.
+     */
     const IMPORT_STATUS_OK = 'csvupload_ok';
-    // Something went wrong during setup; import cannot continue.
+    /**
+     * Something went wrong during setup; import cannot continue.
+     */
     const IMPORT_STATUS_SETUP_ERROR = 'csvupload_setuperror';
-    // Partial success with data errors.
+    /** Partial success with data errors.*/
     const IMPORT_STATUS_DATA_ERROR = 'csvupload_dataerror';
 
-    // Default maximum number of warnings to show notifications for on import problems.
+    /** Default maximum number of warnings to show notifications for on import problems. */
     const MAX_WARNING_COUNT = 5;
 
     /**
@@ -66,11 +75,18 @@ class choice_importer {
         return '[' . join(', ', $fields) . ']';
     }
 
+    /**
+     * @param $ratingallocateid
+     * @param $ratingallocate
+     */
     public function __construct($ratingallocateid, $ratingallocate) {
         $this->ratingallocate = $ratingallocate;
         $this->ratingallocateid = $ratingallocateid;
     }
 
+    /**
+     * Destruct.
+     */
     public function __destruct() {
         $this->free_reader();
     }

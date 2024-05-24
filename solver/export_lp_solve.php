@@ -35,7 +35,7 @@ if ($id) {
     $cm = get_coursemodule_from_id('ratingallocate', $id, 0, false, MUST_EXIST);
     $course = get_course($cm->course);
     $ratingallocate = $DB->get_record('ratingallocate', [
-            'id' => $cm->instance
+            'id' => $cm->instance,
     ], '*', MUST_EXIST);
 } else {
     error('You must specify a course_module ID');
@@ -52,6 +52,7 @@ $ratingallocateobj = new ratingallocate($ratingallocate, $course, $cm, $context)
  * Eine beim csv_export_writer abgeschaute Klasse, die in Dateien schreiben kann und zum Download anbieten.
  * @copyright (c) 2014, M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package mod_ratingallocate
  */
 class lp_export_write {
     /** @var $filename path to write file */

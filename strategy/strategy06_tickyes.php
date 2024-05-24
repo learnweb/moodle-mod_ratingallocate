@@ -34,10 +34,24 @@ require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template.php');
 
+/**
+ * Strategy.
+ *
+ * @class strategy
+ */
 class strategy extends \strategytemplate {
 
+    /**
+     * Strategyid.
+     */
     const STRATEGYID = 'strategy_tickyes';
+    /**
+     * Min ticks for yes.
+     */
     const MINTICKYES = 'mintickyes';
+    /**
+     * Accept label.
+     */
     const ACCEPT_LABEL = 'accept';
 
     public function get_strategyid() {
@@ -48,16 +62,15 @@ class strategy extends \strategytemplate {
         $output = [
                 self::MINTICKYES => ['int',
                         get_string(self::STRATEGYID . '_setting_mintickyes', RATINGALLOCATE_MOD_NAME),
-                        $this->get_settings_value(self::MINTICKYES)
-                ]
+                        $this->get_settings_value(self::MINTICKYES),
+                ],
         ];
 
         $output[1] = [
                 'text',
                 get_string('strategy_settings_label', RATINGALLOCATE_MOD_NAME, $this->get_settings_default_value(1)),
                 null,
-                $this->get_settings_default_value(1)
-
+                $this->get_settings_default_value(1),
         ];
         return $output;
     }
@@ -74,7 +87,7 @@ class strategy extends \strategytemplate {
         return [
                 self::MINTICKYES => 3,
                 1 => get_string(self::STRATEGYID . '_' . self::ACCEPT_LABEL, RATINGALLOCATE_MOD_NAME),
-                0 => get_string(self::STRATEGYID . '_not_' . self::ACCEPT_LABEL, RATINGALLOCATE_MOD_NAME)
+                0 => get_string(self::STRATEGYID . '_not_' . self::ACCEPT_LABEL, RATINGALLOCATE_MOD_NAME),
         ];
     }
 

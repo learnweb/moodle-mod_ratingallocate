@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Ratings and allocations table.
+ *
  * @package    mod_ratingallocate
  * @copyright  2016 Janek Lasocki-Biczysko <j.lasocki-biczysko@intrallect.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,18 +29,33 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/tablelib.php');
 
+/**
+ * @class ratings_and_allocations_table
+ */
 class ratings_and_allocations_table extends \table_sql {
 
+    /**
+     * Choice column.
+     */
     const CHOICE_COL = 'choice_';
+    /**
+     * Alloc suffix.
+     */
     const EXPORT_CHOICE_ALLOC_SUFFIX = 'alloc';
+    /**
+     * Text suffix.
+     */
     const EXPORT_CHOICE_TEXT_SUFFIX = 'text';
 
-    private $choicenames =[];
-    private $choicemax =[];
-    private $choicesum =[];
-
+    /** @var array $choicenames */
+    private $choicenames = [];
+    /** @var array $choicemax */
+    private $choicemax = [];
+    /** @var array $choicesum */
+    private $choicesum = [];
+    /** @var $titles */
     private $titles;
-
+    /** @var true $shownames */
     private $shownames;
 
     /**
@@ -71,6 +88,16 @@ class ratings_and_allocations_table extends \table_sql {
      */
     private $renderer;
 
+    /**
+     * @param \mod_ratingallocate_renderer $renderer
+     * @param $titles
+     * @param $ratingallocate
+     * @param $action
+     * @param $uniqueid
+     * @param $downloadable
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     public function __construct(\mod_ratingallocate_renderer $renderer, $titles, $ratingallocate,
             $action = ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE, $uniqueid = 'mod_ratingallocate_table', $downloadable = true) {
         parent::__construct($uniqueid);
@@ -243,7 +270,7 @@ class ratings_and_allocations_table extends \table_sql {
         $users = $this->rawdata;
 
         // Group all ratings per user to match table structure.
-        $ratingsbyuser =[];
+        $ratingsbyuser = [];
         foreach ($ratings as $rating) {
             if (empty($ratingsbyuser[$rating->userid])) {
                 $ratingsbyuser[$rating->userid] = [];
@@ -332,7 +359,7 @@ class ratings_and_allocations_table extends \table_sql {
         foreach ($userratings as $choiceid => $userrating) {
             $row[self::CHOICE_COL . $choiceid] = [
                     'rating' => $userrating,
-                    'hasallocation' => false // May be overridden later.
+                    'hasallocation' => false, // May be overridden later.
             ];
         }
 
@@ -349,7 +376,7 @@ class ratings_and_allocations_table extends \table_sql {
                 // User has not rated this choice, but it was assigned to him/her.
                 $row[$rowkey] = [
                         'rating' => null,
-                        'hasallocation' => true
+                        'hasallocation' => true,
                 ];
             } else {
                 // User has rated this choice.
@@ -532,7 +559,7 @@ class ratings_and_allocations_table extends \table_sql {
             $filter = [
                     'hidenorating' => $this->hidenorating,
                     'showallocnecessary' => $this->showallocnecessary,
-                    'groupselect' => $this->groupselect
+                    'groupselect' => $this->groupselect,
             ];
         }
         if (!is_null($hidenorating)) {
@@ -558,7 +585,7 @@ class ratings_and_allocations_table extends \table_sql {
         $filter = [
                 'hidenorating' => $this->hidenorating,
                 'showallocnecessary' => $this->showallocnecessary,
-                'groupselect' => $this->groupselect
+                'groupselect' => $this->groupselect,
         ];
         return $filter;
     }
@@ -617,12 +644,17 @@ class ratings_and_allocations_table extends \table_sql {
                         [
                                 'ratingallocateid' => $this->ratingallocate->ratingallocate->id,
                                 'ratingallocateid2' => $this->ratingallocate->ratingallocate->id,
-                                'groupselect' => $this->groupselect
+                                'groupselect' => $this->groupselect,
                         ]
                 )
         );
     }
 
+    /**
+     * @param $choiceids
+     * @return array
+     * @throws \dml_exception
+     */
     private function filter_choiceids($choiceids) {
         global $DB;
         if (!$choiceids) {
@@ -655,7 +687,7 @@ class ratings_and_allocations_table extends \table_sql {
             $DB->get_records_sql($sql,
                 [
                     'ratingallocateid' => $this->ratingallocate->ratingallocate->id,
-                    'groupselect' => $this->groupselect
+                    'groupselect' => $this->groupselect,
                 ]
             )
         );

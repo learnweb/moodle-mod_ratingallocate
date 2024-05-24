@@ -26,6 +26,9 @@ namespace mod_ratingallocate;
 use coding_exception;
 use dml_exception;
 
+/**
+ * @class ratingallocate_observer
+ */
 class ratingallocate_observer {
 
     /**
@@ -36,7 +39,7 @@ class ratingallocate_observer {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public static function ch_gengroups_delete (\core\event\group_deleted $event) {
+    public static function ch_gengroups_delete(\core\event\group_deleted $event) {
         global $DB;
 
         $eventdata = $event->get_record_snapshot('groups', $event->objectid);
@@ -61,7 +64,7 @@ class ratingallocate_observer {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public static function ra_groupings_delete (\core\event\grouping_deleted $event) {
+    public static function ra_groupings_delete(\core\event\grouping_deleted $event) {
         global $DB;
 
         $eventdata = $event->get_record_snapshot('groupings', $event->objectid);

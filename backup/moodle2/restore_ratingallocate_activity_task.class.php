@@ -27,6 +27,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 require_once($CFG->dirroot . '/mod/ratingallocate/backup/moodle2/restore_ratingallocate_activity_stepslib.php');
 
+/**
+ * @class restore_ratingallocate_activity_task
+ * @copyright 214 C. Usener
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class restore_ratingallocate_activity_task extends restore_activity_task {
 
     /**

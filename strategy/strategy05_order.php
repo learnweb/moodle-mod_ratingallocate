@@ -33,9 +33,18 @@ require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template.php');
 
+/**
+ * @class strategy
+ */
 class strategy extends \strategytemplate {
 
+    /**
+     * Strategyid.
+     */
     const STRATEGYID = 'strategy_order';
+    /**
+     * Countoptions.
+     */
     const COUNTOPTIONS = 'countoptions';
 
     public function get_strategyid() {
@@ -48,8 +57,8 @@ class strategy extends \strategytemplate {
                         'int',
                         get_string(self::STRATEGYID . '_setting_countoptions', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::COUNTOPTIONS),
-                        null
-                ]
+                        null,
+                ],
         ];
     }
 
@@ -60,7 +69,7 @@ class strategy extends \strategytemplate {
     public function get_default_settings() {
         $defaultcountoptions = 2;
         $output = [
-                self::COUNTOPTIONS => $defaultcountoptions
+                self::COUNTOPTIONS => $defaultcountoptions,
         ];
         $countoptions = $this->get_settings_value(self::COUNTOPTIONS, false);
         if (is_null($countoptions)) {

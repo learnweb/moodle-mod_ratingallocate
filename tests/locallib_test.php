@@ -254,29 +254,29 @@ class locallib_test extends \advanced_testcase {
                 'title' => 'C2',
                 'maxsize' => '1',
                 'active' => '1',
-            ]
+            ],
         ];
         $ratings = [
             $student1->id => [
                 [
                     'choice' => 'C1',
-                    'rating' => 1
+                    'rating' => 1,
                 ],
                 [
                     'choice' => 'C2',
-                    'rating' => 0
-                ]
+                    'rating' => 0,
+                ],
             ],
             $student2->id => [
                 [
                     'choice' => 'C1',
-                    'rating' => 0
+                    'rating' => 0,
                 ],
                 [
                     'choice' => 'C2',
-                    'rating' => 1
-                ]
-            ]
+                    'rating' => 1,
+                ],
+            ],
         ];
 
         // Create ratingallocate instance.

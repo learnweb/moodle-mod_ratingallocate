@@ -41,6 +41,9 @@ class manual_alloc_form extends moodleform {
      * Constant for the action
      */
     const FORM_ACTION = 'action';
+    /**
+     * Assign.
+     */
     const ASSIGN = 'assign';
 
     /**
@@ -76,6 +79,8 @@ class manual_alloc_form extends moodleform {
     }
 
     /**
+     * Render filter.
+     *
      * @return void
      * @throws coding_exception
      * @throws dml_exception
@@ -86,17 +91,17 @@ class manual_alloc_form extends moodleform {
 
         $mform->addElement('advcheckbox', 'hide_users_without_rating',
                 get_string('filter_hide_users_without_rating', RATINGALLOCATE_MOD_NAME),
-                null,[0, 1]);
+                null, [0, 1]);
         $mform->setType('show_users_with_no_rating', PARAM_BOOL);
 
         $mform->addElement('advcheckbox', 'show_alloc_necessary',
                 get_string('filter_show_alloc_necessary', RATINGALLOCATE_MOD_NAME),
-                null,[0, 1]);
+                null, [0, 1]);
         $mform->setType('show_alloc_necessary', PARAM_BOOL);
 
         // Filter by group.
         $choicegroups = $this->ratingallocate->get_all_groups_of_choices();
-        $allgroups =[];
+        $allgroups = [];
         foreach ($choicegroups as $choicegroup) {
             $allgroups[$choicegroup] = groups_get_group($choicegroup);
         }
@@ -122,7 +127,7 @@ class manual_alloc_form extends moodleform {
         $mform = &$this->_form;
 
         $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices();
-        $differentratings =[];
+        $differentratings = [];
         // Add actual rating data to userdata.
         foreach ($ratingdata as $rating) {
             if ($rating->rating != null) {
@@ -185,13 +190,13 @@ class manual_alloc_form extends moodleform {
         $mform = $this->_form;
 
         // Elements in a row need a group.
-        $buttonarray =[];
+        $buttonarray = [];
 
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton2', $submit2label);
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
         $buttonarray[] = &$mform->createElement('cancel');
 
-        $mform->addGroup($buttonarray, 'buttonar', '',[' '], false);
+        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
         $mform->setType('buttonar', PARAM_RAW);
         $mform->closeHeaderBefore('buttonar');
     }

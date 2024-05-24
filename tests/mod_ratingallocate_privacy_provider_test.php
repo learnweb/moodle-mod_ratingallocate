@@ -38,6 +38,7 @@ require_once(dirname(__FILE__) . '/generator/lib.php');
  * @covers \classes\privacy\provider
  */
 class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provider_testcase {
+    /** @var \mod_ratingallocate_generated_module $testmodule */
     protected $testmodule;
 
     /**
@@ -201,11 +202,11 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
         $testmodule2 = new \mod_ratingallocate_generated_module($this);
         $cm = get_coursemodule_from_instance('ratingallocate', $this->testmodule->moddb->id);
 
-        $params1 =[
-                'ratingallocateid' => $this->testmodule->moddb->id
+        $params1 = [
+                'ratingallocateid' => $this->testmodule->moddb->id,
         ];
         $params2 = [
-                'ratingallocateid' => $testmodule2->moddb->id
+                'ratingallocateid' => $testmodule2->moddb->id,
         ];
 
         // Before deletion, we should have 20 responses and 10 allocations in instance 1.

@@ -40,7 +40,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
      */
     private function get_choice_lines($joined=false) {
         // Whitespace should be trimmed by the importer.
-        $contents =[];
+        $contents = [];
         $contents[] = 'title, explanation, maxsize, active, groups';
         $contents[] = 'New Test Choice 3,Explain New Choice 3, 10, 1,';
         $contents[] = 'New Test Choice 4,Explain New Choice 4, 100, 1,Green Group';
@@ -67,7 +67,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->blue = $generator->create_group(['name' => 'Blue Group', 'courseid' => $course->id]);
         $this->red = $generator->create_group(['name' => 'Red Group', 'courseid' => $course->id]);
 
-        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this,['course' => $course]);
+        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, ['course' => $course]);
 
         $this->ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
         $this->ratingallocateid = $mod->id;
@@ -99,7 +99,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals($importstatus->readcount, 4);
         $this->assertEquals($importstatus->importcount, 3);
         $this->assertEquals($importstatus->status_message,
-            get_string('csvupload_test_success', 'ratingallocate',['importcount' => $importstatus->importcount])
+            get_string('csvupload_test_success', 'ratingallocate', ['importcount' => $importstatus->importcount])
         );
 
         /* Note: delegated transaction rollback doesn't seme to be  working inside PHPUnit tests.
@@ -119,7 +119,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals($importstatus->readcount, 4);
         $this->assertEquals($importstatus->importcount, 3);
         $this->assertEquals($importstatus->status_message,
-            get_string('csvupload_live_success', 'ratingallocate',['importcount' => $importstatus->importcount])
+            get_string('csvupload_live_success', 'ratingallocate', ['importcount' => $importstatus->importcount])
         );
         $choices = $this->ratingallocate->get_choices();
         $this->assertEquals(5, count($choices), 'Three new choices imported');
@@ -208,7 +208,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals($importstatus->status, \mod_ratingallocate\choice_importer::IMPORT_STATUS_DATA_ERROR);
         $this->assertEquals($importstatus->readcount, 5);
         $this->assertEquals($importstatus->importcount, 4); // Will import, but no group association.
-        $this->assertEquals($importstatus->errors[0], get_string('csvupload_missing_groups', 'ratingallocate',[
+        $this->assertEquals($importstatus->errors[0], get_string('csvupload_missing_groups', 'ratingallocate', [
             'row' => 5,
             'invalidgroups' => 'Blue Man Group',
         ]));

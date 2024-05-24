@@ -28,14 +28,27 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/solver-template.php');
 
+/**
+ * @class solver_edmonds_karp
+ */
 class solver_edmonds_karp extends distributor {
 
+    /**
+     * @return string
+     */
     public function get_name() {
         return 'edmonds_karp';
     }
 
+    /**
+     * @param $choicerecords
+     * @param $ratings
+     * @param $usercount
+     * @return an|array
+     * @throws moodle_exception
+     */
     public function compute_distribution($choicerecords, $ratings, $usercount) {
-        $choicedata =[];
+        $choicedata = [];
         foreach ($choicerecords as $record) {
             $choicedata[$record->id] = $record;
         }
@@ -71,9 +84,9 @@ class solver_edmonds_karp extends distributor {
      */
     private function find_shortest_path_bellf($from, $to) {
         // Table of distances known so far.
-        $dists =[];
+        $dists = [];
         // Table of predecessors (used to reconstruct the shortest path later).
-        $preds =[];
+        $preds = [];
 
         // Number of nodes in the graph.
         $count = $this->graph['count'];
@@ -116,7 +129,7 @@ class solver_edmonds_karp extends distributor {
         unset($dists);
 
         // Use the preds table to reconstruct the shortest path.
-        $path =[];
+        $path = [];
         $p = $to;
         while ($p != $from) {
             $path[] = $p;

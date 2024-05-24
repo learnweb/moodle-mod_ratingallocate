@@ -37,7 +37,9 @@ use ratingallocate\db as this_db;
  */
 class cron_test extends \advanced_testcase {
 
+    /** @var $teacher */
     private $teacher;
+    /** @var $mod */
     private $mod;
 
     // <editor-fold defaultstate="collapsed" desc="Algorithm Run Tests">
@@ -197,7 +199,7 @@ class cron_test extends \advanced_testcase {
 
         // There should not be any module for that course first.
         $this->assertFalse(
-                $DB->record_exists(this_db\ratingallocate::TABLE, [this_db\ratingallocate::COURSE => $course->id
+                $DB->record_exists(this_db\ratingallocate::TABLE, [this_db\ratingallocate::COURSE => $course->id,
                 ]));
         $data = \mod_ratingallocate_generator::get_default_values();
         $data['course'] = $course;

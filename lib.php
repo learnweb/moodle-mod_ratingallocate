@@ -159,19 +159,19 @@ function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallo
 function ratingallocate_delete_instance($id) {
     global $DB;
 
-    if (!$ratingallocate = $DB->get_record('ratingallocate',[
-            'id' => $id
+    if (!$ratingallocate = $DB->get_record('ratingallocate', [
+            'id' => $id,
     ])) {
         return false;
     }
 
     // Delete any dependent records here # .
-    $DB->delete_records('ratingallocate_allocations',[
-            'ratingallocateid' => $ratingallocate->id
+    $DB->delete_records('ratingallocate_allocations', [
+            'ratingallocateid' => $ratingallocate->id,
     ]);
 
-    $deleteids = array_keys($DB->get_records('ratingallocate_choices',[
-        'ratingallocateid' => $ratingallocate->id
+    $deleteids = array_keys($DB->get_records('ratingallocate_choices', [
+        'ratingallocateid' => $ratingallocate->id,
             ], '', 'id'));
 
     if (!empty($deleteids)) {
@@ -182,21 +182,21 @@ function ratingallocate_delete_instance($id) {
             'choiceid ' . $insql, $params);
     }
 
-    $DB->delete_records('ratingallocate_groupings',[
-        'ratingallocateid' => $ratingallocate->id
+    $DB->delete_records('ratingallocate_groupings', [
+        'ratingallocateid' => $ratingallocate->id,
     ]);
 
     $DB->delete_records_list('ratingallocate_ratings', 'choiceid', $deleteids);
 
-    $DB->delete_records('ratingallocate_choices',[
-            'ratingallocateid' => $ratingallocate->id
+    $DB->delete_records('ratingallocate_choices', [
+            'ratingallocateid' => $ratingallocate->id,
     ]);
 
     // Delete associated events.
-    $DB->delete_records('event',['modulename' => 'ratingallocate', 'instance' => $ratingallocate->id]);
+    $DB->delete_records('event', ['modulename' => 'ratingallocate', 'instance' => $ratingallocate->id]);
 
-    $DB->delete_records('ratingallocate',[
-            'id' => $ratingallocate->id
+    $DB->delete_records('ratingallocate', [
+            'id' => $ratingallocate->id,
     ]);
 
     return true;
@@ -569,7 +569,6 @@ function mod_ratingallocate_core_is_event_visible(calendar_event $event): bool {
 /**
  * This function will update the ratingallocate module according to the event that has been modified.
  *
- * @params calendar_event, stdClass
  * @throws coding_exception
  * @throws dml_exception
  * @throws moodle_exception

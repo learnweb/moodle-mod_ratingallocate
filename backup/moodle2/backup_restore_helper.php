@@ -15,12 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
+ * Backup restore helper.
+ *
+ * @package mod_ratingallocate
  * @subpackage backup-moodle2
  * @copyright  2014 C. Usener
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * @param $class
+ * @return array
+ * @throws ReflectionException
+ */
 function get_fields_for_tableclass($class) {
     $class = new ReflectionClass($class);
     $constants = $class->getConstants();
@@ -33,12 +40,22 @@ function get_fields_for_tableclass($class) {
     return array_values($constants);
 }
 
+/**
+ * @param $class
+ * @return mixed
+ * @throws ReflectionException
+ */
 function get_tablename_for_tableclass($class) {
     $class = new ReflectionClass($class);
     $constants = $class->getConstants();
     return $constants['TABLE'];
 }
 
+/**
+ * @param $class
+ * @return array
+ * @throws ReflectionException
+ */
 function get_id_for_tableclass($class) {
     $class = new ReflectionClass($class);
     $constants = $class->getConstants();

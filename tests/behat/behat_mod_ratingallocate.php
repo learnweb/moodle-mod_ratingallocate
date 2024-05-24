@@ -27,6 +27,13 @@ use Behat\Gherkin\Node\TableNode as TableNode,
         Behat\Mink\Exception\ExpectationException as ExpectationException,
         Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
+/**
+ * Class for Behat tests
+ *
+ * @copyright 2014 Tobias Reischmann
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package mod_ratingallocate
+ */
 class behat_mod_ratingallocate extends behat_base {
 
     /**
@@ -417,6 +424,8 @@ class behat_mod_ratingallocate extends behat_base {
     }
 
     /**
+     * User should have ratings.
+     *
      * @Then the user :useridentifier should have ratings
      *
      * @param string $username username of a user.
@@ -432,6 +441,8 @@ class behat_mod_ratingallocate extends behat_base {
     }
 
     /**
+     * User should not have ratings.
+     *
      * @Then the user :useridentifier should not have ratings
      *
      * @param string $username username of a user.

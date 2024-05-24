@@ -36,8 +36,11 @@ class modify_choice_form extends moodleform {
     /** @var $choice ratingallocate_choice */
     private $choice;
 
+    /** The form action. */
     const FORM_ACTION = 'action';
+    /** @var $msgerrorrequired */
     private $msgerrorrequired;
+    /** @var bool $addnew */
     private $addnew = false;
 
     /**
@@ -53,7 +56,7 @@ class modify_choice_form extends moodleform {
         if ($choice) {
             $this->choice = $choice;
             // Special handling for HTML editor.
-            $this->choice->explanation =[
+            $this->choice->explanation = [
                     'text' => $this->choice->explanation,
                     'format' => FORMAT_HTML,
             ];
@@ -82,7 +85,7 @@ class modify_choice_form extends moodleform {
             'maxlength', '255');
 
         $elementname = 'explanation';
-        $editoroptions =[
+        $editoroptions = [
                 'enable_filemanagement' => false,
         ];
         $mform->addElement('editor', $elementname, get_string('choice_explanation', RATINGALLOCATE_MOD_NAME), $editoroptions);
@@ -96,7 +99,7 @@ class modify_choice_form extends moodleform {
         $mform->addRule($elementname, get_string('err_positivnumber', 'ratingallocate'), 'regex', '/^[1-9][0-9]*|0/', 'server');
 
         $elementname = 'attachments_filemanager';
-        $mform->addElement('filemanager', $elementname, get_string('uploadafile'), null,[
+        $mform->addElement('filemanager', $elementname, get_string('uploadafile'), null, [
                 'accepted_types' => '*',
                 'subdirs' => false,
         ]);
@@ -104,12 +107,12 @@ class modify_choice_form extends moodleform {
 
         $elementname = 'active';
         $mform->addElement('advcheckbox', $elementname, get_string('choice_active', RATINGALLOCATE_MOD_NAME),
-                null, null,[0, 1]);
+                null, null, [0, 1]);
         $mform->addHelpButton($elementname, 'choice_active', RATINGALLOCATE_MOD_NAME);
 
         $elementname = 'usegroups';
         $mform->addelement('advcheckbox', $elementname, get_string('choice_usegroups', RATINGALLOCATE_MOD_NAME),
-            null, null,[0, 1]);
+            null, null, [0, 1]);
         $mform->addHelpButton($elementname, 'choice_usegroups', RATINGALLOCATE_MOD_NAME);
 
         $elementname = 'groupselector';
@@ -136,17 +139,23 @@ class modify_choice_form extends moodleform {
         $this->add_buttons();
     }
 
+    /**
+     * Add buttons to form.
+     *
+     * @return void
+     * @throws coding_exception
+     */
     public function add_buttons() {
         $mform =& $this->_form;
 
-        $buttonarray =[];
+        $buttonarray = [];
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         if ($this->addnew) {
             $buttonarray[] = &$mform->createElement('submit', 'submitbutton2',
                     get_string('saveandnext', RATINGALLOCATE_MOD_NAME));
         }
         $buttonarray[] = &$mform->createElement('cancel');
-        $mform->addGroup($buttonarray, 'buttonar', '',[' '], false);
+        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
         $mform->closeHeaderBefore('buttonar');
     }
 

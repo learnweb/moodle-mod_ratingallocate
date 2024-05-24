@@ -30,6 +30,11 @@ require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template.php');
 
+/**
+ * Strategytemplate options.
+ *
+ * @class strategytemplate_options
+ */
 abstract class strategytemplate_options extends \strategytemplate {
 
     /**
@@ -48,7 +53,7 @@ abstract class strategytemplate_options extends \strategytemplate {
                 get_string('strategy_settings_default', RATINGALLOCATE_MOD_NAME),
                 $this->get_settings_value('default'),
                 $this->get_choiceoptions(),
-                'strategy_settings_default'
+                'strategy_settings_default',
         ]];
     }
 }

@@ -84,7 +84,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
                         20],
                 'Rating phase is not over, yet.' => [
                         'get_open_ratingallocate_for_teacher',
-                        10]
+                        10],
         ];
     }
 
@@ -171,10 +171,10 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
          * Choice C: ratable by all students
          */
         $ratingallocate->update_choice_groups($choiceidmap['Choice A'], [
-            $groupidmap['group1']
+            $groupidmap['group1'],
         ]);
         $ratingallocate->update_choice_groups($choiceidmap['Choice B'], [
-            $groupidmap['group2']
+            $groupidmap['group2'],
         ]);
 
         // Test the group filter only (set hidenorating and showalloccount to false).
@@ -254,7 +254,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
             'explanation' => "Ratable by group1",
             'maxsize' => 10,
             'active' => true,
-            'usegroups' => true
+            'usegroups' => true,
         ];
         $choicedata[] = $choice1;
         $choice2 = [
@@ -262,7 +262,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
             'explanation' => "Ratable by group2",
             'maxsize' => 10,
             'active' => true,
-            'usegroups' => true
+            'usegroups' => true,
         ];
         $choicedata[] = $choice2;
         $choice3 = [
@@ -270,7 +270,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
             'explanation' => "Ratable by all students",
             'maxsize' => 10,
             'active' => true,
-            'usegroups' => false
+            'usegroups' => false,
         ];
         $choicedata[] = $choice3;
         return $choicedata;

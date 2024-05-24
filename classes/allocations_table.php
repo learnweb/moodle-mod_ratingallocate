@@ -29,6 +29,9 @@ global $CFG;
 require_once($CFG->libdir . '/tablelib.php');
 require_once($CFG->dirroot . '/user/lib.php');
 
+/**
+ * @class allocations_table
+ */
 class allocations_table extends \table_sql {
 
     /**
@@ -203,7 +206,7 @@ class allocations_table extends \table_sql {
         $name = fullname($user);
 
         if ($COURSE->id == SITEID) {
-            $profileurl = new \moodle_url('/user/profile.php',['id' => $user->id]);
+            $profileurl = new \moodle_url('/user/profile.php', ['id' => $user->id]);
         } else {
             $profileurl = new \moodle_url('/user/view.php',
                    ['id' => $user->id, 'course' => $COURSE->id]);
@@ -229,7 +232,7 @@ class allocations_table extends \table_sql {
 
         $where = "c.ratingallocateid = :ratingallocateid";
 
-        $params =[];
+        $params = [];
         $params['ratingallocateid'] = $this->ratingallocate->ratingallocate->id;
 
         $this->set_sql($fields, $from, $where, $params);

@@ -42,7 +42,7 @@ class mod_generator_test extends \advanced_testcase {
 
         // There should not be any module for that course first.
         $this->assertFalse(
-                $DB->record_exists('ratingallocate',['course' => $course->id
+                $DB->record_exists('ratingallocate',['course' => $course->id,
                 ]));
         $records = $DB->get_records('ratingallocate_choices', [], 'id');
         $this->assertEquals(0, count($records));
@@ -50,7 +50,7 @@ class mod_generator_test extends \advanced_testcase {
         // Create activity.
         $mod = \mod_ratingallocate_generator::create_instance_with_choices($this,
                 ['course' => $course]);
-        $records = $DB->get_records('ratingallocate', ['course' => $course->id
+        $records = $DB->get_records('ratingallocate', ['course' => $course->id,
         ], 'id');
         $this->assertEquals(1, count($records));
         $this->assertTrue(array_key_exists($mod->id, $records));
@@ -71,13 +71,13 @@ class mod_generator_test extends \advanced_testcase {
                 'notificationsend' => '0',
                 'algorithmstarttime' => null,
                 'algorithmstatus' => '0',
-                'runalgorithmbycron' => '1'
+                'runalgorithmbycron' => '1',
         ];
 
         $this->assertEquals(json_decode(json_encode($expectedvaluesdb, false)), reset($records));
         // Must have two choices.
         $records = $DB->get_records('ratingallocate_choices',
-                ['ratingallocateid' => $mod->id
+                ['ratingallocateid' => $mod->id,
                 ], 'title');
         $this->assertEquals(2, count($records));
         $choiceids = array_keys($records);
@@ -89,7 +89,7 @@ class mod_generator_test extends \advanced_testcase {
                         'explanation' => 'Some explanatory text for choice 1',
                         'maxsize' => '10',
                         'usegroups' => '0',
-                        'active' => '1'
+                        'active' => '1',
                 ],
                 $choiceids[1] => (object) [
                         'title' => 'Choice 2',
@@ -98,16 +98,16 @@ class mod_generator_test extends \advanced_testcase {
                         'explanation' => 'Some explanatory text for choice 2',
                         'maxsize' => '5',
                         'usegroups' => '0',
-                        'active' => '0'
-                ]
+                        'active' => '0',
+                ],
         ];
         $this->assertEquals($expectedchoices, $records);
 
         // Create an other mod_ratingallocate within the course.
-        $params = ['course' => $course->id, 'name' => 'Another mod_ratingallocate'
+        $params = ['course' => $course->id, 'name' => 'Another mod_ratingallocate',
         ];
         $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, $params);
-        $records = $DB->get_records('ratingallocate', ['course' => $course->id
+        $records = $DB->get_records('ratingallocate', ['course' => $course->id,
         ], 'id');
         // Are there 2 modules within the course?
         $this->assertEquals(2, count($records));

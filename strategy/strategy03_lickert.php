@@ -33,11 +33,25 @@ require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template_options.php');
 
+/**
+ * Strategy
+ * @class strategy
+ */
 class strategy extends \strategytemplate_options {
 
+    /**
+     * Strategyid.
+     */
     const STRATEGYID = 'strategy_lickert';
+    /**
+     * Max NO.
+     */
     const MAXNO = 'maxno';
+    /**
+     * Countlickert.
+     */
     const COUNTLICKERT = 'countlickert';
+    /** @var mixed $maxlickert */
     private $maxlickert;
 
     public function __construct(array $strategysettings = null) {
@@ -59,14 +73,14 @@ class strategy extends \strategytemplate_options {
                         'int',
                         get_string(self::STRATEGYID . '_setting_maxno', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::MAXNO),
-                        null
+                        null,
                 ],
                 self::COUNTLICKERT => [// How many fields there are.
                         'int',
                         get_string(self::STRATEGYID . '_setting_maxlickert', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::COUNTLICKERT),
-                        null
-                ]
+                        null,
+                ],
         ];
     }
 
@@ -77,13 +91,18 @@ class strategy extends \strategytemplate_options {
                     'text',
                     get_string('strategy_settings_label', RATINGALLOCATE_MOD_NAME, $this->get_settings_default_value($id)),
                     null,
-                    $this->get_settings_default_value($id)
+                    $this->get_settings_default_value($id),
             ];
         }
         $output += $this->get_default_strategy_option();
         return $output;
     }
 
+    /**
+     * Get choiceoptions.
+     *
+     * @return array
+     */
     public function get_choiceoptions() {
         $options = [];
         for ($i = 0; $i <= $this->maxlickert; $i++) {
@@ -92,6 +111,12 @@ class strategy extends \strategytemplate_options {
         return $options;
     }
 
+    /**
+     * Get default settings.
+     *
+     * @return array
+     * @throws \coding_exception
+     */
     public function get_default_settings() {
         $defaults = [
                 self::MAXNO => 3,
@@ -110,9 +135,14 @@ class strategy extends \strategytemplate_options {
         return $defaults;
     }
 
+    /**
+     * Get validation info.
+     *
+     * @return array[]
+     */
     protected function getvalidationinfo() {
         return [self::MAXNO => [true, 0],
-                self::COUNTLICKERT => [true, 2]
+                self::COUNTLICKERT => [true, 2],
         ];
     }
 }
@@ -120,6 +150,11 @@ class strategy extends \strategytemplate_options {
 // Register with the strategymanager.
 \strategymanager::add_strategy(strategy::STRATEGYID);
 
+/**
+ * View form.
+ *
+ * @class mod_ratinallocate_view_form
+ */
 class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform {
     // Already specified by parent class.
 

@@ -23,7 +23,7 @@
  */
 
 /**
- * Custom uninstallation procedure
+ * @function uninstall Custom uninstallation procedure
  */
 function xmldb_ratingallocate_uninstall() {
     return true;

@@ -22,6 +22,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(__FILE__) . '/locallib.php');
 
 /**
+ * Renderer for ratingallocate.
+ *
  * @package    mod_ratingallocate
  * @copyright  2014 M Schulze, T Reischmann, C Usener
  * @copyright  based on code by Stefan Koegel copyright (C) 2013 Stefan Koegel
@@ -32,7 +34,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * @var array rendered notifications to output for handle_view()
      */
-    private $notifications =[];
+    private $notifications = [];
 
     /**
      * Render the header.
@@ -58,6 +60,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render strategyform.
+     *
      * @param $mform ratingallocate_strategyform
      * @return string
      * @throws coding_exception
@@ -105,9 +109,9 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 } else {
                     $cell2 = new html_table_cell(format_time($duedate - $time));
                 }
-                $row->cells =[
+                $row->cells = [
                         $cell1,
-                        $cell2
+                        $cell2,
                 ];
                 $t->data[] = $row;
             }
@@ -136,31 +140,31 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('your_rating', RATINGALLOCATE_MOD_NAME));
 
-            $choiceshtml =[];
+            $choiceshtml = [];
             foreach ($status->ownchoices as $choice) {
                 array_push($choiceshtml, format_string($choice->title) .
                         ' (' . s($this->get_option_title($choice->rating, $status->strategy)) . ')');
             }
 
             $cell2 = new html_table_cell(html_writer::alist($choiceshtml));
-            $row->cells =[
+            $row->cells = [
                     $cell1,
-                    $cell2
+                    $cell2,
             ];
             $t->data[] = $row;
         } else if (!empty($status->availablechoices)) {
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('rateable_choices', RATINGALLOCATE_MOD_NAME));
 
-            $choiceshtml =[];
+            $choiceshtml = [];
             foreach ($status->ownchoices as $choice) {
                 array_push($choiceshtml, format_string($choice->title));
             }
 
             $cell2 = new html_table_cell(html_writer::alist($choiceshtml));
-            $row->cells =[
+            $row->cells = [
                     $cell1,
-                    $cell2
+                    $cell2,
             ];
             $t->data[] = $row;
         }
@@ -187,7 +191,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                     $allocationhtml .= '<br/>' . format_text($allocation->{this_db\ratingallocate_choices::EXPLANATION});
                 }
                 $cell2 = new html_table_cell($allocationhtml);
-                $row->cells =[$cell1, $cell2];
+                $row->cells = [$cell1, $cell2];
                 $t->data[] = $row;
             } else if (!empty($status->ownchoices)) {
                 // Only print warning that user is not allocated if she has any rating.
@@ -452,7 +456,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $uploadcsvurl = new moodle_url($this->page->url, ['action' => ACTION_UPLOAD_CHOICES]);
         echo $this->output->single_button($uploadcsvurl, get_string('csvupload', 'ratingallocate'), 'get', [
-            'tooltip' => get_string('csvupload_explanation', 'ratingallocate')
+            'tooltip' => get_string('csvupload_explanation', 'ratingallocate'),
         ]);
 
         // Set up the table.

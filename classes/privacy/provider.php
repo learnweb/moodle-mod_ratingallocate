@@ -60,14 +60,14 @@ class provider implements
         $items->add_database_table('ratingallocate_ratings', [
                 'choiceid' => 'privacy:metadata:ratingallocate_ratings:choiceid',
                 'userid' => 'privacy:metadata:ratingallocate_ratings:userid',
-                'rating' => 'privacy:metadata:ratingallocate_ratings:rating'
+                'rating' => 'privacy:metadata:ratingallocate_ratings:rating',
         ],
                 'privacy:metadata:ratingallocate_ratings');
 
         $items->add_database_table('ratingallocate_allocations', [
                 'userid' => 'privacy:metadata:ratingallocate_allocations:userid',
                 'ratingallocateid' => 'privacy:metadata:ratingallocate_allocations:ratingallocateid',
-                'choiceid' => 'privacy:metadata:ratingallocate_allocations:choiceid'
+                'choiceid' => 'privacy:metadata:ratingallocate_allocations:choiceid',
         ], 'privacy:metadata:ratingallocate_allocations');
 
         $items->add_user_preference('flextable_mod_ratingallocate_table_filter',
@@ -290,7 +290,7 @@ class provider implements
                         WHERE ratingallocateid = :instanceid) AND userid = :userid",
                     [
                             'instanceid' => $instanceid,
-                            'userid' => $userid
+                            'userid' => $userid,
                     ]
             );
         }

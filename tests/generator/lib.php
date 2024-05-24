@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Library for Tests
+ *
+ * @package mod_ratingallocate
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__) . '/../../locallib.php');
@@ -84,6 +90,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
         return self::$defaultvalue;
     }
 
+    /** @var $defaultvalue */
     private static $defaultvalue;
 
     public static function get_default_choice_data() {
@@ -96,13 +103,14 @@ class mod_ratingallocate_generator extends testing_module_generator {
                     ['title' => 'Choice 2',
                             'explanation' => 'Some explanatory text for choice 2',
                             'maxsize' => '5',
-                            'active' => false
-                    ]
+                            'active' => false,
+                    ],
             ];
         }
         return self::$defaultchoicedata;
     }
 
+    /** @var $defaultchoicedata */
     private static $defaultchoicedata;
 
     /**
@@ -121,7 +129,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
                 global $DB;
                 // Enrol teacher and student.
                 self::$teacherrole = $DB->get_record('role',
-                        ['shortname' => 'editingteacher'
+                        ['shortname' => 'editingteacher',
                         ]);
             }
             $enroled = $tc->getDataGenerator()->enrol_user($user->id, $course->id,
@@ -133,6 +141,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
         return $user;
     }
 
+    /** @var $teacherrole */
     private static $teacherrole;
 
     /**
@@ -210,13 +219,25 @@ class mod_ratingallocate_generator extends testing_module_generator {
     }
 }
 
+/**
+ * Generated Module.
+ *
+ * @package mod_ratingallocate
+ */
 class mod_ratingallocate_generated_module {
+    /** @var stdClass $moddb */
     public $moddb;
+    /** @var stdClass $teacher */
     public $teacher;
+    /** @var array $students */
     public $students = [];
+    /** @var mixed|stdClass $course */
     public $course;
+    /** @var array|mixed $ratings */
     public $ratings;
+    /** @var array $choices */
     public $choices;
+    /** @var array $allocations */
     public $allocations;
 
     /**
@@ -249,7 +270,7 @@ class mod_ratingallocate_generated_module {
         if ($assertintermediateresult) {
             $tc->assertFalse(
                     $DB->record_exists(this_db\ratingallocate::TABLE,
-                            [this_db\ratingallocate::COURSE => $this->course->id
+                            [this_db\ratingallocate::COURSE => $this->course->id,
                             ]), 'There should not be any module for that course first');
         }
 
@@ -271,7 +292,7 @@ class mod_ratingallocate_generated_module {
                         if ($choice->title == $singlerating['choice']) {
                             $ratingdata[] = [
                                     'rating' => $singlerating['rating'],
-                                    'choiceid' => $choice->id
+                                    'choiceid' => $choice->id,
                             ];
                         }
                     }
@@ -302,7 +323,7 @@ class mod_ratingallocate_generated_module {
                 $moduledata['ratings'] = [];
                 for ($i = 0; $i < $numstudents; $i++) {
                     $moduledata['ratings'][$i] = [
-                            $choicesnummerated[$i % $numchoices]->{this_db\ratingallocate_choices::TITLE} => 1
+                            $choicesnummerated[$i % $numchoices]->{this_db\ratingallocate_choices::TITLE} => 1,
                     ];
                 }
             }
@@ -314,7 +335,7 @@ class mod_ratingallocate_generated_module {
             foreach ($choices as $choice) {
                 $prefersnon[$choice->{this_db\ratingallocate_choices::ID}] = [
                         this_db\ratingallocate_ratings::CHOICEID => $choice->{this_db\ratingallocate_choices::ID},
-                        this_db\ratingallocate_ratings::RATING => 0
+                        this_db\ratingallocate_ratings::RATING => 0,
                 ];
                 $choiceidbytitle[$choice->{this_db\ratingallocate_choices::TITLE}] = $choice->{this_db\ratingallocate_choices::ID};
             }

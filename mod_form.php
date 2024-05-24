@@ -34,11 +34,25 @@ require_once(dirname(__FILE__) . '/locallib.php');
  * Module instance settings form
  */
 class mod_ratingallocate_mod_form extends moodleform_mod {
+    /**
+     * Mod_name.
+     */
     const MOD_NAME = 'ratingallocate';
+    /**
+     * Choice placeholder.
+     */
     const CHOICE_PLACEHOLDER_IDENTIFIER = 'placeholder_for_choices';
+    /**
+     * Strategy options.
+     */
     const STRATEGY_OPTIONS = 'strategyopt';
+    /**
+     * Strategyoptions placeholder.
+     */
     const STRATEGY_OPTIONS_PLACEHOLDER = 'placeholder_strategyopt';
+    /** @var int $newchoicecounter */
     private $newchoicecounter = 0;
+    /** @var lang_string|string $msgerrorrequired */
     private $msgerrorrequired;
 
     /**
@@ -72,8 +86,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field.
-        $mform->addElement('text', 'name', get_string('ratingallocatename', self::MOD_NAME),[
-                'size' => '64'
+        $mform->addElement('text', 'name', get_string('ratingallocatename', self::MOD_NAME), [
+                'size' => '64',
         ]);
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
@@ -90,7 +104,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         // -------------------------------------------------------------------------------
         $elementname = 'strategy';
         // Define options for select.
-        $selectoptions =[];
+        $selectoptions = [];
         foreach (\strategymanager::get_strategies() as $strategy) {
             $selectoptions[$strategy] = get_string($strategy . '_name', self::MOD_NAME);
         }
@@ -116,7 +130,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->setDefault($elementname, time() + 9 * 24 * 60 * 60);
 
         $elementname = 'runalgorithmbycron';
-        $mform->addElement('advcheckbox', $elementname, get_string($elementname, self::MOD_NAME), null, null,[0, 1]);
+        $mform->addElement('advcheckbox', $elementname, get_string($elementname, self::MOD_NAME), null, null, [0, 1]);
         $mform->addHelpButton($elementname, $elementname, self::MOD_NAME);
         $mform->setDefault($elementname, 1);
 
@@ -151,7 +165,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $courseid = $update;
             $cm         = get_coursemodule_from_id('ratingallocate', $courseid, 0, false, MUST_EXIST);
             $course     = get_course($cm->course);
-            $ratingallocatedb  = $DB->get_record('ratingallocate',['id' => $cm->instance], '*', MUST_EXIST);
+            $ratingallocatedb  = $DB->get_record('ratingallocate', ['id' => $cm->instance], '*', MUST_EXIST);
             $context = context_module::instance($cm->id);
             $ratingallocate = new ratingallocate($ratingallocatedb, $course, $cm, $context);
             $disablestrategy = $ratingallocate->get_number_of_active_raters() > 0;
@@ -164,7 +178,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         } else {
             return [
                 'ratingallocate' => $ratingallocate,
-                'disable_strategy' => $disablestrategy
+                'disable_strategy' => $disablestrategy,
             ];
         }
     }
@@ -202,7 +216,12 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->hideIf($stratfieldid, 'strategy', 'neq', $strategyid);
     }
 
-    // Override if you need to setup the form depending on current values.
+    /**
+     * Override if you need to setup the form depending on current values.
+     *
+     * @return void
+     * @throws coding_exception
+     */
     public function definition_after_data() {
         parent::definition_after_data();
         $mform = &$this->_form;

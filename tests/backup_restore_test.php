@@ -74,7 +74,7 @@ class backup_restore_test extends \advanced_testcase {
 
         $unsetvalues = function($elem1, $elem2, $varname) {
             $this->assertNotEquals($elem1->{$varname}, $elem2->{$varname});
-            $result =[$elem1->{$varname}, $elem2->{$varname}];
+            $result = [$elem1->{$varname}, $elem2->{$varname}];
             unset($elem1->{$varname});
             unset($elem2->{$varname});
             return $result;

@@ -34,11 +34,28 @@ require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template.php');
 
+/**
+ * Strategy
+ *
+ * @class strategy
+ */
 class strategy extends \strategytemplate {
 
+    /**
+     * Strategyid.
+     */
     const STRATEGYID = 'strategy_points';
+    /**
+     * Max zero.
+     */
     const MAXZERO = 'maxzero';
+    /**
+     * Totalpoints.
+     */
     const TOTALPOINTS = 'totalpoints';
+    /**
+     * Max per choice.
+     */
     const MAXPERCHOICE = 'maxperchoice';
 
     public function get_strategyid() {
@@ -51,20 +68,20 @@ class strategy extends \strategytemplate {
                         'int',
                         get_string(self::STRATEGYID . '_setting_maxzero', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::MAXZERO),
-                        null
+                        null,
                 ],
                 self::TOTALPOINTS => [ // Amount of fields.
                         'int',
                         get_string(self::STRATEGYID . '_setting_totalpoints', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::TOTALPOINTS),
-                        null
+                        null,
                 ],
-                self::MAXPERCHOICE =>  [// Maximum amount of points the student can give per choice.
+                self::MAXPERCHOICE => [// Maximum amount of points the student can give per choice.
                     'int',
                     get_string(self::STRATEGYID . '_setting_maxperchoice', RATINGALLOCATE_MOD_NAME),
                     $this->get_settings_value(self::MAXPERCHOICE),
-                    null
-                ]
+                    null,
+                ],
         ];
     }
 
@@ -76,14 +93,14 @@ class strategy extends \strategytemplate {
         return [
                 self::MAXZERO => 3,
                 self::TOTALPOINTS => 100,
-                self::MAXPERCHOICE => 100
+                self::MAXPERCHOICE => 100,
         ];
     }
 
     protected function getvalidationinfo() {
         return [self::MAXZERO => [true, 0],
                 self::TOTALPOINTS => [true, 1],
-                self::MAXPERCHOICE => [true, 1]
+                self::MAXPERCHOICE => [true, 1],
         ];
     }
 
@@ -92,6 +109,11 @@ class strategy extends \strategytemplate {
 // Register with the strategymanager.
 \strategymanager::add_strategy(strategy::STRATEGYID);
 
+/**
+ * View form.
+ *
+ * @class mod_ratingallocate_view_form
+ */
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
     protected function construct_strategy($strategyoptions) {

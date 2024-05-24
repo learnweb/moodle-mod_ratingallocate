@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Send distibution notification.
+ *
  * @package    mod_ratingallocate
  * @copyright  2014 M Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,6 +30,9 @@ require_once(dirname(__FILE__) . '/../../db/db_structure.php');
 
 use ratingallocate\db as this_db;
 
+/**
+ * @class send_distibution_notification
+ */
 class send_distribution_notification extends \core\task\adhoc_task {
     // Gets executed by the task runner. Will lookup the ratingallocation object and
     // command it to notify users.

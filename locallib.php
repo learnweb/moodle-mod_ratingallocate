@@ -135,6 +135,11 @@ class ratingallocate_db_wrapper {
         return $this->dbrecord->{$name};
     }
 
+    /**
+     * Construct.
+     *
+     * @param $record
+     */
     public function __construct($record) {
         $this->dbrecord = $record;
     }
@@ -175,7 +180,9 @@ class ratingallocate {
      */
     protected $renderer;
 
+    /** @var string notify success */
     const NOTIFY_SUCCESS = 'notifysuccess';
+    /** @var string notify message */
     const NOTIFY_MESSAGE = 'notifymessage';
 
     /**
@@ -211,6 +218,14 @@ class ratingallocate {
         return $options;
     }
 
+    /**
+     * Construct.
+     *
+     * @param $ratingallocaterecord
+     * @param $course
+     * @param $coursem
+     * @param context_module $context
+     */
     public function __construct($ratingallocaterecord, $course, $coursem, context_module $context) {
         global $DB;
         $this->db = &$DB;
@@ -224,6 +239,8 @@ class ratingallocate {
     }
 
     /**
+     * Start distribution.
+     *
      * @return string
      * @throws coding_exception
      */
@@ -291,6 +308,13 @@ class ratingallocate {
         return;
     }
 
+    /**
+     * Delete sutdent ratings.
+     *
+     * @return void
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
     private function delete_all_student_ratings() {
         global $USER;
         // Disallow to delete ratings for students and tutors.
@@ -311,6 +335,14 @@ class ratingallocate {
             get_string('success_deleting_all', RATINGALLOCATE_MOD_NAME));
     }
 
+    /**
+     * Give rating.
+     *
+     * @return string
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     */
     private function process_action_give_rating() {
         global $CFG;
 
@@ -387,6 +419,13 @@ class ratingallocate {
         redirect(new moodle_url('/mod/ratingallocate/view.php', ['id' => $this->coursemodule->id]));
     }
 
+    /**
+     * Show choices.
+     *
+     * @return void
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
     private function process_action_show_choices() {
 
         if (has_capability('mod/ratingallocate:modify_choices', $this->context)) {
@@ -417,6 +456,15 @@ class ratingallocate {
 
     }
 
+    /**
+     * Edit choice.
+     *
+     * @return string
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws dml_transaction_exception
+     * @throws moodle_exception
+     */
     private function process_action_edit_choice() {
         global $DB, $PAGE;
 
@@ -607,6 +655,13 @@ class ratingallocate {
         }
     }
 
+    /**
+     * Manual allocation.
+     *
+     * @return string
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
     private function process_action_manual_allocation() {
         // Manual allocation.
         $output = '';
@@ -897,7 +952,8 @@ class ratingallocate {
     /**
      * Wrapper function to queue an adhoc task for distributing unallocated users.
      *
-     * @param string $distributionalgorithm one of the string constants ACTION_DISTRIBUTE_UNALLOCATED_FILL or ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY
+     * @param string $distributionalgorithm
+     * one of the string constants ACTION_DISTRIBUTE_UNALLOCATED_FILL or ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY
      * @return void
      */
     public function queue_distribution_of_users_without_choice(string $distributionalgorithm): void {
@@ -957,6 +1013,13 @@ class ratingallocate {
         $transaction->allow_commit();
     }
 
+    /**
+     * Show ratings and allocation table.
+     *
+     * @return string
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
     private function process_action_show_ratings_and_alloc_table() {
         $output = '';
         // Print ratings table.
@@ -981,6 +1044,13 @@ class ratingallocate {
         return $output;
     }
 
+    /**
+     * Process action show allocation table.
+     *
+     * @return string
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
     private function process_action_show_allocation_table() {
         $output = '';
         // Print ratings table.
@@ -1001,6 +1071,13 @@ class ratingallocate {
         return $output;
     }
 
+    /**
+     * Process action show statistics.
+     *
+     * @return string
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
     private function process_action_show_statistics() {
         $output = '';
         // Print ratings table.
@@ -1021,6 +1098,13 @@ class ratingallocate {
         return $output;
     }
 
+    /**
+     * Process action publish allocations.
+     *
+     * @return void
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
     private function process_publish_allocations() {
         $status = $this->get_status();
         if ($status === self::DISTRIBUTION_STATUS_READY_ALLOC_STARTED) {
@@ -1038,6 +1122,14 @@ class ratingallocate {
                 ['id' => $this->coursemodule->id]));
     }
 
+    /**
+     * Allocation to grouping.
+     *
+     * @return void
+     * @throws coding_exception
+     * @throws moodle_exception
+     * @throws required_capability_exception
+     */
     private function process_action_allocation_to_grouping() {
         $this->synchronize_allocation_and_grouping();
 
@@ -1048,6 +1140,13 @@ class ratingallocate {
                 \core\output\notification::NOTIFY_SUCCESS);
     }
 
+    /**
+     * Process default.
+     *
+     * @return string
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
     private function process_default() {
         global $OUTPUT;
         $output = '';
@@ -1093,7 +1192,7 @@ class ratingallocate {
         return $output;
     }
 
-    // States if the ratingallocate info schould be displayed.
+    /** @var bool $showinfo States if the ratingallocate info schould be displayed. */
     private $showinfo = true;
 
     /**
@@ -1265,7 +1364,7 @@ class ratingallocate {
                 WHERE c.ratingallocateid = :ratingallocateid AND c.active = 1';
 
         $ratings = $this->db->get_records_sql($sql, [
-                'ratingallocateid' => $this->ratingallocateid
+                'ratingallocateid' => $this->ratingallocateid,
         ]);
         $raters = $this->get_raters_in_course();
 
@@ -1409,7 +1508,7 @@ class ratingallocate {
         // Add custom data.
         $task->set_component('mod_ratingallocate');
         $task->set_custom_data([
-                'ratingallocateid' => $this->ratingallocateid
+                'ratingallocateid' => $this->ratingallocateid,
         ]);
 
         // Queue it.
@@ -1440,7 +1539,7 @@ class ratingallocate {
                WHERE al.ratingallocateid = :ratingallocateid';
 
         $allocated = $this->db->get_records_sql($sql, [
-                'ratingallocateid' => $this->ratingallocateid
+                'ratingallocateid' => $this->ratingallocateid,
         ]);
         $ratings = $this->get_ratings_for_rateable_choices();
         // Macht daraus ein Array mit userid => quatsch.
@@ -1456,8 +1555,11 @@ class ratingallocate {
         return $unallocraters;
     }
 
-    /*
+    /**
      * Returns all active choices with allocation count
+     *
+     * @return array
+     * @throws dml_exception
      */
     public function get_choices_with_allocationcount() {
         $sql = 'SELECT c.*, al.usercount
@@ -1489,7 +1591,7 @@ class ratingallocate {
            LEFT JOIN {ratingallocate_ratings} r ON al.choiceid = r.choiceid AND al.userid = r.userid
                WHERE al.ratingallocateid = :ratingallocateid AND c.active = 1';
         $records = $this->db->get_records_sql($query, [
-                'ratingallocateid' => $this->ratingallocateid
+                'ratingallocateid' => $this->ratingallocateid,
         ]);
         return $records;
     }
@@ -1615,7 +1717,7 @@ class ratingallocate {
                ORDER by c.title";
         return $this->db->get_records_sql($sql, [
                 'ratingallocateid' => $this->ratingallocateid,
-                'userid' => $userid
+                'userid' => $userid,
         ]);
     }
 
@@ -1630,7 +1732,7 @@ class ratingallocate {
                   ON c.id = r.choiceid
                WHERE c.ratingallocateid = :ratingallocateid AND c.active = 1";
         return $this->db->get_records_sql($sql, [
-                'ratingallocateid' => $this->ratingallocateid
+                'ratingallocateid' => $this->ratingallocateid,
         ]);
     }
 
@@ -1647,7 +1749,7 @@ class ratingallocate {
 
             foreach ($choices as $id => $choice) {
                 $data = [
-                    'choiceid' => $id
+                    'choiceid' => $id,
                 ];
 
                 // Delete the allocations associated with this rating.
@@ -1684,7 +1786,7 @@ class ratingallocate {
             foreach ($choices as $id => $choice) {
                 $data = [
                         'userid' => $userid,
-                        'choiceid' => $id
+                        'choiceid' => $id,
                 ];
 
                 // Actually delete the rating.
@@ -1718,7 +1820,7 @@ class ratingallocate {
 
                 $ratingexists = [
                         'choiceid' => $rdata['choiceid'],
-                        'userid' => $userid
+                        'userid' => $userid,
                 ];
                 if ($DB->record_exists('ratingallocate_ratings', $ratingexists)) {
                     // The rating exists, we need to update its value
@@ -1854,7 +1956,7 @@ class ratingallocate {
 
         return $this->db->get_records_sql($sql, [
                 'ratingallocateid' => $this->ratingallocateid,
-                'userid' => $userid
+                'userid' => $userid,
         ]);
     }
 
@@ -1894,6 +1996,13 @@ class ratingallocate {
         }
     }
 
+    /**
+     * Save form.
+     *
+     * @param $data
+     * @return void
+     * @throws dml_transaction_exception
+     */
     public function save_modify_choice_form($data) {
         global $DB;
         try {
@@ -1932,7 +2041,7 @@ class ratingallocate {
     public function remove_allocation($choiceid, $userid) {
         $this->db->delete_records('ratingallocate_allocations', [
                 'choiceid' => $choiceid,
-                'userid' => $userid
+                'userid' => $userid,
         ]);
         return true;
     }
@@ -1945,7 +2054,7 @@ class ratingallocate {
     public function remove_allocations($userid) {
         $this->db->delete_records('ratingallocate_allocations', [
                 'userid' => $userid,
-                'ratingallocateid' => $this->ratingallocateid
+                'ratingallocateid' => $this->ratingallocateid,
         ]);
     }
 
@@ -1959,7 +2068,7 @@ class ratingallocate {
         $this->db->insert_record_raw('ratingallocate_allocations', [
                 'choiceid' => $choiceid,
                 'userid' => $userid,
-                'ratingallocateid' => $this->ratingallocateid
+                'ratingallocateid' => $this->ratingallocateid,
         ]);
         return true;
     }
@@ -1975,7 +2084,7 @@ class ratingallocate {
         $this->db->set_field(this_db\ratingallocate_allocations::TABLE, this_db\ratingallocate_allocations::CHOICEID,
                 $newchoiceid, [
                         'choiceid' => $oldchoiceid,
-                        'userid' => $userid
+                        'userid' => $userid,
                 ]
         );
         return true;
@@ -2100,7 +2209,9 @@ class ratingallocate {
         return (int) $this->ratingallocate->algorithmstatus;
     }
 
-    /** Returns the context of the ratingallocate instance
+    /**
+     * Returns the context of the ratingallocate instance
+     *
      * @return context_module
      */
     public function get_context() {
@@ -2191,6 +2302,8 @@ class ratingallocate {
     }
 
     /**
+     * Is the setup ok?
+     *
      * @return bool true, if all strategy settings are ok.
      */
     public function is_setup_ok() {
@@ -2207,6 +2320,8 @@ class ratingallocate {
     }
 
     /**
+     * Get File attachments.
+     *
      * @param int choiceid
      * @return array of file objects.
      */
@@ -2300,6 +2415,11 @@ class ratingallocate_choice {
         $this->dbrecord->{$name} = $value;
     }
 
+    /**
+     * Construct.
+     *
+     * @param $record
+     */
     public function __construct($record) {
         $this->dbrecord = $record;
     }
@@ -2336,6 +2456,11 @@ class ratingallocate_group_choices {
         $this->dbrecord->{$name} = $value;
     }
 
+    /**
+     * Construct.
+     *
+     * @param $record
+     */
     public function __construct($record) {
         $this->dbrecord = $record;
     }

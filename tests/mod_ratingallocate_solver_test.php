@@ -24,7 +24,7 @@ require_once($CFG->dirroot . '/mod/ratingallocate/solver/ford-fulkerson-koegel.p
 /**
  * Contains unit tests for the distribution algorithm.
  *
- * @package    mod
+ * @package mod_ratingallocate
  * @subpackage mod_groupdistribution
  * @group mod_ratingallocate
  * @copyright  original Version 2013 Stefan Koegel
@@ -131,6 +131,8 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
     }
 
     /**
+     * Test Edmonds-Karp algorithm.
+     *
      * @return void
      * @covers \solver_edmonds_karp
      */
@@ -206,6 +208,8 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
     }
 
     /**
+     * Test algorithm for negativeweightcycle.
+     *
      * @return void
      */
     public function test_negweightcycle() {
@@ -254,6 +258,8 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
     }
 
     /**
+     * Test tagetfunction.
+     *
      * @return void
      */
     public function test_targetfunc() {

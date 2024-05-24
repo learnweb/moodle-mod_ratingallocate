@@ -33,10 +33,21 @@ require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template_options.php');
 
+/**
+ * Strategy
+ *
+ * @class strategy
+ */
 class strategy extends \strategytemplate_options {
 
+    /**
+     * Strategyid.
+     */
     const STRATEGYID = 'strategy_yesno';
-    const MAXCROSSOUT = 'maxcrossout'; // Maximum to deny.
+    /**
+     * Maximum to deny.
+     */
+    const MAXCROSSOUT = 'maxcrossout';
 
     public function get_strategyid() {
         return self::STRATEGYID;
@@ -48,15 +59,15 @@ class strategy extends \strategytemplate_options {
                         'int',
                         get_string(self::STRATEGYID . '_setting_crossout', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::MAXCROSSOUT),
-                        null
-                ]
+                        null,
+                ],
         ];
         foreach (array_keys($this->get_choiceoptions()) as $id) {
             $output[$id] = [
                     'text',
                     get_string('strategy_settings_label', RATINGALLOCATE_MOD_NAME, $this->get_settings_default_value($id)),
                     null,
-                    $this->get_settings_default_value($id)
+                    $this->get_settings_default_value($id),
             ];
         }
         $output += $this->get_default_strategy_option();
@@ -70,7 +81,7 @@ class strategy extends \strategytemplate_options {
     public function get_choiceoptions() {
         $options = [
                 0 => $this->get_settings_value(0),
-                1 => $this->get_settings_value(1)
+                1 => $this->get_settings_value(1),
         ];
         return $options;
     }
@@ -92,6 +103,11 @@ class strategy extends \strategytemplate_options {
 // Register with the strategymanager.
 \strategymanager::add_strategy(strategy::STRATEGYID);
 
+/**
+ * View form
+ *
+ * @class mod_ratingallocate_view_form
+ */
 class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform {
     // Already specified by parent class.
 
