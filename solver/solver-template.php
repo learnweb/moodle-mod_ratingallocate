@@ -33,7 +33,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * @class edge
+ * Edge.
+ *
+ * @package mod_ratingallocate
  */
 class edge {
     /** @var from int */
@@ -46,6 +48,8 @@ class edge {
     public $space;
 
     /**
+     * Construct.
+     *
      * @param $from
      * @param $to
      * @param $weight

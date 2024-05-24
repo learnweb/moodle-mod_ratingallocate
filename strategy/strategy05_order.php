@@ -34,7 +34,9 @@ require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template.php');
 
 /**
- * @class strategy
+ * Strategy.
+ *
+ * @package mod_ratingallocate
  */
 class strategy extends \strategytemplate {
 

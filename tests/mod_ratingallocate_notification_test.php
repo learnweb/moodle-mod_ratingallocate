@@ -90,7 +90,7 @@ class mod_ratingallocate_notification_test extends \advanced_testcase {
                                 'choice' => self::CHOICE2,
                                 'rating' => 0,
                         ],
-                ]
+                ],
         ];
 
         $ratingallocate = \mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this, $choices,

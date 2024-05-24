@@ -31,7 +31,9 @@ require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/solver-template.php');
 
 /**
- * @class solver_ford_fulkerson
+ * Solver Ford-fulkerson.
+ *
+ * @package mod_ratingallocate
  */
 class solver_ford_fulkerson extends distributor {
 
@@ -156,6 +158,8 @@ class solver_ford_fulkerson extends distributor {
     }
 
     /**
+     * Return name.
+     *
      * @return string
      */
     public function get_name() {

@@ -30,7 +30,9 @@ global $CFG;
 require_once($CFG->libdir . '/tablelib.php');
 
 /**
- * @class ratings_and_allocations_table
+ * Ratings and allocations table
+ *
+ * @package mod_ratingallocate
  */
 class ratings_and_allocations_table extends \table_sql {
 
@@ -89,6 +91,8 @@ class ratings_and_allocations_table extends \table_sql {
     private $renderer;
 
     /**
+     * Construct.
+     *
      * @param \mod_ratingallocate_renderer $renderer
      * @param $titles
      * @param $ratingallocate
@@ -651,6 +655,8 @@ class ratings_and_allocations_table extends \table_sql {
     }
 
     /**
+     * Filter choiceids.
+     *
      * @param $choiceids
      * @return array
      * @throws \dml_exception

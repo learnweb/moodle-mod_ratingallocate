@@ -37,7 +37,7 @@ require_once(dirname(__FILE__) . '/strategy_template.php');
 /**
  * Strategy
  *
- * @class strategy
+ * @package mod_ratingallocate
  */
 class strategy extends \strategytemplate {
 
@@ -112,7 +112,7 @@ class strategy extends \strategytemplate {
 /**
  * View form.
  *
- * @class mod_ratingallocate_view_form
+ * @package mod_ratingallocate
  */
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 

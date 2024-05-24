@@ -27,7 +27,9 @@ use coding_exception;
 use dml_exception;
 
 /**
- * @class ratingallocate_observer
+ * Ratingallocate observer.
+ *
+ * @package mod_ratingallocate
  */
 class ratingallocate_observer {
 

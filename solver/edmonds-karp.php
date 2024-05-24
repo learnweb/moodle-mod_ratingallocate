@@ -29,11 +29,15 @@ require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/solver-template.php');
 
 /**
- * @class solver_edmonds_karp
+ * Solver edmonds-karp.
+ *
+ * @package mod_ratingallocate
  */
 class solver_edmonds_karp extends distributor {
 
     /**
+     * Return name.
+     *
      * @return string
      */
     public function get_name() {
@@ -41,6 +45,8 @@ class solver_edmonds_karp extends distributor {
     }
 
     /**
+     * Compute distribution.
+     *
      * @param $choicerecords
      * @param $ratings
      * @param $usercount

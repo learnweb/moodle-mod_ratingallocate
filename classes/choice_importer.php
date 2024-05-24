@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Choice importer.
+ *
  * @package    mod_ratingallocate
  * @copyright  2021 Catalyst IT
  * @author     David Thompson <david.thompson@catalyst.net.nz>
@@ -28,7 +30,9 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/csvlib.class.php');
 
 /**
- * @class choice_importer
+ * Choice importer.
+ *
+ * @package mod_ratingallocate
  */
 class choice_importer {
     /**
@@ -76,6 +80,8 @@ class choice_importer {
     }
 
     /**
+     * Construct.
+     *
      * @param $ratingallocateid
      * @param $ratingallocate
      */

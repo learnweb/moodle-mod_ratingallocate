@@ -42,7 +42,7 @@ class mod_generator_test extends \advanced_testcase {
 
         // There should not be any module for that course first.
         $this->assertFalse(
-                $DB->record_exists('ratingallocate',['course' => $course->id,
+                $DB->record_exists('ratingallocate', ['course' => $course->id,
                 ]));
         $records = $DB->get_records('ratingallocate_choices', [], 'id');
         $this->assertEquals(0, count($records));

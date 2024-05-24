@@ -37,7 +37,7 @@ require_once(dirname(__FILE__) . '/strategy_template.php');
 /**
  * Strategy.
  *
- * @class strategy
+ * @package mod_ratingallocate
  */
 class strategy extends \strategytemplate {
 

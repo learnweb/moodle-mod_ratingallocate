@@ -24,6 +24,8 @@
  */
 
 /**
+ * Get fields for tableclass
+ *
  * @param $class
  * @return array
  * @throws ReflectionException
@@ -41,6 +43,8 @@ function get_fields_for_tableclass($class) {
 }
 
 /**
+ * Get tablename for tableclass.
+ *
  * @param $class
  * @return mixed
  * @throws ReflectionException
@@ -52,6 +56,8 @@ function get_tablename_for_tableclass($class) {
 }
 
 /**
+ * Get id for tableclass.
+ *
  * @param $class
  * @return array
  * @throws ReflectionException

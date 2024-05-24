@@ -33,7 +33,7 @@ require_once(dirname(__FILE__) . '/strategy_template.php');
 /**
  * Strategytemplate options.
  *
- * @class strategytemplate_options
+ * @package mod_ratingallocate
  */
 abstract class strategytemplate_options extends \strategytemplate {
 

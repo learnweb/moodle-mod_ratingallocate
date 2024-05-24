@@ -28,7 +28,9 @@ namespace ratingallocate\db;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * @class ratingallocate
+ * Ratingallocate.
+ *
+ * @package mod_ratingallocate
  */
 class ratingallocate {
     /**
@@ -106,7 +108,9 @@ class ratingallocate {
 }
 
 /**
- * @class  Ratingallocate choices
+ * Ratingallocate choices.
+ *
+ * @package mod_ratingallocate
  */
 class ratingallocate_choices {
     /**
@@ -144,7 +148,9 @@ class ratingallocate_choices {
 }
 
 /**
- * @class ratingallocate_group_choices
+ * Ratingallocate group choices.
+ *
+ * @package mod_ratingallocate
  */
 class ratingallocate_group_choices {
     /**
@@ -166,7 +172,9 @@ class ratingallocate_group_choices {
 }
 
 /**
- * @class ratingallocate_ch_gengroups
+ * Ratingallocate generated groups of choices
+ *
+ * @package mod_ratingallocate
  */
 class ratingallocate_ch_gengroups {
     /**
@@ -188,7 +196,9 @@ class ratingallocate_ch_gengroups {
 }
 
 /**
- * @class ratingallocate_groupings Generated grouping by instance
+ * Ratingallocate groupings
+ *
+ * @package mod_ratingallocate
  */
 class ratingallocate_groupings {
     /**
@@ -210,7 +220,9 @@ class ratingallocate_groupings {
 }
 
 /**
- * @class ratings (map user to choice)
+ * Ratingallocate ratings
+ *
+ * @package mod_ratingallocate
  */
 class ratingallocate_ratings {
     /**
@@ -236,7 +248,9 @@ class ratingallocate_ratings {
 }
 
 /**
- * @class allocations
+ * Ratingallocate allocations.
+ *
+ * @package mod_ratingallocate
  */
 class ratingallocate_allocations {
     /**

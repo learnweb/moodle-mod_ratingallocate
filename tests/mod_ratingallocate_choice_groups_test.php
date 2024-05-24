@@ -227,6 +227,8 @@ class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
     }
 
     /**
+     * Test update choice groups.
+     *
      * @return void
      * @covers ::update_choice_groups
      */

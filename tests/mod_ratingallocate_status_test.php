@@ -41,9 +41,9 @@ class mod_ratingallocate_status_test extends \advanced_testcase {
     }
 
     /**
-     * Provider.
+     * Provider
      *
-     * @return array|Iterable|Generator the different testing scenarios.
+     * @return array[]
      */
     public function ratingallocate_provider() {
         return [

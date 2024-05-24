@@ -35,7 +35,9 @@ require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template_options.php');
 
 /**
- * @class strategy
+ * Strategy.
+ *
+ * @package mod_ratingallocate
  */
 class strategy extends \strategytemplate_options {
 
@@ -126,7 +128,9 @@ class strategy extends \strategytemplate_options {
 \strategymanager::add_strategy(strategy::STRATEGYID);
 
 /**
- * @class mod_ratingallocate_view_form
+ * View form.
+ *
+ * @package mod_ratingallocate
  */
 class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform {
     // Already specified by parent class.

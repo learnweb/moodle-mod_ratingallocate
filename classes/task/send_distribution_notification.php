@@ -31,7 +31,9 @@ require_once(dirname(__FILE__) . '/../../db/db_structure.php');
 use ratingallocate\db as this_db;
 
 /**
- * @class send_distibution_notification
+ * Send distribution notification
+ *
+ * @package mod_ratingallocate
  */
 class send_distribution_notification extends \core\task\adhoc_task {
     // Gets executed by the task runner. Will lookup the ratingallocation object and

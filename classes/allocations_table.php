@@ -30,7 +30,9 @@ require_once($CFG->libdir . '/tablelib.php');
 require_once($CFG->dirroot . '/user/lib.php');
 
 /**
- * @class allocations_table
+ * Allocations table.
+ *
+ * @package mod_ratingallocate
  */
 class allocations_table extends \table_sql {
 
