@@ -587,7 +587,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             'action', array(
                 ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE => get_string('show_table', RATINGALLOCATE_MOD_NAME),
                 ACTION_SHOW_ALLOCATION_TABLE => get_string('show_allocation_table', RATINGALLOCATE_MOD_NAME),
-                ACTION_SHOW_STATISTICS => get_string('show_allocation_statistics', RATINGALLOCATE_MOD_NAME)
+                ACTION_SHOW_STATISTICS => get_string('show_allocation_statistics', RATINGALLOCATE_MOD_NAME),
             ),
             $action
         );
@@ -854,7 +854,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                             'notrated' => $notrated,
                             'rated' => $activeraters,
                             'rating' => $titles[max(array_keys($distributiondata))],
-                            'unassigned' => count($ratingallocate->get_undistributed_users()))));
+                            'unassigned' => count($ratingallocate->get_undistributed_users()),
+                    ]));
             $output .= html_writer::table($allocationtable);
         }
         $output .= $this->box_end();

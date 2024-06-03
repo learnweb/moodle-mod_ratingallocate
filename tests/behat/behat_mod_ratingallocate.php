@@ -681,13 +681,13 @@ class behat_mod_ratingallocate extends behat_base {
 
             case 'choices':
                 return new moodle_url('/mod/ratingallocate/view.php', [
-                    'id' => $this->get_cm_by_ratingallocate_name($identifier)->id, 'action' => ACTION_SHOW_CHOICES
+                    'id' => $this->get_cm_by_ratingallocate_name($identifier)->id, 'action' => ACTION_SHOW_CHOICES,
                 ]);
 
             case 'reports':
                 return new moodle_url('/mod/ratingallocate/view.php', [
                     'id' => $this->get_cm_by_ratingallocate_name($identifier)->id,
-                    'action' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE
+                    'action' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE,
                 ]);
 
             default:
