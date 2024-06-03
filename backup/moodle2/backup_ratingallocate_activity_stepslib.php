@@ -18,7 +18,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__) . '/backup_restore_helper.php');
 
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 /**
  * Define the complete ratingallocate structure for backup, with [file and] id annotations
@@ -35,38 +35,38 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
         $userinfo = $this->get_setting_value('userinfo');
 
         // Define each element separated.
-        $class = 'ratingallocate\db\ratingallocate';
+        $class = 'mod_ratingallocate\db\ratingallocate';
         $ratingallocate = new backup_nested_element(get_tablename_for_tableClass($class), get_id_for_tableClass($class),
                 get_fields_for_tableClass($class));
 
-        $class = 'ratingallocate\db\ratingallocate_choices';
+        $class = 'mod_ratingallocate\db\ratingallocate_choices';
         $ratingallocatechoices = new backup_nested_element(get_tablename_for_tableClass($class) . 's');
         $ratingallocatechoice = new backup_nested_element(get_tablename_for_tableClass($class), get_id_for_tableClass($class),
                 get_fields_for_tableClass($class));
 
-        $class = 'ratingallocate\db\ratingallocate_ratings';
+        $class = 'mod_ratingallocate\db\ratingallocate_ratings';
         $ratingallocateratings = new backup_nested_element(get_tablename_for_tableClass($class) . 's');
         $ratingallocaterating = new backup_nested_element(get_tablename_for_tableClass($class), get_id_for_tableClass($class),
                 get_fields_for_tableClass($class));
 
-        $class = 'ratingallocate\db\ratingallocate_allocations';
+        $class = 'mod_ratingallocate\db\ratingallocate_allocations';
         $ratingallocateallocations = new backup_nested_element(get_tablename_for_tableClass($class) . 's');
         $ratingallocateallocation = new backup_nested_element(get_tablename_for_tableClass($class), get_id_for_tableClass($class),
                 get_fields_for_tableClass($class));
 
-        $groupchoiceclass = 'ratingallocate\db\ratingallocate_group_choices';
+        $groupchoiceclass = 'mod_ratingallocate\db\ratingallocate_group_choices';
         $groupchoices = new backup_nested_element(get_tablename_for_tableClass($groupchoiceclass) . 's');
         $groupchoice = new backup_nested_element(get_tablename_for_tableClass($groupchoiceclass),
             get_id_for_tableClass($groupchoiceclass),
             get_fields_for_tableClass($groupchoiceclass));
 
-        $choicegroupclass = 'ratingallocate\db\ratingallocate_ch_gengroups';
+        $choicegroupclass = 'mod_ratingallocate\db\ratingallocate_ch_gengroups';
         $ratingallocatechoicegroups = new backup_nested_element(get_tablename_for_tableClass($choicegroupclass) . 's');
         $ratingallocatechoicegroup = new backup_nested_element(get_tablename_for_tableClass($choicegroupclass),
                                                  get_id_for_tableClass($choicegroupclass),
                                                  get_fields_for_tableClass($choicegroupclass));
 
-        $groupingclass = 'ratingallocate\db\ratingallocate_groupings';
+        $groupingclass = 'mod_ratingallocate\db\ratingallocate_groupings';
         $ratingallocategroupings = new backup_nested_element(get_tablename_for_tableClass($groupingclass) . 's');
         $ratingallocategrouping = new backup_nested_element(get_tablename_for_tableClass($groupingclass),
                                                 get_id_for_tableClass($groupingclass),
@@ -111,8 +111,9 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
             $ratingallocateallocation->set_source_table(
                     get_tablename_for_tableClass('ratingallocate\db\ratingallocate_allocations'),
                     [
-                            this_db\ratingallocate_allocations::RATINGALLOCATEID => backup::VAR_ACTIVITYID,
-                            this_db\ratingallocate_allocations::CHOICEID => backup::VAR_PARENTID],
+                      this_db\ratingallocate_allocations::RATINGALLOCATEID => backup::VAR_ACTIVITYID,
+                      this_db\ratingallocate_allocations::CHOICEID => backup::VAR_PARENTID,
+                    ],
                     this_db\ratingallocate_allocations::ID . ' ASC'
             );
         }

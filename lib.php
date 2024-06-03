@@ -40,8 +40,9 @@ define('RATINGALLOCATE_EVENT_TYPE_STOP', 'stop');
 // define('NEWMODULE_ULTIMATE_ANSWER', 42);
 
 require_once(dirname(__FILE__) . '/db/db_structure.php');
+require_once(dirname(__FILE__) . '/locallib.php');
 
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 // //////////////////////////////////////////////////////////////////////////////
 // Moodle core API //
@@ -381,6 +382,23 @@ function ratingallocate_extend_navigation(navigation_node $navref, stdclass $cou
  *            {@link navigation_node}
  */
 function ratingallocate_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $ratingallocatenode = null) {
+    $hassecondary = $settingsnav->get_page()->has_secondary_navigation();
+    if (!$context = context_module::instance($settingsnav->get_page()->cm->id, IGNORE_MISSING)) {
+        throw new \moodle_exception('badcontext');
+    }
+    if (has_capability('mod/ratingallocate:modify_choices', $context)) {
+        $choicenode = navigation_node::create(get_string('choice_navigation', RATINGALLOCATE_MOD_NAME),
+            new moodle_url('/mod/ratingallocate/view.php', ['id' => $settingsnav->get_page()->cm->id, 'action' => ACTION_SHOW_CHOICES]),
+            navigation_node::TYPE_CUSTOM, null, 'mod_ratingallocate_choices');
+        $ratingallocatenode->add_node($choicenode);
+    }
+
+    if (has_capability('mod/ratingallocate:start_distribution', $context)) {
+        $reportsnode = navigation_node::create(get_string('reports_group', RATINGALLOCATE_MOD_NAME),
+            new moodle_url('/mod/ratingallocate/view.php', ['id' => $settingsnav->get_page()->cm->id, 'action' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE]),
+            navigation_node::TYPE_CUSTOM, null, 'mod_ratingallocate_reports');
+        $ratingallocatenode->add_node($reportsnode);
+    }
 
 }
 

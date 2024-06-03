@@ -27,7 +27,7 @@
  */
 
 // Namespace is mandatory!
-namespace ratingallocate\strategy_points;
+namespace mod_ratingallocate\strategy_points;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');

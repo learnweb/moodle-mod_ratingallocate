@@ -636,4 +636,85 @@ class behat_mod_ratingallocate extends behat_base {
         }
     }
 
+    /**
+     * Convert page names to URLs for steps like 'When I am on the "mod_ratingallocate > [page name]" page'.
+     *
+     * Recognised page names are:
+     * | None so far!      |                                                              |
+     *
+     * @param string $page name of the page, with the component name removed e.g. 'Edit'.
+     * @return moodle_url the corresponding URL.
+     * @throws Exception with a meaningful error message if the specified page cannot be found.
+     */
+    protected function resolve_page_url(string $page): moodle_url {
+        switch (strtolower($page)) {
+            default:
+                throw new Exception('Unrecognised mod_ratingallocate page type "' . $page . '."');
+        }
+    }
+
+    /**
+     * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
+     *
+     * Recognised page names are:
+     * | pagetype          | name meaning                                | description                                  |
+     * | View              | Ratingallocate name                         | The ratingallocate info page                 |
+     * | Edit              | Ratingallocate name                         | The edit ratingallocate page                 |
+     * | Choices           | Ratingallocate name                         | The page for editing choices                 |
+     * | Reports           | Ratingallocate name                         | The page for reports and statistics          |
+     *
+     * @param string $type identifies which type of page this is, e.g. 'mod_ratingallocate > Choices'.
+     * @param string $identifier identifies the particular page, e.g. 'My Fair Allocation'.
+     * @return moodle_url the corresponding URL.
+     * @throws Exception with a meaningful error message if the specified page cannot be found.
+     */
+    protected function resolve_page_instance_url(string $type, string $identifier): moodle_url {
+
+        switch (strtolower($type)) {
+            case 'view':
+                return new moodle_url('/mod/ratingallocate/view.php',
+                    ['id' => $this->get_cm_by_ratingallocate_name($identifier)->id]);
+
+            case 'edit':
+                return new moodle_url('/course/modedit.php', [
+                    'update' => $this->get_cm_by_ratingallocate_name($identifier)->id]);
+
+            case 'choices':
+                return new moodle_url('/mod/ratingallocate/view.php', [
+                    'id' => $this->get_cm_by_ratingallocate_name($identifier)->id, 'action' => ACTION_SHOW_CHOICES
+                ]);
+
+            case 'reports':
+                return new moodle_url('/mod/ratingallocate/view.php', [
+                    'id' => $this->get_cm_by_ratingallocate_name($identifier)->id,
+                    'action' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE
+                ]);
+
+            default:
+                throw new Exception('Unrecognised ratingallocate page type "' . $type . '."');
+        }
+    }
+
+    /**
+     * Get a ratingallocate instance by name.
+     *
+     * @param string $name ratingallocate name.
+     * @return stdClass the corresponding DB row.
+     */
+    protected function get_ratingallocate_by_name(string $name): stdClass {
+        global $DB;
+        return $DB->get_record('ratingallocate', ['name' => $name], '*', MUST_EXIST);
+    }
+
+    /**
+     * Get a ratingallocate cmid from the ratingallocate name.
+     *
+     * @param string $name ratingallocate name.
+     * @return stdClass cm from get_coursemodule_from_instance.
+     */
+    protected function get_cm_by_ratingallocate_name(string $name): stdClass {
+        $ratingallocate = $this->get_ratingallocate_by_name($name);
+        return get_coursemodule_from_instance('ratingallocate', $ratingallocate->id, $ratingallocate->course);
+    }
+
 }

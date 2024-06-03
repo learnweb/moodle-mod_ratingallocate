@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 
 defined('MOODLE_INTERNAL') || die();
@@ -73,6 +73,174 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $o .= $mform->to_html();
 
         return $o;
+    }
+
+    /**
+     * Displays the status of the allocation with buttons to start the algorithm, delete existing distributions,
+     * and distribute unallocated users.
+     *
+     * @param $coursemoduleid
+     * @param $status
+     * @param $undistributeduserscount
+     * @return string
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
+    public function render_ratingallocate_allocation_status($coursemoduleid, $status, $undistributeduserscount) {
+
+        $output = '';
+        $output .= $this->output->container_start('allocationstatustable');
+        $output .= $this->heading(get_string('modify_allocation_group', RATINGALLOCATE_MOD_NAME), 2);
+        $output .= $this->box_start();
+
+        $isdistributionrunning = $this->is_distribution_of_unallocated_users_running($coursemoduleid);
+
+        // The instance is called ready if it is in one of the two following status.
+        $ratingover = $status !== ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY &&
+            $status !== ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS;
+
+        $starturl = new moodle_url($this->page->url, array('action' => ACTION_START_DISTRIBUTION));
+        $deleteurl = new moodle_url($this->page->url, array('id' => $coursemoduleid, 'action' => ACTION_DELETE_ALL_RATINGS));
+
+        // Get description dependent on status.
+        $descriptionbaseid = 'modify_allocation_group_desc_';
+        $description = get_string($descriptionbaseid . $status, RATINGALLOCATE_MOD_NAME);
+
+        // Create start algorithm button.
+        $button = new single_button($starturl, get_string('start_distribution', RATINGALLOCATE_MOD_NAME), 'get');
+        // Enable only if the instance is ready and the algorithm may run manually.
+        $button->disabled = !($ratingover) || $isdistributionrunning;
+        $button->tooltip = get_string('start_distribution_explanation', RATINGALLOCATE_MOD_NAME);
+        $button->add_action(new confirm_action(get_string('confirm_start_distribution', RATINGALLOCATE_MOD_NAME)));
+
+        // Create delete all ratings button.
+        $deletebutton = new single_button($deleteurl, get_string('delete_all_ratings', RATINGALLOCATE_MOD_NAME, 'get'));
+        // Only allow deletion if new submission is possible and distribution currently not running.
+        $deletebutton->disabled = $ratingover || $isdistributionrunning;
+        $deletebutton->tooltip = get_string('delete_all_ratings_explanation', RATINGALLOCATE_MOD_NAME);
+        $deletebutton->add_action(new confirm_action(get_string('confirm_delete_all_ratings', RATINGALLOCATE_MOD_NAME)));
+
+        $table = new html_table();
+
+        // Add status, buttons for manual and algorithmic allocation and delete all ratings button to the table.
+        $this->add_table_row_triple($table,
+            $description,
+            $this->render($button) . '<br/>' . '<br/>' . $this->single_button(
+                new moodle_url(
+                    '/mod/ratingallocate/view.php',
+                    array('id' => $coursemoduleid,
+                    'action' => ACTION_MANUAL_ALLOCATION)),
+                    get_string('manual_allocation_form',
+                        RATINGALLOCATE_MOD_NAME),
+                    'get',
+                    array('disabled' => !$ratingover || $isdistributionrunning)
+                ),
+            $this->render($deletebutton)
+        );
+
+        if (has_capability('mod/ratingallocate:distribute_unallocated', context_module::instance($coursemoduleid))) {
+
+            if ($ratingover && $undistributeduserscount != 0 && !$isdistributionrunning) {
+
+                // Add empty row.
+                $this->add_table_row_triple($table, '', '', '');
+
+                $distributeunallocatedurleq = new moodle_url(
+                    $this->page->url,
+                    array('action' => ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY)
+                );
+                $buttondisteq = new single_button($distributeunallocatedurleq,
+                    get_string('distributeequally', RATINGALLOCATE_MOD_NAME), 'get');
+                $buttondisteq->class = 'ratingallocate_front_page_buttons';
+
+                $buttondisteq->add_action(new confirm_action(
+                    get_string('distribute_unallocated_equally_confirm', RATINGALLOCATE_MOD_NAME)));
+
+                $distributeunallocatedurlfill = new moodle_url(
+                    $this->page->url,
+                    array('action' => ACTION_DISTRIBUTE_UNALLOCATED_FILL)
+                );
+                $buttondistfill = new single_button($distributeunallocatedurlfill,
+                    get_string('distributefill', RATINGALLOCATE_MOD_NAME), 'get');
+                $buttondistfill->class = 'ratingallocate_front_page_buttons';
+                $buttondistfill->add_action(new confirm_action(
+                    get_string('distribute_unallocated_fill_confirm', RATINGALLOCATE_MOD_NAME)));
+
+                // Add Amount of users that are unallocated and buttons to allocate them manually.
+                $this->add_table_row_triple($table,
+                    get_string('unallocated_user_count',
+                        RATINGALLOCATE_MOD_NAME,
+                        ['count' => $undistributeduserscount]) . $this->help_icon('distribution_description', RATINGALLOCATE_MOD_NAME),
+                    $this->render($buttondisteq),
+                    $this->render($buttondistfill)
+                );
+
+            } else if ($isdistributionrunning) {
+
+                // Add empty row.
+                $this->add_table_row_triple($table, '', '', '');
+
+                $this->add_table_row_triple($table,
+                    get_string('unallocated_user_count', RATINGALLOCATE_MOD_NAME, ['count' => $undistributeduserscount]),
+                    get_string('distribution_unallocated_already_running', RATINGALLOCATE_MOD_NAME),
+                    ''
+                );
+            }
+        }
+
+        $output .= html_writer::table($table);
+        $output .= $this->output->box_end();
+        $output .= $this->output->container_end();
+        return $output;
+    }
+
+    /**
+     * Displays the status concerning publishing the allocation together with the buttons to publish the allocation
+     * and to create groups.
+     *
+     * @param $ratingallocateid
+     * @param $coursemoduleid
+     * @param $status
+     * @return string
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
+    public function render_ratingallocate_publish_allocation($ratingallocateid, $coursemoduleid, $status) {
+
+        $output = '';
+        $output .= $this->output->container_start('allocationstatustable');
+        $output .= $this->heading(get_string('publish_allocation_group', RATINGALLOCATE_MOD_NAME), 2);
+        $output .= $this->box_start();
+
+        $isready = $status === ratingallocate::DISTRIBUTION_STATUS_READY_ALLOC_STARTED;
+
+        $table = new html_table();
+
+        // Get description dependent on status.
+        $descriptionbaseid = 'publish_allocation_group_desc_';
+        $description = get_string($descriptionbaseid . $status, RATINGALLOCATE_MOD_NAME);
+
+        if ($isready) {
+            $description = $description . $this->help_icon('publish_allocation_group_desc_' . $status, RATINGALLOCATE_MOD_NAME);
+        } else {
+            $description = $this->format_text($description);
+        }
+
+        $this->add_table_row_triple($table,
+            $description,
+            $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
+                'ratingallocateid' => $ratingallocateid,
+                'action' => ACTION_PUBLISH_ALLOCATIONS)), get_string('publish_allocation', RATINGALLOCATE_MOD_NAME), 'get',
+                array('disabled' => !$isready)),
+            $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
+                'ratingallocateid' => $ratingallocateid,
+                'action' => ACTION_ALLOCATION_TO_GROUPING)), get_string('create_moodle_groups', RATINGALLOCATE_MOD_NAME), 'get')
+        );
+
+        $output .= html_writer::table($table);
+        $output .= $this->output->box_end();
+        $output .= $this->output->container_end();
+        return $output;
     }
 
     /**
@@ -409,25 +577,20 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * Output the ratingallocate modfify allocation
      */
-    public function reports_group($ratingallocateid, $coursemoduleid, $status, $context) {
+    public function reports_group($ratingallocateid, $coursemoduleid, $status, $context, $action = '') {
         $output = '';
         $output .= $this->heading(get_string('reports_group', RATINGALLOCATE_MOD_NAME), 2);
         $output .= $this->box_start();
 
-        $tableurl = new moodle_url($this->page->url, ['action' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE]);
-
-        // Button with link to display information about the allocations and ratings.
-        $output .= $this->single_button($tableurl, get_string('show_table', RATINGALLOCATE_MOD_NAME), 'get');
-
-        $tableurl = new moodle_url($this->page->url, ['action' => ACTION_SHOW_ALLOCATION_TABLE]);
-
-        // Button with link to display information about the allocations and ratings.
-        $output .= $this->single_button($tableurl, get_string('show_allocation_table', RATINGALLOCATE_MOD_NAME), 'get');
-
-        $tableurl = new moodle_url($this->page->url, ['action' => ACTION_SHOW_STATISTICS]);
-
-        // Buttton with link to display statistical information about the allocations.
-        $output .= $this->single_button($tableurl, get_string('show_allocation_statistics', RATINGALLOCATE_MOD_NAME), 'get');
+        $output .= $this->output->single_select(
+            new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid)),
+            'action', array(
+                ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE => get_string('show_table', RATINGALLOCATE_MOD_NAME),
+                ACTION_SHOW_ALLOCATION_TABLE => get_string('show_allocation_table', RATINGALLOCATE_MOD_NAME),
+                ACTION_SHOW_STATISTICS => get_string('show_allocation_statistics', RATINGALLOCATE_MOD_NAME)
+            ),
+            $action
+        );
 
         /* TODO: File not readable
         $output .= html_writer::empty_tag('br', []);
@@ -663,7 +826,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $cell = new html_table_cell();
         $usersinchoice = $ratingallocate->get_raters_in_course();
-        $cell->text = count($usersinchoice) - count($memberships);
+        $cell->text = count($ratingallocate->get_undistributed_users());
         $allocationrow[] = $cell;
 
         $cell = new html_table_cell();
@@ -691,7 +854,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                             'notrated' => $notrated,
                             'rated' => $activeraters,
                             'rating' => $titles[max(array_keys($distributiondata))],
-                            'unassigned' => count($usersinchoice) - count($memberships)]));
+                            'unassigned' => count($ratingallocate->get_undistributed_users()))));
             $output .= html_writer::table($allocationtable);
         }
         $output .= $this->box_end();
@@ -798,6 +961,28 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $cell1 = new html_table_cell($first);
         $cell2 = new html_table_cell($second);
         $row->cells = [$cell1, $cell2];
+        $table->data[] = $row;
+    }
+
+    /**
+     * Utility function to add a row of data to a table with 3 columns. Modified
+     * the table param and does not return a value
+     *
+     * @param html_table $table The table to append the row of data to
+     * @param string $first The first column text
+     * @param string $second The second column text
+     * @param string $third The third column text
+     * @return void
+     */
+    private function add_table_row_triple(html_table $table, $first, $second, $third) {
+        $row = new html_table_row();
+        $cell1 = new html_table_cell($first);
+        $cell1->attributes['class'] = 'ratingallocate_front_page_table_1';
+        $cell2 = new html_table_cell($second);
+        $cell2->attributes['class'] = 'ratingallocate_front_page_table_23';
+        $cell3 = new html_table_cell($third);
+        $cell3->attributes['class'] = 'ratingallocate_front_page_table_23';
+        $row->cells = array($cell1, $cell2, $cell3);
         $table->data[] = $row;
     }
 
