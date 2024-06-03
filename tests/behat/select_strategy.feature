@@ -13,7 +13,7 @@ Feature: When a teacher selects a strategy the appropriate options are displayed
       | teacher1 | C1     | editingteacher |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Fair Allocation" activity to course "Course 1" section "1"
+    And I add a ratingallocate to course "Course 1" section "1"
 
   @javascript
   Scenario: The correct options are displayed for the default strategy (Yes-No)

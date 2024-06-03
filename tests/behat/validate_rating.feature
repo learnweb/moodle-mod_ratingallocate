@@ -15,7 +15,7 @@ Feature: When a student attempts to rate choices it should be validated prior to
       | student1 | C1     | student        |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Fair Allocation" activity to course "Course 1" section "1" and I fill the form with:
+    And I add a ratingallocate to course "Course 1" section "1" and I fill the form with:
       | id_name                               | Validated Rating |
       | strategy                              | strategy_points  |
       | Rating begins at                      | ##2 days ago##   |
