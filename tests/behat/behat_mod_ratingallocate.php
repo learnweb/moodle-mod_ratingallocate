@@ -628,7 +628,7 @@ class behat_mod_ratingallocate extends behat_base {
      * @param $data
      * @return void
      */
-    public function i_add_a_ratingallocate_to_course_section ($courseshortname, $sectionnumber, TableNode $data) {
+    public function i_add_a_ratingallocate_to_course_section($courseshortname, $sectionnumber, TableNode $data) {
         global $CFG;
 
         if ($CFG->branch >= 404) {
