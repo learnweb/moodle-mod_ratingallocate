@@ -87,8 +87,8 @@ Only users who rated at least one choice and who are not allocated yet are liste
 $string['allocation_manual_explain_all'] = 'Select a choice to be assigned to a user.';
 $string['distribution_algorithm'] = 'Distribution Algorithm';
 $string['distribution_saved'] = 'Distribution saved (in {$a}s).';
-$string['distributeequally'] = 'Distribute unallocated users equally';
-$string['distributefill'] = 'Distribute unallocated users by filling up';
+$string['distributeequally'] = 'Distribute equally';
+$string['distributefill'] = 'Distribute by filling up';
 $string['distribution_description'] = 'Distribution of unallocated users';
 $string['distribution_description_help'] = 'You can choose between two different algorithms to distribute currently unallocated users.<br/>
  <i>Distribute equally:</i> Users are being distributed equally across the choices regarding the maximum of each choice.<br/>
@@ -99,7 +99,7 @@ $string['distribute_unallocated_fill_confirm'] = 'All currently unallocated user
  Each choice will be filled up to its maximum before assigning users to the next choice.';
 $string['distribute_unallocated_equally_confirm'] = 'All currently unallocated users will be distributed to the choices.
  The choices will be filled up equally, so all of them have about the same amount of places left.';
-$string['unallocated_user_count'] = 'There are {$a->count} users unallocated';
+$string['unallocated_user_count'] = 'There are {$a->count} users unallocated. Distribute <b>unallocated</b> users to open places left in choices.';
 $string['no_user_to_allocate'] = 'There is no user you could allocate';
 $string['ratings_table'] = 'Ratings and Allocations';
 $string['ratings_table_sum_allocations'] = 'Number of allocations / Maximum';

@@ -118,9 +118,9 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $table = new html_table();
 
-        // Add status, buttons for manual and algorithmic allocation and delete all ratings buuton to the table.
+        // Add status, buttons for manual and algorithmic allocation and delete all ratings button to the table.
         $this->add_table_row_triple($table,
-            $this->format_text($description),
+            $description,
             $this->render($button) . '<br/>' . '<br/>' . $this->single_button(
                 new moodle_url(
                     '/mod/ratingallocate/view.php',
@@ -217,7 +217,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $description = get_string($descriptionbaseid . $status, RATINGALLOCATE_MOD_NAME);
 
         if ($isready) {
-            $description = $this->format_text($description) . $this->help_icon('publish_allocation_group_desc_' . $status, RATINGALLOCATE_MOD_NAME);
+            $description = $description . $this->help_icon('publish_allocation_group_desc_' . $status, RATINGALLOCATE_MOD_NAME);
         } else {
             $description = $this->format_text($description);
         }
