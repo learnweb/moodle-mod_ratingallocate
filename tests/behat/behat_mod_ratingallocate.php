@@ -602,20 +602,11 @@ class behat_mod_ratingallocate extends behat_base {
             );
         } else {
             // This is the code from the deprecated behat function "i_add_to_section_and_i_fill_the_form_with".
-            // Add activity to section.
+            // Add activity to section and fill form.
             $this->execute(
-                "behat_course::i_add_to_section",
-                [$this->escape('ratingallocate'), $this->escape($sectionnumber)]
+                "behat_course::i_add_to_section_and_i_fill_the_form_with",
+                [$this->escape('ratingallocate'), $this->escape($sectionnumber), $data]
             );
-
-            // Wait to be redirected.
-            $this->execute('behat_general::wait_until_the_page_is_ready');
-
-            // Set form fields.
-            $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $data);
-
-            // Save course settings.
-            $this->execute("behat_forms::press_button", get_string('savechangesandreturntocourse'));
         }
     }
 
@@ -625,16 +616,15 @@ class behat_mod_ratingallocate extends behat_base {
      * @Given I add a ratingallocate to course :coursefullname section :sectionnum
      * @param $courseshortname
      * @param $sectionnumber
-     * @param $data
      * @return void
      */
-    public function i_add_a_ratingallocate_to_course_section($courseshortname, $sectionnumber, TableNode $data) {
+    public function i_add_a_ratingallocate_to_course_section($courseshortname, $sectionnumber) {
         global $CFG;
 
         if ($CFG->branch >= 404) {
             $this->execute(
                 "behat_course::i_add_to_course_section",
-                [$this->escape('ratingallocate'), $this->escape($courseshortname), $this->escape($sectionnumber), $data]
+                [$this->escape('ratingallocate'), $this->escape($courseshortname), $this->escape($sectionnumber)]
             );
         } else {
             // This is the code from the deprecated behat function "i_add_to_section".
