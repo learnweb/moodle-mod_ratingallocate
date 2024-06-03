@@ -92,9 +92,9 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
         $ratingallocatechoicegroups->add_child($ratingallocatechoicegroup);
 
         // Define sources.
-        $ratingallocate->set_source_table(get_tablename_for_tableClass('ratingallocate\db\ratingallocate'),
+        $ratingallocate->set_source_table(get_tablename_for_tableClass('mod_ratingallocate\db\ratingallocate'),
                 [this_db\ratingallocate::ID => backup::VAR_ACTIVITYID], this_db\ratingallocate_choices::ID . ' ASC');
-        $ratingallocatechoice->set_source_table(get_tablename_for_tableClass('ratingallocate\db\ratingallocate_choices'),
+        $ratingallocatechoice->set_source_table(get_tablename_for_tableClass('mod_ratingallocate\db\ratingallocate_choices'),
                 [this_db\ratingallocate_choices::RATINGALLOCATEID => backup::VAR_PARENTID],
                 this_db\ratingallocate_choices::ID . ' ASC');
         $groupchoice->set_source_table(get_tablename_for_tableClass($groupchoiceclass), ['choiceid' => backup::VAR_PARENTID]);
@@ -105,11 +105,11 @@ class backup_ratingallocate_activity_structure_step extends backup_activity_stru
 
         if ($userinfo) {
             $ratingallocaterating->set_source_table(get_tablename_for_tableClass(
-                    'ratingallocate\db\ratingallocate_ratings'),
+                    'mod_ratingallocate\db\ratingallocate_ratings'),
                     [this_db\ratingallocate_ratings::CHOICEID => backup::VAR_PARENTID],
                     this_db\ratingallocate_ratings::ID . ' ASC');
             $ratingallocateallocation->set_source_table(
-                    get_tablename_for_tableClass('ratingallocate\db\ratingallocate_allocations'),
+                    get_tablename_for_tableClass('mod_ratingallocate\db\ratingallocate_allocations'),
                     [
                       this_db\ratingallocate_allocations::RATINGALLOCATEID => backup::VAR_ACTIVITYID,
                       this_db\ratingallocate_allocations::CHOICEID => backup::VAR_PARENTID,
