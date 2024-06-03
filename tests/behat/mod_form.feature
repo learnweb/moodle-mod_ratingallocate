@@ -16,7 +16,7 @@ Feature: Creating a new rating allocation, where new choices need to
       | student1 | C1     | student        |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Fair Allocation" to section "0" and I fill the form with:
+    And I add a "Fair Allocation" activity to course "Course 1" section "0" and I fill the form with:
       | id_name | My Fair Allocation |
     And I am on the "My Fair Allocation" "ratingallocate activity" page
     And I press "Edit Choices"
