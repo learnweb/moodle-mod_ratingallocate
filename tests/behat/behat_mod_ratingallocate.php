@@ -605,7 +605,7 @@ class behat_mod_ratingallocate extends behat_base {
             // Add activity to section and fill form.
             $this->execute(
                 "behat_course::i_add_to_section_and_i_fill_the_form_with",
-                [$this->escape('ratingallocate'), $this->escape($sectionnumber), $data]
+                [$this->escape('Fair Allocation'), $this->escape($sectionnumber), $data]
             );
         }
     }
@@ -631,7 +631,7 @@ class behat_mod_ratingallocate extends behat_base {
             // Add activity to section:
             $this->execute(
                 "behat_course::i_add_to_section",
-                [$this->escape('ratingallocate'), $this->escape($sectionnumber)]
+                [$this->escape('Fair Allocation'), $this->escape($sectionnumber)]
             );
         }
     }
