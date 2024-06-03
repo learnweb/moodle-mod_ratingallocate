@@ -43,9 +43,9 @@ class mod_ratingallocate_status_test extends \advanced_testcase {
     /**
      * Provider
      *
-     * @return array[]
+     * @return array
      */
-    public function ratingallocate_provider() {
+    public function ratingallocate_provider(): array {
         return [
                 'Rating phase is not started.' => [
                         3, 6, false, false, \ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
