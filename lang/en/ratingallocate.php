@@ -99,7 +99,7 @@ $string['distribute_unallocated_fill_confirm'] = 'All currently unallocated user
  Each choice will be filled up to its maximum before assigning users to the next choice.';
 $string['distribute_unallocated_equally_confirm'] = 'All currently unallocated users will be distributed to the choices.
  The choices will be filled up equally, so all of them have about the same amount of places left.';
-$string['unallocated_user_count'] = 'There are {$a->count} users unallocated. Distribute <b>unallocated</b> users to open places left in choices.';
+$string['unallocated_user_count'] = 'There are {$a->count} users unallocated. Distribute <b>unallocated</b> users to open places left in choices disregaring potential user ratings.';
 $string['no_user_to_allocate'] = 'There is no user you could allocate';
 $string['ratings_table'] = 'Ratings and Allocations';
 $string['ratings_table_sum_allocations'] = 'Number of allocations / Maximum';
@@ -162,7 +162,7 @@ $string['modify_allocation_group_desc_too_early'] =
 $string['modify_allocation_group_desc_rating_in_progress'] =
         'The rating phase is currently running. You can start the allocation process after the rating phase has ended.';
 $string['modify_allocation_group_desc_ready'] =
-        'The rating phase has ended. You can now run the algorithm for an automatic allocation.';
+        'The rating phase has ended. You can now run the algorithm for an automatic allocation based on the user ratings.';
 $string['modify_allocation_group_desc_ready_alloc_started'] = 'The rating phase has ended. Some allocations have already been created.
 Rerunning the algorithm will delete all current allocations.
 You can now modify the allocations manually or proceed to publishing the allocations.';
