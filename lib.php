@@ -160,20 +160,20 @@ function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallo
 function ratingallocate_delete_instance($id) {
     global $DB;
 
-    if (!$ratingallocate = $DB->get_record('ratingallocate', array(
-            'id' => $id
-    ))) {
+    if (!$ratingallocate = $DB->get_record('ratingallocate', [
+            'id' => $id,
+    ])) {
         return false;
     }
 
     // Delete any dependent records here # .
-    $DB->delete_records('ratingallocate_allocations', array(
-            'ratingallocateid' => $ratingallocate->id
-    ));
+    $DB->delete_records('ratingallocate_allocations', [
+            'ratingallocateid' => $ratingallocate->id,
+    ]);
 
-    $deleteids = array_keys($DB->get_records('ratingallocate_choices', array(
-        'ratingallocateid' => $ratingallocate->id
-            ), '', 'id'));
+    $deleteids = array_keys($DB->get_records('ratingallocate_choices', [
+        'ratingallocateid' => $ratingallocate->id,
+            ], '', 'id'));
 
     if (!empty($deleteids)) {
         list ($insql, $params) = $DB->get_in_or_equal($deleteids);
@@ -183,22 +183,22 @@ function ratingallocate_delete_instance($id) {
             'choiceid ' . $insql, $params);
     }
 
-    $DB->delete_records('ratingallocate_groupings', array(
-        'ratingallocateid' => $ratingallocate->id
-    ));
+    $DB->delete_records('ratingallocate_groupings', [
+        'ratingallocateid' => $ratingallocate->id,
+    ]);
 
     $DB->delete_records_list('ratingallocate_ratings', 'choiceid', $deleteids);
 
-    $DB->delete_records('ratingallocate_choices', array(
-            'ratingallocateid' => $ratingallocate->id
-    ));
+    $DB->delete_records('ratingallocate_choices', [
+            'ratingallocateid' => $ratingallocate->id,
+    ]);
 
     // Delete associated events.
-    $DB->delete_records('event', array('modulename' => 'ratingallocate', 'instance' => $ratingallocate->id));
+    $DB->delete_records('event', ['modulename' => 'ratingallocate', 'instance' => $ratingallocate->id]);
 
-    $DB->delete_records('ratingallocate', array(
-            'id' => $ratingallocate->id
-    ));
+    $DB->delete_records('ratingallocate', [
+            'id' => $ratingallocate->id,
+    ]);
 
     return true;
 }
@@ -250,7 +250,7 @@ function ratingallocate_print_recent_mod_activity($activity, $courseid, $detail,
  * @return array
  */
 function ratingallocate_get_extra_capabilities() {
-    return array();
+    return[];
 }
 
 // //////////////////////////////////////////////////////////////////////////////
@@ -269,7 +269,7 @@ function ratingallocate_get_extra_capabilities() {
  * @return array of [(string)filearea] => (string)description
  */
 function ratingallocate_get_file_areas($course, $cm, $context) {
-    return array();
+    return[];
 }
 
 /**
@@ -314,7 +314,7 @@ function ratingallocate_get_file_info($browser, $areas, $course, $cm, $context, 
  *
  * @package mod_ratingallocate
  */
-function ratingallocate_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options = array()) {
+function ratingallocate_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options = []) {
     global $DB, $CFG;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -423,14 +423,14 @@ function ratingallocate_refresh_events($courseid = 0, $instance = null, $cm = nu
     // If we have instance information then we can just update the one event instead of updating all events.
     if (isset($instance)) {
         if (!is_object($instance)) {
-            $instance = $DB->get_record('ratingallocate', array('id' => $instance), '*', MUST_EXIST);
+            $instance = $DB->get_record('ratingallocate', ['id' => $instance], '*', MUST_EXIST);
         }
         ratingallocate_set_events($instance);
         return true;
     }
 
     if ($courseid) {
-        if (! $ratingallocates = $DB->get_records('ratingallocate', array('course' => $courseid))) {
+        if (! $ratingallocates = $DB->get_records('ratingallocate', ['course' => $courseid])) {
             return true;
         }
     } else {
@@ -469,9 +469,9 @@ function ratingallocate_set_events($ratingallocate) {
 
     // Ratingallocate-accessstart calendar events.
     $eventid = $DB->get_field('event', 'id',
-        array('modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_START));
+        ['modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_START]);
 
-    $timestart = $DB->get_field('ratingallocate', 'accesstimestart', array('id' => $ratingallocate->id));
+    $timestart = $DB->get_field('ratingallocate', 'accesstimestart', ['id' => $ratingallocate->id]);
 
     if (isset($timestart) && $timestart > 0) {
         $event = new stdClass();
@@ -513,9 +513,9 @@ function ratingallocate_set_events($ratingallocate) {
 
     // Ratingallocate-accessstop calendar events.
     $eventid = $DB->get_field('event', 'id',
-        array('modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_STOP));
+        ['modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_STOP]);
 
-    $timestop = $DB->get_field('ratingallocate', 'accesstimestop', array('id' => $ratingallocate->id));
+    $timestop = $DB->get_field('ratingallocate', 'accesstimestop', ['id' => $ratingallocate->id]);
 
     if (isset($timestop) && $timestop > 0) {
         $event = new stdClass();
@@ -587,7 +587,6 @@ function mod_ratingallocate_core_is_event_visible(calendar_event $event): bool {
 /**
  * This function will update the ratingallocate module according to the event that has been modified.
  *
- * @params calendar_event, stdClass
  * @throws coding_exception
  * @throws dml_exception
  * @throws moodle_exception
@@ -698,7 +697,7 @@ function ratingallocate_reset_userdata($data) {
     $componentstr = get_string('modulenameplural', RATINGALLOCATE_MOD_NAME);
     $status = [];
 
-    $params = array('courseid' => $data->courseid);
+    $params = ['courseid' => $data->courseid];
 
     if (!empty($data->reset_ratings_and_allocations)) {
 
@@ -725,8 +724,9 @@ function ratingallocate_reset_userdata($data) {
     if ($data->timeshift) {
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
-        shift_course_mod_dates(RATINGALLOCATE_MOD_NAME, array('accesstimestart', 'accesstimestop'), $data->timeshift, $data->courseid);
-        $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
+        shift_course_mod_dates(RATINGALLOCATE_MOD_NAME, ['accesstimestart', 'accesstimestop'], $data->timeshift, $data->courseid);
+        $status[] = ['component' => $componentstr, 'item' => get_string('datechanged'), 'error'
+        => false];
     }
 
     return $status;
@@ -767,7 +767,7 @@ function ratingallocate_reset_course_form_defaults($course) {
 function ratingallocate_get_coursemodule_info($coursemodule) {
     global $DB;
 
-    $dbparams = array('id' => $coursemodule->instance);
+    $dbparams = ['id' => $coursemodule->instance];
     if (! $ratingallocate = $DB->get_record('ratingallocate', $dbparams)) {
         return false;
     }

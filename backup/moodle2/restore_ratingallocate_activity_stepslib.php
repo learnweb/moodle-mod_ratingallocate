@@ -18,7 +18,7 @@ use mod_ratingallocate\db as this_db;
 
 /**
  *
- * @package moodlecore
+ * @package mod_ratingallocate
  * @subpackage backup-moodle2
  * @copyright 2014 C. Usener
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

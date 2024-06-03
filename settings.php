@@ -36,7 +36,7 @@ if ($ADMIN->fulltree) {
                     'username' => 1,
                     'department' => 0,
                     'institution' => 0,
-                    'email' => 1
+                    'email' => 1,
             ],
             [
                     'id' => new lang_string('userid', 'ratingallocate'),

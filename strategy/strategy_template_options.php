@@ -30,6 +30,11 @@ require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template.php');
 
+/**
+ * Strategytemplate options.
+ *
+ * @package mod_ratingallocate
+ */
 abstract class strategytemplate_options extends \strategytemplate {
 
     /**
@@ -43,13 +48,13 @@ abstract class strategytemplate_options extends \strategytemplate {
      * @return array
      */
     protected function get_default_strategy_option() {
-        return ['default' => array(
+        return ['default' => [
                 'select',
                 get_string('strategy_settings_default', RATINGALLOCATE_MOD_NAME),
                 $this->get_settings_value('default'),
                 $this->get_choiceoptions(),
-                'strategy_settings_default'
-        )];
+                'strategy_settings_default',
+        ]];
     }
 }
 
@@ -97,7 +102,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             // Options for each choice.
             $choiceoptions = $this->get_choiceoptions();
 
-            $radioarray = array();
+            $radioarray = [];
             foreach ($choiceoptions as $id => $option) {
                 $radioarray[] =& $mform->createElement('radio', $ratingelem, '', $option, $id);
             }

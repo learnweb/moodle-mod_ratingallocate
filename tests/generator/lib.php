@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Library for Tests
+ *
+ * @package mod_ratingallocate
+ * @copyright  usener
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__) . '/../../locallib.php');
@@ -72,37 +80,39 @@ class mod_ratingallocate_generator extends testing_module_generator {
 
     public static function get_default_values() {
         if (empty(self::$defaultvalue)) {
-            self::$defaultvalue = array(
+            self::$defaultvalue = [
                     'name' => 'Rating Allocation',
                     'accesstimestart' => time() + (0 * 24 * 60 * 60),
                     'accesstimestop' => time() + (6 * 24 * 60 * 60),
                     'publishdate' => time() + (7 * 24 * 60 * 60),
-                    'strategyopt' => array('strategy_yesno' => array('maxcrossout' => '1')),
+                    'strategyopt' => ['strategy_yesno' => ['maxcrossout' => '1']],
                     'strategy' => 'strategy_yesno',
-            );
+            ];
         }
         return self::$defaultvalue;
     }
 
+    /** @var $defaultvalue */
     private static $defaultvalue;
 
     public static function get_default_choice_data() {
         if (empty(self::$defaultchoicedata)) {
-            self::$defaultchoicedata = array(
-                    array('title' => 'Choice 1',
+            self::$defaultchoicedata = [
+                    ['title' => 'Choice 1',
                             'explanation' => 'Some explanatory text for choice 1',
                             'maxsize' => '10',
-                            'active' => true),
-                    array('title' => 'Choice 2',
+                            'active' => true],
+                    ['title' => 'Choice 2',
                             'explanation' => 'Some explanatory text for choice 2',
                             'maxsize' => '5',
-                            'active' => false
-                    )
-            );
+                            'active' => false,
+                    ],
+            ];
         }
         return self::$defaultchoicedata;
     }
 
+    /** @var $defaultchoicedata */
     private static $defaultchoicedata;
 
     /**
@@ -121,8 +131,8 @@ class mod_ratingallocate_generator extends testing_module_generator {
                 global $DB;
                 // Enrol teacher and student.
                 self::$teacherrole = $DB->get_record('role',
-                        array('shortname' => 'editingteacher'
-                        ));
+                        ['shortname' => 'editingteacher',
+                        ]);
             }
             $enroled = $tc->getDataGenerator()->enrol_user($user->id, $course->id,
                     self::$teacherrole->id);
@@ -133,6 +143,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
         return $user;
     }
 
+    /** @var $teacherrole */
     private static $teacherrole;
 
     /**
@@ -210,13 +221,25 @@ class mod_ratingallocate_generator extends testing_module_generator {
     }
 }
 
+/**
+ * Generated Module.
+ *
+ * @package mod_ratingallocate
+ */
 class mod_ratingallocate_generated_module {
+    /** @var stdClass $moddb */
     public $moddb;
+    /** @var stdClass $teacher */
     public $teacher;
-    public $students = array();
+    /** @var array $students */
+    public $students = [];
+    /** @var mixed|stdClass $course */
     public $course;
+    /** @var array|mixed $ratings */
     public $ratings;
+    /** @var array $choices */
     public $choices;
+    /** @var array $allocations */
     public $allocations;
 
     /**
@@ -234,7 +257,7 @@ class mod_ratingallocate_generated_module {
         $tc->setAdminUser();
 
         if (is_null($moduledata)) {
-            $moduledata = array();
+            $moduledata = [];
         } else if (!is_array($moduledata)) {
             $tc->fail('$moduledata must be null or an array');
         }
@@ -249,8 +272,8 @@ class mod_ratingallocate_generated_module {
         if ($assertintermediateresult) {
             $tc->assertFalse(
                     $DB->record_exists(this_db\ratingallocate::TABLE,
-                            array(this_db\ratingallocate::COURSE => $this->course->id
-                            )), 'There should not be any module for that course first');
+                            [this_db\ratingallocate::COURSE => $this->course->id,
+                            ]), 'There should not be any module for that course first');
         }
 
         // Create activity.
@@ -265,14 +288,14 @@ class mod_ratingallocate_generated_module {
             foreach ($ratings as $userid => $rating) {
                 $choices = $ratingallocate->get_choices();
                 $user = get_complete_user_data('id', $userid);
-                $ratingdata = array();
+                $ratingdata = [];
                 foreach ($rating as $singlerating) {
                     foreach ($choices as $choice) {
                         if ($choice->title == $singlerating['choice']) {
-                            $ratingdata[] = array(
+                            $ratingdata[] = [
                                     'rating' => $singlerating['rating'],
-                                    'choiceid' => $choice->id
-                            );
+                                    'choiceid' => $choice->id,
+                            ];
                         }
                     }
                 }
@@ -289,7 +312,7 @@ class mod_ratingallocate_generated_module {
 
             // Assert number of choices is correct.
             $numberofrecords = $DB->count_records(this_db\ratingallocate_choices::TABLE,
-                    array(this_db\ratingallocate_choices::RATINGALLOCATEID => $this->moddb->id));
+                    [this_db\ratingallocate_choices::RATINGALLOCATEID => $this->moddb->id]);
             $tc->assertEquals(2, $numberofrecords);
 
             // Load choices.
@@ -299,23 +322,23 @@ class mod_ratingallocate_generated_module {
 
             // Create students' preferences as array.
             if (!array_key_exists('ratings', $moduledata)) {
-                $moduledata['ratings'] = array();
+                $moduledata['ratings'] = [];
                 for ($i = 0; $i < $numstudents; $i++) {
-                    $moduledata['ratings'][$i] = array(
-                            $choicesnummerated[$i % $numchoices]->{this_db\ratingallocate_choices::TITLE} => 1
-                    );
+                    $moduledata['ratings'][$i] = [
+                            $choicesnummerated[$i % $numchoices]->{this_db\ratingallocate_choices::TITLE} => 1,
+                    ];
                 }
             }
             $this->ratings = $moduledata['ratings'];
 
             // Create preferences.
-            $prefersnon = array();
-            $choiceidbytitle = array();
+            $prefersnon = [];
+            $choiceidbytitle = [];
             foreach ($choices as $choice) {
-                $prefersnon[$choice->{this_db\ratingallocate_choices::ID}] = array(
+                $prefersnon[$choice->{this_db\ratingallocate_choices::ID}] = [
                         this_db\ratingallocate_ratings::CHOICEID => $choice->{this_db\ratingallocate_choices::ID},
-                        this_db\ratingallocate_ratings::RATING => 0
-                );
+                        this_db\ratingallocate_ratings::RATING => 0,
+                ];
                 $choiceidbytitle[$choice->{this_db\ratingallocate_choices::TITLE}] = $choice->{this_db\ratingallocate_choices::ID};
             }
 
@@ -336,7 +359,7 @@ class mod_ratingallocate_generated_module {
                     $alloc = mod_ratingallocate_generator::get_ratingallocate_for_user($tc,
                             $this->moddb, $this->students[$i]);
                     $savedratings = $alloc->get_rating_data_for_user($this->students[$i]->id);
-                    $savedratingarr = array();
+                    $savedratingarr = [];
                     foreach ($savedratings as $savedrating) {
                         if (!$savedrating->{this_db\ratingallocate_ratings::RATING} == 0) {
                             $savedratingarr[$savedrating->{this_db\ratingallocate_choices::TITLE}] =

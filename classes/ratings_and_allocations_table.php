@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Ratings and allocations table.
+ *
  * @package    mod_ratingallocate
  * @copyright  2016 Janek Lasocki-Biczysko <j.lasocki-biczysko@intrallect.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,18 +29,35 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/tablelib.php');
 
+/**
+ * Ratings and allocations table
+ *
+ * @package mod_ratingallocate
+ */
 class ratings_and_allocations_table extends \table_sql {
 
+    /**
+     * Choice column.
+     */
     const CHOICE_COL = 'choice_';
+    /**
+     * Alloc suffix.
+     */
     const EXPORT_CHOICE_ALLOC_SUFFIX = 'alloc';
+    /**
+     * Text suffix.
+     */
     const EXPORT_CHOICE_TEXT_SUFFIX = 'text';
 
-    private $choicenames = array();
-    private $choicemax = array();
-    private $choicesum = array();
-
+    /** @var array $choicenames */
+    private $choicenames = [];
+    /** @var array $choicemax */
+    private $choicemax = [];
+    /** @var array $choicesum */
+    private $choicesum = [];
+    /** @var $titles */
     private $titles;
-
+    /** @var true $shownames */
     private $shownames;
 
     /**
@@ -71,12 +90,24 @@ class ratings_and_allocations_table extends \table_sql {
      */
     private $renderer;
 
+    /**
+     * Construct.
+     *
+     * @param \mod_ratingallocate_renderer $renderer
+     * @param $titles
+     * @param $ratingallocate
+     * @param $action
+     * @param $uniqueid
+     * @param $downloadable
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     public function __construct(\mod_ratingallocate_renderer $renderer, $titles, $ratingallocate,
             $action = ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE, $uniqueid = 'mod_ratingallocate_table', $downloadable = true) {
         parent::__construct($uniqueid);
         global $PAGE;
         $url = $PAGE->url;
-        $url->params(array("action" => $action));
+        $url->params(["action" => $action]);
         $PAGE->set_url($url);
         $this->renderer = $renderer;
         $this->titles = $titles;
@@ -243,27 +274,27 @@ class ratings_and_allocations_table extends \table_sql {
         $users = $this->rawdata;
 
         // Group all ratings per user to match table structure.
-        $ratingsbyuser = array();
+        $ratingsbyuser = [];
         foreach ($ratings as $rating) {
             if (empty($ratingsbyuser[$rating->userid])) {
-                $ratingsbyuser[$rating->userid] = array();
+                $ratingsbyuser[$rating->userid] = [];
             }
             $ratingsbyuser[$rating->userid][$rating->choiceid] = $rating->rating;
         }
 
         // Group all memberships per user per choice.
-        $allocationsbyuser = array();
+        $allocationsbyuser = [];
         foreach ($allocations as $allocation) {
             if (empty($allocationsbyuser[$allocation->userid])) {
-                $allocationsbyuser[$allocation->userid] = array();
+                $allocationsbyuser[$allocation->userid] = [];
             }
             $allocationsbyuser[$allocation->userid][$allocation->choiceid] = true;
         }
 
         // Add rating rows for each user.
         foreach ($users as $user) {
-            $userratings = isset($ratingsbyuser[$user->id]) ? $ratingsbyuser[$user->id] : array();
-            $userallocations = isset($allocationsbyuser[$user->id]) ? $allocationsbyuser[$user->id] : array();
+            $userratings = isset($ratingsbyuser[$user->id]) ? $ratingsbyuser[$user->id] : [];
+            $userallocations = isset($allocationsbyuser[$user->id]) ? $allocationsbyuser[$user->id] : [];
             $this->add_user_ratings_row($user, $userratings, $userallocations);
         }
 
@@ -330,10 +361,10 @@ class ratings_and_allocations_table extends \table_sql {
         }
 
         foreach ($userratings as $choiceid => $userrating) {
-            $row[self::CHOICE_COL . $choiceid] = array(
+            $row[self::CHOICE_COL . $choiceid] = [
                     'rating' => $userrating,
-                    'hasallocation' => false // May be overridden later.
-            );
+                    'hasallocation' => false, // May be overridden later.
+            ];
         }
 
         // Process allocations separately, since assignment can exist for choices that have not been rated.
@@ -347,10 +378,10 @@ class ratings_and_allocations_table extends \table_sql {
             $rowkey = self::CHOICE_COL . $choiceid;
             if (!isset($row[$rowkey])) {
                 // User has not rated this choice, but it was assigned to him/her.
-                $row[$rowkey] = array(
+                $row[$rowkey] = [
                         'rating' => null,
-                        'hasallocation' => true
-                );
+                        'hasallocation' => true,
+                ];
             } else {
                 // User has rated this choice.
                 $row[$rowkey]['hasallocation'] = true;
@@ -365,7 +396,7 @@ class ratings_and_allocations_table extends \table_sql {
      */
     private function add_summary_row() {
 
-        $row = array();
+        $row = [];
 
         if ($this->shownames) {
             $row[] = get_string('ratings_table_sum_allocations', RATINGALLOCATE_MOD_NAME);
@@ -380,7 +411,7 @@ class ratings_and_allocations_table extends \table_sql {
                 $row[] = get_string(
                     'ratings_table_sum_allocations_value',
                     RATINGALLOCATE_MOD_NAME,
-                    array('sum' => $sum, 'max' => $this->choicemax[$choiceid])
+                    ['sum' => $sum, 'max' => $this->choicemax[$choiceid]]
                 );
             }
         }
@@ -405,7 +436,7 @@ class ratings_and_allocations_table extends \table_sql {
         $suffix = '';
         // Suffixes for additional columns have to be removed.
         if ($this->is_downloading()) {
-            foreach (array('text', 'alloc') as $key) {
+            foreach (['text', 'alloc'] as $key) {
                 if (strpos($column, $key)) {
                     $suffix = $key;
                     $column = str_replace($key, '', $column);
@@ -474,12 +505,12 @@ class ratings_and_allocations_table extends \table_sql {
         if ($this->writeable) {
             $result = \html_writer::start_span();
             $result .= \html_writer::tag('input', '',
-                    array('class' => 'ratingallocate_checkbox_label',
+                    ['class' => 'ratingallocate_checkbox_label',
                             'type' => 'radio',
                             'name' => 'allocdata[' . $userid . ']',
                             'id' => 'user_' . $userid . '_alloc_' . $choiceid,
                             'value' => $choiceid,
-                            $checked => ''));
+                            $checked => '']);
             $result .= \html_writer::label(
                     \html_writer::span('', 'ratingallocate_checkbox') . $text,
                     'user_' . $userid . '_alloc_' . $choiceid
@@ -500,11 +531,11 @@ class ratings_and_allocations_table extends \table_sql {
             echo \html_writer::start_span();
             foreach ($users as $user) {
                 echo \html_writer::tag('input', '',
-                        array(
+                        [
                                 'name' => 'userdata[' . $user->id . ']',
                                 'value' => $user->id,
                                 'type' => 'hidden',
-                        ));
+                        ]);
             }
             echo \html_writer::end_span();
         }
@@ -529,11 +560,11 @@ class ratings_and_allocations_table extends \table_sql {
         $filter = $settings ? json_decode($settings, true) : null;
 
         if (!$filter) {
-            $filter = array(
+            $filter = [
                     'hidenorating' => $this->hidenorating,
                     'showallocnecessary' => $this->showallocnecessary,
-                    'groupselect' => $this->groupselect
-            );
+                    'groupselect' => $this->groupselect,
+            ];
         }
         if (!is_null($hidenorating)) {
             $filter['hidenorating'] = $hidenorating;
@@ -555,11 +586,11 @@ class ratings_and_allocations_table extends \table_sql {
      * @return array with keys hidenorating and showallocnecessary
      */
     public function get_filter() {
-        $filter = array(
+        $filter = [
                 'hidenorating' => $this->hidenorating,
                 'showallocnecessary' => $this->showallocnecessary,
-                'groupselect' => $this->groupselect
-        );
+                'groupselect' => $this->groupselect,
+        ];
         return $filter;
     }
 
@@ -614,15 +645,22 @@ class ratings_and_allocations_table extends \table_sql {
                     return $u->id;
                 },
                 $DB->get_records_sql($sql,
-                        array(
+                        [
                                 'ratingallocateid' => $this->ratingallocate->ratingallocate->id,
                                 'ratingallocateid2' => $this->ratingallocate->ratingallocate->id,
-                                'groupselect' => $this->groupselect
-                        )
+                                'groupselect' => $this->groupselect,
+                        ]
                 )
         );
     }
 
+    /**
+     * Filter choiceids.
+     *
+     * @param $choiceids
+     * @return array
+     * @throws \dml_exception
+     */
     private function filter_choiceids($choiceids) {
         global $DB;
         if (!$choiceids) {
@@ -653,10 +691,10 @@ class ratings_and_allocations_table extends \table_sql {
                 return $c->id;
             },
             $DB->get_records_sql($sql,
-                array(
+                [
                     'ratingallocateid' => $this->ratingallocate->ratingallocate->id,
-                    'groupselect' => $this->groupselect
-                )
+                    'groupselect' => $this->groupselect,
+                ]
             )
         );
 
@@ -682,7 +720,7 @@ class ratings_and_allocations_table extends \table_sql {
 
         $from = "{user} u";
 
-        $params = array();
+        $params = [];
         for ($i = 0; $i < count($sortfields); $i++) {
             $key = array_keys($sortfields)[$i];
             if (substr($key, 0, 6) == "choice") {

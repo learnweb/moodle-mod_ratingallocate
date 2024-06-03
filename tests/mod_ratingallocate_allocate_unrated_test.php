@@ -407,7 +407,7 @@ class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase {
                 'explanation' => "Explain Choice $letter",
                 'maxsize' => 8,
                 'active' => true,
-                'usegroups' => false
+                'usegroups' => false,
             ];
             $choices[] = $choice;
         }
@@ -602,7 +602,7 @@ class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase {
                 'usegroups' => false,
                 // We choose 14, 12, 10, 8 and 6 maxsize values for the groups A, B, C, D, E.
                 // This means 50 places for 40 users in the course.
-                'maxsize' => $i
+                'maxsize' => $i,
             ];
 
             $choices[] = $choice;
@@ -653,7 +653,7 @@ class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase {
                 'usegroups' => false,
                 // We choose 14, 12, 10, 8 and 6 maxsize values for the groups A, B, C, D, E.
                 // This means 50 places for 40 users in the course.
-                'maxsize' => $i
+                'maxsize' => $i,
             ];
 
             $choices[] = $choice;

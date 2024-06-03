@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Internal library of functions for module ratingallocate
  *
@@ -27,20 +25,30 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Template for Strategies, which present the interface in which the user votes
  * @copyright 2014 M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package mod_ratingallocate
  */
 abstract class strategytemplate {
 
-    /** @const STRATEGYID string identifier, for language translation, etc. */
+    /** STRATEGYID string identifier, for language translation, etc. */
     const STRATEGYID = '';
 
+    /** @var array|null $_strategy_settings */
     private $_strategy_settings;
 
+    /**
+     * Construct.
+     *
+     * @param array|null $strategysettings
+     */
     public function __construct(array $strategysettings = null) {
         $this->_strategy_settings = $strategysettings;
     }
@@ -112,6 +120,11 @@ abstract class strategytemplate {
         return get_string($this->get_strategyid() . '_name', RATINGALLOCATE_MOD_NAME);
     }
 
+    /**
+     * Get strategyid.
+     *
+     * @return mixed
+     */
     abstract public function get_strategyid();
 
     /**
@@ -122,7 +135,7 @@ abstract class strategytemplate {
      * @return array of rating titles
      */
     public function translate_ratings_to_titles(array $ratings) {
-        $result = array();
+        $result = [];
         foreach ($ratings as $id => $rating) {
             $result[$rating] = $this->translate_rating_to_titles($rating);
         }
@@ -149,7 +162,7 @@ abstract class strategytemplate {
      */
     public function validate_settings() {
         $validationinfo = $this->getValidationInfo();
-        $errors = array();
+        $errors = [];
         foreach ($validationinfo as $key => $info) {
             if (isset($info[0]) && $info[0] === true) {
                 if (array_key_exists($key, $this->_strategy_settings) &&
@@ -175,6 +188,8 @@ abstract class strategytemplate {
     }
 
     /**
+     * Get validation info.
+     *
      * @return array of arrays:     key - identifier of setting_dependenc
      *                              value[0] - is setting required
      *                              value[1] - min value of setting (if numeric)
@@ -187,13 +202,16 @@ abstract class strategytemplate {
  * Form that asks users to express their ratings for choices
  * @copyright 2014 M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package mod_ratingallocate
  */
 abstract class ratingallocate_strategyform extends \moodleform {
     /** @var \ratingallocate pointer to the parent \ratingallocate object */
     protected $ratingallocate;
 
+    /** @var array|mixed $strategyoptions */
     private $strategyoptions;
 
+    /** @var strategytemplate $strategy */
     private $strategy;
 
     /**
@@ -209,7 +227,7 @@ abstract class ratingallocate_strategyform extends \moodleform {
         if (array_key_exists($strategyid, $allstrategyoptions)) {
             $this->strategyoptions = $allstrategyoptions[$strategyid];
         } else {
-            $this->strategyoptions = array();
+            $this->strategyoptions = [];
         }
         $this->strategy = $this->construct_strategy($this->strategyoptions);
         parent::__construct($url);
@@ -222,6 +240,8 @@ abstract class ratingallocate_strategyform extends \moodleform {
     abstract protected function construct_strategy($strategyoptions);
 
     /**
+     * Get strategy.
+     *
      * @return \strategytemplate Returns the underlying strategy object.
      */
     protected function get_strategy() {
@@ -268,7 +288,7 @@ abstract class ratingallocate_strategyform extends \moodleform {
     /**
      * returns strategy specific option for a strategy
      * @param string $key
-     * @returns the specific option or null if it does not exist
+     * @return the specific option or null if it does not exist
      */
     protected function get_strategysetting($key) {
         if (array_key_exists($key, $this->strategyoptions)) {

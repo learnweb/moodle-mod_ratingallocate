@@ -28,7 +28,13 @@ require_once(__DIR__ . '/../locallib.php');
  */
 class mod_ratingallocate_notification_test extends \advanced_testcase {
 
+    /**
+     * Choice 1.
+     */
     const CHOICE1 = 'Choice 1';
+    /**
+     * Choice 2.
+     */
     const CHOICE2 = 'Choice 2';
 
     /**
@@ -38,54 +44,54 @@ class mod_ratingallocate_notification_test extends \advanced_testcase {
      */
     public function test_allocation_notification() {
         $course = $this->getDataGenerator()->create_course();
-        $students = array();
+        $students = [];
         for ($i = 1; $i <= 4; $i++) {
             $students[$i] = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         }
-        $choices = array(
-                array(
+        $choices = [
+                [
                         'title' => self::CHOICE1,
                         'maxsize' => '1',
                         'active' => '1',
-                ),
-                array(
+                ],
+                [
                         'title' => self::CHOICE2,
                         'maxsize' => '1',
                         'active' => '1',
-                )
-        );
-        $ratings = array(
-                $students[1]->id => array(
-                        array(
+                ],
+        ];
+        $ratings = [
+                $students[1]->id => [
+                        [
                                 'choice' => self::CHOICE1,
-                                'rating' => 1
-                        ),
-                        array(
+                                'rating' => 1,
+                        ],
+                        [
                                 'choice' => self::CHOICE2,
-                                'rating' => 0
-                        )
-                ),
-                $students[2]->id => array(
-                        array(
+                                'rating' => 0,
+                        ],
+                ],
+                $students[2]->id => [
+                        [
                                 'choice' => self::CHOICE1,
-                                'rating' => 0
-                        ),
-                        array(
+                                'rating' => 0,
+                        ],
+                        [
                                 'choice' => self::CHOICE2,
-                                'rating' => 1
-                        )
-                ),
-                $students[3]->id => array(
-                        array(
+                                'rating' => 1,
+                        ],
+                ],
+                $students[3]->id => [
+                        [
                                 'choice' => self::CHOICE1,
-                                'rating' => 0
-                        ),
-                        array(
+                                'rating' => 0,
+                        ],
+                        [
                                 'choice' => self::CHOICE2,
-                                'rating' => 0
-                        )
-                )
-        );
+                                'rating' => 0,
+                        ],
+                ],
+        ];
 
         $ratingallocate = \mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this, $choices,
                 $course, $ratings);
@@ -105,9 +111,9 @@ class mod_ratingallocate_notification_test extends \advanced_testcase {
 
         // Add custom data.
         $task->set_component('mod_ratingallocate');
-        $task->set_custom_data(array(
-                'ratingallocateid' => $ratingallocate->ratingallocate->id
-        ));
+        $task->set_custom_data([
+                'ratingallocateid' => $ratingallocate->ratingallocate->id,
+        ]);
 
         $this->setAdminUser();
         $task->execute();

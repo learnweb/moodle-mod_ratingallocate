@@ -34,11 +34,28 @@ require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template.php');
 
+/**
+ * Strategy
+ *
+ * @package mod_ratingallocate
+ */
 class strategy extends \strategytemplate {
 
+    /**
+     * Strategyid.
+     */
     const STRATEGYID = 'strategy_points';
+    /**
+     * Max zero.
+     */
     const MAXZERO = 'maxzero';
+    /**
+     * Totalpoints.
+     */
     const TOTALPOINTS = 'totalpoints';
+    /**
+     * Max per choice.
+     */
     const MAXPERCHOICE = 'maxperchoice';
 
     public function get_strategyid() {
@@ -46,45 +63,45 @@ class strategy extends \strategytemplate {
     }
 
     public function get_static_settingfields() {
-        return array(
-                self::MAXZERO => array( // Maximum count of 'No'.
+        return [
+                self::MAXZERO => [ // Maximum count of 'No'.
                         'int',
                         get_string(self::STRATEGYID . '_setting_maxzero', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::MAXZERO),
-                        null
-                ),
-                self::TOTALPOINTS => array( // Amount of fields.
+                        null,
+                ],
+                self::TOTALPOINTS => [ // Amount of fields.
                         'int',
                         get_string(self::STRATEGYID . '_setting_totalpoints', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::TOTALPOINTS),
-                        null
-                ),
-                self::MAXPERCHOICE => array( // Maximum amount of points the student can give per choice.
+                        null,
+                ],
+                self::MAXPERCHOICE => [// Maximum amount of points the student can give per choice.
                     'int',
                     get_string(self::STRATEGYID . '_setting_maxperchoice', RATINGALLOCATE_MOD_NAME),
                     $this->get_settings_value(self::MAXPERCHOICE),
-                    null
-                )
-        );
+                    null,
+                ],
+        ];
     }
 
     public function get_dynamic_settingfields() {
-        return array();
+        return [];
     }
 
     public function get_default_settings() {
-        return array(
+        return [
                 self::MAXZERO => 3,
                 self::TOTALPOINTS => 100,
-                self::MAXPERCHOICE => 100
-        );
+                self::MAXPERCHOICE => 100,
+        ];
     }
 
     protected function getvalidationinfo() {
-        return array(self::MAXZERO => array(true, 0),
-                self::TOTALPOINTS => array(true, 1),
-                self::MAXPERCHOICE => array(true, 1)
-        );
+        return [self::MAXZERO => [true, 0],
+                self::TOTALPOINTS => [true, 1],
+                self::MAXPERCHOICE => [true, 1],
+        ];
     }
 
 }
@@ -92,6 +109,11 @@ class strategy extends \strategytemplate {
 // Register with the strategymanager.
 \strategymanager::add_strategy(strategy::STRATEGYID);
 
+/**
+ * View form.
+ *
+ * @package mod_ratingallocate
+ */
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
     protected function construct_strategy($strategyoptions) {

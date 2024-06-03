@@ -15,6 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 namespace mod_ratingallocate;
 
+use PHP_CodeSniffer\Generators\Generator;
+use PhpOffice\PhpSpreadsheet\Worksheet\Iterator;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/generator/lib.php');
@@ -38,9 +41,11 @@ class mod_ratingallocate_status_test extends \advanced_testcase {
     }
 
     /**
-     * @return array the different testing scenarios.
+     * Provider
+     *
+     * @return array
      */
-    public function ratingallocate_provider() {
+    public function ratingallocate_provider(): array {
         return [
                 'Rating phase is not started.' => [
                         3, 6, false, false, \ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
@@ -65,7 +70,7 @@ class mod_ratingallocate_status_test extends \advanced_testcase {
                 'The rating phase is running and allocation is published.' => [
                         -7, -6, true, false, \ratingallocate::DISTRIBUTION_STATUS_PUBLISHED],
                 'The rating phase is running and allocations exist and are published.' => [
-                        -7, -6, true, true, \ratingallocate::DISTRIBUTION_STATUS_PUBLISHED]
+                        -7, -6, true, true, \ratingallocate::DISTRIBUTION_STATUS_PUBLISHED],
         ];
     }
 
@@ -75,12 +80,12 @@ class mod_ratingallocate_status_test extends \advanced_testcase {
      * @covers ::get_status()
      */
     public function test_get_status($addtostart, $addtostop, $published, $hasallocations, $expected) {
-        $record = array(
+        $record = [
                 'name' => 'Rating Allocation',
                 'accesstimestart' => time() + ($addtostart * 24 * 60 * 60),
                 'accesstimestop' => time() + ($addtostop * 24 * 60 * 60),
-                'strategyopt' => array('strategy_yesno' => array('maxcrossout' => '1')),
-                'strategy' => 'strategy_yesno');
+                'strategyopt' => ['strategy_yesno' => ['maxcrossout' => '1']],
+                'strategy' => 'strategy_yesno'];
         if ($hasallocations) {
             $genmod = new \mod_ratingallocate_generated_module($this, $record);
             $moddb = $genmod->moddb;

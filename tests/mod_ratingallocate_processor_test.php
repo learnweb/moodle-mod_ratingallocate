@@ -84,7 +84,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
                         20],
                 'Rating phase is not over, yet.' => [
                         'get_open_ratingallocate_for_teacher',
-                        10]
+                        10],
         ];
     }
 
@@ -138,12 +138,12 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
         $this->setUser($teacher);
 
         // Create two groups.
-        $group1 = $this->getDataGenerator()->create_group(array(
+        $group1 = $this->getDataGenerator()->create_group([
             'courseid' => $course->id,
-            'name' => 'group1'));
-        $group2 = $this->getDataGenerator()->create_group(array(
+            'name' => 'group1']);
+        $group2 = $this->getDataGenerator()->create_group([
             'courseid' => $course->id,
-            'name' => 'group2'));
+            'name' => 'group2']);
 
         // Add 1 member to each group, and 1 member to both groups.
         $student1 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
@@ -156,7 +156,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
         $student4 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
 
         // Setup ratingallocate instance.
-        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, array('course' => $course), $this->get_choice_data());
+        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, ['course' => $course], $this->get_choice_data());
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $teacher);
 
         // Map choice titles to choice IDs, group names to group IDs.
@@ -170,12 +170,12 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
          * Choice B: only rateable by group2
          * Choice C: ratable by all students
          */
-        $ratingallocate->update_choice_groups($choiceidmap['Choice A'], array(
-            $groupidmap['group1']
-        ));
-        $ratingallocate->update_choice_groups($choiceidmap['Choice B'], array(
-            $groupidmap['group2']
-        ));
+        $ratingallocate->update_choice_groups($choiceidmap['Choice A'], [
+            $groupidmap['group1'],
+        ]);
+        $ratingallocate->update_choice_groups($choiceidmap['Choice B'], [
+            $groupidmap['group2'],
+        ]);
 
         // Test the group filter only (set hidenorating and showalloccount to false).
 
@@ -236,7 +236,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
         // Create and set up the flextable for ratings and allocations.
         $choices = $ratingallocate->get_rateable_choices();
         $table = new \mod_ratingallocate\ratings_and_allocations_table($ratingallocate->get_renderer(),
-                array(), $ratingallocate, 'show_alloc_table', 'mod_ratingallocate_test', false);
+                [], $ratingallocate, 'show_alloc_table', 'mod_ratingallocate_test', false);
         $table->setup_table($choices, $hidenorating, $showallocnecessary, $groupselect);
 
         return $table;
@@ -248,30 +248,30 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      * @return array
      */
     private function get_choice_data() {
-        $choicedata = array();
-        $choice1 = array(
+        $choicedata = [];
+        $choice1 = [
             'title' => "Choice A",
             'explanation' => "Ratable by group1",
             'maxsize' => 10,
             'active' => true,
-            'usegroups' => true
-        );
+            'usegroups' => true,
+        ];
         $choicedata[] = $choice1;
-        $choice2 = array(
+        $choice2 = [
             'title' => "Choice B",
             'explanation' => "Ratable by group2",
             'maxsize' => 10,
             'active' => true,
-            'usegroups' => true
-        );
+            'usegroups' => true,
+        ];
         $choicedata[] = $choice2;
-        $choice3 = array(
+        $choice3 = [
             'title' => "Choice C",
             'explanation' => "Ratable by all students",
             'maxsize' => 10,
             'active' => true,
-            'usegroups' => false
-        );
+            'usegroups' => false,
+        ];
         $choicedata[] = $choice3;
         return $choicedata;
     }

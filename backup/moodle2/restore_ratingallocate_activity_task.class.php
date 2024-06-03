@@ -27,6 +27,13 @@ defined('MOODLE_INTERNAL') || die();
  */
 require_once($CFG->dirroot . '/mod/ratingallocate/backup/moodle2/restore_ratingallocate_activity_stepslib.php');
 
+/**
+ * Restore ratingallocate activity class
+ *
+ * @package mod_ratingallocate
+ * @copyright 214 C. Usener
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class restore_ratingallocate_activity_task extends restore_activity_task {
 
     /**
@@ -49,7 +56,7 @@ class restore_ratingallocate_activity_task extends restore_activity_task {
      * processed by the link decoder
      */
     public static function define_decode_contents() {
-        $contents = array();
+        $contents = [];
 
         return $contents;
     }
@@ -59,7 +66,7 @@ class restore_ratingallocate_activity_task extends restore_activity_task {
      * to the activity to be executed by the link decoder
      */
     public static function define_decode_rules() {
-        $rules = array();
+        $rules = [];
 
         return $rules;
     }
@@ -72,7 +79,7 @@ class restore_ratingallocate_activity_task extends restore_activity_task {
      * of {@link restore_log_rule} objects
      */
     public static function define_restore_log_rules() {
-        $rules = array();
+        $rules = [];
 
         return $rules;
     }
@@ -89,7 +96,7 @@ class restore_ratingallocate_activity_task extends restore_activity_task {
      * activity level. All them are rules not linked to any module instance (cmid = 0)
      */
     public static function define_restore_log_rules_for_course() {
-        $rules = array();
+        $rules = [];
         return $rules;
     }
 }

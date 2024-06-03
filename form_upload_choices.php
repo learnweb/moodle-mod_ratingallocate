@@ -64,7 +64,7 @@ class upload_choices_form extends moodleform {
 
         $elementname = 'testimport';
         $mform->addElement('advcheckbox', $elementname, get_string('csvupload_test_upload', 'ratingallocate'),
-            null, null, array(0, 1));
+            null, null, [0, 1]);
         $mform->addHelpButton($elementname, 'csvupload_test_upload', 'ratingallocate');
 
         $this->add_buttons();
@@ -73,10 +73,10 @@ class upload_choices_form extends moodleform {
     public function add_buttons() {
         $mform =& $this->_form;
 
-        $buttonarray = array();
+        $buttonarray = [];
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('csvupload', 'ratingallocate'));
         $buttonarray[] = &$mform->createElement('cancel');
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
         $mform->closeHeaderBefore('buttonar');
     }
 

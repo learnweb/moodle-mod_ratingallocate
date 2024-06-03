@@ -33,7 +33,7 @@ namespace mod_ratingallocate\event;
 class rating_deleted extends \core\event\base {
 
     public static function create_simple($modulecontext, $ratingallocateid) {
-        return self::create(array('context' => $modulecontext, 'objectid' => $ratingallocateid));
+        return self::create(['context' => $modulecontext, 'objectid' => $ratingallocateid]);
     }
 
     protected function init() {
@@ -48,15 +48,15 @@ class rating_deleted extends \core\event\base {
 
     public function get_description() {
         return get_string('log_rating_deleted_description', 'mod_ratingallocate',
-                array('userid' => $this->userid, 'ratingallocateid' => $this->objectid));
+                ['userid' => $this->userid, 'ratingallocateid' => $this->objectid]);
     }
 
     public function get_url() {
-        return new \moodle_url('/mod/ratingallocate/view.php', array('m' => $this->objectid));
+        return new \moodle_url('/mod/ratingallocate/view.php', ['m' => $this->objectid]);
     }
 
     public static function get_objectid_mapping() {
-        return array('db' => 'ratingallocate', 'restore' => 'ratingallocate');
+        return ['db' => 'ratingallocate', 'restore' => 'ratingallocate'];
     }
 
     public static function get_other_mapping() {

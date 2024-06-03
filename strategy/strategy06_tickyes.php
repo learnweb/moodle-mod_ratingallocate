@@ -34,10 +34,24 @@ require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template.php');
 
+/**
+ * Strategy.
+ *
+ * @package mod_ratingallocate
+ */
 class strategy extends \strategytemplate {
 
+    /**
+     * Strategyid.
+     */
     const STRATEGYID = 'strategy_tickyes';
+    /**
+     * Min ticks for yes.
+     */
     const MINTICKYES = 'mintickyes';
+    /**
+     * Accept label.
+     */
     const ACCEPT_LABEL = 'accept';
 
     public function get_strategyid() {
@@ -45,25 +59,24 @@ class strategy extends \strategytemplate {
     }
 
     public function get_static_settingfields() {
-        $output = array(
-                self::MINTICKYES => array('int',
+        $output = [
+                self::MINTICKYES => ['int',
                         get_string(self::STRATEGYID . '_setting_mintickyes', RATINGALLOCATE_MOD_NAME),
-                        $this->get_settings_value(self::MINTICKYES)
-                )
-        );
+                        $this->get_settings_value(self::MINTICKYES),
+                ],
+        ];
 
-        $output[1] = array(
+        $output[1] = [
                 'text',
                 get_string('strategy_settings_label', RATINGALLOCATE_MOD_NAME, $this->get_settings_default_value(1)),
                 null,
-                $this->get_settings_default_value(1)
-
-        );
+                $this->get_settings_default_value(1),
+        ];
         return $output;
     }
 
     public function get_dynamic_settingfields() {
-        return array();
+        return [];
     }
 
     public function get_accept_label() {
@@ -71,16 +84,15 @@ class strategy extends \strategytemplate {
     }
 
     public function get_default_settings() {
-        return array(
+        return [
                 self::MINTICKYES => 3,
                 1 => get_string(self::STRATEGYID . '_' . self::ACCEPT_LABEL, RATINGALLOCATE_MOD_NAME),
-                0 => get_string(self::STRATEGYID . '_not_' . self::ACCEPT_LABEL, RATINGALLOCATE_MOD_NAME)
-        );
+                0 => get_string(self::STRATEGYID . '_not_' . self::ACCEPT_LABEL, RATINGALLOCATE_MOD_NAME),
+        ];
     }
 
     protected function getvalidationinfo() {
-        return array(self::MINTICKYES => array(true, 1)
-        );
+        return [self::MINTICKYES => [true, 1]];
     }
 }
 
@@ -131,7 +143,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
             // Use explanation as title/label of checkbox to align with other strategies.
             $mform->addElement('advcheckbox', $ratingelem, format_text($data->explanation),
-                    $this->get_strategy()->get_accept_label(), null, array(0, 1));
+                    $this->get_strategy()->get_accept_label(), null, [0, 1]);
             $mform->setType($ratingelem, PARAM_INT);
 
             if (is_numeric($data->rating) && $data->rating >= 0) {
