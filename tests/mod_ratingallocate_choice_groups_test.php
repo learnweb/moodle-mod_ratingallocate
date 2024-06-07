@@ -133,7 +133,7 @@ class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
      * @return void
      * @covers ::get_group_selections
      */
-    public function test_setup() {
+    public function test_setup(): void {
         $this->resetAfterTest();
 
         $this->assertEquals(5, count($this->choicedata));
@@ -154,7 +154,7 @@ class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
      * @return void
      * @covers ::filter_choices_by_groups
      */
-    public function test_choice_groups() {
+    public function test_choice_groups(): void {
         $this->resetAfterTest();
 
         // Map choice titles to choice IDs, group names to group IDs.
@@ -232,7 +232,7 @@ class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
      * @return void
      * @covers ::update_choice_groups
      */
-    public function test_update_choice_groups() {
+    public function test_update_choice_groups(): void {
         $this->resetAfterTest();
 
         $choiceidmap = $this->get_choice_map();

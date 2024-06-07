@@ -136,7 +136,7 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
      * @return void
      * @covers \solver_edmonds_karp
      */
-    public function test_edmondskarp() {
+    public function test_edmondskarp(): void {
         $choices = [];
         $choices[1] = new \stdClass();
         $choices[1]->maxsize = 2;
@@ -212,7 +212,7 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
      *
      * @return void
      */
-    public function test_negweightcycle() {
+    public function test_negweightcycle(): void {
         // Experimental.
         $choices = [];
         $choices[1] = new \stdClass();
@@ -262,7 +262,7 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
      *
      * @return void
      */
-    public function test_targetfunc() {
+    public function test_targetfunc(): void {
         $ratings = [];
         $ratings[1] = new \stdClass();
         $ratings[1]->userid = 1;
@@ -293,7 +293,7 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
     /**
      * Test id conversions from user+choicids to graphids
      */
-    public function test_setupids() {
+    public function test_setupids(): void {
         $ratings = [];
         $ratings[1] = new \stdClass();
         $ratings[1]->userid = 3;

@@ -39,7 +39,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      * Assert, that the ratingallocate can be published
      * @covers ::publish_allocation()
      */
-    public function test_publishing() {
+    public function test_publishing(): void {
         $ratingallocate = \mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $ratingallocate->ratingallocate->published);
         $ratingallocate->publish_allocation();
@@ -51,7 +51,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      * Assert, that the number of groupings does not change
      * @covers ::synchronize_allocation_and_grouping()
      */
-    public function test_grouping_before_accesstimestop() {
+    public function test_grouping_before_accesstimestop(): void {
         global $DB;
         $ratingallocate = \mod_ratingallocate_generator::get_open_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $DB->count_records('groupings'));
@@ -64,7 +64,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      * Assert, that the number of groupings changes as expected (1 Grouping should be created)
      * @covers ::synchronize_allocation_and_grouping()
      */
-    public function test_grouping_after_accesstimestop() {
+    public function test_grouping_after_accesstimestop(): void {
         global $DB;
         $ratingallocate = \mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $DB->count_records('groupings'));
@@ -97,7 +97,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      * - 1 User without ratings but with allocations
      * @covers \classes\ratings_and_allocations_table
      */
-    public function test_ratings_table_filter() {
+    public function test_ratings_table_filter(): void {
 
         $this->resetAfterTest();
 
@@ -130,7 +130,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
 
     }
 
-    public function test_ratings_table_groupfilter() {
+    public function test_ratings_table_groupfilter(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();

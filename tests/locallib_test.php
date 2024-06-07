@@ -155,7 +155,7 @@ class locallib_test extends \advanced_testcase {
      * Default data has two choices but only one is active.
      * Test if count of rateable choices is 1.
      */
-    public function test_get_ratable_choices() {
+    public function test_get_ratable_choices(): void {
         $record = \mod_ratingallocate_generator::get_default_values();
         $testmodule = new \mod_ratingallocate_generated_module($this, $record);
         $ratingallocate =
@@ -166,7 +166,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test if option titles are returned according to the default values
      */
-    public function test_get_option_titles_default() {
+    public function test_get_option_titles_default(): void {
         $expectedresult = [1 => 'Accept', 0 => 'Deny']; // Depends on language file.
         $ratings = [0, 1, 1, 1, 0];
 
@@ -182,7 +182,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test if option titles are returned according to defined custom values
      */
-    public function test_get_option_titles_custom() {
+    public function test_get_option_titles_custom(): void {
         $expectedresult = [1 => 'Ja1234', 0 => 'Nein1234']; // Test data.
         $ratings = [1, 1, 1, 0, 1, 1];
 
@@ -199,7 +199,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test if option titles are returned according to defined custom values, if ratings consist of just one rating
      */
-    public function test_get_option_titles_custom1() {
+    public function test_get_option_titles_custom1(): void {
         $expectedresult = [1 => 'Ja1234']; // Test data.
         $ratings = [1, 1, 1, 1, 1];
 
@@ -216,7 +216,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test if option titles are returned according to a mixture of defined and custom values,
      */
-    public function test_get_option_titles_mixed() {
+    public function test_get_option_titles_mixed(): void {
         $settings = [1 => 'Ja1234']; // Test data.
         $ratings = [0, 1, 1, 1, 1];
         $expectedresult = $settings;
@@ -232,7 +232,7 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals($expectedresult, $result);
     }
 
-    public function test_reset_userdata() {
+    public function test_reset_userdata(): void {
         global $DB;
 
         $this->resetAfterTest();

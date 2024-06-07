@@ -231,7 +231,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $description,
             $this->single_button(new moodle_url('/mod/ratingallocate/view.php', ['id' => $coursemoduleid,
                 'ratingallocateid' => $ratingallocateid,
-                'action' => ACTION_PUBLISH_ALLOCATIONS]), get_string('publish_allocation',RATINGALLOCATE_MOD_NAME), 'get',
+                'action' => ACTION_PUBLISH_ALLOCATIONS]), get_string('publish_allocation', RATINGALLOCATE_MOD_NAME), 'get',
                 ['disabled' => !$isready]),
             $this->single_button(new moodle_url('/mod/ratingallocate/view.php', ['id' => $coursemoduleid,
                 'ratingallocateid' => $ratingallocateid,

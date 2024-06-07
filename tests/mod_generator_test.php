@@ -31,7 +31,7 @@ require_once(dirname(__FILE__) . '/../locallib.php');
  */
 class mod_generator_test extends \advanced_testcase {
 
-    public function test_create_instance() {
+    public function test_create_instance(): void {
 
         global $DB, $USER;
         \core_php_time_limit::raise();
@@ -124,7 +124,7 @@ class mod_generator_test extends \advanced_testcase {
         $this->assertEquals(0, count($records));
     }
 
-    public function test_mod_ratingallocate_generated_module() {
+    public function test_mod_ratingallocate_generated_module(): void {
         $choicedata = \mod_ratingallocate_generator::get_default_choice_data();
         foreach ($choicedata as $id => $choice) {
             $choice['maxsize'] = 10;

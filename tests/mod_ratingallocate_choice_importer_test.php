@@ -73,7 +73,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->ratingallocateid = $mod->id;
     }
 
-    public function test_setup() {
+    public function test_setup(): void {
         $this->resetAfterTest();
 
         // Groups in course context.
@@ -87,7 +87,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals(2, count($choices), 'Generator default: two pre-existing choices.');
     }
 
-    public function test_choice_importer_testmode() {
+    public function test_choice_importer_testmode(): void {
         $this->resetAfterTest();
         $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
         $this->assertTrue($choiceimporter instanceof \mod_ratingallocate\choice_importer);
@@ -107,7 +107,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
          */
     }
 
-    public function test_choice_importer_livemode() {
+    public function test_choice_importer_livemode(): void {
         $this->resetAfterTest();
         $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
         $this->assertTrue($choiceimporter instanceof \mod_ratingallocate\choice_importer);
@@ -125,7 +125,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals(5, count($choices), 'Three new choices imported');
     }
 
-    public function test_adding_groups() {
+    public function test_adding_groups(): void {
         $this->resetAfterTest();
         $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
 
@@ -197,7 +197,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertContains(intval($this->blue->id), $choicegroups10);
     }
 
-    public function test_bad_group() {
+    public function test_bad_group(): void {
         $this->resetAfterTest();
         $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
 

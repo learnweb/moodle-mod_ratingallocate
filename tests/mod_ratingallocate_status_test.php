@@ -79,7 +79,7 @@ class mod_ratingallocate_status_test extends \advanced_testcase {
      * @dataProvider ratingallocate_provider
      * @covers ::get_status()
      */
-    public function test_get_status($addtostart, $addtostop, $published, $hasallocations, $expected) {
+    public function test_get_status($addtostart, $addtostop, $published, $hasallocations, $expected): void {
         $record = [
                 'name' => 'Rating Allocation',
                 'accesstimestart' => time() + ($addtostart * 24 * 60 * 60),
