@@ -40,22 +40,44 @@ namespace mod_ratingallocate\event;
  **/
 class distribution_triggered extends \core\event\base {
 
+    /**
+     * Create simple distribution_triggered event.
+     * @param $modulecontext
+     * @param $ratingallocateid
+     * @param $timeneeded
+     * @return \core\event\base
+     * @throws \coding_exception
+     */
     public static function create_simple($modulecontext, $ratingallocateid, $timeneeded) {
         $timeneededjsonvalid = json_decode(json_encode($timeneeded), true);
         return self::create(['context' => $modulecontext, 'objectid' => $ratingallocateid,
                 'other' => ['time_needed' => $timeneededjsonvalid]]);
     }
 
+    /**
+     * Initialize data.
+     * @return void
+     */
     protected function init() {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'ratingallocate_ratings';
     }
 
+    /**
+     * Get event name.
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
     public static function get_name() {
         return get_string('log_distribution_triggered', 'mod_ratingallocate');
     }
 
+    /**
+     * Get event description.
+     * @return \lang_string|string|null
+     * @throws \coding_exception
+     */
     public function get_description() {
         return get_string('log_distribution_triggered_description', 'mod_ratingallocate',
                 ['userid' => $this->userid,
@@ -63,14 +85,27 @@ class distribution_triggered extends \core\event\base {
                         'time_needed' => $this->other['time_needed']]);
     }
 
+    /**
+     * Get event url.
+     * @return \moodle_url
+     * @throws \moodle_exception
+     */
     public function get_url() {
         return new \moodle_url('/mod/ratingallocate/view.php', ['m' => $this->objectid]);
     }
 
+    /**
+     * Get event mapping.
+     * @return string[]
+     */
     public static function get_objectid_mapping() {
         return ['db' => 'ratingallocate', 'restore' => 'ratingallocate'];
     }
 
+    /**
+     * No other mappings available.
+     * @return false
+     */
     public static function get_other_mapping() {
         return false;
     }

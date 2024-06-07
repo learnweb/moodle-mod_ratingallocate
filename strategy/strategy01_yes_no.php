@@ -49,10 +49,19 @@ class strategy extends \strategytemplate_options {
      */
     const MAXCROSSOUT = 'maxcrossout';
 
+    /**
+     * Get strategy id.
+     * @return string
+     */
     public function get_strategyid() {
         return self::STRATEGYID;
     }
 
+    /**
+     * Get static settingfields.
+     * @return array|array[]
+     * @throws \coding_exception
+     */
     public function get_static_settingfields() {
         $output = [
                 self::MAXCROSSOUT => [
@@ -74,10 +83,18 @@ class strategy extends \strategytemplate_options {
         return $output;
     }
 
+    /**
+     * Get dynamic settingfields.
+     * @return array
+     */
     public function get_dynamic_settingfields() {
         return [];
     }
 
+    /**
+     * Get choice options.
+     * @return array
+     */
     public function get_choiceoptions() {
         $options = [
                 0 => $this->get_settings_value(0),
@@ -86,6 +103,11 @@ class strategy extends \strategytemplate_options {
         return $options;
     }
 
+    /**
+     * Get default settings.
+     * @return array
+     * @throws \coding_exception
+     */
     public function get_default_settings() {
         return [
                 self::MAXCROSSOUT => 3,
@@ -95,6 +117,10 @@ class strategy extends \strategytemplate_options {
         ];
     }
 
+    /**
+     * Get validation information.
+     * @return array[]
+     */
     protected function getvalidationinfo() {
         return [self::MAXCROSSOUT => [true, 0]];
     }
@@ -111,18 +137,35 @@ class strategy extends \strategytemplate_options {
 class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform {
     // Already specified by parent class.
 
+    /**
+     * Create new strategy.
+     * @param $strategyoptions
+     * @return strategy
+     */
     protected function construct_strategy($strategyoptions) {
         return new strategy($strategyoptions);
     }
 
+    /**
+     * Get choice options.
+     * @return mixed
+     */
     public function get_choiceoptions() {
         return $this->get_strategy()->get_choiceoptions();
     }
 
+    /**
+     * Get maximal amount how many times a user is allowed to rate a choice with "NO".
+     * @return mixed|\the|null
+     */
     protected function get_max_amount_of_nos() {
         return $this->get_strategysetting(strategy::MAXCROSSOUT);
     }
 
+    /**
+     * Get string identifier of max_nos.
+     * @return string
+     */
     protected function get_max_nos_string_identyfier() {
         return strategy::STRATEGYID . '_max_no';
     }

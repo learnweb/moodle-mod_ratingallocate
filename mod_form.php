@@ -158,6 +158,14 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
+    /**
+     * If ratings have already been submitted by users, the ratingallocate strategy can no longer
+     * be changend.
+     * @param $includeratingallocate
+     * @return array|bool
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function get_disable_strategy($includeratingallocate = false) {
         $update = $this->optional_param('update', 0, PARAM_INT);
         if ($update != 0) {

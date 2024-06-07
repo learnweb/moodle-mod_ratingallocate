@@ -120,6 +120,12 @@ class manual_alloc_form extends moodleform {
         $mform->registerNoSubmitButton('update_filter');
     }
 
+    /**
+     * Fill table with data.
+     * @return void
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function definition_after_data() {
         parent::definition_after_data();
         global $PAGE;

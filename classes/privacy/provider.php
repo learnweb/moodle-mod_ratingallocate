@@ -212,6 +212,12 @@ class provider implements
         }
     }
 
+    /**
+     * Export user preferences based on given userid.
+     * @param int $userid
+     * @return void
+     * @throws \coding_exception
+     */
     public static function export_user_preferences(int $userid) {
         $filtertable = get_user_preferences('flextable_mod_ratingallocate_table_filter', null, $userid);
         if (null !== $filtertable) {

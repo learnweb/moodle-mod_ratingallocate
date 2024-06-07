@@ -99,8 +99,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $ratingover = $status !== ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY &&
             $status !== ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS;
 
-        $starturl = new moodle_url($this->page->url, array('action' => ACTION_START_DISTRIBUTION));
-        $deleteurl = new moodle_url($this->page->url, array('id' => $coursemoduleid, 'action' => ACTION_DELETE_ALL_RATINGS));
+        $starturl = new moodle_url($this->page->url, ['action' => ACTION_START_DISTRIBUTION]);
+        $deleteurl = new moodle_url($this->page->url, ['id' => $coursemoduleid, 'action' => ACTION_DELETE_ALL_RATINGS]);
 
         // Get description dependent on status.
         $descriptionbaseid = 'modify_allocation_group_desc_';
@@ -128,12 +128,12 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $this->render($button) . '<br/>' . '<br/>' . $this->single_button(
                 new moodle_url(
                     '/mod/ratingallocate/view.php',
-                    array('id' => $coursemoduleid,
-                    'action' => ACTION_MANUAL_ALLOCATION)),
+                    ['id' => $coursemoduleid,
+                    'action' => ACTION_MANUAL_ALLOCATION]),
                     get_string('manual_allocation_form',
                         RATINGALLOCATE_MOD_NAME),
                     'get',
-                    array('disabled' => !$ratingover || $isdistributionrunning)
+                    ['disabled' => !$ratingover || $isdistributionrunning]
                 ),
             $this->render($deletebutton)
         );
@@ -147,7 +147,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
                 $distributeunallocatedurleq = new moodle_url(
                     $this->page->url,
-                    array('action' => ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY)
+                    ['action' => ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY]
                 );
                 $buttondisteq = new single_button($distributeunallocatedurleq,
                     get_string('distributeequally', RATINGALLOCATE_MOD_NAME), 'get');
@@ -158,7 +158,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
                 $distributeunallocatedurlfill = new moodle_url(
                     $this->page->url,
-                    array('action' => ACTION_DISTRIBUTE_UNALLOCATED_FILL)
+                    ['action' => ACTION_DISTRIBUTE_UNALLOCATED_FILL]
                 );
                 $buttondistfill = new single_button($distributeunallocatedurlfill,
                     get_string('distributefill', RATINGALLOCATE_MOD_NAME), 'get');
@@ -170,7 +170,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $this->add_table_row_triple($table,
                     get_string('unallocated_user_count',
                         RATINGALLOCATE_MOD_NAME,
-                        ['count' => $undistributeduserscount]) . $this->help_icon('distribution_description', RATINGALLOCATE_MOD_NAME),
+                        ['count' => $undistributeduserscount]) .
+                    $this->help_icon('distribution_description', RATINGALLOCATE_MOD_NAME),
                     $this->render($buttondisteq),
                     $this->render($buttondistfill)
                 );
@@ -228,13 +229,13 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
         $this->add_table_row_triple($table,
             $description,
-            $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
+            $this->single_button(new moodle_url('/mod/ratingallocate/view.php', ['id' => $coursemoduleid,
                 'ratingallocateid' => $ratingallocateid,
-                'action' => ACTION_PUBLISH_ALLOCATIONS)), get_string('publish_allocation', RATINGALLOCATE_MOD_NAME), 'get',
-                array('disabled' => !$isready)),
-            $this->single_button(new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid,
+                'action' => ACTION_PUBLISH_ALLOCATIONS]), get_string('publish_allocation',RATINGALLOCATE_MOD_NAME), 'get',
+                ['disabled' => !$isready]),
+            $this->single_button(new moodle_url('/mod/ratingallocate/view.php', ['id' => $coursemoduleid,
                 'ratingallocateid' => $ratingallocateid,
-                'action' => ACTION_ALLOCATION_TO_GROUPING)), get_string('create_moodle_groups', RATINGALLOCATE_MOD_NAME), 'get')
+                'action' => ACTION_ALLOCATION_TO_GROUPING]), get_string('create_moodle_groups', RATINGALLOCATE_MOD_NAME), 'get')
         );
 
         $output .= html_writer::table($table);
@@ -414,6 +415,11 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         return $o;
     }
 
+    /**
+     * Format text by enclosing it with div box.
+     * @param $text
+     * @return string
+     */
     public function format_text($text) {
         $output = '';
 
@@ -583,12 +589,12 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $output .= $this->box_start();
 
         $output .= $this->output->single_select(
-            new moodle_url('/mod/ratingallocate/view.php', array('id' => $coursemoduleid)),
-            'action', array(
+            new moodle_url('/mod/ratingallocate/view.php', ['id' => $coursemoduleid]),
+            'action', [
                 ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE => get_string('show_table', RATINGALLOCATE_MOD_NAME),
                 ACTION_SHOW_ALLOCATION_TABLE => get_string('show_allocation_table', RATINGALLOCATE_MOD_NAME),
                 ACTION_SHOW_STATISTICS => get_string('show_allocation_statistics', RATINGALLOCATE_MOD_NAME),
-            ),
+            ],
             $action
         );
 
@@ -983,7 +989,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $cell2->attributes['class'] = 'ratingallocate_front_page_table_23';
         $cell3 = new html_table_cell($third);
         $cell3->attributes['class'] = 'ratingallocate_front_page_table_23';
-        $row->cells = array($cell1, $cell2, $cell3);
+        $row->cells = [$cell1, $cell2, $cell3];
         $table->data[] = $row;
     }
 

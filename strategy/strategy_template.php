@@ -49,7 +49,7 @@ abstract class strategytemplate {
      *
      * @param array|null $strategysettings
      */
-    public function __construct(array $strategysettings = null) {
+    public function __construct(?array $strategysettings) {
         $this->_strategy_settings = $strategysettings;
     }
 
@@ -265,6 +265,11 @@ abstract class ratingallocate_strategyform extends \moodleform {
      */
     abstract public function describe_strategy();
 
+    /**
+     * Get strategy description.
+     * @return lang_string|string
+     * @throws coding_exception
+     */
     public function get_strategy_description_header() {
         return get_string('strategyname', RATINGALLOCATE_MOD_NAME, $this->get_strategyname());
     }
@@ -281,6 +286,11 @@ abstract class ratingallocate_strategyform extends \moodleform {
         return $o;
     }
 
+    /**
+     * Get strategy name.
+     * @return lang_string|string
+     * @throws coding_exception
+     */
     protected function get_strategyname() {
         return get_string($this->ratingallocate->ratingallocate->strategy . '_name', RATINGALLOCATE_MOD_NAME);
     }

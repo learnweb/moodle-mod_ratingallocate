@@ -54,10 +54,19 @@ class strategy extends \strategytemplate {
      */
     const ACCEPT_LABEL = 'accept';
 
+    /**
+     * Get strategy id.
+     * @return string
+     */
     public function get_strategyid() {
         return self::STRATEGYID;
     }
 
+    /**
+     * Get static settingfields.
+     * @return array[]
+     * @throws \coding_exception
+     */
     public function get_static_settingfields() {
         $output = [
                 self::MINTICKYES => ['int',
@@ -75,14 +84,27 @@ class strategy extends \strategytemplate {
         return $output;
     }
 
+    /**
+     * Get dynamic settingfields.
+     * @return array
+     */
     public function get_dynamic_settingfields() {
         return [];
     }
 
+    /**
+     * Get accept label.
+     * @return \either|\the|null
+     */
     public function get_accept_label() {
         return $this->get_settings_value(1);
     }
 
+    /**
+     * Get default settings.
+     * @return array
+     * @throws \coding_exception
+     */
     public function get_default_settings() {
         return [
                 self::MINTICKYES => 3,
@@ -91,6 +113,10 @@ class strategy extends \strategytemplate {
         ];
     }
 
+    /**
+     * Get validation information.
+     * @return array[]
+     */
     protected function getvalidationinfo() {
         return [self::MINTICKYES => [true, 1]];
     }
@@ -107,10 +133,20 @@ class strategy extends \strategytemplate {
  */
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
+    /**
+     * Create a new strategy.
+     * @param $strategyoptions
+     * @return strategy
+     */
     protected function construct_strategy($strategyoptions) {
         return new strategy($strategyoptions);
     }
 
+    /**
+     * Form definition of this strategy.
+     * @return void
+     * @throws \coding_exception
+     */
     public function definition() {
         global $USER;
         parent::definition();
@@ -158,11 +194,23 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         }
     }
 
+    /**
+     * Get strategy description.
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
     public function describe_strategy() {
         return get_string(strategy::STRATEGYID . '_explain_mintickyes', RATINGALLOCATE_MOD_NAME,
                 $this->get_strategysetting(strategy::MINTICKYES));
     }
 
+    /**
+     * Validate form data.
+     * @param $data
+     * @param $files
+     * @return array
+     * @throws \coding_exception
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         $mintickyes = $this->get_strategysetting(strategy::MINTICKYES);

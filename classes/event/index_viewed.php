@@ -32,31 +32,64 @@ namespace mod_ratingallocate\event;
  **/
 class index_viewed extends \core\event\base {
 
+    /**
+     * Create simple index_viewed event.
+     * @param $coursecontext
+     * @return \core\event\base
+     * @throws \coding_exception
+     */
     public static function create_simple($coursecontext) {
         return self::create(['context' => $coursecontext]);
     }
 
+    /**
+     * Initialize data.
+     * @return void
+     */
     protected function init() {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
+    /**
+     * Get event name.
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
     public static function get_name() {
         return get_string('log_index_viewed', 'mod_ratingallocate');
     }
 
+    /**
+     * Get event description.
+     * @return \lang_string|string|null
+     * @throws \coding_exception
+     */
     public function get_description() {
         return get_string('log_index_viewed_description', 'mod_ratingallocate', ['userid' => $this->userid]);
     }
 
+    /**
+     * Get event url.
+     * @return \moodle_url
+     * @throws \moodle_exception
+     */
     public function get_url() {
         return new \moodle_url('/mod/ratingallocate/index.php', ['id' => $this->courseid]);
     }
 
+    /**
+     * Get event mapping.
+     * @return array
+     */
     public static function get_objectid_mapping() {
         return [];
     }
 
+    /**
+     * No other mappings available.
+     * @return false
+     */
     public static function get_other_mapping() {
         return false;
     }

@@ -26,7 +26,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @copyright  2018 T Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_notification_test extends \advanced_testcase {
+final class mod_ratingallocate_notification_test extends \advanced_testcase {
 
     /**
      * Choice 1.
@@ -42,7 +42,7 @@ class mod_ratingallocate_notification_test extends \advanced_testcase {
      *
      * @covers ::send_distribution_notification()
      */
-    public function test_allocation_notification() {
+    public function test_allocation_notification(): void {
         $course = $this->getDataGenerator()->create_course();
         $students = [];
         for ($i = 1; $i <= 4; $i++) {
