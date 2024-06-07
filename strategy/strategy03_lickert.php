@@ -195,7 +195,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform 
     public function get_choiceoptions() {
         $params = $this->get_strategysetting(strategy::COUNTLICKERT);
         return $this->get_strategy()->get_choiceoptions($params);
-    }string identifier of max_nos.
+    }
 
     /**
      *
