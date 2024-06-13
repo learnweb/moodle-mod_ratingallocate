@@ -373,7 +373,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      * @param $defaultvalues
      * @return void
      */
-    public function data_preprocessing (&$defaultvalues){
+    public function data_preprocessing(&$defaultvalues) {
         if (empty($defaultvalues[$this->get_suffixed_name('vote')])) {
             $defaultvalues[$this->get_suffixed_name('vote')] = 0;
         }
