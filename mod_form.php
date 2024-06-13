@@ -202,15 +202,16 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->hideIf($stratfieldid, 'strategy', 'neq', $strategyid);
     }
 
+
     // Override if you need to setup the form depending on current values.
     public function definition_after_data() {
-        parent::definition_after_data();
+
         $mform = &$this->_form;
 
         $data = $this->current;
 
         if ($this->is_submitted()) {
-            $subdata = $this->get_submitted_data();
+            $subdata = $this->get_data();
             $allstrategyoptions = $subdata->{self::STRATEGY_OPTIONS};
         } else if (isset($data->setting)) {
             $allstrategyoptions = json_decode($data->setting, true);
@@ -245,7 +246,11 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             }
             $mform->removeElement($strategyplaceholder);
         }
+
+        // Call parent function after, in order to have completiontracking working properly.
+        parent::definition_after_data();
     }
+
 
     /**
      * Checks that accesstimestart is before accesstimestop
@@ -321,7 +326,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     }
 
     protected function get_suffixed_name(string $fieldname): string {
-        return 'completion' . $fieldname;
+        return 'completion' . $fieldname . $this->get_suffix();
     }
 
     /**
@@ -332,6 +337,46 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      */
     public function completion_rule_enabled($data) {
         return ($data[$this->get_suffixed_name('vote')] == 1 || $data[$this->get_suffixed_name('allocation')] == 1);
+    }
+
+    /**
+     * Allows module to modify data returned by get_moduleinfo_data() or prepare_new_moduleinfo_data() before calling set_data().
+     * This method is also called in the bulk activity completion form.
+     * Only available on moodleform_mod.
+     *
+     * @param $default_values
+     * @return void
+     */
+    function data_preprocessing(&$default_values){
+        if(empty($default_values[$this->get_suffixed_name('vote')])) {
+            $default_values[$this->get_suffixed_name('vote')] = 0;
+        }
+        if(empty($default_values[$this->get_suffixed_name('allocation')])) {
+            $default_values[$this->get_suffixed_name('allocation')] = 0;
+        }
+    }
+
+    /**
+     * Allows module to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
+     */
+    public function data_postprocessing($data) {
+        parent::data_postprocessing($data);
+        // Turn off completion settings if the checkboxes aren't ticked.
+        if (!empty($data->completionunlocked)) {
+            $completion = $data->{'completion' . $this->get_suffix()};
+            $autocompletion = !empty($completion) && $completion == COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->{$this->get_suffixed_name('vote')}) || !$autocompletion) {
+                $data->{$this->get_suffixed_name('vote')} = 0;
+            }
+            if (empty($data->{$this->get_suffixed_name('allocation')}) || !$autocompletion) {
+                $data->{$this->get_suffixed_name('allocation')} = 0;
+            }
+        }
     }
 
 }

@@ -1122,6 +1122,9 @@ class ratingallocate {
             // $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context);
         }
 
+        $completion = new completion_info($this->course);
+        $completion->set_module_viewed($this->coursemodule);
+
         // Logging.
         $event = \mod_ratingallocate\event\ratingallocate_viewed::create_simple(
                 context_module::instance($this->coursemodule->id), $this->ratingallocateid);
