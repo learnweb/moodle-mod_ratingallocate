@@ -370,15 +370,15 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      * This method is also called in the bulk activity completion form.
      * Only available on moodleform_mod.
      *
-     * @param $default_values
+     * @param $defaultvalues
      * @return void
      */
-    function data_preprocessing(&$default_values){
-        if(empty($default_values[$this->get_suffixed_name('vote')])) {
-            $default_values[$this->get_suffixed_name('vote')] = 0;
+    public function data_preprocessing (&$defaultvalues){
+        if (empty($defaultvalues[$this->get_suffixed_name('vote')])) {
+            $defaultvalues[$this->get_suffixed_name('vote')] = 0;
         }
-        if(empty($default_values[$this->get_suffixed_name('allocation')])) {
-            $default_values[$this->get_suffixed_name('allocation')] = 0;
+        if (empty($defaultvalues[$this->get_suffixed_name('allocation')])) {
+            $defaultvalues[$this->get_suffixed_name('allocation')] = 0;
         }
     }
 
