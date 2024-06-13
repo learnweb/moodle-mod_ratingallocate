@@ -35,6 +35,7 @@ Feature: Set a ratingallocate activity marked as completed when a user has been 
     And I am on the "My Fair Allocation" "mod_ratingallocate > View" page
     And I run the scheduled task "mod_ratingallocate\task\cron_task"
     And I press "Publish Allocation"
+    And I run the scheduled task "core\task\completion_regular_task"
     And I log out
 
   @javascript
