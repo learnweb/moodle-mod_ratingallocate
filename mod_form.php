@@ -352,7 +352,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     }
 
     protected function get_suffixed_name(string $fieldname): string {
-        return 'completion' . $fieldname . $this->get_suffix();
+        // Replace _ratingallocate with $this->get_suffix() for Moodle 4.3 or later.
+        return 'completion' . $fieldname . '_ratingallocate';
     }
 
     /**
