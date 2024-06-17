@@ -58,6 +58,8 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
     }
 
     /**
+     * Process ratingallocate.
+     *
      * @param $data
      * @return void
      * @throws base_step_exception

@@ -628,7 +628,7 @@ class behat_mod_ratingallocate extends behat_base {
             );
         } else {
             // This is the code from the deprecated behat function "i_add_to_section".
-            // Add activity to section:
+            // Add activity to section.
             $this->execute(
                 "behat_course::i_add_to_section",
                 [$this->escape('Fair Allocation'), $this->escape($sectionnumber)]
