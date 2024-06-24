@@ -66,8 +66,8 @@ class mod_ratingallocate_generator extends testing_module_generator {
      * @param null|array $options general options for ratingallocate
      * @return stdClass record from ratingallocate
      */
-    public static function create_instance_with_choices(advanced_testcase $tc, array|stdClass|null $moduledata = null,
-                                                        array|stdClass|null $choicedata = null, ?array $options = null) {
+    public static function create_instance_with_choices(advanced_testcase $tc, $moduledata = null,
+                                                        $choicedata = null, ?array $options = null) {
         if ($choicedata === null) {
             $choicedata = self::get_default_choice_data();
         }

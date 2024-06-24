@@ -60,7 +60,7 @@ class strategy extends \strategytemplate_options {
      * @param array|null $strategysettings
      * @throws \coding_exception
      */
-    public function __construct(?array $strategysettings) {
+    public function __construct(?array $strategysettings = null) {
         parent::__construct($strategysettings);
         if (isset($strategysettings) && array_key_exists(self::COUNTLICKERT, $strategysettings)) {
             $this->maxlickert = $strategysettings[self::COUNTLICKERT];
