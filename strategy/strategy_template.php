@@ -49,7 +49,7 @@ abstract class strategytemplate {
      *
      * @param array|null $strategysettings
      */
-    public function __construct(?array $strategysettings) {
+    public function __construct(?array $strategysettings = null) {
         $this->_strategy_settings = $strategysettings;
     }
 
