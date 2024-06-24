@@ -36,7 +36,7 @@ Feature: Set a ratingallocate activity marked as completed when a user has been 
     And I set the following fields to these values:
       | Rating begins at                    | ##2 days ago## |
       | Rating ends at                      | ##yesterday##  |
-      | Add requirements                    | 1              |
+      | id_completion_2                     | 2              |
       | completionallocation_ratingallocate | 1              |
     And I press "id_submitbutton"
     And I am on the "My Fair Allocation" "mod_ratingallocate > View" page
