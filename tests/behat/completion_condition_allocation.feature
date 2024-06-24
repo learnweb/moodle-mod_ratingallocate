@@ -32,6 +32,13 @@ Feature: Set a ratingallocate activity marked as completed when a user has been 
       | C2     | student1 | 0      |
       | C2     | student2 | 0      |
     And I log in as "teacher1"
+    And I am on the "My Fair Allocation" "mod_ratingallocate > Edit" page
+    And I set the following fields to these values:
+      | Rating begins at                    | ##2 days ago## |
+      | Rating ends at                      | ##yesterday##  |
+      | Add requirements                    | 1              |
+      | completionallocation_ratingallocate | 1              |
+    And I press "id_submitbutton"
     And I am on the "My Fair Allocation" "mod_ratingallocate > View" page
     And I run the scheduled task "mod_ratingallocate\task\cron_task"
     And I press "Publish Allocation"
@@ -44,7 +51,5 @@ Feature: Set a ratingallocate activity marked as completed when a user has been 
   Scenario: User completes ratingallocate only if they have been allocated
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Reports" in current page administration
-    And I click on "Activity completion" "link"
-    Then "Completed" "icon" should exist in the "Student 1" "table_row"
-    And "Completed" "icon" should not exist in the "Student 2" "table_row"
+    Then "Student 1" user has completed "My Fair Allocation" activity
+    And "Student 2" user has not completed "My Fair Allocation" activity

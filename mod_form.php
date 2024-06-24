@@ -237,7 +237,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $data = $this->current;
 
         if ($this->is_submitted()) {
-            $subdata = $this->get_data();
+            $subdata = $this->get_submitted_data();
             $allstrategyoptions = $subdata->{self::STRATEGY_OPTIONS};
         } else if (isset($data->setting)) {
             $allstrategyoptions = json_decode($data->setting, true);

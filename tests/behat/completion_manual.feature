@@ -32,6 +32,7 @@ Feature: Manually mark a ratingallocate activity as completed
     And I am on the "My Fair Allocation" "mod_ratingallocate > View" page
     Then the manual completion button for "My Fair Allocation" should be disabled
 
+  @javascript
   Scenario: Use manual completion student view
     When I log in as "student1"
     And I am on the "My Fair Allocation" "mod_ratingallocate > View" page
