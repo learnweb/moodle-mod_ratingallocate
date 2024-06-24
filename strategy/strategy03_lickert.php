@@ -55,7 +55,12 @@ class strategy extends \strategytemplate_options {
     /** @var mixed $maxlickert */
     private $maxlickert;
 
-    public function __construct(array $strategysettings = null) {
+    /**
+     * Constructor.
+     * @param array|null $strategysettings
+     * @throws \coding_exception
+     */
+    public function __construct(?array $strategysettings = null) {
         parent::__construct($strategysettings);
         if (isset($strategysettings) && array_key_exists(self::COUNTLICKERT, $strategysettings)) {
             $this->maxlickert = $strategysettings[self::COUNTLICKERT];
@@ -64,10 +69,19 @@ class strategy extends \strategytemplate_options {
         }
     }
 
+    /**
+     * Get strategy id.
+     * @return string
+     */
     public function get_strategyid() {
         return self::STRATEGYID;
     }
 
+    /**
+     * Get static settingfields of strategy.
+     * @return array[]
+     * @throws \coding_exception
+     */
     public function get_static_settingfields() {
         return [
                 self::MAXNO => [// Maximum count of 'No'.
@@ -85,6 +99,11 @@ class strategy extends \strategytemplate_options {
         ];
     }
 
+    /**
+     * Get dynamic settingfields of strategy.
+     * @return array|array[]
+     * @throws \coding_exception
+     */
     public function get_dynamic_settingfields() {
         $output = [];
         foreach (array_keys($this->get_choiceoptions()) as $id) {
@@ -159,19 +178,37 @@ class strategy extends \strategytemplate_options {
 class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform {
     // Already specified by parent class.
 
+    /**Get maximal amount how many times a user is allowed to rate a choice with "NO".
+     * Create new strategy.
+     * @param $strategyoptions
+     * @return strategy
+     * @throws \coding_exception
+     */
     protected function construct_strategy($strategyoptions) {
         return new strategy($strategyoptions);
     }
 
+    /**
+     * Get choice options.
+     * @return mixed
+     */
     public function get_choiceoptions() {
         $params = $this->get_strategysetting(strategy::COUNTLICKERT);
         return $this->get_strategy()->get_choiceoptions($params);
     }
 
+    /**
+     *
+     * @return \the|null
+     */
     protected function get_max_amount_of_nos() {
         return $this->get_strategysetting(strategy::MAXNO);
     }
 
+    /**
+     * Get string identifier of max_nos.
+     * @return string
+     */
     protected function get_max_nos_string_identyfier() {
         return strategy::STRATEGYID . '_max_no';
     }

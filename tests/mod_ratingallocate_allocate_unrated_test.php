@@ -36,7 +36,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @author     Philipp Memmel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase {
+final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase {
 
     /** @var stdClass Course object. */
     private stdClass $course;

@@ -51,7 +51,7 @@ class modify_choice_form extends moodleform {
      * @param array $customdata
      */
     public function __construct($url, ratingallocate $ratingallocate,
-            ratingallocate_choice $choice = null, $customdata = null) {
+            ?ratingallocate_choice $choice, ?array $customdata) {
         $this->ratingallocate = $ratingallocate;
         if ($choice) {
             $this->choice = $choice;

@@ -21,7 +21,7 @@ require_once(dirname(__FILE__) . '/backup_restore_helper.php');
 use mod_ratingallocate\db as this_db;
 
 /**
- * Define the complete ratingallocate structure for backup, with [file and] id annotations
+ * Class to define the complete ratingallocate structure for backup, with [file and] id annotations
  *
  * @package   mod_ratingallocate
  * @copyright 2014 C. Usener
@@ -29,6 +29,13 @@ use mod_ratingallocate\db as this_db;
  */
 class backup_ratingallocate_activity_structure_step extends backup_activity_structure_step {
 
+    /**
+     * Define the complete ratingallocate structure for backup.
+     * @return backup_nested_element
+     * @throws ReflectionException
+     * @throws base_element_struct_exception
+     * @throws base_step_exception
+     */
     protected function define_structure() {
 
         // To know if we are including userinfo.

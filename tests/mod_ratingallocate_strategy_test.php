@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace mod_ratingallocate;
 /**
  * mod_ratingallocate processor tests
@@ -30,12 +31,12 @@ namespace mod_ratingallocate;
  *
  * @package mod_ratingallocate
  */
-class mod_ratingallocate_strategy_test extends \advanced_testcase {
+final class mod_ratingallocate_strategy_test extends \advanced_testcase {
 
     /**
      * Test for correct validation of settings
      */
-    public function test_yes_no_validation() {
+    public function test_yes_no_validation(): void {
         // Attribute required.
         $settings = [\mod_ratingallocate\strategy_yesno\strategy::MAXCROSSOUT => null];
         $strategy = new \mod_ratingallocate\strategy_yesno\strategy($settings);
@@ -53,7 +54,7 @@ class mod_ratingallocate_strategy_test extends \advanced_testcase {
     /**
      * Test for correct validation of settings
      */
-    public function test_yes_maybe_no_validation() {
+    public function test_yes_maybe_no_validation(): void {
         // Attribute required.
         $settings = [\mod_ratingallocate\strategy_yesmaybeno\strategy::MAXNO => null];
         $strategy = new \mod_ratingallocate\strategy_yesmaybeno\strategy($settings);
@@ -71,7 +72,7 @@ class mod_ratingallocate_strategy_test extends \advanced_testcase {
     /**
      * Test for correct validation of settings
      */
-    public function test_lickert_validation() {
+    public function test_lickert_validation(): void {
         // Attribute required.
         $settings = [\mod_ratingallocate\strategy_lickert\strategy::COUNTLICKERT => null];
         $strategy = new \mod_ratingallocate\strategy_lickert\strategy($settings);
@@ -101,7 +102,7 @@ class mod_ratingallocate_strategy_test extends \advanced_testcase {
     /**
      * Test for correct validation of settings
      */
-    public function test_points_validation() {
+    public function test_points_validation(): void {
         // Attribute required.
         $settings = [\mod_ratingallocate\strategy_points\strategy::MAXZERO => null];
         $strategy = new \mod_ratingallocate\strategy_points\strategy($settings);
@@ -143,7 +144,7 @@ class mod_ratingallocate_strategy_test extends \advanced_testcase {
     /**
      * Test for correct validation of settings
      */
-    public function test_order_validation() {
+    public function test_order_validation(): void {
         // Attribute required.
         $settings = [\mod_ratingallocate\strategy_order\strategy::COUNTOPTIONS => null];
         $strategy = new \mod_ratingallocate\strategy_order\strategy($settings);
@@ -161,7 +162,7 @@ class mod_ratingallocate_strategy_test extends \advanced_testcase {
     /**
      * Test for correct validation of settings
      */
-    public function test_tickyes_validation() {
+    public function test_tickyes_validation(): void {
         // Attribute required.
         $settings = [\mod_ratingallocate\strategy_tickyes\strategy::MINTICKYES => null];
         $strategy = new \mod_ratingallocate\strategy_tickyes\strategy($settings);

@@ -450,7 +450,7 @@ class ratingallocate {
             echo $renderer->render_header($this->ratingallocate, $this->context, $this->coursemodule->id);
             echo $OUTPUT->heading(get_string('show_choices_header', RATINGALLOCATE_MOD_NAME));
 
-            // Get description dependent on status
+            // Get description dependent on status.
             $descriptionbaseid = 'modify_choices_group_desc_';
             $description = get_string($descriptionbaseid . $status, RATINGALLOCATE_MOD_NAME);
             echo $renderer->format_text($description);
@@ -1038,7 +1038,8 @@ class ratingallocate {
             $PAGE->set_secondary_active_tab('mod_ratingallocate_reports');
             $renderer = $this->get_renderer();
             $status = $this->get_status();
-            $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context, ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE);
+            $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id,
+                $status, $this->context, ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE);
 
             $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
                     $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(),
@@ -1070,7 +1071,8 @@ class ratingallocate {
             $PAGE->set_secondary_active_tab('mod_ratingallocate_reports');
             $renderer = $this->get_renderer();
             $status = $this->get_status();
-            $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context, ACTION_SHOW_ALLOCATION_TABLE);
+            $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id,
+                $status, $this->context, ACTION_SHOW_ALLOCATION_TABLE);
 
             $output .= $renderer->allocation_table_for_ratingallocate($this);
 
@@ -1097,7 +1099,8 @@ class ratingallocate {
             $PAGE->set_secondary_active_tab('mod_ratingallocate_reports');
             $renderer = $this->get_renderer();
             $status = $this->get_status();
-            $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context, ACTION_SHOW_STATISTICS);
+            $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id,
+                $status, $this->context, ACTION_SHOW_STATISTICS);
 
             $output .= $renderer->statistics_table_for_ratingallocate($this);
 
@@ -1185,9 +1188,10 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             $undistributeduserscount = count($this->get_undistributed_users());
 
-            $output .= $renderer->render_ratingallocate_allocation_status($this->coursemodule->id, $status, $undistributeduserscount);
-            $output .= $renderer->render_ratingallocate_publish_allocation($this->ratingallocateid, $this->coursemodule->id, $status);
-            // $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id, $status, $this->context);
+            $output .= $renderer->render_ratingallocate_allocation_status($this->coursemodule->id,
+                $status, $undistributeduserscount);
+            $output .= $renderer->render_ratingallocate_publish_allocation($this->ratingallocateid,
+                $this->coursemodule->id, $status);
 
         }
 
@@ -1970,7 +1974,7 @@ class ratingallocate {
     /**
      * Adds the manual allocation to db. Does not perform checks if there is already an allocation user-choice
      * @param $allocdata array of users to the choice ids they should be allocated to.
-     * @global mixed $DB
+     * @throws dml_transaction_exception
      */
     public function save_manual_allocation_form($allocdata, $userdata) {
         try {

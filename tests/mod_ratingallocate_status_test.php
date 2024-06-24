@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace mod_ratingallocate;
 
 use PHP_CodeSniffer\Generators\Generator;
@@ -79,7 +80,7 @@ class mod_ratingallocate_status_test extends \advanced_testcase {
      * @dataProvider ratingallocate_provider
      * @covers ::get_status()
      */
-    public function test_get_status($addtostart, $addtostop, $published, $hasallocations, $expected) {
+    public function test_get_status($addtostart, $addtostop, $published, $hasallocations, $expected): void {
         $record = [
                 'name' => 'Rating Allocation',
                 'accesstimestart' => time() + ($addtostart * 24 * 60 * 60),

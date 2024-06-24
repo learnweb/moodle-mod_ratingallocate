@@ -24,7 +24,6 @@
  * Moodle is performing actions across all modules.
  *
  * @package mod_ratingallocate
- * @abstract sollte nur minimalstes, was von außen aufgerufen wird.
  * @copyright 2014 M Schulze, T Reischmann, C Usener
  * @copyright  based on code by Stefan Koegel copyright (C) 2013 Stefan Koegel
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -37,7 +36,6 @@ defined('MOODLE_INTERNAL') || die();
 define('RATINGALLOCATE_MOD_NAME', 'ratingallocate');
 define('RATINGALLOCATE_EVENT_TYPE_START', 'start');
 define('RATINGALLOCATE_EVENT_TYPE_STOP', 'stop');
-// define('NEWMODULE_ULTIMATE_ANSWER', 42);
 
 require_once(dirname(__FILE__) . '/db/db_structure.php');
 require_once(dirname(__FILE__) . '/locallib.php');
@@ -90,7 +88,7 @@ function ratingallocate_supports($feature) {
  * @param mod_ratingallocate_mod_form $mform
  * @return int The id of the newly inserted ratingallocate record
  */
-function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocate_mod_form $mform = null) {
+function ratingallocate_add_instance(stdClass $ratingallocate, ?mod_ratingallocate_mod_form $mform) {
     global $DB, $COURSE;
 
     $ratingallocate->timecreated = time();
@@ -122,7 +120,7 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
  * @param mod_ratingallocate_mod_form $mform
  * @return boolean Success/Fail
  */
-function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallocate_mod_form $mform = null) {
+function ratingallocate_update_instance(stdClass $ratingallocate, ?mod_ratingallocate_mod_form $mform) {
     global $DB;
 
     $ratingallocate->timemodified = time();
@@ -246,8 +244,7 @@ function ratingallocate_print_recent_mod_activity($activity, $courseid, $detail,
 /**
  * Returns all other caps used in the module
  *
- * @example return array('moodle/site:accessallgroups');
- * @return array
+ * @return array e.g. ['moodle/site:accessallgroups']
  */
 function ratingallocate_get_extra_capabilities() {
     return[];
@@ -381,21 +378,23 @@ function ratingallocate_extend_navigation(navigation_node $navref, stdclass $cou
  * @param navigation_node $ratingallocatenode
  *            {@link navigation_node}
  */
-function ratingallocate_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $ratingallocatenode = null) {
+function ratingallocate_extend_settings_navigation(settings_navigation $settingsnav, ?navigation_node $ratingallocatenode) {
     $hassecondary = $settingsnav->get_page()->has_secondary_navigation();
     if (!$context = context_module::instance($settingsnav->get_page()->cm->id, IGNORE_MISSING)) {
         throw new \moodle_exception('badcontext');
     }
     if (has_capability('mod/ratingallocate:modify_choices', $context)) {
         $choicenode = navigation_node::create(get_string('choice_navigation', RATINGALLOCATE_MOD_NAME),
-            new moodle_url('/mod/ratingallocate/view.php', ['id' => $settingsnav->get_page()->cm->id, 'action' => ACTION_SHOW_CHOICES]),
+            new moodle_url('/mod/ratingallocate/view.php', ['id' => $settingsnav->get_page()->cm->id,
+                'action' => ACTION_SHOW_CHOICES]),
             navigation_node::TYPE_CUSTOM, null, 'mod_ratingallocate_choices');
         $ratingallocatenode->add_node($choicenode);
     }
 
     if (has_capability('mod/ratingallocate:start_distribution', $context)) {
         $reportsnode = navigation_node::create(get_string('reports_group', RATINGALLOCATE_MOD_NAME),
-            new moodle_url('/mod/ratingallocate/view.php', ['id' => $settingsnav->get_page()->cm->id, 'action' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE]),
+            new moodle_url('/mod/ratingallocate/view.php', ['id' => $settingsnav->get_page()->cm->id,
+                'action' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE]),
             navigation_node::TYPE_CUSTOM, null, 'mod_ratingallocate_reports');
         $ratingallocatenode->add_node($reportsnode);
     }
@@ -686,8 +685,6 @@ function mod_ratingallocate_core_calendar_get_valid_event_timestart_range (\cale
  * This function will remove all ratings and allocations
  * and clean up any related data.
  *
- * @global object
- * @global object
  * @param $data stdClass the data submitted from the reset course.
  * @return array status array
  */
