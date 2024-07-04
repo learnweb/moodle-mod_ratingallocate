@@ -19,8 +19,8 @@ Feature: Set a ratingallocate activity marked as completed when a user has been 
       | student1 | C1     | student        |
       | student2 | C1     | student        |
     And the following "activities" exist:
-      | activity       | course | idnumber | name               | completion | completionallocation |
-      | ratingallocate | C1     | ra1      | My Fair Allocation | 2          | 1                    |
+      | activity       | course | idnumber | name               | completion | completionallocation | accesstimestart | accesstimestop |
+      | ratingallocate | C1     | ra1      | My Fair Allocation | 2          | 1                    | ##2 days ago##  | ##yesterday##  |
     And the following choices exist:
       | title | explanation | maxsize | ratingallocate     |
       | C1    | Test        | 1       | My Fair Allocation |
@@ -32,13 +32,6 @@ Feature: Set a ratingallocate activity marked as completed when a user has been 
       | C2     | student1 | 0      |
       | C2     | student2 | 0      |
     And I log in as "teacher1"
-    And I am on the "My Fair Allocation" "mod_ratingallocate > Edit" page
-    And I set the following fields to these values:
-      | Rating begins at                    | ##2 days ago## |
-      | Rating ends at                      | ##yesterday##  |
-      | id_completion_2                     | 2              |
-      | completionallocation_ratingallocate | 1              |
-    And I press "id_submitbutton"
     And I am on the "My Fair Allocation" "mod_ratingallocate > View" page
     And I run the scheduled task "mod_ratingallocate\task\cron_task"
     And I press "Publish Allocation"
