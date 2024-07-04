@@ -132,6 +132,8 @@ final class mod_ratingallocate_processor_test extends \advanced_testcase {
     }
 
     /**
+     * Test groupfilter in ratings and allocations table.
+     *
      * @return void
      * @throws \coding_exception
      * @covers \classes\ratings_and_allocations_table
