@@ -28,7 +28,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @copyright  reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_processor_test extends \advanced_testcase {
+final class mod_ratingallocate_processor_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $PAGE;
@@ -131,6 +131,11 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
 
     }
 
+    /**
+     * @return void
+     * @throws \coding_exception
+     * @covers \classes\ratings_and_allocations_table
+     */
     public function test_ratings_table_groupfilter(): void {
         $this->resetAfterTest();
 

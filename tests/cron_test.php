@@ -36,7 +36,7 @@ use mod_ratingallocate\db as this_db;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \classes\task\cron_task
  */
-class cron_test extends \advanced_testcase {
+final class cron_test extends \advanced_testcase {
 
     /** @var $teacher */
     private $teacher;

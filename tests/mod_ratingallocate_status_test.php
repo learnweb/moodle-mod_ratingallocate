@@ -33,7 +33,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @copyright  reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_status_test extends \advanced_testcase {
+final class mod_ratingallocate_status_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $PAGE;
@@ -46,7 +46,7 @@ class mod_ratingallocate_status_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function ratingallocate_provider(): array {
+    public static function ratingallocate_provider(): array {
         return [
                 'Rating phase is not started.' => [
                         3, 6, false, false, \ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],

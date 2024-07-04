@@ -29,7 +29,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @author     David Thompson <david.thompson@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
+final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
 
     /** Helper function - Create a range of choices.
      *

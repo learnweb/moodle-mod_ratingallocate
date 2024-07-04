@@ -35,6 +35,9 @@ final class mod_ratingallocate_strategy_test extends \advanced_testcase {
 
     /**
      * Test for correct validation of settings
+     *
+     * @return void
+     * @covers \strategy\strategy01_yes_no
      */
     public function test_yes_no_validation(): void {
         // Attribute required.
@@ -53,6 +56,8 @@ final class mod_ratingallocate_strategy_test extends \advanced_testcase {
 
     /**
      * Test for correct validation of settings
+     *
+     * @covers \strategy\strategy02_yes_maybe_no
      */
     public function test_yes_maybe_no_validation(): void {
         // Attribute required.
@@ -71,6 +76,8 @@ final class mod_ratingallocate_strategy_test extends \advanced_testcase {
 
     /**
      * Test for correct validation of settings
+     *
+     * @covers \strategy\strategy03_lickert
      */
     public function test_lickert_validation(): void {
         // Attribute required.
@@ -101,6 +108,8 @@ final class mod_ratingallocate_strategy_test extends \advanced_testcase {
 
     /**
      * Test for correct validation of settings
+     *
+     * @covers \strategy\strategy04_points
      */
     public function test_points_validation(): void {
         // Attribute required.
@@ -143,6 +152,8 @@ final class mod_ratingallocate_strategy_test extends \advanced_testcase {
 
     /**
      * Test for correct validation of settings
+     *
+     * @covers \strategy\strategy05_order
      */
     public function test_order_validation(): void {
         // Attribute required.
@@ -161,6 +172,8 @@ final class mod_ratingallocate_strategy_test extends \advanced_testcase {
 
     /**
      * Test for correct validation of settings
+     *
+     * @covers \strategy\strategy06_tickyes
      */
     public function test_tickyes_validation(): void {
         // Attribute required.

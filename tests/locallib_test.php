@@ -33,9 +33,9 @@ use mod_ratingallocate\db as this_db;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \locallib
  */
-class locallib_test extends \advanced_testcase {
+final class locallib_test extends \advanced_testcase {
 
-    public function test_simple() {
+    public function test_simple(): void {
         global $DB;
         \core_php_time_limit::raise();
         $this->resetAfterTest();
@@ -145,6 +145,13 @@ class locallib_test extends \advanced_testcase {
             . 'a student, so this one should not have been distributed.');
     }
 
+    /**
+     * Filter allocations by choice
+     *
+     * @param $allocations
+     * @param $choiceid
+     * @return array
+     */
     private static function filter_allocations_by_choice($allocations, $choiceid) {
         $filterchoiceid = function($elem) use ($choiceid) {
             return $elem->{this_db\ratingallocate_allocations::CHOICEID} == $choiceid;
@@ -292,8 +299,16 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals(2, count($ratingallocate->get_allocations()));
 
         // Keep dates for comparison.
-        $accesstimestart = $DB->get_record('ratingallocate', ['id' => $ratingallocate->get_ratingallocateid()], 'accesstimestart')->accesstimestart;
-        $accesstimestop = $DB->get_record('ratingallocate', ['id' => $ratingallocate->get_ratingallocateid()], 'accesstimestop')->accesstimestop;
+        $accesstimestart = $DB->get_record(
+            'ratingallocate',
+            ['id' => $ratingallocate->get_ratingallocateid()],
+            'accesstimestart'
+        )->accesstimestart;
+        $accesstimestop = $DB->get_record(
+            'ratingallocate',
+            ['id' => $ratingallocate->get_ratingallocateid()],
+            'accesstimestop'
+        )->accesstimestop;
 
         // Now try and reset.
         $data = new \stdClass();

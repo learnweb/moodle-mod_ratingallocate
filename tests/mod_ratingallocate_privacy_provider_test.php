@@ -38,7 +38,7 @@ require_once(dirname(__FILE__) . '/generator/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \classes\privacy\provider
  */
-class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provider_testcase {
+final class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /** @var \mod_ratingallocate_generated_module $testmodule */
     protected $testmodule;
 

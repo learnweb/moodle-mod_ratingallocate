@@ -33,8 +33,15 @@ require_once($CFG->dirroot . '/mod/ratingallocate/solver/ford-fulkerson-koegel.p
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \solver
  */
-class mod_ratingallocate_solver_test extends \basic_testcase {
+final class mod_ratingallocate_solver_test extends \basic_testcase {
 
+    /**
+     * Perform race.
+     *
+     * @param $groupsnum
+     * @param $ratersnum
+     * @return array
+     */
     private function perform_race($groupsnum, $ratersnum) {
         $groupsmaxsizemin = floor($ratersnum / $groupsnum);
         $groupsmaxsizemax = ceil($ratersnum / $groupsnum) + 1;
@@ -89,6 +96,11 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
         return $result;
     }
 
+    /**
+     * Test on random.
+     *
+     * @return void
+     */
     public function teston_random() {
         if (!PHPUNIT_LONGTEST) {
             return; // This test takes longer than 10s.
