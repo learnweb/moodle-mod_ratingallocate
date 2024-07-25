@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,9 +37,9 @@ use mod_ratingallocate\db as this_db;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \backup\moodle2
  */
-class backup_restore_test extends \advanced_testcase {
+final class backup_restore_test extends \advanced_testcase {
 
-    public function test_backup_restore() {
+    public function test_backup_restore(): void {
         // TODO this test does not check if userids are correctly mapped.
         global $CFG, $DB;
         \core_php_time_limit::raise();

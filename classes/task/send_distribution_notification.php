@@ -36,8 +36,15 @@ use mod_ratingallocate\db as this_db;
  * @package mod_ratingallocate
  */
 class send_distribution_notification extends \core\task\adhoc_task {
-    // Gets executed by the task runner. Will lookup the ratingallocation object and
-    // command it to notify users.
+
+    /**
+     * Gets executed by the task runner. Will lookup the ratingallocation object and command it
+     * to notify users.
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
     public function execute() {
         global $CFG, $DB;
 

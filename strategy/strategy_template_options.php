@@ -128,10 +128,22 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
         }
     }
 
+    /**
+     * Get strategy description.
+     * @return lang_string|string
+     * @throws coding_exception
+     */
     public function describe_strategy() {
         return get_string($this->get_max_nos_string_identyfier(), RATINGALLOCATE_MOD_NAME, $this->get_max_amount_of_nos());
     }
 
+    /**
+     * Validate form data.
+     * @param $data
+     * @param $files
+     * @return array
+     * @throws coding_exception
+     */
     public function validation($data, $files) {
         $maxno = $this->get_max_amount_of_nos();
         $errors = parent::validation($data, $files);
@@ -160,11 +172,24 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
         return $errors;
     }
 
+    /**
+     * Abstract function to get choiceoptions.
+     * @return mixed
+     */
     abstract public function get_choiceoptions();
 
+    /**
+     * Abstract function to get maximal amount how many times a user is allowed to rate a choice with "NO".
+     * @return mixed
+     */
     abstract protected function get_max_amount_of_nos();
 
     // TODO remove and make identifier strategy_options specific not strategy specific.
+
+    /**
+     * Abstract function to get string identifier of max_nos.
+     * @return mixed
+     */
     abstract protected function get_max_nos_string_identyfier();
 
 }

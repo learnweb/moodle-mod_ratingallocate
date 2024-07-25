@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 
@@ -29,9 +30,9 @@ require_once(dirname(__FILE__) . '/../locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_ratingallocate_generator
  */
-class mod_generator_test extends \advanced_testcase {
+final class mod_generator_test extends \advanced_testcase {
 
-    public function test_create_instance() {
+    public function test_create_instance(): void {
 
         global $DB, $USER;
         \core_php_time_limit::raise();
@@ -124,7 +125,7 @@ class mod_generator_test extends \advanced_testcase {
         $this->assertEquals(0, count($records));
     }
 
-    public function test_mod_ratingallocate_generated_module() {
+    public function test_mod_ratingallocate_generated_module(): void {
         $choicedata = \mod_ratingallocate_generator::get_default_choice_data();
         foreach ($choicedata as $id => $choice) {
             $choice['maxsize'] = 10;

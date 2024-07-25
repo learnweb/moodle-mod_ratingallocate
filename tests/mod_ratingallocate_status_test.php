@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace mod_ratingallocate;
 
 use PHP_CodeSniffer\Generators\Generator;
@@ -32,7 +33,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @copyright  reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_status_test extends \advanced_testcase {
+final class mod_ratingallocate_status_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $PAGE;
@@ -45,7 +46,7 @@ class mod_ratingallocate_status_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function ratingallocate_provider(): array {
+    public static function ratingallocate_provider(): array {
         return [
                 'Rating phase is not started.' => [
                         3, 6, false, false, \ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY],
@@ -79,7 +80,7 @@ class mod_ratingallocate_status_test extends \advanced_testcase {
      * @dataProvider ratingallocate_provider
      * @covers ::get_status()
      */
-    public function test_get_status($addtostart, $addtostop, $published, $hasallocations, $expected) {
+    public function test_get_status($addtostart, $addtostop, $published, $hasallocations, $expected): void {
         $record = [
                 'name' => 'Rating Allocation',
                 'accesstimestart' => time() + ($addtostart * 24 * 60 * 60),

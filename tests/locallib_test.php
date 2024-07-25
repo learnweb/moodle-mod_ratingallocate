@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,9 +33,9 @@ use mod_ratingallocate\db as this_db;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \locallib
  */
-class locallib_test extends \advanced_testcase {
+final class locallib_test extends \advanced_testcase {
 
-    public function test_simple() {
+    public function test_simple(): void {
         global $DB;
         \core_php_time_limit::raise();
         $this->resetAfterTest();
@@ -144,6 +145,13 @@ class locallib_test extends \advanced_testcase {
             . 'a student, so this one should not have been distributed.');
     }
 
+    /**
+     * Filter allocations by choice
+     *
+     * @param $allocations
+     * @param $choiceid
+     * @return array
+     */
     private static function filter_allocations_by_choice($allocations, $choiceid) {
         $filterchoiceid = function($elem) use ($choiceid) {
             return $elem->{this_db\ratingallocate_allocations::CHOICEID} == $choiceid;
@@ -155,7 +163,7 @@ class locallib_test extends \advanced_testcase {
      * Default data has two choices but only one is active.
      * Test if count of rateable choices is 1.
      */
-    public function test_get_ratable_choices() {
+    public function test_get_ratable_choices(): void {
         $record = \mod_ratingallocate_generator::get_default_values();
         $testmodule = new \mod_ratingallocate_generated_module($this, $record);
         $ratingallocate =
@@ -166,7 +174,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test if option titles are returned according to the default values
      */
-    public function test_get_option_titles_default() {
+    public function test_get_option_titles_default(): void {
         $expectedresult = [1 => 'Accept', 0 => 'Deny']; // Depends on language file.
         $ratings = [0, 1, 1, 1, 0];
 
@@ -182,7 +190,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test if option titles are returned according to defined custom values
      */
-    public function test_get_option_titles_custom() {
+    public function test_get_option_titles_custom(): void {
         $expectedresult = [1 => 'Ja1234', 0 => 'Nein1234']; // Test data.
         $ratings = [1, 1, 1, 0, 1, 1];
 
@@ -199,7 +207,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test if option titles are returned according to defined custom values, if ratings consist of just one rating
      */
-    public function test_get_option_titles_custom1() {
+    public function test_get_option_titles_custom1(): void {
         $expectedresult = [1 => 'Ja1234']; // Test data.
         $ratings = [1, 1, 1, 1, 1];
 
@@ -216,7 +224,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test if option titles are returned according to a mixture of defined and custom values,
      */
-    public function test_get_option_titles_mixed() {
+    public function test_get_option_titles_mixed(): void {
         $settings = [1 => 'Ja1234']; // Test data.
         $ratings = [0, 1, 1, 1, 1];
         $expectedresult = $settings;
@@ -232,7 +240,7 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals($expectedresult, $result);
     }
 
-    public function test_reset_userdata() {
+    public function test_reset_userdata(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -291,8 +299,16 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals(2, count($ratingallocate->get_allocations()));
 
         // Keep dates for comparison.
-        $accesstimestart = $DB->get_record('ratingallocate', ['id' => $ratingallocate->get_ratingallocateid()], 'accesstimestart')->accesstimestart;
-        $accesstimestop = $DB->get_record('ratingallocate', ['id' => $ratingallocate->get_ratingallocateid()], 'accesstimestop')->accesstimestop;
+        $accesstimestart = $DB->get_record(
+            'ratingallocate',
+            ['id' => $ratingallocate->get_ratingallocateid()],
+            'accesstimestart'
+        )->accesstimestart;
+        $accesstimestop = $DB->get_record(
+            'ratingallocate',
+            ['id' => $ratingallocate->get_ratingallocateid()],
+            'accesstimestop'
+        )->accesstimestop;
 
         // Now try and reset.
         $data = new \stdClass();

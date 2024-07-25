@@ -38,6 +38,13 @@ use mod_ratingallocate\db as this_db;
  */
 class mod_ratingallocate_generator extends testing_module_generator {
 
+    /**
+     * Creates instance of the module with default values.
+     * @param $record
+     * @param array|null $options
+     * @return stdClass
+     * @throws coding_exception
+     */
     public function create_instance($record = null, array $options = null) {
         $defaultvalues = self::get_default_values();
 
@@ -60,7 +67,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
      * @return stdClass record from ratingallocate
      */
     public static function create_instance_with_choices(advanced_testcase $tc, $moduledata = null,
-            $choicedata = null, array $options = null) {
+                                                        $choicedata = null, ?array $options = null) {
         if ($choicedata === null) {
             $choicedata = self::get_default_choice_data();
         }
@@ -78,6 +85,10 @@ class mod_ratingallocate_generator extends testing_module_generator {
         return $instance;
     }
 
+    /**
+     * Get default values.
+     * @return array
+     */
     public static function get_default_values() {
         if (empty(self::$defaultvalue)) {
             self::$defaultvalue = [
@@ -95,6 +106,10 @@ class mod_ratingallocate_generator extends testing_module_generator {
     /** @var $defaultvalue */
     private static $defaultvalue;
 
+    /**
+     * Get default data of choices.
+     * @return array[]
+     */
     public static function get_default_choice_data() {
         if (empty(self::$defaultchoicedata)) {
             self::$defaultchoicedata = [
@@ -188,16 +203,41 @@ class mod_ratingallocate_generator extends testing_module_generator {
         return new ratingallocate($ratingallocatedb, $course, $cm, $context);
     }
 
+    /**
+     * Get open ratingallocate instance for teacher.
+     * @param advanced_testcase $tc
+     * @param $choices
+     * @param $course
+     * @param $ratings
+     * @return ratingallocate
+     */
     public static function get_open_ratingallocate_for_teacher(advanced_testcase $tc, $choices = null,
             $course = null, $ratings = null) {
         return self::get_ratingallocate_for_teacher_open_in(0, $tc, $choices, $course, $ratings);
     }
 
+    /**
+     * Get closed ratingallocate instance for teacher.
+     * @param advanced_testcase $tc
+     * @param $choices
+     * @param $course
+     * @param $ratings
+     * @return ratingallocate
+     */
     public static function get_closed_ratingallocate_for_teacher(advanced_testcase $tc, $choices = null,
             $course = null, $ratings = null) {
         return self::get_ratingallocate_for_teacher_open_in(-7, $tc, $choices, $course, $ratings);
     }
 
+    /**
+     * Get ratingallocate instance for teachers which opens in specified number of days.
+     * @param $numdays
+     * @param advanced_testcase $tc
+     * @param $choices
+     * @param $course
+     * @param $ratings
+     * @return ratingallocate
+     */
     private static function get_ratingallocate_for_teacher_open_in($numdays, advanced_testcase $tc, $choices = null,
             $course = null, $ratings = null) {
         $record = self::get_default_values();
@@ -212,6 +252,12 @@ class mod_ratingallocate_generator extends testing_module_generator {
                 $testmodule->moddb, $testmodule->teacher);
     }
 
+    /**
+     * Get small ratingallocate for filter tests.
+     * @param advanced_testcase $tc
+     * @param $choices
+     * @return ratingallocate
+     */
     public static function get_small_ratingallocate_for_filter_tests(advanced_testcase $tc, $choices = null) {
         $record = self::get_default_values();
         $record['num_students'] = 4;

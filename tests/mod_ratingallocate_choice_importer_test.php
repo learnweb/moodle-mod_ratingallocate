@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/generator/lib.php');
@@ -29,7 +30,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \choice_importer
  */
-class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
+final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
 
     /**
      * Return lines of text for a sample CSV file.
@@ -73,7 +74,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->ratingallocateid = $mod->id;
     }
 
-    public function test_setup() {
+    public function test_setup(): void {
         $this->resetAfterTest();
 
         // Groups in course context.
@@ -87,7 +88,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals(2, count($choices), 'Generator default: two pre-existing choices.');
     }
 
-    public function test_choice_importer_testmode() {
+    public function test_choice_importer_testmode(): void {
         $this->resetAfterTest();
         $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
         $this->assertTrue($choiceimporter instanceof \mod_ratingallocate\choice_importer);
@@ -107,7 +108,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
          */
     }
 
-    public function test_choice_importer_livemode() {
+    public function test_choice_importer_livemode(): void {
         $this->resetAfterTest();
         $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
         $this->assertTrue($choiceimporter instanceof \mod_ratingallocate\choice_importer);
@@ -125,7 +126,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals(5, count($choices), 'Three new choices imported');
     }
 
-    public function test_adding_groups() {
+    public function test_adding_groups(): void {
         $this->resetAfterTest();
         $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
 
@@ -197,7 +198,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertContains(intval($this->blue->id), $choicegroups10);
     }
 
-    public function test_bad_group() {
+    public function test_bad_group(): void {
         $this->resetAfterTest();
         $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
 

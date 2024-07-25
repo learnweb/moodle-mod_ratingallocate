@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +36,7 @@ use mod_ratingallocate\db as this_db;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \classes\task\cron_task
  */
-class cron_test extends \advanced_testcase {
+final class cron_test extends \advanced_testcase {
 
     /** @var $teacher */
     private $teacher;
@@ -47,7 +48,7 @@ class cron_test extends \advanced_testcase {
     /**
      * The cron should run, when the algorithm status is not_started and the rating period ended.
      */
-    public function test_successful_run() {
+    public function test_successful_run(): void {
         $this->create_ratingallocate(true);
         $this->run_cron();
         $this->assert_finish();
@@ -56,7 +57,7 @@ class cron_test extends \advanced_testcase {
     /**
      * The cron should not run, when the rating period has not ended.
      */
-    public function test_rating_in_progress() {
+    public function test_rating_in_progress(): void {
         $this->create_ratingallocate(false);
         $this->run_cron();
         $this->assert_not_started();
@@ -65,7 +66,7 @@ class cron_test extends \advanced_testcase {
     /**
      * The cron should not run, when the algorithm status is running.
      */
-    public function test_running() {
+    public function test_running(): void {
         $this->create_ratingallocate(true, \mod_ratingallocate\algorithm_status::RUNNING);
         $this->run_cron();
         $this->assert_running();
@@ -74,7 +75,7 @@ class cron_test extends \advanced_testcase {
     /**
      * The cron should not run, when the algorithm status is failure.
      */
-    public function test_failure() {
+    public function test_failure(): void {
         $this->create_ratingallocate(true, \mod_ratingallocate\algorithm_status::FAILURE);
         $this->run_cron();
         $this->assert_failure();
@@ -83,7 +84,7 @@ class cron_test extends \advanced_testcase {
     /**
      * The cron should not run, when the algorithm status is finished.
      */
-    public function test_finished() {
+    public function test_finished(): void {
         $this->create_ratingallocate(true, \mod_ratingallocate\algorithm_status::FINISHED);
         $this->run_cron();
         $this->assert_already_finish();
@@ -93,7 +94,7 @@ class cron_test extends \advanced_testcase {
     /**
      * The cron should not change the status of the algorithm, since it is not timedout.
      */
-    public function test_undue_failure_handling() {
+    public function test_undue_failure_handling(): void {
         $this->create_ratingallocate(true, \mod_ratingallocate\algorithm_status::RUNNING, time());
         $this->run_cron();
         $this->assert_running();
@@ -102,7 +103,7 @@ class cron_test extends \advanced_testcase {
     /**
      * The cron should switch the status of the algorithm to failure, since it has timedout.
      */
-    public function test_due_failure_handling() {
+    public function test_due_failure_handling(): void {
         global $CFG;
         $this->create_ratingallocate(true, \mod_ratingallocate\algorithm_status::RUNNING, time() - 2);
         $CFG->ratingallocate_algorithm_timeout = 1;

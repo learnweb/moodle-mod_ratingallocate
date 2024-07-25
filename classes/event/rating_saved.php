@@ -39,6 +39,14 @@ namespace mod_ratingallocate\event;
  **/
 class rating_saved extends \core\event\base {
 
+    /**
+     * Create simple rating_saved event.
+     * @param $modulecontext
+     * @param $ratingallocateid
+     * @param $rating
+     * @return \core\event\base
+     * @throws \coding_exception
+     */
     public static function create_simple($modulecontext, $ratingallocateid, $rating) {
         // The values of other need to be encoded since the base checks for equality
         // of a decoded encoded other instance with the original
@@ -48,29 +56,56 @@ class rating_saved extends \core\event\base {
                 'other' => ['ratings' => $ratingjsonvalid]]);
     }
 
+    /**
+     * Initialize data.
+     * @return void
+     */
     protected function init() {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'ratingallocate_ratings';
     }
 
+    /**
+     * Get event name.
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
     public static function get_name() {
         return get_string('log_rating_saved', 'mod_ratingallocate');
     }
 
+    /**
+     * Get event description.
+     * @return \lang_string|string|null
+     * @throws \coding_exception
+     */
     public function get_description() {
         return get_string('log_rating_saved_description', 'mod_ratingallocate',
                 ['userid' => $this->userid, 'ratingallocateid' => $this->objectid]);
     }
 
+    /**
+     * Get event url.
+     * @return \moodle_url
+     * @throws \moodle_exception
+     */
     public function get_url() {
         return new \moodle_url('/mod/ratingallocate/view.php', ['m' => $this->objectid]);
     }
 
+    /**
+     * Get event mapping.
+     * @return string[]
+     */
     public static function get_objectid_mapping() {
         return ['db' => 'ratingallocate', 'restore' => 'ratingallocate'];
     }
 
+    /**
+     * No other mappings available.
+     * @return false
+     */
     public static function get_other_mapping() {
         return false;
     }

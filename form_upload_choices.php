@@ -70,6 +70,11 @@ class upload_choices_form extends moodleform {
         $this->add_buttons();
     }
 
+    /**
+     * Add button group.
+     * @return void
+     * @throws coding_exception
+     */
     public function add_buttons() {
         $mform =& $this->_form;
 

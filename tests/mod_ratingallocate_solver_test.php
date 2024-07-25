@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,8 +33,15 @@ require_once($CFG->dirroot . '/mod/ratingallocate/solver/ford-fulkerson-koegel.p
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \solver
  */
-class mod_ratingallocate_solver_test extends \basic_testcase {
+final class mod_ratingallocate_solver_test extends \basic_testcase {
 
+    /**
+     * Perform race.
+     *
+     * @param $groupsnum
+     * @param $ratersnum
+     * @return array
+     */
     private function perform_race($groupsnum, $ratersnum) {
         $groupsmaxsizemin = floor($ratersnum / $groupsnum);
         $groupsmaxsizemax = ceil($ratersnum / $groupsnum) + 1;
@@ -88,6 +96,11 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
         return $result;
     }
 
+    /**
+     * Test on random.
+     *
+     * @return void
+     */
     public function teston_random() {
         if (!PHPUNIT_LONGTEST) {
             return; // This test takes longer than 10s.
@@ -136,7 +149,7 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
      * @return void
      * @covers \solver_edmonds_karp
      */
-    public function test_edmondskarp() {
+    public function test_edmondskarp(): void {
         $choices = [];
         $choices[1] = new \stdClass();
         $choices[1]->maxsize = 2;
@@ -212,7 +225,7 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
      *
      * @return void
      */
-    public function test_negweightcycle() {
+    public function test_negweightcycle(): void {
         // Experimental.
         $choices = [];
         $choices[1] = new \stdClass();
@@ -262,7 +275,7 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
      *
      * @return void
      */
-    public function test_targetfunc() {
+    public function test_targetfunc(): void {
         $ratings = [];
         $ratings[1] = new \stdClass();
         $ratings[1]->userid = 1;
@@ -293,7 +306,7 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
     /**
      * Test id conversions from user+choicids to graphids
      */
-    public function test_setupids() {
+    public function test_setupids(): void {
         $ratings = [];
         $ratings[1] = new \stdClass();
         $ratings[1]->userid = 3;

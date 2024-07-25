@@ -49,10 +49,19 @@ class strategy extends \strategytemplate {
      */
     const COUNTOPTIONS = 'countoptions';
 
+    /**
+     * Get strategy id.
+     * @return string
+     */
     public function get_strategyid() {
         return self::STRATEGYID;
     }
 
+    /**
+     * Get static settingfields.
+     * @return array[]
+     * @throws \coding_exception
+     */
     public function get_static_settingfields() {
         return [
                 self::COUNTOPTIONS => [// Amount of fields.
@@ -64,10 +73,19 @@ class strategy extends \strategytemplate {
         ];
     }
 
+    /**
+     * Get dynamic settingfields.
+     * @return array
+     */
     public function get_dynamic_settingfields() {
         return [];
     }
 
+    /**
+     * Get default settings.
+     * @return array|int[]
+     * @throws \coding_exception
+     */
     public function get_default_settings() {
         $defaultcountoptions = 2;
         $output = [
@@ -84,6 +102,10 @@ class strategy extends \strategytemplate {
         return $output;
     }
 
+    /**
+     * Get validation information.
+     * @return array[]
+     */
     protected function getvalidationinfo() {
         return [self::COUNTOPTIONS => [true, 1]];
     }
@@ -101,10 +123,20 @@ class strategy extends \strategytemplate {
  */
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
+    /**
+     * Create new strategy.
+     * @param $strategyoptions
+     * @return strategy
+     */
     protected function construct_strategy($strategyoptions) {
         return new strategy($strategyoptions);
     }
 
+    /**
+     * Form definition of strategy.
+     * @return void
+     * @throws \coding_exception
+     */
     public function definition() {
         global $USER;
         parent::definition();
@@ -164,6 +196,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
      * @param $i number of select element
      * @param array $choices choices which should be available in the select element.
      * @return \HTML_QuickForm_select select element;
+     * @throws \coding_exception
      */
     private function fill_select($select, $i, array $choices) {
         $select->setName('choice[' . $i . ']');
@@ -177,6 +210,11 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         return $select;
     }
 
+    /**
+     * Get strategy description.
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
     public function describe_strategy() {
         return get_string(strategy::STRATEGYID . '_explain_choices', RATINGALLOCATE_MOD_NAME);
     }
@@ -207,6 +245,13 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         return $data;
     }
 
+    /**
+     * Validate form data.
+     * @param $data
+     * @param $files
+     * @return array
+     * @throws \coding_exception
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         $usedchoices = [];

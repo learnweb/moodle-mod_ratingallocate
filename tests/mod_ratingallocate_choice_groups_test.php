@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/generator/lib.php');
@@ -28,7 +29,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @author     David Thompson <david.thompson@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
+final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
 
     /** Helper function - Create a range of choices.
      *
@@ -133,7 +134,7 @@ class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
      * @return void
      * @covers ::get_group_selections
      */
-    public function test_setup() {
+    public function test_setup(): void {
         $this->resetAfterTest();
 
         $this->assertEquals(5, count($this->choicedata));
@@ -154,7 +155,7 @@ class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
      * @return void
      * @covers ::filter_choices_by_groups
      */
-    public function test_choice_groups() {
+    public function test_choice_groups(): void {
         $this->resetAfterTest();
 
         // Map choice titles to choice IDs, group names to group IDs.
@@ -232,7 +233,7 @@ class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
      * @return void
      * @covers ::update_choice_groups
      */
-    public function test_update_choice_groups() {
+    public function test_update_choice_groups(): void {
         $this->resetAfterTest();
 
         $choiceidmap = $this->get_choice_map();
