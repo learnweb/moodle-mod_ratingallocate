@@ -27,64 +27,102 @@
  */
 
 // Namespace is mandatory!
-namespace ratingallocate\strategy_points;
+namespace mod_ratingallocate\strategy_points;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template.php');
 
+/**
+ * Strategy
+ *
+ * @package mod_ratingallocate
+ */
 class strategy extends \strategytemplate {
 
+    /**
+     * Strategyid.
+     */
     const STRATEGYID = 'strategy_points';
+    /**
+     * Max zero.
+     */
     const MAXZERO = 'maxzero';
+    /**
+     * Totalpoints.
+     */
     const TOTALPOINTS = 'totalpoints';
+    /**
+     * Max per choice.
+     */
     const MAXPERCHOICE = 'maxperchoice';
 
+    /**
+     * Get strategy id.
+     * @return string
+     */
     public function get_strategyid() {
         return self::STRATEGYID;
     }
 
+    /**
+     * Get static settingfields.
+     * @return array[]
+     * @throws \coding_exception
+     */
     public function get_static_settingfields() {
-        return array(
-                self::MAXZERO => array( // Maximum count of 'No'.
+        return [
+                self::MAXZERO => [ // Maximum count of 'No'.
                         'int',
                         get_string(self::STRATEGYID . '_setting_maxzero', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::MAXZERO),
-                        null
-                ),
-                self::TOTALPOINTS => array( // Amount of fields.
+                        null,
+                ],
+                self::TOTALPOINTS => [ // Amount of fields.
                         'int',
                         get_string(self::STRATEGYID . '_setting_totalpoints', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::TOTALPOINTS),
-                        null
-                ),
-                self::MAXPERCHOICE => array( // Maximum amount of points the student can give per choice.
+                        null,
+                ],
+                self::MAXPERCHOICE => [// Maximum amount of points the student can give per choice.
                     'int',
                     get_string(self::STRATEGYID . '_setting_maxperchoice', RATINGALLOCATE_MOD_NAME),
                     $this->get_settings_value(self::MAXPERCHOICE),
-                    null
-                )
-        );
+                    null,
+                ],
+        ];
     }
 
+    /**
+     * Get dynamic settingfields.
+     * @return array
+     */
     public function get_dynamic_settingfields() {
-        return array();
+        return [];
     }
 
+    /**
+     * Get default settings.
+     * @return int[]
+     */
     public function get_default_settings() {
-        return array(
+        return [
                 self::MAXZERO => 3,
                 self::TOTALPOINTS => 100,
-                self::MAXPERCHOICE => 100
-        );
+                self::MAXPERCHOICE => 100,
+        ];
     }
 
+    /**
+     * Get validation information.
+     * @return array[]
+     */
     protected function getvalidationinfo() {
-        return array(self::MAXZERO => array(true, 0),
-                self::TOTALPOINTS => array(true, 1),
-                self::MAXPERCHOICE => array(true, 1)
-        );
+        return [self::MAXZERO => [true, 0],
+                self::TOTALPOINTS => [true, 1],
+                self::MAXPERCHOICE => [true, 1],
+        ];
     }
 
 }
@@ -92,12 +130,27 @@ class strategy extends \strategytemplate {
 // Register with the strategymanager.
 \strategymanager::add_strategy(strategy::STRATEGYID);
 
+/**
+ * View form.
+ *
+ * @package mod_ratingallocate
+ */
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
+    /**
+     * Create new strategy.
+     * @param $strategyoptions
+     * @return strategy
+     */
     protected function construct_strategy($strategyoptions) {
         return new strategy($strategyoptions);
     }
 
+    /**
+     * Form definition for this strategy.
+     * @return void
+     * @throws \coding_exception
+     */
     public function definition() {
         global $USER;
         parent::definition();
@@ -146,6 +199,11 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         }
     }
 
+    /**
+     * Get strategy description.
+     * @return string
+     * @throws \coding_exception
+     */
     public function describe_strategy() {
         $output = get_string(strategy::STRATEGYID . '_explain_distribute_points', RATINGALLOCATE_MOD_NAME,
                 $this->get_strategysetting(strategy::TOTALPOINTS));
@@ -153,10 +211,18 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         $output .= get_string(strategy::STRATEGYID . '_explain_max_zero', RATINGALLOCATE_MOD_NAME,
                 $this->get_strategysetting(strategy::MAXZERO));
         $output .= '<br />';
-        $output .= get_string(strategy::STRATEGYID . '_explain_max_per_choice', RATINGALLOCATE_MOD_NAME, $this->get_strategysetting(strategy::MAXPERCHOICE));
+        $output .= get_string(strategy::STRATEGYID . '_explain_max_per_choice', RATINGALLOCATE_MOD_NAME,
+            $this->get_strategysetting(strategy::MAXPERCHOICE));
         return $output;
     }
 
+    /**
+     * Validate form data.
+     * @param $data
+     * @param $files
+     * @return array
+     * @throws \coding_exception
+     */
     public function validation($data, $files) {
         $maxcrossout = $this->get_strategysetting(strategy::MAXZERO);
         $totalpoints = $this->get_strategysetting(strategy::TOTALPOINTS);

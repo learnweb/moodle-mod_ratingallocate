@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/generator/lib.php');
@@ -29,7 +30,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \choice_importer
  */
-class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
+final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
 
     /**
      * Return lines of text for a sample CSV file.
@@ -40,7 +41,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
      */
     private function get_choice_lines($joined=false) {
         // Whitespace should be trimmed by the importer.
-        $contents = array();
+        $contents = [];
         $contents[] = 'title, explanation, maxsize, active, groups';
         $contents[] = 'New Test Choice 3,Explain New Choice 3, 10, 1,';
         $contents[] = 'New Test Choice 4,Explain New Choice 4, 100, 1,Green Group';
@@ -63,17 +64,17 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->teacher = \mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
 
         // Make test groups.
-        $this->green = $generator->create_group(array('name' => 'Green Group', 'courseid' => $course->id));
-        $this->blue = $generator->create_group(array('name' => 'Blue Group', 'courseid' => $course->id));
-        $this->red = $generator->create_group(array('name' => 'Red Group', 'courseid' => $course->id));
+        $this->green = $generator->create_group(['name' => 'Green Group', 'courseid' => $course->id]);
+        $this->blue = $generator->create_group(['name' => 'Blue Group', 'courseid' => $course->id]);
+        $this->red = $generator->create_group(['name' => 'Red Group', 'courseid' => $course->id]);
 
-        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, array('course' => $course));
+        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, ['course' => $course]);
 
         $this->ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
         $this->ratingallocateid = $mod->id;
     }
 
-    public function test_setup() {
+    public function test_setup(): void {
         $this->resetAfterTest();
 
         // Groups in course context.
@@ -87,7 +88,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals(2, count($choices), 'Generator default: two pre-existing choices.');
     }
 
-    public function test_choice_importer_testmode() {
+    public function test_choice_importer_testmode(): void {
         $this->resetAfterTest();
         $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
         $this->assertTrue($choiceimporter instanceof \mod_ratingallocate\choice_importer);
@@ -99,7 +100,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals($importstatus->readcount, 4);
         $this->assertEquals($importstatus->importcount, 3);
         $this->assertEquals($importstatus->status_message,
-            get_string('csvupload_test_success', 'ratingallocate', array('importcount' => $importstatus->importcount))
+            get_string('csvupload_test_success', 'ratingallocate', ['importcount' => $importstatus->importcount])
         );
 
         /* Note: delegated transaction rollback doesn't seme to be  working inside PHPUnit tests.
@@ -107,7 +108,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
          */
     }
 
-    public function test_choice_importer_livemode() {
+    public function test_choice_importer_livemode(): void {
         $this->resetAfterTest();
         $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
         $this->assertTrue($choiceimporter instanceof \mod_ratingallocate\choice_importer);
@@ -119,13 +120,13 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals($importstatus->readcount, 4);
         $this->assertEquals($importstatus->importcount, 3);
         $this->assertEquals($importstatus->status_message,
-            get_string('csvupload_live_success', 'ratingallocate', array('importcount' => $importstatus->importcount))
+            get_string('csvupload_live_success', 'ratingallocate', ['importcount' => $importstatus->importcount])
         );
         $choices = $this->ratingallocate->get_choices();
         $this->assertEquals(5, count($choices), 'Three new choices imported');
     }
 
-    public function test_adding_groups() {
+    public function test_adding_groups(): void {
         $this->resetAfterTest();
         $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
 
@@ -197,7 +198,7 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertContains(intval($this->blue->id), $choicegroups10);
     }
 
-    public function test_bad_group() {
+    public function test_bad_group(): void {
         $this->resetAfterTest();
         $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
 
@@ -208,10 +209,10 @@ class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals($importstatus->status, \mod_ratingallocate\choice_importer::IMPORT_STATUS_DATA_ERROR);
         $this->assertEquals($importstatus->readcount, 5);
         $this->assertEquals($importstatus->importcount, 4); // Will import, but no group association.
-        $this->assertEquals($importstatus->errors[0], get_string('csvupload_missing_groups', 'ratingallocate', array(
+        $this->assertEquals($importstatus->errors[0], get_string('csvupload_missing_groups', 'ratingallocate', [
             'row' => 5,
             'invalidgroups' => 'Blue Man Group',
-        )));
+        ]));
         $this->assertEquals($importstatus->status_message,
             get_string('csvupload_live_problems', 'ratingallocate', 1)
         );

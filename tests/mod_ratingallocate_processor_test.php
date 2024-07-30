@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 
@@ -27,7 +28,7 @@ require_once(__DIR__ . '/../locallib.php');
  * @copyright  reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_ratingallocate_processor_test extends \advanced_testcase {
+final class mod_ratingallocate_processor_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $PAGE;
@@ -39,7 +40,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      * Assert, that the ratingallocate can be published
      * @covers ::publish_allocation()
      */
-    public function test_publishing() {
+    public function test_publishing(): void {
         $ratingallocate = \mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $ratingallocate->ratingallocate->published);
         $ratingallocate->publish_allocation();
@@ -51,7 +52,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      * Assert, that the number of groupings does not change
      * @covers ::synchronize_allocation_and_grouping()
      */
-    public function test_grouping_before_accesstimestop() {
+    public function test_grouping_before_accesstimestop(): void {
         global $DB;
         $ratingallocate = \mod_ratingallocate_generator::get_open_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $DB->count_records('groupings'));
@@ -64,7 +65,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      * Assert, that the number of groupings changes as expected (1 Grouping should be created)
      * @covers ::synchronize_allocation_and_grouping()
      */
-    public function test_grouping_after_accesstimestop() {
+    public function test_grouping_after_accesstimestop(): void {
         global $DB;
         $ratingallocate = \mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this);
         $this->assertEquals(0, $DB->count_records('groupings'));
@@ -84,7 +85,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
                         20],
                 'Rating phase is not over, yet.' => [
                         'get_open_ratingallocate_for_teacher',
-                        10]
+                        10],
         ];
     }
 
@@ -97,7 +98,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      * - 1 User without ratings but with allocations
      * @covers \classes\ratings_and_allocations_table
      */
-    public function test_ratings_table_filter() {
+    public function test_ratings_table_filter(): void {
 
         $this->resetAfterTest();
 
@@ -130,7 +131,14 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
 
     }
 
-    public function test_ratings_table_groupfilter() {
+    /**
+     * Test groupfilter in ratings and allocations table.
+     *
+     * @return void
+     * @throws \coding_exception
+     * @covers \classes\ratings_and_allocations_table
+     */
+    public function test_ratings_table_groupfilter(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -138,12 +146,12 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
         $this->setUser($teacher);
 
         // Create two groups.
-        $group1 = $this->getDataGenerator()->create_group(array(
+        $group1 = $this->getDataGenerator()->create_group([
             'courseid' => $course->id,
-            'name' => 'group1'));
-        $group2 = $this->getDataGenerator()->create_group(array(
+            'name' => 'group1']);
+        $group2 = $this->getDataGenerator()->create_group([
             'courseid' => $course->id,
-            'name' => 'group2'));
+            'name' => 'group2']);
 
         // Add 1 member to each group, and 1 member to both groups.
         $student1 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
@@ -156,7 +164,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
         $student4 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
 
         // Setup ratingallocate instance.
-        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, array('course' => $course), $this->get_choice_data());
+        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, ['course' => $course], $this->get_choice_data());
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $teacher);
 
         // Map choice titles to choice IDs, group names to group IDs.
@@ -170,12 +178,12 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
          * Choice B: only rateable by group2
          * Choice C: ratable by all students
          */
-        $ratingallocate->update_choice_groups($choiceidmap['Choice A'], array(
-            $groupidmap['group1']
-        ));
-        $ratingallocate->update_choice_groups($choiceidmap['Choice B'], array(
-            $groupidmap['group2']
-        ));
+        $ratingallocate->update_choice_groups($choiceidmap['Choice A'], [
+            $groupidmap['group1'],
+        ]);
+        $ratingallocate->update_choice_groups($choiceidmap['Choice B'], [
+            $groupidmap['group2'],
+        ]);
 
         // Test the group filter only (set hidenorating and showalloccount to false).
 
@@ -236,7 +244,7 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
         // Create and set up the flextable for ratings and allocations.
         $choices = $ratingallocate->get_rateable_choices();
         $table = new \mod_ratingallocate\ratings_and_allocations_table($ratingallocate->get_renderer(),
-                array(), $ratingallocate, 'show_alloc_table', 'mod_ratingallocate_test', false);
+                [], $ratingallocate, 'show_alloc_table', 'mod_ratingallocate_test', false);
         $table->setup_table($choices, $hidenorating, $showallocnecessary, $groupselect);
 
         return $table;
@@ -248,30 +256,30 @@ class mod_ratingallocate_processor_test extends \advanced_testcase {
      * @return array
      */
     private function get_choice_data() {
-        $choicedata = array();
-        $choice1 = array(
+        $choicedata = [];
+        $choice1 = [
             'title' => "Choice A",
             'explanation' => "Ratable by group1",
             'maxsize' => 10,
             'active' => true,
-            'usegroups' => true
-        );
+            'usegroups' => true,
+        ];
         $choicedata[] = $choice1;
-        $choice2 = array(
+        $choice2 = [
             'title' => "Choice B",
             'explanation' => "Ratable by group2",
             'maxsize' => 10,
             'active' => true,
-            'usegroups' => true
-        );
+            'usegroups' => true,
+        ];
         $choicedata[] = $choice2;
-        $choice3 = array(
+        $choice3 = [
             'title' => "Choice C",
             'explanation' => "Ratable by all students",
             'maxsize' => 10,
             'active' => true,
-            'usegroups' => false
-        );
+            'usegroups' => false,
+        ];
         $choicedata[] = $choice3;
         return $choicedata;
     }

@@ -30,6 +30,11 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/solver-template.php');
 
+/**
+ * Solver Ford-fulkerson.
+ *
+ * @package mod_ratingallocate
+ */
 class solver_ford_fulkerson extends distributor {
 
     /**
@@ -43,7 +48,7 @@ class solver_ford_fulkerson extends distributor {
      *
      */
     public function compute_distribution($choicerecords, $ratings, $usercount) {
-        $groupdata = array();
+        $groupdata = [];
         foreach ($choicerecords as $record) {
             $groupdata[$record->id] = $record;
         }
@@ -87,9 +92,9 @@ class solver_ford_fulkerson extends distributor {
     public function find_shortest_path_bellmanf_koegel($from, $to) {
 
         // Table of distances known so far.
-        $dists = array();
+        $dists = [];
         // Table of predecessors (used to reconstruct the shortest path later).
-        $preds = array();
+        $preds = [];
         // Stack of the edges we need to test next.
         $edges = $this->graph[$from];
         // Number of nodes in the graph.
@@ -141,7 +146,7 @@ class solver_ford_fulkerson extends distributor {
         }
 
         // Use the preds table to reconstruct the shortest path.
-        $path = array();
+        $path = [];
         $p = $to;
         while ($p != $from) {
             $path[] = $p;
@@ -152,6 +157,11 @@ class solver_ford_fulkerson extends distributor {
         return $path;
     }
 
+    /**
+     * Return name.
+     *
+     * @return string
+     */
     public function get_name() {
         return "ford-fulkerson Koegel2014";
     }

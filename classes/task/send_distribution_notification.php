@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Send distibution notification.
+ *
  * @package    mod_ratingallocate
  * @copyright  2014 M Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,11 +28,23 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__) . '/../../db/db_structure.php');
 
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
+/**
+ * Send distribution notification
+ *
+ * @package mod_ratingallocate
+ */
 class send_distribution_notification extends \core\task\adhoc_task {
-    // Gets executed by the task runner. Will lookup the ratingallocation object and
-    // command it to notify users.
+
+    /**
+     * Gets executed by the task runner. Will lookup the ratingallocation object and command it
+     * to notify users.
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
     public function execute() {
         global $CFG, $DB;
 
@@ -43,7 +57,7 @@ class send_distribution_notification extends \core\task\adhoc_task {
 
         // Get instance of ratingallocate.
         $ratingallocate =
-                $DB->get_record(this_db\ratingallocate::TABLE, array(this_db\ratingallocate::ID => $ratingallocateid), '*',
+                $DB->get_record(this_db\ratingallocate::TABLE, [this_db\ratingallocate::ID => $ratingallocateid], '*',
                         MUST_EXIST);
 
         $courseid = $ratingallocate->course;

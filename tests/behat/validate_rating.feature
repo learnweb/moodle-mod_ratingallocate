@@ -15,13 +15,12 @@ Feature: When a student attempts to rate choices it should be validated prior to
       | student1 | C1     | student        |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Fair Allocation" to section "1" and I fill the form with:
+    And I add a ratingallocate to course "Course 1" section "1" and I fill the form with:
       | id_name                               | Validated Rating |
       | strategy                              | strategy_points  |
       | Rating begins at                      | ##2 days ago##   |
       | strategyopt[strategy_points][maxzero] | 2                |
-    And I am on the "Validated Rating" "ratingallocate activity" page
-    And I press "Edit Choices"
+    And I am on the "Validated Rating" "mod_ratingallocate > Choices" page
     And I add a new choice with the values:
       | title                  | My first choice |
       | Description (optional) | Test 1          |
@@ -42,7 +41,7 @@ Feature: When a student attempts to rate choices it should be validated prior to
 
   Scenario: The user cannot enter values less than 0.
     When I log in as "student1"
-    And I am on the "Validated Rating" "ratingallocate activity" page
+    And I am on the "Validated Rating" "mod_ratingallocate > View" page
     And I press "Edit Rating"
     And I rate choices with the following points:
       | My first choice  | -1 |
@@ -54,7 +53,7 @@ Feature: When a student attempts to rate choices it should be validated prior to
 
   Scenario: The values entered by the user must sum up to the (default) maximum.
     When I log in as "student1"
-    And I am on the "Validated Rating" "ratingallocate activity" page
+    And I am on the "Validated Rating" "mod_ratingallocate > View" page
     And I press "Edit Rating"
     And I rate choices with the following points:
       | My first choice  | 1 |
@@ -66,7 +65,7 @@ Feature: When a student attempts to rate choices it should be validated prior to
 
   Scenario: The user may not rate more than a (default) number of choices with 0.
     When I log in as "student1"
-    And I am on the "Validated Rating" "ratingallocate activity" page
+    And I am on the "Validated Rating" "mod_ratingallocate > View" page
     And I press "Edit Rating"
     And I rate choices with the following points:
       | My first choice  | 0   |

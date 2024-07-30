@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 
@@ -24,7 +25,7 @@ require_once($CFG->dirroot . '/mod/ratingallocate/solver/ford-fulkerson-koegel.p
 /**
  * Contains unit tests for the distribution algorithm.
  *
- * @package    mod
+ * @package mod_ratingallocate
  * @subpackage mod_groupdistribution
  * @group mod_ratingallocate
  * @copyright  original Version 2013 Stefan Koegel
@@ -32,16 +33,23 @@ require_once($CFG->dirroot . '/mod/ratingallocate/solver/ford-fulkerson-koegel.p
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \solver
  */
-class mod_ratingallocate_solver_test extends \basic_testcase {
+final class mod_ratingallocate_solver_test extends \basic_testcase {
 
+    /**
+     * Perform race.
+     *
+     * @param $groupsnum
+     * @param $ratersnum
+     * @return array
+     */
     private function perform_race($groupsnum, $ratersnum) {
         $groupsmaxsizemin = floor($ratersnum / $groupsnum);
         $groupsmaxsizemax = ceil($ratersnum / $groupsnum) + 1;
 
         $rateminimum = 0.7; // Every Student gives a min voting.
         $ratingmax = 5; // Rating from 1 to X.
-        $result = array();
-        $groups = array();
+        $result = [];
+        $groups = [];
 
         for ($i = 1; $i < $groupsnum; $i++) {
             $groups[$i] = new \stdClass();
@@ -49,7 +57,7 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
             $groups[$i]->maxsize = rand($groupsmaxsizemin, $groupsmaxsizemax);
         }
 
-        $ratings = array();
+        $ratings = [];
 
         for ($i = 1; $i < $ratersnum; $i++) {
             $ratingsgiven = 0;
@@ -74,7 +82,7 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
 
         $usercount = $ratersnum;
 
-        $solvers = array('solver_edmonds_karp', 'solver_ford_fulkerson');
+        $solvers = ['solver_edmonds_karp', 'solver_ford_fulkerson'];
         foreach ($solvers as $solver) {
             $solver1 = new $solver;
             $timestart = microtime(true);
@@ -88,24 +96,29 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
         return $result;
     }
 
+    /**
+     * Test on random.
+     *
+     * @return void
+     */
     public function teston_random() {
         if (!PHPUNIT_LONGTEST) {
             return; // This test takes longer than 10s.
         }
-        $testparams = array(array(5, 25), array(10, 50), array(10, 100),
-                array(20, 200));
-        $testergebnisse = array();
+        $testparams = [[5, 25], [10, 50], [10, 100],
+                [20, 200]];
+        $testergebnisse = [];
         foreach ($testparams as $testset) {
             $paramgroups = ceil(sqrt($testset[1]));
             $paramusers = $testset[1];
-            $rundenergebnis = array();
+            $rundenergebnis = [];
             for ($i = 0; $i < 10; $i++) {
                 $ergebnis = $this->perform_race($paramgroups, $paramusers);
                 $this->assertEquals($ergebnis['ford-fulkerson Koegel2014']['gesamtpunktzahl'],
                         $ergebnis['edmonds_karp']['gesamtpunktzahl']);
                 $rundenergebnis[] = $ergebnis;
             }
-            $durchschnitt = array();
+            $durchschnitt = [];
             $counter = 0;
             // Calculate average for each round.
             foreach ($rundenergebnis as $einzelergebnis) {
@@ -131,11 +144,13 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
     }
 
     /**
+     * Test Edmonds-Karp algorithm.
+     *
      * @return void
      * @covers \solver_edmonds_karp
      */
-    public function test_edmondskarp() {
-        $choices = array();
+    public function test_edmondskarp(): void {
+        $choices = [];
         $choices[1] = new \stdClass();
         $choices[1]->maxsize = 2;
         $choices[1]->id = 1;
@@ -143,7 +158,7 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
         $choices[2]->maxsize = 2;
         $choices[2]->id = 2;
 
-        $ratings = array();
+        $ratings = [];
         $ratings[1] = new \stdClass();
         $ratings[1]->userid = 1;
         $ratings[1]->choiceid = 1;
@@ -193,7 +208,7 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
 
         $solver = new \solver_edmonds_karp();
         $distribution = $solver->compute_distribution($choices, $ratings, $usercount);
-        $expected = array(1 => array(2, 5), 2 => array(4, 1));
+        $expected = [1 => [2, 5], 2 => [4, 1]];
         $this->assertEquals($expected, $distribution);
         $this->assertEquals($solver::compute_target_function($ratings, $distribution), 15);
 
@@ -206,11 +221,13 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
     }
 
     /**
+     * Test algorithm for negativeweightcycle.
+     *
      * @return void
      */
-    public function test_negweightcycle() {
+    public function test_negweightcycle(): void {
         // Experimental.
-        $choices = array();
+        $choices = [];
         $choices[1] = new \stdClass();
         $choices[1]->maxsize = 2;
         $choices[1]->id = 1;
@@ -218,7 +235,7 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
         $choices[2]->maxsize = 2;
         $choices[2]->id = 2;
 
-        $ratings = array();
+        $ratings = [];
         $ratings[1] = new \stdClass();
         $ratings[1]->userid = 1;
         $ratings[1]->choiceid = 1;
@@ -254,10 +271,12 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
     }
 
     /**
+     * Test tagetfunction.
+     *
      * @return void
      */
-    public function test_targetfunc() {
-        $ratings = array();
+    public function test_targetfunc(): void {
+        $ratings = [];
         $ratings[1] = new \stdClass();
         $ratings[1]->userid = 1;
         $ratings[1]->choiceid = 1;
@@ -278,16 +297,17 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
         $ratings[4]->choiceid = 2;
         $ratings[4]->rating = 4;
 
-        $this->assertEquals(\distributor::compute_target_function($ratings, array(1 => array(1), 2 => array(2))), 9);
-        $this->assertEquals(\distributor::compute_target_function($ratings, array(1 => array(1, 2))), 8);
-        $this->assertEquals(\distributor::compute_target_function($ratings, array(1 => array(2), 2 => array(1))), 7);
+        $this->assertEquals(\distributor::compute_target_function($ratings, [1 => [1], 2 =>
+            [2]]), 9);
+        $this->assertEquals(\distributor::compute_target_function($ratings, [1 => [1, 2]]), 8);
+        $this->assertEquals(\distributor::compute_target_function($ratings, [1 => [2], 2 => [1]]), 7);
     }
 
     /**
      * Test id conversions from user+choicids to graphids
      */
-    public function test_setupids() {
-        $ratings = array();
+    public function test_setupids(): void {
+        $ratings = [];
         $ratings[1] = new \stdClass();
         $ratings[1]->userid = 3;
         $ratings[1]->choiceid = 1;
@@ -311,11 +331,11 @@ class mod_ratingallocate_solver_test extends \basic_testcase {
         $usercount = 2;
         list($fromuserid, $touserid, $fromchoiceid, $tochoiceid) = \solver_edmonds_karp::setup_id_conversions($usercount, $ratings);
 
-        $this->assertEquals(array(3 => 1, 2 => 2), $fromuserid);
-        $this->assertEquals(array(1 => 3, 2 => 2), $touserid);
+        $this->assertEquals([3 => 1, 2 => 2], $fromuserid);
+        $this->assertEquals([1 => 3, 2 => 2], $touserid);
 
-        $this->assertEquals(array(1 => 3, 2 => 4), $fromchoiceid);
-        $this->assertEquals(array(3 => 1, 4 => 2), $tochoiceid);
+        $this->assertEquals([1 => 3, 2 => 4], $fromchoiceid);
+        $this->assertEquals([3 => 1, 4 => 2], $tochoiceid);
     }
 
 }

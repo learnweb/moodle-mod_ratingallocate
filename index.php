@@ -39,7 +39,7 @@ require_course_login($course);
 $coursecontext = context_course::instance($course->id);
 
 $PAGE->set_pagelayout('incourse');
-$PAGE->set_url('/mod/ratingallocate/index.php', array('id' => $id));
+$PAGE->set_url('/mod/ratingallocate/index.php', ['id' => $id]);
 $PAGE->set_title(format_string($course->fullname));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($coursecontext);
@@ -55,32 +55,32 @@ $event->trigger();
 
 if (!$ratingallocates = get_all_instances_in_course('ratingallocate', $course, $USER->id)) {
     notice(get_string('noratingallocates', RATINGALLOCATE_MOD_NAME),
-            new moodle_url('/course/view.php', array('id' => $course->id)));
+            new moodle_url('/course/view.php', ['id' => $course->id]));
 }
 
 $table = new html_table();
-$table->head = array(
+$table->head = [
         get_string('name'),
         get_string('rating_begintime', 'mod_ratingallocate'),
         get_string('rating_endtime', 'mod_ratingallocate'),
-        get_string('is_published', 'mod_ratingallocate'));
-$table->align = array('left', 'left', 'left', 'left');
+        get_string('is_published', 'mod_ratingallocate')];
+$table->align = ['left', 'left', 'left', 'left'];
 
 foreach ($ratingallocates as $ratingallocate) {
-    $ratingallocateinstance = $DB->get_record('ratingallocate', array('id' => $ratingallocate->id));
+    $ratingallocateinstance = $DB->get_record('ratingallocate', ['id' => $ratingallocate->id]);
     if (!$ratingallocate->visible) {
         $link = html_writer::link(
-                new moodle_url('/mod/ratingallocate/view.php', array('id' => $ratingallocate->coursemodule)),
+                new moodle_url('/mod/ratingallocate/view.php', ['id' => $ratingallocate->coursemodule]),
                 format_string($ratingallocate->name, true),
-                array('class' => 'dimmed'));
+               ['class' => 'dimmed']);
     } else {
         $link = html_writer::link(
-                new moodle_url('/mod/ratingallocate/view.php', array('id' => $ratingallocate->coursemodule)),
+                new moodle_url('/mod/ratingallocate/view.php', ['id' => $ratingallocate->coursemodule]),
                 format_string($ratingallocate->name, true));
     }
-    $table->data[] = array($link, userdate($ratingallocateinstance->accesstimestart),
+    $table->data[] = [$link, userdate($ratingallocateinstance->accesstimestart),
             userdate($ratingallocateinstance->accesstimestop),
-            $ratingallocateinstance->published == 0 ? get_string('no') : get_string('yes'));
+            $ratingallocateinstance->published == 0 ? get_string('no') : get_string('yes')];
 
 }
 

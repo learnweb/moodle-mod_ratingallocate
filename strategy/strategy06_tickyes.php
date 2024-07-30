@@ -27,60 +27,98 @@
  */
 
 // Namespace is mandatory!
-namespace ratingallocate\strategy_tickyes;
+namespace mod_ratingallocate\strategy_tickyes;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template.php');
 
+/**
+ * Strategy.
+ *
+ * @package mod_ratingallocate
+ */
 class strategy extends \strategytemplate {
 
+    /**
+     * Strategyid.
+     */
     const STRATEGYID = 'strategy_tickyes';
+    /**
+     * Min ticks for yes.
+     */
     const MINTICKYES = 'mintickyes';
+    /**
+     * Accept label.
+     */
     const ACCEPT_LABEL = 'accept';
 
+    /**
+     * Get strategy id.
+     * @return string
+     */
     public function get_strategyid() {
         return self::STRATEGYID;
     }
 
+    /**
+     * Get static settingfields.
+     * @return array[]
+     * @throws \coding_exception
+     */
     public function get_static_settingfields() {
-        $output = array(
-                self::MINTICKYES => array('int',
+        $output = [
+                self::MINTICKYES => ['int',
                         get_string(self::STRATEGYID . '_setting_mintickyes', RATINGALLOCATE_MOD_NAME),
-                        $this->get_settings_value(self::MINTICKYES)
-                )
-        );
+                        $this->get_settings_value(self::MINTICKYES),
+                ],
+        ];
 
-        $output[1] = array(
+        $output[1] = [
                 'text',
                 get_string('strategy_settings_label', RATINGALLOCATE_MOD_NAME, $this->get_settings_default_value(1)),
                 null,
-                $this->get_settings_default_value(1)
-
-        );
+                $this->get_settings_default_value(1),
+        ];
         return $output;
     }
 
+    /**
+     * Get dynamic settingfields.
+     * @return array
+     */
     public function get_dynamic_settingfields() {
-        return array();
+        return [];
     }
 
+    /**
+     * Get accept label.
+     * @return \either|\the|null
+     */
     public function get_accept_label() {
         return $this->get_settings_value(1);
     }
 
+    /**
+     * Get default settings.
+     * @return array
+     * @throws \coding_exception
+     */
     public function get_default_settings() {
-        return array(
+        return [
                 self::MINTICKYES => 3,
                 1 => get_string(self::STRATEGYID . '_' . self::ACCEPT_LABEL, RATINGALLOCATE_MOD_NAME),
-                0 => get_string(self::STRATEGYID . '_not_' . self::ACCEPT_LABEL, RATINGALLOCATE_MOD_NAME)
-        );
+                0 => get_string(self::STRATEGYID . '_not_' . self::ACCEPT_LABEL, RATINGALLOCATE_MOD_NAME),
+        ];
     }
 
+    /**
+     * Get validation information.
+     * @return array[]
+     */
     protected function getvalidationinfo() {
-        return array(self::MINTICKYES => array(true, 1)
-        );
+        return [self::MINTICKYES => [true, 1]];
     }
 }
 
@@ -95,10 +133,20 @@ class strategy extends \strategytemplate {
  */
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
+    /**
+     * Create a new strategy.
+     * @param $strategyoptions
+     * @return strategy
+     */
     protected function construct_strategy($strategyoptions) {
         return new strategy($strategyoptions);
     }
 
+    /**
+     * Form definition of this strategy.
+     * @return void
+     * @throws \coding_exception
+     */
     public function definition() {
         global $USER;
         parent::definition();
@@ -131,7 +179,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
             // Use explanation as title/label of checkbox to align with other strategies.
             $mform->addElement('advcheckbox', $ratingelem, format_text($data->explanation),
-                    $this->get_strategy()->get_accept_label(), null, array(0, 1));
+                    $this->get_strategy()->get_accept_label(), null, [0, 1]);
             $mform->setType($ratingelem, PARAM_INT);
 
             if (is_numeric($data->rating) && $data->rating >= 0) {
@@ -146,11 +194,23 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         }
     }
 
+    /**
+     * Get strategy description.
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
     public function describe_strategy() {
         return get_string(strategy::STRATEGYID . '_explain_mintickyes', RATINGALLOCATE_MOD_NAME,
                 $this->get_strategysetting(strategy::MINTICKYES));
     }
 
+    /**
+     * Validate form data.
+     * @param $data
+     * @param $files
+     * @return array
+     * @throws \coding_exception
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         $mintickyes = $this->get_strategysetting(strategy::MINTICKYES);

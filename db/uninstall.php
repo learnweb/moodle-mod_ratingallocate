@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Db uninstall.
+ *
  * @see uninstall_plugin()
  *
  * @package    mod_ratingallocate
@@ -23,7 +25,9 @@
  */
 
 /**
- * Custom uninstallation procedure
+ * Uninstall.
+ *
+ * @package mod_ratingallocate
  */
 function xmldb_ratingallocate_uninstall() {
     return true;

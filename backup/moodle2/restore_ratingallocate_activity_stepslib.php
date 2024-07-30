@@ -14,19 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 /**
  *
- * @package moodlecore
+ * @package mod_ratingallocate
  * @subpackage backup-moodle2
  * @copyright 2014 C. Usener
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_ratingallocate_activity_structure_step extends restore_activity_structure_step {
 
+    /**
+     * Define the complete ratingallocate structure for restore.
+     * @return mixed
+     * @throws base_step_exception
+     */
     protected function define_structure() {
-        $paths = array();
+        $paths = [];
         $userinfo = $this->get_setting_value('userinfo');
 
         $ratingallocatepath = '/activity/' . this_db\ratingallocate::TABLE;
@@ -52,6 +57,14 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         return $this->prepare_activity_structure($paths);
     }
 
+    /**
+     * Process ratingallocate.
+     *
+     * @param $data
+     * @return void
+     * @throws base_step_exception
+     * @throws dml_exception
+     */
     protected function process_ratingallocate($data) {
         global $DB;
         $data = (object) $data;
@@ -74,6 +87,13 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $this->apply_activity_instance($newitemid);
     }
 
+    /**
+     * Restore data for ratingallocate choices.
+     * @param $data
+     * @return void
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_ratingallocate_choices($data) {
         global $DB;
         $data = (object) $data;
@@ -86,6 +106,13 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $this->set_mapping(this_db\ratingallocate_choices::TABLE, $oldid, $newitemid);
     }
 
+    /**
+     * Restore data for the ratingallocate ratings of users.
+     * @param $data
+     * @return void
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_ratingallocate_ratings($data) {
         global $DB;
         $data = (object) $data;
@@ -99,6 +126,13 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $this->set_mapping(this_db\ratingallocate_ratings::TABLE, $oldid, $newitemid);
     }
 
+    /**
+     * Restore data of allocations of users to choices.
+     * @param $data
+     * @return void
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_ratingallocate_allocations($data) {
         global $DB;
         $data = (object) $data;
@@ -114,7 +148,7 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
     }
 
     /**
-     * Process group choices restore data.
+     * Restore data of group restrictions of choices.
      *
      * @param array $data
      * @return void
@@ -132,6 +166,13 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $this->set_mapping(this_db\ratingallocate_group_choices::TABLE, $oldid, $newitemid);
     }
 
+    /**
+     * Restore data for generated groups based on allocations.
+     * @param $data
+     * @return void
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_ratingallocate_ch_gengroups($data) {
         global $DB;
         $data = (object) $data;
@@ -145,6 +186,13 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $this->set_mapping(this_db\ratingallocate_ch_gengroups::TABLE, $oldid, $newitemid);
     }
 
+    /**
+     * Restore data for generated groupings based on allocations.
+     * @param $data
+     * @return void
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_ratingallocate_groupings($data) {
         global $DB;
         $data = (object) $data;
@@ -158,8 +206,11 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $this->set_mapping(this_db\ratingallocate_groupings::TABLE, $oldid, $newitemid);
     }
 
+    /**
+     * Add ratingallocate related files.
+     * @return void
+     */
     protected function after_execute() {
-        // Add ratingallocate related files.
         $this->add_related_files('mod_' . RATINGALLOCATE_MOD_NAME, 'intro', null);
     }
 }

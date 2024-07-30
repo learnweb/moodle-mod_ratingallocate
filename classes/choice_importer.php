@@ -15,30 +15,43 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Choice importer.
+ *
  * @package    mod_ratingallocate
  * @copyright  2021 Catalyst IT
  * @author     David Thompson <david.thompson@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_ratingallocate;
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/csvlib.class.php');
 
-
+/**
+ * Choice importer.
+ *
+ * @package mod_ratingallocate
+ */
 class choice_importer {
-    const REQUIRED_FIELDS = array("title", "explanation", "maxsize", "active", "groups");
+    /**
+     * Required fields.
+     */
+    const REQUIRED_FIELDS = ["title", "explanation", "maxsize", "active", "groups"];
 
-    // The import process worked as expected.
+    /**
+     * The import process worked as expected.
+     */
     const IMPORT_STATUS_OK = 'csvupload_ok';
-    // Something went wrong during setup; import cannot continue.
+    /**
+     * Something went wrong during setup; import cannot continue.
+     */
     const IMPORT_STATUS_SETUP_ERROR = 'csvupload_setuperror';
-    // Partial success with data errors.
+    /** Partial success with data errors.*/
     const IMPORT_STATUS_DATA_ERROR = 'csvupload_dataerror';
 
-    // Default maximum number of warnings to show notifications for on import problems.
+    /** Default maximum number of warnings to show notifications for on import problems. */
     const MAX_WARNING_COUNT = 5;
 
     /**
@@ -66,11 +79,20 @@ class choice_importer {
         return '[' . join(', ', $fields) . ']';
     }
 
+    /**
+     * Construct.
+     *
+     * @param $ratingallocateid
+     * @param $ratingallocate
+     */
     public function __construct($ratingallocateid, $ratingallocate) {
         $this->ratingallocate = $ratingallocate;
         $this->ratingallocateid = $ratingallocateid;
     }
 
+    /**
+     * Destruct.
+     */
     public function __destruct() {
         $this->free_reader();
     }
@@ -122,7 +144,7 @@ class choice_importer {
         $importstatus = new \stdClass;
         $importstatus->status = self::IMPORT_STATUS_OK;  // Unless we hear otherwise.
         $importstatus->live = $live;  // Only commit live transactions.
-        $importstatus->errors = array();
+        $importstatus->errors = [];
         $importstatus->importcount = 0;
         $importstatus->rowcount = 1;  // Start at 1 for header.
 
@@ -183,7 +205,7 @@ class choice_importer {
                             }
 
                             if ($fieldname == 'groups') {
-                                $groups = array();
+                                $groups = [];
 
                                 // Turn off 'usegroups' if no groups specified.
                                 if (empty(trim($cell))) {
@@ -229,10 +251,10 @@ class choice_importer {
                             // Note for warnings.
                             if (!empty($invalidgroups)) {
                                 $importstatus->status = self::IMPORT_STATUS_DATA_ERROR;
-                                $warningmessage = get_string('csvupload_missing_groups', 'ratingallocate', array(
+                                $warningmessage = get_string('csvupload_missing_groups', 'ratingallocate', [
                                     'row' => $importstatus->rowcount,
                                     'invalidgroups' => join(', ', $invalidgroups),
-                                ));
+                                ]);
                                 $importstatus->errors[] = $warningmessage;
                             }
 

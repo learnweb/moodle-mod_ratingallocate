@@ -40,6 +40,14 @@ class ratingallocate_header implements renderable {
     /** @var int coursemoduleid - The course module id */
     public $coursemoduleid = 0;
 
+    /**
+     * Construct.
+     *
+     * @param ratingallocate_db_wrapper $ratingallocate
+     * @param $context
+     * @param $showintro
+     * @param $coursemoduleid
+     */
     public function __construct(ratingallocate_db_wrapper $ratingallocate, $context, $showintro, $coursemoduleid) {
         $this->ratingallocate = $ratingallocate;
         $this->context = $context;
@@ -48,21 +56,37 @@ class ratingallocate_header implements renderable {
     }
 }
 
+/**
+ * Choice status
+ *
+ * @package mod_ratingallocate
+ */
 class ratingallocate_choice_status implements renderable {
 
+    /** @var $accesstimestop */
     public $accesstimestop;
+    /** @var $accesstimestart */
     public $accesstimestart;
+    /** @var $ispublished */
     public $ispublished;
+    /** @var $publishdate */
     public $publishdate;
+    /** @var $availablechoices */
     public $availablechoices;
+    /** @var $necessarychoices */
     public $necessarychoices;
+    /** @var $ownchoices */
     public $ownchoices;
+    /** @var $allocations */
     public $allocations;
+    /** @var $strategy */
     public $strategy;
     /** @var bool show_distribution_info specifies if the info regarding the distribution should be displayed. * */
     public $showdistributioninfo;
     /** @var bool show_user_info specifies if the current ratings of the user shoulld be renderer. * */
     public $showuserinfo;
+    /** @var $algorithmstarttime */
     public $algorithmstarttime;
+    /** @var $algorithmstatus */
     public $algorithmstatus;
 }

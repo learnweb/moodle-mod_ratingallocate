@@ -23,74 +23,254 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace ratingallocate\db;
+namespace mod_ratingallocate\db;
 
 defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Ratingallocate.
+ *
+ * @package mod_ratingallocate
+ */
 class ratingallocate {
+    /**
+     * The ratingallocate table.
+     */
     const TABLE = 'ratingallocate';
+    /**
+     * Ratingallocateid.
+     */
     const ID = 'id';
+    /**
+     * The course.
+     */
     const COURSE = 'course';
+    /**
+     * Name of the instance.
+     */
     const NAME = 'name';
+    /**
+     * Intro.
+     */
     const INTRO = 'intro';
+    /**
+     * The introformat.
+     */
     const INTROFORMAT = 'introformat';
+    /**
+     * When the instance was created.
+     */
     const TIMECREATED = 'timecreated';
+    /**
+     * Time it was modified.
+     */
     const TIMEMODIFIED = 'timemodified';
+    /**
+     * Beginning voting.
+     */
     const ACCESSTIMESTART = 'accesstimestart';
+    /**
+     * End of voting.
+     */
     const ACCESSTIMESTOP = 'accesstimestop';
+    /**
+     * Setting.
+     */
     const SETTING = 'setting';
+    /**
+     * The strategy used.
+     */
     const STRATEGY = 'strategy';
+    /**
+     * Date to publish allocation.
+     */
     const PUBLISHDATE = 'publishdate';
+    /**
+     * Wether its published.
+     */
     const PUBLISHED = 'published';
+    /**
+     * Send notification to users.
+     */
     const NOTIFICATIONSEND = 'notificationsend';
+    /**
+     * Strat time of algorithm.
+     */
     const ALGORITHMSTARTTIME = 'algorithmstarttime';
+    /**
+     * Wether algorithm is run by cron task.
+     */
     const RUNALGORITHMBYCRON = 'runalgorithmbycron';
+    /**
+     * Status of the most recent algorithm run.
+     */
     const ALGORITHMSTATUS = 'algorithmstatus';
 }
 
+/**
+ * Ratingallocate choices.
+ *
+ * @package mod_ratingallocate
+ */
 class ratingallocate_choices {
+    /**
+     * Table.
+     */
     const TABLE = 'ratingallocate_choices';
+    /**
+     * ID.
+     */
     const ID = 'id';
+    /**
+     * Ratingallocateid.
+     */
     const RATINGALLOCATEID = 'ratingallocateid';
+    /**
+     * Title of choice.
+     */
     const TITLE = 'title';
+    /**
+     * Explanation.
+     */
     const EXPLANATION = 'explanation';
+    /**
+     * Max number of users.
+     */
     const MAXSIZE = 'maxsize';
+    /**
+     * If its active.
+     */
     const ACTIVE = 'active';
+    /**
+     * Restrict visibility by groups.
+     */
     const USEGROUPS = 'usegroups';
 }
+
+/**
+ * Ratingallocate group choices.
+ *
+ * @package mod_ratingallocate
+ */
 class ratingallocate_group_choices {
+    /**
+     * Table.
+     */
     const TABLE = 'ratingallocate_group_choices';
+    /**
+     * Id.
+     */
     const ID = 'id';
+    /**
+     * Choiceid.
+     */
     const CHOICEID = 'choiceid';
+    /**
+     * Groupid.
+     */
     const GROUPID = 'groupid';
 }
 
-
+/**
+ * Ratingallocate generated groups of choices
+ *
+ * @package mod_ratingallocate
+ */
 class ratingallocate_ch_gengroups {
+    /**
+     * Table.
+     */
     const TABLE = 'ratingallocate_ch_gengroups';
+    /**
+     * Id.
+     */
     const ID = 'id';
+    /**
+     * Groupid.
+     */
     const  GROUPID = 'groupid';
+    /**
+     * Choiceid.
+     */
     const CHOICEID = 'choiceid';
 }
 
+/**
+ * Ratingallocate groupings
+ *
+ * @package mod_ratingallocate
+ */
 class ratingallocate_groupings {
+    /**
+     * Table.
+     */
     const TABLE = 'ratingallocate_groupings';
+    /**
+     * Id.
+     */
     const ID = 'id';
+    /**
+     * Ratingallocateid.
+     */
     const RATINGALLOCATEID = 'ratingallocateid';
+    /**
+     * Groupingid.
+     */
     const GROUPINGID = 'groupingid';
 }
 
+/**
+ * Ratingallocate ratings
+ *
+ * @package mod_ratingallocate
+ */
 class ratingallocate_ratings {
+    /**
+     * Table.
+     */
     const TABLE = 'ratingallocate_ratings';
+    /**
+     * Id.
+     */
     const ID = 'id';
+    /**
+     * The choiceid.
+     */
     const CHOICEID = 'choiceid';
+    /**
+     * The userid.
+     */
     const USERID = 'userid';
+    /**
+     * How the user rated the choice.
+     */
     const RATING = 'rating';
 }
 
+/**
+ * Ratingallocate allocations.
+ *
+ * @package mod_ratingallocate
+ */
 class ratingallocate_allocations {
+    /**
+     * Table.
+     */
     const TABLE = 'ratingallocate_allocations';
+    /**
+     * Id.
+     */
     const ID = 'id';
+    /**
+     * Userid.
+     */
     const USERID = 'userid';
+    /**
+     * Id of ratingallocate instance.
+     */
     const RATINGALLOCATEID = 'ratingallocateid';
+    /**
+     * Choiceid.
+     */
     const CHOICEID = 'choiceid';
 }

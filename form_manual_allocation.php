@@ -37,7 +37,13 @@ class manual_alloc_form extends moodleform {
     /** @var $ratingallocate ratingallocate */
     private $ratingallocate;
 
+    /**
+     * Constant for the action
+     */
     const FORM_ACTION = 'action';
+    /**
+     * Assign.
+     */
     const ASSIGN = 'assign';
 
     /**
@@ -47,7 +53,7 @@ class manual_alloc_form extends moodleform {
      */
     public function __construct($url, ratingallocate $ratingallocate) {
         $this->ratingallocate = $ratingallocate;
-        $url->params(array("action" => "manual_allocation"));
+        $url->params(["action" => "manual_allocation"]);
         parent::__construct($url->out(false));
         $this->definition_after_data();
     }
@@ -72,23 +78,30 @@ class manual_alloc_form extends moodleform {
         $this->render_filter();
     }
 
+    /**
+     * Render filter.
+     *
+     * @return void
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     protected function render_filter() {
         global $COURSE;
         $mform = &$this->_form;
 
         $mform->addElement('advcheckbox', 'hide_users_without_rating',
                 get_string('filter_hide_users_without_rating', RATINGALLOCATE_MOD_NAME),
-                null, array(0, 1));
+                null, [0, 1]);
         $mform->setType('show_users_with_no_rating', PARAM_BOOL);
 
         $mform->addElement('advcheckbox', 'show_alloc_necessary',
                 get_string('filter_show_alloc_necessary', RATINGALLOCATE_MOD_NAME),
-                null, array(0, 1));
+                null, [0, 1]);
         $mform->setType('show_alloc_necessary', PARAM_BOOL);
 
         // Filter by group.
         $choicegroups = $this->ratingallocate->get_all_groups_of_choices();
-        $allgroups = array();
+        $allgroups = [];
         foreach ($choicegroups as $choicegroup) {
             $allgroups[$choicegroup] = groups_get_group($choicegroup);
         }
@@ -107,6 +120,12 @@ class manual_alloc_form extends moodleform {
         $mform->registerNoSubmitButton('update_filter');
     }
 
+    /**
+     * Fill table with data.
+     * @return void
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function definition_after_data() {
         parent::definition_after_data();
         global $PAGE;
@@ -114,7 +133,7 @@ class manual_alloc_form extends moodleform {
         $mform = &$this->_form;
 
         $ratingdata = $this->ratingallocate->get_ratings_for_rateable_choices();
-        $differentratings = array();
+        $differentratings = [];
         // Add actual rating data to userdata.
         foreach ($ratingdata as $rating) {
             if ($rating->rating != null) {
@@ -177,13 +196,13 @@ class manual_alloc_form extends moodleform {
         $mform = $this->_form;
 
         // Elements in a row need a group.
-        $buttonarray = array();
+        $buttonarray = [];
 
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton2', $submit2label);
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
         $buttonarray[] = &$mform->createElement('cancel');
 
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
         $mform->setType('buttonar', PARAM_RAW);
         $mform->closeHeaderBefore('buttonar');
     }

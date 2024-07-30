@@ -26,21 +26,41 @@
  */
 
 // Namespace is mandatory!
-namespace ratingallocate\strategy_lickert;
+namespace mod_ratingallocate\strategy_lickert;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 require_once(dirname(__FILE__) . '/strategy_template_options.php');
 
+/**
+ * Strategy
+ *
+ * @package mod_ratingallocate
+ */
 class strategy extends \strategytemplate_options {
 
+    /**
+     * Strategyid.
+     */
     const STRATEGYID = 'strategy_lickert';
+    /**
+     * Max NO.
+     */
     const MAXNO = 'maxno';
+    /**
+     * Countlickert.
+     */
     const COUNTLICKERT = 'countlickert';
+    /** @var mixed $maxlickert */
     private $maxlickert;
 
-    public function __construct(array $strategysettings = null) {
+    /**
+     * Constructor.
+     * @param array|null $strategysettings
+     * @throws \coding_exception
+     */
+    public function __construct(?array $strategysettings = null) {
         parent::__construct($strategysettings);
         if (isset($strategysettings) && array_key_exists(self::COUNTLICKERT, $strategysettings)) {
             $this->maxlickert = $strategysettings[self::COUNTLICKERT];
@@ -49,56 +69,81 @@ class strategy extends \strategytemplate_options {
         }
     }
 
+    /**
+     * Get strategy id.
+     * @return string
+     */
     public function get_strategyid() {
         return self::STRATEGYID;
     }
 
+    /**
+     * Get static settingfields of strategy.
+     * @return array[]
+     * @throws \coding_exception
+     */
     public function get_static_settingfields() {
-        return array(
-                self::MAXNO => array(// Maximum count of 'No'.
+        return [
+                self::MAXNO => [// Maximum count of 'No'.
                         'int',
                         get_string(self::STRATEGYID . '_setting_maxno', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::MAXNO),
-                        null
-                ),
-                self::COUNTLICKERT => array(// How many fields there are.
+                        null,
+                ],
+                self::COUNTLICKERT => [// How many fields there are.
                         'int',
                         get_string(self::STRATEGYID . '_setting_maxlickert', RATINGALLOCATE_MOD_NAME),
                         $this->get_settings_value(self::COUNTLICKERT),
-                        null
-                )
-        );
+                        null,
+                ],
+        ];
     }
 
+    /**
+     * Get dynamic settingfields of strategy.
+     * @return array|array[]
+     * @throws \coding_exception
+     */
     public function get_dynamic_settingfields() {
-        $output = array();
+        $output = [];
         foreach (array_keys($this->get_choiceoptions()) as $id) {
-            $output[$id] = array(
+            $output[$id] = [
                     'text',
                     get_string('strategy_settings_label', RATINGALLOCATE_MOD_NAME, $this->get_settings_default_value($id)),
                     null,
-                    $this->get_settings_default_value($id)
-            );
+                    $this->get_settings_default_value($id),
+            ];
         }
         $output += $this->get_default_strategy_option();
         return $output;
     }
 
+    /**
+     * Get choiceoptions.
+     *
+     * @return array
+     */
     public function get_choiceoptions() {
-        $options = array();
+        $options = [];
         for ($i = 0; $i <= $this->maxlickert; $i++) {
             $options[$i] = $this->get_settings_value($i);
         }
         return $options;
     }
 
+    /**
+     * Get default settings.
+     *
+     * @return array
+     * @throws \coding_exception
+     */
     public function get_default_settings() {
-        $defaults = array(
+        $defaults = [
                 self::MAXNO => 3,
                 self::COUNTLICKERT => 4,
                 0 => get_string(self::STRATEGYID . '_rating_exclude', RATINGALLOCATE_MOD_NAME, "0"),
                 'default' => $this->maxlickert,
-        );
+        ];
 
         for ($i = 1; $i <= $this->maxlickert; $i++) {
             if ($i == $this->maxlickert) {
@@ -110,32 +155,60 @@ class strategy extends \strategytemplate_options {
         return $defaults;
     }
 
+    /**
+     * Get validation info.
+     *
+     * @return array[]
+     */
     protected function getvalidationinfo() {
-        return array(self::MAXNO => array(true, 0),
-                self::COUNTLICKERT => array(true, 2)
-        );
+        return [self::MAXNO => [true, 0],
+                self::COUNTLICKERT => [true, 2],
+        ];
     }
 }
 
 // Register with the strategymanager.
 \strategymanager::add_strategy(strategy::STRATEGYID);
 
+/**
+ * View form.
+ *
+ * @package mod_ratingallocate
+ */
 class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform {
     // Already specified by parent class.
 
+    /**Get maximal amount how many times a user is allowed to rate a choice with "NO".
+     * Create new strategy.
+     * @param $strategyoptions
+     * @return strategy
+     * @throws \coding_exception
+     */
     protected function construct_strategy($strategyoptions) {
         return new strategy($strategyoptions);
     }
 
+    /**
+     * Get choice options.
+     * @return mixed
+     */
     public function get_choiceoptions() {
         $params = $this->get_strategysetting(strategy::COUNTLICKERT);
         return $this->get_strategy()->get_choiceoptions($params);
     }
 
+    /**
+     *
+     * @return \the|null
+     */
     protected function get_max_amount_of_nos() {
         return $this->get_strategysetting(strategy::MAXNO);
     }
 
+    /**
+     * Get string identifier of max_nos.
+     * @return string
+     */
     protected function get_max_nos_string_identyfier() {
         return strategy::STRATEGYID . '_max_no';
     }

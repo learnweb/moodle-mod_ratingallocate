@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Privacy provider tests.
  *
@@ -37,7 +38,8 @@ require_once(dirname(__FILE__) . '/generator/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \classes\privacy\provider
  */
-class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provider_testcase {
+final class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provider_testcase {
+    /** @var \mod_ratingallocate_generated_module $testmodule */
     protected $testmodule;
 
     /**
@@ -51,7 +53,7 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
     /**
      * Test for provider::get_metadata().
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new collection('mod_ratingallocate');
         $newcollection = provider::get_metadata($collection);
         $itemcollection = $newcollection->get_collection();
@@ -81,7 +83,7 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
     /**
      * Test for provider::get_contexts_for_userid().
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $cm = get_coursemodule_from_instance('ratingallocate', $this->testmodule->moddb->id);
 
         $contextlist = provider::get_contexts_for_userid($this->testmodule->students[0]->id);
@@ -94,7 +96,7 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
     /**
      * Test for provider::export_user_data().
      */
-    public function test_export_for_context() {
+    public function test_export_for_context(): void {
         $cm = get_coursemodule_from_instance('ratingallocate', $this->testmodule->moddb->id);
         $cmcontext = \context_module::instance($cm->id);
 
@@ -107,7 +109,7 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         $cm = get_coursemodule_from_instance('ratingallocate', $this->testmodule->moddb->id);
 
@@ -131,7 +133,7 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $cm = get_coursemodule_from_instance('ratingallocate', $this->testmodule->moddb->id);
@@ -162,7 +164,7 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
     /**
      * Test for provider::get_users_in_context().
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         global $DB;
         $cm = get_coursemodule_from_instance('ratingallocate', $this->testmodule->moddb->id);
 
@@ -196,17 +198,17 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
     /**
      * Test for provider::delete_for_users_in_context().
      */
-    public function test_delete_for_users_in_context() {
+    public function test_delete_for_users_in_context(): void {
         global $DB;
         $testmodule2 = new \mod_ratingallocate_generated_module($this);
         $cm = get_coursemodule_from_instance('ratingallocate', $this->testmodule->moddb->id);
 
-        $params1 = array(
-                'ratingallocateid' => $this->testmodule->moddb->id
-        );
-        $params2 = array(
-                'ratingallocateid' => $testmodule2->moddb->id
-        );
+        $params1 = [
+                'ratingallocateid' => $this->testmodule->moddb->id,
+        ];
+        $params2 = [
+                'ratingallocateid' => $testmodule2->moddb->id,
+        ];
 
         // Before deletion, we should have 20 responses and 10 allocations in instance 1.
         $count = $DB->count_records_select('ratingallocate_ratings',
@@ -226,7 +228,7 @@ class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests\provi
         // Delete data based on context.
         $cmcontext = \context_module::instance($cm->id);
 
-        $userlist = array();
+        $userlist = [];
         // Select one unassigned student.
         $userlist[] = $DB->get_record_sql("SELECT ra.userid
             FROM {ratingallocate_choices} ch JOIN

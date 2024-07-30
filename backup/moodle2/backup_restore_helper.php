@@ -15,32 +15,55 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
+ * Backup restore helper.
+ *
+ * @package mod_ratingallocate
  * @subpackage backup-moodle2
  * @copyright  2014 C. Usener
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Get fields for tableclass
+ *
+ * @param $class
+ * @return array
+ * @throws ReflectionException
+ */
 function get_fields_for_tableclass($class) {
     $class = new ReflectionClass($class);
     $constants = $class->getConstants();
-    $keystoremove = array('ID', 'TABLE');
+    $keystoremove = ['ID', 'TABLE'];
     foreach ($constants as $key => $value) {
-        if (count(array_intersect(array($key), $keystoremove)) > 0) {
+        if (count(array_intersect([$key], $keystoremove)) > 0) {
             unset($constants[$key]);
         }
     }
     return array_values($constants);
 }
 
+/**
+ * Get tablename for tableclass.
+ *
+ * @param $class
+ * @return mixed
+ * @throws ReflectionException
+ */
 function get_tablename_for_tableclass($class) {
     $class = new ReflectionClass($class);
     $constants = $class->getConstants();
     return $constants['TABLE'];
 }
 
+/**
+ * Get id for tableclass.
+ *
+ * @param $class
+ * @return array
+ * @throws ReflectionException
+ */
 function get_id_for_tableclass($class) {
     $class = new ReflectionClass($class);
     $constants = $class->getConstants();
-    return array($constants['ID']);
+    return [$constants['ID']];
 }

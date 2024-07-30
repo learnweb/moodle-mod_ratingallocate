@@ -34,11 +34,25 @@ require_once(dirname(__FILE__) . '/locallib.php');
  * Module instance settings form
  */
 class mod_ratingallocate_mod_form extends moodleform_mod {
+    /**
+     * Mod_name.
+     */
     const MOD_NAME = 'ratingallocate';
+    /**
+     * Choice placeholder.
+     */
     const CHOICE_PLACEHOLDER_IDENTIFIER = 'placeholder_for_choices';
+    /**
+     * Strategy options.
+     */
     const STRATEGY_OPTIONS = 'strategyopt';
+    /**
+     * Strategyoptions placeholder.
+     */
     const STRATEGY_OPTIONS_PLACEHOLDER = 'placeholder_strategyopt';
+    /** @var int $newchoicecounter */
     private $newchoicecounter = 0;
+    /** @var lang_string|string $msgerrorrequired */
     private $msgerrorrequired;
 
     /**
@@ -72,9 +86,9 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field.
-        $mform->addElement('text', 'name', get_string('ratingallocatename', self::MOD_NAME), array(
-                'size' => '64'
-        ));
+        $mform->addElement('text', 'name', get_string('ratingallocatename', self::MOD_NAME), [
+                'size' => '64',
+        ]);
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -90,7 +104,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         // -------------------------------------------------------------------------------
         $elementname = 'strategy';
         // Define options for select.
-        $selectoptions = array();
+        $selectoptions = [];
         foreach (\strategymanager::get_strategies() as $strategy) {
             $selectoptions[$strategy] = get_string($strategy . '_name', self::MOD_NAME);
         }
@@ -112,11 +126,11 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         $elementname = 'publishdate';
         $mform->addElement('date_time_selector', $elementname, get_string($elementname, self::MOD_NAME),
-                array('optional' => true));
+               ['optional' => true]);
         $mform->setDefault($elementname, time() + 9 * 24 * 60 * 60);
 
         $elementname = 'runalgorithmbycron';
-        $mform->addElement('advcheckbox', $elementname, get_string($elementname, self::MOD_NAME), null, null, array(0, 1));
+        $mform->addElement('advcheckbox', $elementname, get_string($elementname, self::MOD_NAME), null, null, [0, 1]);
         $mform->addHelpButton($elementname, $elementname, self::MOD_NAME);
         $mform->setDefault($elementname, 1);
 
@@ -126,7 +140,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
         foreach (\strategymanager::get_strategies() as $strategy) {
             // Load strategy class.
-            $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
+            $strategyclassp = 'mod_ratingallocate\\' . $strategy . '\\strategy';
             $strategyclass = new $strategyclassp();
 
             // Add options fields.
@@ -144,6 +158,14 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
+    /**
+     * If ratings have already been submitted by users, the ratingallocate strategy can no longer
+     * be changend.
+     * @param $includeratingallocate
+     * @return array|bool
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function get_disable_strategy($includeratingallocate = false) {
         $update = $this->optional_param('update', 0, PARAM_INT);
         if ($update != 0) {
@@ -151,7 +173,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $courseid = $update;
             $cm         = get_coursemodule_from_id('ratingallocate', $courseid, 0, false, MUST_EXIST);
             $course     = get_course($cm->course);
-            $ratingallocatedb  = $DB->get_record('ratingallocate', array('id' => $cm->instance), '*', MUST_EXIST);
+            $ratingallocatedb  = $DB->get_record('ratingallocate', ['id' => $cm->instance], '*', MUST_EXIST);
             $context = context_module::instance($cm->id);
             $ratingallocate = new ratingallocate($ratingallocatedb, $course, $cm, $context);
             $disablestrategy = $ratingallocate->get_number_of_active_raters() > 0;
@@ -164,7 +186,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         } else {
             return [
                 'ratingallocate' => $ratingallocate,
-                'disable_strategy' => $disablestrategy
+                'disable_strategy' => $disablestrategy,
             ];
         }
     }
@@ -202,7 +224,12 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->hideIf($stratfieldid, 'strategy', 'neq', $strategyid);
     }
 
-    // Override if you need to setup the form depending on current values.
+    /**
+     * Override if you need to setup the form depending on current values.
+     *
+     * @return void
+     * @throws coding_exception
+     */
     public function definition_after_data() {
         parent::definition_after_data();
         $mform = &$this->_form;
@@ -218,7 +245,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         // Add dynamic settings fields.
         foreach (\strategymanager::get_strategies() as $strategy) {
             // Load strategy class.
-            $strategyclassp = 'ratingallocate\\' . $strategy . '\\strategy';
+            $strategyclassp = 'mod_ratingallocate\\' . $strategy . '\\strategy';
             if (isset($allstrategyoptions) && array_key_exists($strategy, $allstrategyoptions)) {
                 $strategyclass = new $strategyclassp($allstrategyoptions[$strategy]);
             } else {
@@ -276,7 +303,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             // User has to select one strategy.
             $errors['strategy'] = get_string('strategy_not_specified', self::MOD_NAME);
         } else {
-            $strategyclassp = 'ratingallocate\\' . $data['strategy'] . '\\strategy';
+            $strategyclassp = 'mod_ratingallocate\\' . $data['strategy'] . '\\strategy';
             if (array_key_exists($data['strategy'], $data['strategyopt'])) {
                 $strategyclass = new $strategyclassp($data['strategyopt'][$data['strategy']]);
                 $settingerrors = $strategyclass->validate_settings();

@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 
@@ -24,7 +25,7 @@ require_once(dirname(__FILE__) . '/../locallib.php');
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 /**
  * mod_ratingallocate backup restore procedure test
@@ -36,9 +37,9 @@ use ratingallocate\db as this_db;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \backup\moodle2
  */
-class backup_restore_test extends \advanced_testcase {
+final class backup_restore_test extends \advanced_testcase {
 
-    public function test_backup_restore() {
+    public function test_backup_restore(): void {
         // TODO this test does not check if userids are correctly mapped.
         global $CFG, $DB;
         \core_php_time_limit::raise();
@@ -74,25 +75,25 @@ class backup_restore_test extends \advanced_testcase {
 
         $unsetvalues = function($elem1, $elem2, $varname) {
             $this->assertNotEquals($elem1->{$varname}, $elem2->{$varname});
-            $result = array($elem1->{$varname}, $elem2->{$varname});
+            $result = [$elem1->{$varname}, $elem2->{$varname}];
             unset($elem1->{$varname});
             unset($elem2->{$varname});
             return $result;
         };
 
         $ratingallocate1 = $DB->get_record(this_db\ratingallocate::TABLE,
-                array(this_db\ratingallocate::COURSE => $course1->id));
+               [this_db\ratingallocate::COURSE => $course1->id]);
         $ratingallocate2 = $DB->get_record(this_db\ratingallocate::TABLE,
-                array(this_db\ratingallocate::COURSE => $course2->id));
+               [this_db\ratingallocate::COURSE => $course2->id]);
         list($ratingid1, $ratingid2) = $unsetvalues($ratingallocate1, $ratingallocate2, this_db\ratingallocate::ID);
         $unsetvalues($ratingallocate1, $ratingallocate2, this_db\ratingallocate::COURSE);
         $this->assertEquals($ratingallocate1, $ratingallocate2);
 
         $choices1 = $DB->get_records(this_db\ratingallocate_choices::TABLE,
-                array(this_db\ratingallocate_choices::RATINGALLOCATEID => $ratingid1),
+               [this_db\ratingallocate_choices::RATINGALLOCATEID => $ratingid1],
                 this_db\ratingallocate_choices::TITLE);
         $choices2 = $DB->get_records(this_db\ratingallocate_choices::TABLE,
-                array(this_db\ratingallocate_choices::RATINGALLOCATEID => $ratingid2),
+                [this_db\ratingallocate_choices::RATINGALLOCATEID => $ratingid2],
                 this_db\ratingallocate_choices::TITLE);
         $this->assertCount(2, $choices1);
         $this->assertCount(2, array_values($choices2));
@@ -106,10 +107,10 @@ class backup_restore_test extends \advanced_testcase {
             $this->assertEquals($choice1, $choice2);
             // Compare ratings for this choice.
             $ratings1 = array_values($DB->get_records(this_db\ratingallocate_ratings::TABLE,
-                    array(this_db\ratingallocate_ratings::CHOICEID => $choiceid1),
+                    [this_db\ratingallocate_ratings::CHOICEID => $choiceid1],
                     this_db\ratingallocate_ratings::USERID));
             $ratings2 = array_values($DB->get_records(this_db\ratingallocate_ratings::TABLE,
-                    array(this_db\ratingallocate_ratings::CHOICEID => $choiceid2),
+                    [this_db\ratingallocate_ratings::CHOICEID => $choiceid2],
                     this_db\ratingallocate_ratings::USERID));
             $this->assertEquals(count($ratings1), count($ratings2));
             $ratings2copy = $ratings2;
@@ -124,10 +125,10 @@ class backup_restore_test extends \advanced_testcase {
 
         // Compare allocations.
         $allocations1 = $DB->get_records(this_db\ratingallocate_allocations::TABLE,
-                array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $ratingid1),
+                [this_db\ratingallocate_allocations::RATINGALLOCATEID => $ratingid1],
                 this_db\ratingallocate_allocations::USERID);
         $allocations2 = $DB->get_records(this_db\ratingallocate_allocations::TABLE,
-                array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $ratingid2),
+                [this_db\ratingallocate_allocations::RATINGALLOCATEID => $ratingid2],
                 this_db\ratingallocate_allocations::USERID);
         // Number of allocations is equal.
         $this->assertCount(count($genmod->allocations), $allocations2);

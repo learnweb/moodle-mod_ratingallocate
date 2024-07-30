@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 
@@ -20,7 +21,7 @@ global $CFG;
 require_once(dirname(__FILE__) . '/generator/lib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 /**
  * mod_ratingallocate generator tests
@@ -32,9 +33,9 @@ use ratingallocate\db as this_db;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \locallib
  */
-class locallib_test extends \advanced_testcase {
+final class locallib_test extends \advanced_testcase {
 
-    public function test_simple() {
+    public function test_simple(): void {
         global $DB;
         \core_php_time_limit::raise();
         $this->resetAfterTest();
@@ -48,7 +49,7 @@ class locallib_test extends \advanced_testcase {
         // There should not be any module for that course first.
         $this->assertFalse(
                 $DB->record_exists(this_db\ratingallocate::TABLE,
-                        array(this_db\ratingallocate::COURSE => $course->id)
+                       [this_db\ratingallocate::COURSE => $course->id]
                 )
         );
 
@@ -66,7 +67,7 @@ class locallib_test extends \advanced_testcase {
         // Create activity.
         $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, $moduledata, $choicedata);
         $this->assertEquals(2, $DB->count_records(this_db\ratingallocate_choices::TABLE),
-                "Failure, debug info: " . implode(",", array(this_db\ratingallocate_choices::ID => $mod->id)));
+                "Failure, debug info: " . implode(",", [this_db\ratingallocate_choices::ID => $mod->id]));
 
         $student1 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         $student2 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
@@ -80,11 +81,11 @@ class locallib_test extends \advanced_testcase {
         $choice2 = end($choices);
 
         // Create preferences.
-        $prefersnon = array();
+        $prefersnon = [];
         foreach ($choices as $choice) {
-            $prefersnon[$choice->{this_db\ratingallocate_choices::ID}] = array(
+            $prefersnon[$choice->{this_db\ratingallocate_choices::ID}] = [
                     this_db\ratingallocate_ratings::CHOICEID => $choice->{this_db\ratingallocate_choices::ID},
-                    this_db\ratingallocate_ratings::RATING => 0);
+                    this_db\ratingallocate_ratings::RATING => 0];
         }
         $prefersfirst = json_decode(json_encode($prefersnon), true);
         $prefersfirst[$choice1->{this_db\ratingallocate_choices::ID}][this_db\ratingallocate_ratings::RATING] = true;
@@ -111,7 +112,7 @@ class locallib_test extends \advanced_testcase {
 
         $this->assertEquals(4, $numallocations, 'There should be only 4 allocations, since there are only 4 choices.');
         $allocations = $DB->get_records(this_db\ratingallocate_allocations::TABLE,
-                array(this_db\ratingallocate_allocations::RATINGALLOCATEID => $mod->{this_db\ratingallocate::ID}),
+                [this_db\ratingallocate_allocations::RATINGALLOCATEID => $mod->{this_db\ratingallocate::ID}],
                 '');
 
         $mapuserid = function($elem) {
@@ -144,6 +145,13 @@ class locallib_test extends \advanced_testcase {
             . 'a student, so this one should not have been distributed.');
     }
 
+    /**
+     * Filter allocations by choice
+     *
+     * @param $allocations
+     * @param $choiceid
+     * @return array
+     */
     private static function filter_allocations_by_choice($allocations, $choiceid) {
         $filterchoiceid = function($elem) use ($choiceid) {
             return $elem->{this_db\ratingallocate_allocations::CHOICEID} == $choiceid;
@@ -155,7 +163,7 @@ class locallib_test extends \advanced_testcase {
      * Default data has two choices but only one is active.
      * Test if count of rateable choices is 1.
      */
-    public function test_get_ratable_choices() {
+    public function test_get_ratable_choices(): void {
         $record = \mod_ratingallocate_generator::get_default_values();
         $testmodule = new \mod_ratingallocate_generated_module($this, $record);
         $ratingallocate =
@@ -166,9 +174,9 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test if option titles are returned according to the default values
      */
-    public function test_get_option_titles_default() {
-        $expectedresult = array(1 => 'Accept', 0 => 'Deny'); // Depends on language file.
-        $ratings = array(0, 1, 1, 1, 0);
+    public function test_get_option_titles_default(): void {
+        $expectedresult = [1 => 'Accept', 0 => 'Deny']; // Depends on language file.
+        $ratings = [0, 1, 1, 1, 0];
 
         $record = \mod_ratingallocate_generator::get_default_values();
         $testmodule = new \mod_ratingallocate_generated_module($this, $record);
@@ -182,9 +190,9 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test if option titles are returned according to defined custom values
      */
-    public function test_get_option_titles_custom() {
-        $expectedresult = array(1 => 'Ja1234', 0 => 'Nein1234'); // Test data.
-        $ratings = array(1, 1, 1, 0, 1, 1);
+    public function test_get_option_titles_custom(): void {
+        $expectedresult = [1 => 'Ja1234', 0 => 'Nein1234']; // Test data.
+        $ratings = [1, 1, 1, 0, 1, 1];
 
         $record = \mod_ratingallocate_generator::get_default_values();
         $record['strategyopt']['strategy_yesno'] = $expectedresult;
@@ -199,9 +207,9 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test if option titles are returned according to defined custom values, if ratings consist of just one rating
      */
-    public function test_get_option_titles_custom1() {
-        $expectedresult = array(1 => 'Ja1234'); // Test data.
-        $ratings = array(1, 1, 1, 1, 1);
+    public function test_get_option_titles_custom1(): void {
+        $expectedresult = [1 => 'Ja1234']; // Test data.
+        $ratings = [1, 1, 1, 1, 1];
 
         $record = \mod_ratingallocate_generator::get_default_values();
         $record['strategyopt']['strategy_yesno'] = $expectedresult;
@@ -216,9 +224,9 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test if option titles are returned according to a mixture of defined and custom values,
      */
-    public function test_get_option_titles_mixed() {
-        $settings = array(1 => 'Ja1234'); // Test data.
-        $ratings = array(0, 1, 1, 1, 1);
+    public function test_get_option_titles_mixed(): void {
+        $settings = [1 => 'Ja1234']; // Test data.
+        $ratings = [0, 1, 1, 1, 1];
         $expectedresult = $settings;
         $expectedresult[0] = 'Deny'; // Depends on language file.
 
@@ -232,7 +240,7 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals($expectedresult, $result);
     }
 
-    public function test_reset_userdata() {
+    public function test_reset_userdata(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -244,40 +252,40 @@ class locallib_test extends \advanced_testcase {
 
         $this->setUser($teacher);
 
-        $choices = array(
-            array(
+        $choices = [
+            [
                 'title' => 'C1',
                 'maxsize' => '1',
                 'active' => '1',
-            ),
-            array(
+            ],
+            [
                 'title' => 'C2',
                 'maxsize' => '1',
                 'active' => '1',
-            )
-        );
-        $ratings = array(
-            $student1->id => array(
-                array(
+            ],
+        ];
+        $ratings = [
+            $student1->id => [
+                [
                     'choice' => 'C1',
-                    'rating' => 1
-                ),
-                array(
+                    'rating' => 1,
+                ],
+                [
                     'choice' => 'C2',
-                    'rating' => 0
-                )
-            ),
-            $student2->id => array(
-                array(
+                    'rating' => 0,
+                ],
+            ],
+            $student2->id => [
+                [
                     'choice' => 'C1',
-                    'rating' => 0
-                ),
-                array(
+                    'rating' => 0,
+                ],
+                [
                     'choice' => 'C2',
-                    'rating' => 1
-                )
-            )
-        );
+                    'rating' => 1,
+                ],
+            ],
+        ];
 
         // Create ratingallocate instance.
         $ratingallocate = \mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this, $choices,
@@ -291,8 +299,16 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals(2, count($ratingallocate->get_allocations()));
 
         // Keep dates for comparison.
-        $accesstimestart = $DB->get_record('ratingallocate', ['id' => $ratingallocate->get_ratingallocateid()], 'accesstimestart')->accesstimestart;
-        $accesstimestop = $DB->get_record('ratingallocate', ['id' => $ratingallocate->get_ratingallocateid()], 'accesstimestop')->accesstimestop;
+        $accesstimestart = $DB->get_record(
+            'ratingallocate',
+            ['id' => $ratingallocate->get_ratingallocateid()],
+            'accesstimestart'
+        )->accesstimestart;
+        $accesstimestop = $DB->get_record(
+            'ratingallocate',
+            ['id' => $ratingallocate->get_ratingallocateid()],
+            'accesstimestop'
+        )->accesstimestop;
 
         // Now try and reset.
         $data = new \stdClass();
@@ -303,7 +319,7 @@ class locallib_test extends \advanced_testcase {
         $status = ratingallocate_reset_userdata($data);
 
         // Reload the instance data.
-        $ra = $DB->get_record('ratingallocate', array('id' => $ratingallocate->get_ratingallocateid()));
+        $ra = $DB->get_record('ratingallocate', ['id' => $ratingallocate->get_ratingallocateid()]);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate($ra);
 
         // There should be no ratings and allocations anymore.

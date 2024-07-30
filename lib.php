@@ -24,7 +24,6 @@
  * Moodle is performing actions across all modules.
  *
  * @package mod_ratingallocate
- * @abstract sollte nur minimalstes, was von außen aufgerufen wird.
  * @copyright 2014 M Schulze, T Reischmann, C Usener
  * @copyright  based on code by Stefan Koegel copyright (C) 2013 Stefan Koegel
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -37,11 +36,11 @@ defined('MOODLE_INTERNAL') || die();
 define('RATINGALLOCATE_MOD_NAME', 'ratingallocate');
 define('RATINGALLOCATE_EVENT_TYPE_START', 'start');
 define('RATINGALLOCATE_EVENT_TYPE_STOP', 'stop');
-// define('NEWMODULE_ULTIMATE_ANSWER', 42);
 
 require_once(dirname(__FILE__) . '/db/db_structure.php');
+require_once(dirname(__FILE__) . '/locallib.php');
 
-use ratingallocate\db as this_db;
+use mod_ratingallocate\db as this_db;
 
 // //////////////////////////////////////////////////////////////////////////////
 // Moodle core API //
@@ -89,7 +88,7 @@ function ratingallocate_supports($feature) {
  * @param mod_ratingallocate_mod_form $mform
  * @return int The id of the newly inserted ratingallocate record
  */
-function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocate_mod_form $mform = null) {
+function ratingallocate_add_instance(stdClass $ratingallocate, ?mod_ratingallocate_mod_form $mform) {
     global $DB, $COURSE;
 
     $ratingallocate->timecreated = time();
@@ -121,7 +120,7 @@ function ratingallocate_add_instance(stdClass $ratingallocate, mod_ratingallocat
  * @param mod_ratingallocate_mod_form $mform
  * @return boolean Success/Fail
  */
-function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallocate_mod_form $mform = null) {
+function ratingallocate_update_instance(stdClass $ratingallocate, ?mod_ratingallocate_mod_form $mform) {
     global $DB;
 
     $ratingallocate->timemodified = time();
@@ -159,20 +158,20 @@ function ratingallocate_update_instance(stdClass $ratingallocate, mod_ratingallo
 function ratingallocate_delete_instance($id) {
     global $DB;
 
-    if (!$ratingallocate = $DB->get_record('ratingallocate', array(
-            'id' => $id
-    ))) {
+    if (!$ratingallocate = $DB->get_record('ratingallocate', [
+            'id' => $id,
+    ])) {
         return false;
     }
 
     // Delete any dependent records here # .
-    $DB->delete_records('ratingallocate_allocations', array(
-            'ratingallocateid' => $ratingallocate->id
-    ));
+    $DB->delete_records('ratingallocate_allocations', [
+            'ratingallocateid' => $ratingallocate->id,
+    ]);
 
-    $deleteids = array_keys($DB->get_records('ratingallocate_choices', array(
-        'ratingallocateid' => $ratingallocate->id
-            ), '', 'id'));
+    $deleteids = array_keys($DB->get_records('ratingallocate_choices', [
+        'ratingallocateid' => $ratingallocate->id,
+            ], '', 'id'));
 
     if (!empty($deleteids)) {
         list ($insql, $params) = $DB->get_in_or_equal($deleteids);
@@ -182,22 +181,22 @@ function ratingallocate_delete_instance($id) {
             'choiceid ' . $insql, $params);
     }
 
-    $DB->delete_records('ratingallocate_groupings', array(
-        'ratingallocateid' => $ratingallocate->id
-    ));
+    $DB->delete_records('ratingallocate_groupings', [
+        'ratingallocateid' => $ratingallocate->id,
+    ]);
 
     $DB->delete_records_list('ratingallocate_ratings', 'choiceid', $deleteids);
 
-    $DB->delete_records('ratingallocate_choices', array(
-            'ratingallocateid' => $ratingallocate->id
-    ));
+    $DB->delete_records('ratingallocate_choices', [
+            'ratingallocateid' => $ratingallocate->id,
+    ]);
 
     // Delete associated events.
-    $DB->delete_records('event', array('modulename' => 'ratingallocate', 'instance' => $ratingallocate->id));
+    $DB->delete_records('event', ['modulename' => 'ratingallocate', 'instance' => $ratingallocate->id]);
 
-    $DB->delete_records('ratingallocate', array(
-            'id' => $ratingallocate->id
-    ));
+    $DB->delete_records('ratingallocate', [
+            'id' => $ratingallocate->id,
+    ]);
 
     return true;
 }
@@ -245,11 +244,10 @@ function ratingallocate_print_recent_mod_activity($activity, $courseid, $detail,
 /**
  * Returns all other caps used in the module
  *
- * @example return array('moodle/site:accessallgroups');
- * @return array
+ * @return array e.g. ['moodle/site:accessallgroups']
  */
 function ratingallocate_get_extra_capabilities() {
-    return array();
+    return[];
 }
 
 // //////////////////////////////////////////////////////////////////////////////
@@ -268,7 +266,7 @@ function ratingallocate_get_extra_capabilities() {
  * @return array of [(string)filearea] => (string)description
  */
 function ratingallocate_get_file_areas($course, $cm, $context) {
-    return array();
+    return[];
 }
 
 /**
@@ -313,7 +311,7 @@ function ratingallocate_get_file_info($browser, $areas, $course, $cm, $context, 
  *
  * @package mod_ratingallocate
  */
-function ratingallocate_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options = array()) {
+function ratingallocate_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options = []) {
     global $DB, $CFG;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -380,7 +378,26 @@ function ratingallocate_extend_navigation(navigation_node $navref, stdclass $cou
  * @param navigation_node $ratingallocatenode
  *            {@link navigation_node}
  */
-function ratingallocate_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $ratingallocatenode = null) {
+function ratingallocate_extend_settings_navigation(settings_navigation $settingsnav, ?navigation_node $ratingallocatenode) {
+    $hassecondary = $settingsnav->get_page()->has_secondary_navigation();
+    if (!$context = context_module::instance($settingsnav->get_page()->cm->id, IGNORE_MISSING)) {
+        throw new \moodle_exception('badcontext');
+    }
+    if (has_capability('mod/ratingallocate:modify_choices', $context)) {
+        $choicenode = navigation_node::create(get_string('choice_navigation', RATINGALLOCATE_MOD_NAME),
+            new moodle_url('/mod/ratingallocate/view.php', ['id' => $settingsnav->get_page()->cm->id,
+                'action' => ACTION_SHOW_CHOICES]),
+            navigation_node::TYPE_CUSTOM, null, 'mod_ratingallocate_choices');
+        $ratingallocatenode->add_node($choicenode);
+    }
+
+    if (has_capability('mod/ratingallocate:start_distribution', $context)) {
+        $reportsnode = navigation_node::create(get_string('reports_group', RATINGALLOCATE_MOD_NAME),
+            new moodle_url('/mod/ratingallocate/view.php', ['id' => $settingsnav->get_page()->cm->id,
+                'action' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE]),
+            navigation_node::TYPE_CUSTOM, null, 'mod_ratingallocate_reports');
+        $ratingallocatenode->add_node($reportsnode);
+    }
 
 }
 
@@ -405,14 +422,14 @@ function ratingallocate_refresh_events($courseid = 0, $instance = null, $cm = nu
     // If we have instance information then we can just update the one event instead of updating all events.
     if (isset($instance)) {
         if (!is_object($instance)) {
-            $instance = $DB->get_record('ratingallocate', array('id' => $instance), '*', MUST_EXIST);
+            $instance = $DB->get_record('ratingallocate', ['id' => $instance], '*', MUST_EXIST);
         }
         ratingallocate_set_events($instance);
         return true;
     }
 
     if ($courseid) {
-        if (! $ratingallocates = $DB->get_records('ratingallocate', array('course' => $courseid))) {
+        if (! $ratingallocates = $DB->get_records('ratingallocate', ['course' => $courseid])) {
             return true;
         }
     } else {
@@ -451,9 +468,9 @@ function ratingallocate_set_events($ratingallocate) {
 
     // Ratingallocate-accessstart calendar events.
     $eventid = $DB->get_field('event', 'id',
-        array('modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_START));
+        ['modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_START]);
 
-    $timestart = $DB->get_field('ratingallocate', 'accesstimestart', array('id' => $ratingallocate->id));
+    $timestart = $DB->get_field('ratingallocate', 'accesstimestart', ['id' => $ratingallocate->id]);
 
     if (isset($timestart) && $timestart > 0) {
         $event = new stdClass();
@@ -495,9 +512,9 @@ function ratingallocate_set_events($ratingallocate) {
 
     // Ratingallocate-accessstop calendar events.
     $eventid = $DB->get_field('event', 'id',
-        array('modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_STOP));
+        ['modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_STOP]);
 
-    $timestop = $DB->get_field('ratingallocate', 'accesstimestop', array('id' => $ratingallocate->id));
+    $timestop = $DB->get_field('ratingallocate', 'accesstimestop', ['id' => $ratingallocate->id]);
 
     if (isset($timestop) && $timestop > 0) {
         $event = new stdClass();
@@ -569,7 +586,6 @@ function mod_ratingallocate_core_is_event_visible(calendar_event $event): bool {
 /**
  * This function will update the ratingallocate module according to the event that has been modified.
  *
- * @params calendar_event, stdClass
  * @throws coding_exception
  * @throws dml_exception
  * @throws moodle_exception
@@ -669,8 +685,6 @@ function mod_ratingallocate_core_calendar_get_valid_event_timestart_range (\cale
  * This function will remove all ratings and allocations
  * and clean up any related data.
  *
- * @global object
- * @global object
  * @param $data stdClass the data submitted from the reset course.
  * @return array status array
  */
@@ -680,7 +694,7 @@ function ratingallocate_reset_userdata($data) {
     $componentstr = get_string('modulenameplural', RATINGALLOCATE_MOD_NAME);
     $status = [];
 
-    $params = array('courseid' => $data->courseid);
+    $params = ['courseid' => $data->courseid];
 
     if (!empty($data->reset_ratings_and_allocations)) {
 
@@ -707,8 +721,9 @@ function ratingallocate_reset_userdata($data) {
     if ($data->timeshift) {
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
-        shift_course_mod_dates(RATINGALLOCATE_MOD_NAME, array('accesstimestart', 'accesstimestop'), $data->timeshift, $data->courseid);
-        $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
+        shift_course_mod_dates(RATINGALLOCATE_MOD_NAME, ['accesstimestart', 'accesstimestop'], $data->timeshift, $data->courseid);
+        $status[] = ['component' => $componentstr, 'item' => get_string('datechanged'), 'error'
+        => false];
     }
 
     return $status;
@@ -749,7 +764,7 @@ function ratingallocate_reset_course_form_defaults($course) {
 function ratingallocate_get_coursemodule_info($coursemodule) {
     global $DB;
 
-    $dbparams = array('id' => $coursemodule->instance);
+    $dbparams = ['id' => $coursemodule->instance];
     if (! $ratingallocate = $DB->get_record('ratingallocate', $dbparams)) {
         return false;
     }

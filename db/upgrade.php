@@ -42,7 +42,7 @@ function xmldb_ratingallocate_upgrade($oldversion) {
     if ($oldversion < 2014103000) {
         try {
             $transaction = $DB->start_delegated_transaction();
-            $results = $DB->get_records('ratingallocate', array('publishdate_show' => 0));
+            $results = $DB->get_records('ratingallocate', ['publishdate_show' => 0]);
 
             foreach ($results as $singleresult) {
                 $singleresult->publishdate = 0;
@@ -114,7 +114,7 @@ function xmldb_ratingallocate_upgrade($oldversion) {
 
             // Set status to notstarted if the instance has no allocations; otherwise to finished.
             foreach ($results as $singleresult) {
-                $allocations = $DB->get_records('ratingallocate_allocations', array('ratingallocateid' => $singleresult->id));
+                $allocations = $DB->get_records('ratingallocate_allocations', ['ratingallocateid' => $singleresult->id]);
                 $singleresult->algorithmstatus = (count($allocations) === 0 ?
                         \mod_ratingallocate\algorithm_status::NOTSTARTED : \mod_ratingallocate\algorithm_status::FINISHED);
                 $DB->update_record('ratingallocate', $singleresult);

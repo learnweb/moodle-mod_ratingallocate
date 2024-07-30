@@ -4,16 +4,16 @@ Feature: When a teacher selects a strategy the appropriate options are displayed
   Background:
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
-      | Course 1 | C1        | 0        | 1         |
+      | Course 1 | CO1        | 0        | 1         |
     And the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
     And the following "course enrolments" exist:
       | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
+      | teacher1 | CO1     | editingteacher |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Fair Allocation" to section "1"
+    And I add a ratingallocate to course "Course 1" section "1"
 
   @javascript
   Scenario: The correct options are displayed for the default strategy (Yes-No)
