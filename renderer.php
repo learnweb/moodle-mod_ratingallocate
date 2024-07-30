@@ -800,7 +800,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         // Count the number of allocations with a specific rating.
         $distributiondata = [];
 
-        $memberships = $ratingallocate->get_allocations();
+        $memberships = $ratingallocate->get_valid_allocations();
 
         foreach ($memberships as $id => $membership) {
             $rating = $membership->rating;

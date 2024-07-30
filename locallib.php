@@ -1354,11 +1354,15 @@ class ratingallocate {
      * @return int
      */
     public function get_number_of_active_raters() {
+        $raters = array_map(function($rater) {
+            return $rater->id;
+        }, $this->get_raters_in_course());
         $sql = 'SELECT COUNT(DISTINCT ra_ratings.userid) AS number
                 FROM {ratingallocate} ra INNER JOIN {ratingallocate_choices} ra_choices
                 ON ra.id = ra_choices.ratingallocateid INNER JOIN {ratingallocate_ratings} ra_ratings
                 ON ra_choices.id = ra_ratings.choiceid
-                WHERE ra.course = :courseid AND ra.id = :ratingallocateid';
+                WHERE ra.course = :courseid AND ra.id = :ratingallocateid
+                AND ra_ratings.userid IN ( ' . implode(',', $raters) . ' )';
         $numberofratersfromdb = $this->db->get_field_sql($sql, [
                 'courseid' => $this->course->id, 'ratingallocateid' => $this->ratingallocateid]);
         return (int) $numberofratersfromdb;
@@ -1603,6 +1607,26 @@ class ratingallocate {
                WHERE al.ratingallocateid = :ratingallocateid AND c.active = 1';
         $records = $this->db->get_records_sql($query, [
                 'ratingallocateid' => $this->ratingallocateid,
+        ]);
+        return $records;
+    }
+
+    /**
+     * Returns the allocation for each ENROLLED user. The keys of the returned array contain the userids.
+     * @return array all allocation objects that belong this ratingallocate
+     */
+    public function get_valid_allocations() {
+        $raters = array_map(function($rater) {
+            return $rater->id;
+        }, $this->get_raters_in_course());
+        $query = 'SELECT al.userid, al.*, r.rating
+                FROM {ratingallocate_allocations} al
+           LEFT JOIN {ratingallocate_choices} c ON al.choiceid = c.id
+           LEFT JOIN {ratingallocate_ratings} r ON al.choiceid = r.choiceid AND al.userid = r.userid
+               WHERE al.ratingallocateid = :ratingallocateid AND c.active = 1
+               AND al.userid IN ( ' . implode(',', $raters) . ' )';
+        $records = $this->db->get_records_sql($query, [
+            'ratingallocateid' => $this->ratingallocateid,
         ]);
         return $records;
     }
