@@ -1738,22 +1738,20 @@ class ratingallocate {
      */
     public function get_users_with_ratings() {
 
+        $raters = array_map(
+            function ($rater) {
+                return $rater->id;
+            },
+            $this->get_raters_in_course());
+
         $sql = "SELECT DISTINCT r.userid
                 FROM {ratingallocate_choices} c
                 JOIN {ratingallocate_ratings} r
                   ON c.id = r.choiceid
-               WHERE c.ratingallocateid = :ratingallocateid AND c.active = 1 AND r.userid IN ( :ratersincourse )";
+               WHERE c.ratingallocateid = :ratingallocateid AND c.active = 1 AND r.userid IN (" . implode(",", $raters) . ") ";
 
         return $this->db->get_records_sql($sql, [
                 'ratingallocateid' => $this->ratingallocateid,
-                'ratersincourse' => implode(
-                    " , ",
-                    array_map(
-                        function ($rater) {
-                            return $rater->id;
-                        },
-                        $this->get_raters_in_course())
-                ),
         ]);
 
     }
