@@ -75,7 +75,7 @@ final class mod_generator_test extends \advanced_testcase {
                 'runalgorithmbycron' => '1',
                 'completionvote' => '0',
                 'completionallocation' => '0',
-        );
+        ];
 
         $this->assertEquals(json_decode(json_encode($expectedvaluesdb, false)), reset($records));
         // Must have two choices.
