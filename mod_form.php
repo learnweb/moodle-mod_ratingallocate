@@ -351,6 +351,12 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         return [$this->get_suffixed_name('vote'), $this->get_suffixed_name('allocation')];
     }
 
+    /**
+     * Returns the suffixed name for custom completion elements.
+     *
+     * @param string $fieldname
+     * @return string
+     */
     protected function get_suffixed_name(string $fieldname): string {
         // Replace _ratingallocate with $this->get_suffix() for Moodle 4.3 or later.
         return 'completion' . $fieldname . '_ratingallocate';

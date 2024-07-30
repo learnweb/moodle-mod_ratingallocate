@@ -73,7 +73,7 @@ class custom_completion extends activity_custom_completion {
     public static function get_defined_custom_rules(): array {
         return [
             'completionvote',
-            'completionallocation'
+            'completionallocation',
         ];
     }
 
@@ -85,7 +85,7 @@ class custom_completion extends activity_custom_completion {
     public function get_custom_rule_descriptions(): array {
         return [
             'completionvote' => get_string('completionvote_desc', RATINGALLOCATE_MOD_NAME),
-            'completionallocation' => get_string('completionallocation_desc', RATINGALLOCATE_MOD_NAME)
+            'completionallocation' => get_string('completionallocation_desc', RATINGALLOCATE_MOD_NAME),
         ];
     }
 
@@ -98,7 +98,7 @@ class custom_completion extends activity_custom_completion {
         return [
             'completionview',
             'completionvote',
-            'completionallocation'
+            'completionallocation',
         ];
     }
 }

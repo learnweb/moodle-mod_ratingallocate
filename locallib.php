@@ -187,7 +187,7 @@ class ratingallocate {
 
     /**
      * Returns all users enrolled in the course the ratingallocate is in, who were able to access the activity
-     * @returns Array of user records
+     * @return Array of user records
      * @throws moodle_exception
      */
     public function get_raters_in_course(): array {

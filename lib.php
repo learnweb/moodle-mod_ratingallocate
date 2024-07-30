@@ -764,6 +764,7 @@ function ratingallocate_reset_course_form_defaults($course) {
  * @param stdClass $coursemodule The coursemodule object (record).
  * @return cached_cm_info An object on information that the courses
  *                        will know about (most noticeably, an icon).
+ * @throws dml_exception
  */
 function ratingallocate_get_coursemodule_info($coursemodule) {
     global $DB;
