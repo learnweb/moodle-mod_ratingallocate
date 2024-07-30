@@ -401,7 +401,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         parent::data_postprocessing($data);
         // Turn off completion settings if the checkboxes aren't ticked.
         if (!empty($data->completionunlocked)) {
-            $completion = $data->{'completion' . $this->get_suffix()};
+            $completion = $data->{'completion_ratingallocate'};
             $autocompletion = !empty($completion) && $completion == COMPLETION_TRACKING_AUTOMATIC;
             if (empty($data->{$this->get_suffixed_name('vote')}) || !$autocompletion) {
                 $data->{$this->get_suffixed_name('vote')} = 0;
