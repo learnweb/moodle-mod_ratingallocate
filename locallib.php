@@ -1577,12 +1577,16 @@ class ratingallocate {
      * @throws dml_exception
      */
     public function get_choices_with_allocationcount() {
+        $raters = array_map(function($rater) {
+            return $rater->id;
+        }, $this->get_raters_in_course());
         $sql = 'SELECT c.*, al.usercount
             FROM {ratingallocate_choices} c
             LEFT JOIN (
                 SELECT choiceid, count( userid ) AS usercount
                 FROM {ratingallocate_allocations}
                 WHERE ratingallocateid =:ratingallocateid1
+                AND userid IN ( ' . implode(',', $raters) . ' )
                 GROUP BY choiceid
             ) AS al ON c.id = al.choiceid
             WHERE c.ratingallocateid =:ratingallocateid and c.active = :active';
@@ -1600,25 +1604,11 @@ class ratingallocate {
      * @return array all allocation objects that belong this ratingallocate
      */
     public function get_allocations() {
-        $query = 'SELECT al.userid, al.*, r.rating
-                FROM {ratingallocate_allocations} al
-           LEFT JOIN {ratingallocate_choices} c ON al.choiceid = c.id
-           LEFT JOIN {ratingallocate_ratings} r ON al.choiceid = r.choiceid AND al.userid = r.userid
-               WHERE al.ratingallocateid = :ratingallocateid AND c.active = 1';
-        $records = $this->db->get_records_sql($query, [
-                'ratingallocateid' => $this->ratingallocateid,
-        ]);
-        return $records;
-    }
 
-    /**
-     * Returns the allocation for each ENROLLED user. The keys of the returned array contain the userids.
-     * @return array all allocation objects that belong this ratingallocate
-     */
-    public function get_valid_allocations() {
         $raters = array_map(function($rater) {
             return $rater->id;
         }, $this->get_raters_in_course());
+
         $query = 'SELECT al.userid, al.*, r.rating
                 FROM {ratingallocate_allocations} al
            LEFT JOIN {ratingallocate_choices} c ON al.choiceid = c.id
@@ -1626,7 +1616,7 @@ class ratingallocate {
                WHERE al.ratingallocateid = :ratingallocateid AND c.active = 1
                AND al.userid IN ( ' . implode(',', $raters) . ' )';
         $records = $this->db->get_records_sql($query, [
-            'ratingallocateid' => $this->ratingallocateid,
+                'ratingallocateid' => $this->ratingallocateid,
         ]);
         return $records;
     }
