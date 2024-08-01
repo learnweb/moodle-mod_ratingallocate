@@ -1357,12 +1357,15 @@ class ratingallocate {
         $raters = array_map(function($rater) {
             return $rater->id;
         }, $this->get_raters_in_course());
+
         $sql = 'SELECT COUNT(DISTINCT ra_ratings.userid) AS number
                 FROM {ratingallocate} ra INNER JOIN {ratingallocate_choices} ra_choices
                 ON ra.id = ra_choices.ratingallocateid INNER JOIN {ratingallocate_ratings} ra_ratings
                 ON ra_choices.id = ra_ratings.choiceid
-                WHERE ra.course = :courseid AND ra.id = :ratingallocateid
-                AND ra_ratings.userid IN ( ' . implode(',', $raters) . ' )';
+                WHERE ra.course = :courseid AND ra.id = :ratingallocateid';
+        if (!empty($raters)) {
+            $sql .= ' AND ra_ratings.userid IN ( ' . implode(',', $raters) . ' )';
+        }
         $numberofratersfromdb = $this->db->get_field_sql($sql, [
                 'courseid' => $this->course->id, 'ratingallocateid' => $this->ratingallocateid]);
         return (int) $numberofratersfromdb;
@@ -1580,13 +1583,19 @@ class ratingallocate {
         $raters = array_map(function($rater) {
             return $rater->id;
         }, $this->get_raters_in_course());
+
+        $validrater = '';
+        if (!empty($raters)) {
+            $validrater .= 'AND userid IN ( ' . implode(',', $raters) . ' )';
+        }
+
         $sql = 'SELECT c.*, al.usercount
             FROM {ratingallocate_choices} c
             LEFT JOIN (
                 SELECT choiceid, count( userid ) AS usercount
                 FROM {ratingallocate_allocations}
                 WHERE ratingallocateid =:ratingallocateid1
-                AND userid IN ( ' . implode(',', $raters) . ' )
+                ' . $validrater .'
                 GROUP BY choiceid
             ) AS al ON c.id = al.choiceid
             WHERE c.ratingallocateid =:ratingallocateid and c.active = :active';
@@ -1613,8 +1622,10 @@ class ratingallocate {
                 FROM {ratingallocate_allocations} al
            LEFT JOIN {ratingallocate_choices} c ON al.choiceid = c.id
            LEFT JOIN {ratingallocate_ratings} r ON al.choiceid = r.choiceid AND al.userid = r.userid
-               WHERE al.ratingallocateid = :ratingallocateid AND c.active = 1
-               AND al.userid IN ( ' . implode(',', $raters) . ' )';
+               WHERE al.ratingallocateid = :ratingallocateid AND c.active = 1';
+        if (!empty($raters)) {
+            $query .= ' AND al.userid IN ( ' . implode(',', $raters) . ' )';
+        }
         $records = $this->db->get_records_sql($query, [
                 'ratingallocateid' => $this->ratingallocateid,
         ]);
