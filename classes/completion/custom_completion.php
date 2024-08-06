@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace mod_ratingallocate\completion;
 
+use context_module;
 use core_completion\activity_custom_completion;
 
 /**
@@ -41,25 +42,37 @@ class custom_completion extends activity_custom_completion {
      */
     public function get_state(string $rule): int {
         global $DB;
-
+        $status = false;
         $this->validate_rule($rule);
 
         $userid = $this->userid;
-        $ratingallocateid = $this->cm->instance;
+        $course = $this->cm->get_course();
+        $instance = $this->cm->instance;
 
-        if (!$DB->get_record('ratingallocate', ['id' => $ratingallocateid])) {
-            throw new \moodle_exception('Unable to find ratingallocate instance with id ' . $ratingallocateid);
+        if (!$ratingallocaterecord= $DB->get_record('ratingallocate', ['id' => $instance])) {
+            throw new \moodle_exception('Unable to find ratingallocate instance with id ' . $instance);
         }
 
+        $modinfo = get_fast_modinfo($course, $userid)->instances['ratingallocate'][$instance];
+        $context = context_module::instance($modinfo->id);
+
+        $ratingallocate = new \ratingallocate($ratingallocaterecord, $course, $this->cm, $context);
+
         if ($rule == 'completionvote') {
+            $status = count($ratingallocate->get_rating_data_for_user($userid)) > 0;
+            /*
             $sql = "SELECT * FROM {ratingallocate_ratings} r INNER JOIN {ratingallocate_choices} c on r.choiceid=c.id " .
                 "WHERE r.userid= :userid AND c.ratingallocateid= :ratingallocateid";
             $votesofuser = $DB->get_records_sql($sql, ['userid' => $userid, 'ratingallocateid' => $ratingallocateid]);
             $status = count($votesofuser) > 0;
+            */
         } else if ($rule == 'completionallocation') {
+            $status = count($ratingallocate->get_allocations_for_user($userid)) > 0;
+            /*
             $sql = "SELECT * FROM {ratingallocate_allocations} WHERE userid= :userid AND ratingallocateid= :ratingallocateid";
             $allocationsofuser = $DB->get_records_sql($sql, ['userid' => $userid, 'ratingallocateid' => $ratingallocateid]);
             $status = count($allocationsofuser) > 0;
+            */
         }
 
         return $status ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;

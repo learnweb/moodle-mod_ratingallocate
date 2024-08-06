@@ -358,8 +358,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      * @return string
      */
     protected function get_suffixed_name(string $fieldname): string {
-        // Replace _ratingallocate with $this->get_suffix() for Moodle 4.3 or later.
-        return 'completion' . $fieldname . '_ratingallocate';
+        // Counterintuitively don't use function get_suffix(), since data isn't saved correctly in DB otherwise.
+        return 'completion' . $fieldname;
     }
 
     /**
@@ -401,7 +401,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         parent::data_postprocessing($data);
         // Turn off completion settings if the checkboxes aren't ticked.
         if (!empty($data->completionunlocked)) {
-            $completion = $data->{'completion_ratingallocate'};
+            $completion = $data->completion;
             $autocompletion = !empty($completion) && $completion == COMPLETION_TRACKING_AUTOMATIC;
             if (empty($data->{$this->get_suffixed_name('vote')}) || !$autocompletion) {
                 $data->{$this->get_suffixed_name('vote')} = 0;
