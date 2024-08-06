@@ -49,7 +49,7 @@ class custom_completion extends activity_custom_completion {
         $course = $this->cm->get_course();
         $instance = $this->cm->instance;
 
-        if (!$ratingallocaterecord= $DB->get_record('ratingallocate', ['id' => $instance])) {
+        if (!$ratingallocaterecord = $DB->get_record('ratingallocate', ['id' => $instance])) {
             throw new \moodle_exception('Unable to find ratingallocate instance with id ' . $instance);
         }
 
@@ -60,19 +60,8 @@ class custom_completion extends activity_custom_completion {
 
         if ($rule == 'completionvote') {
             $status = count($ratingallocate->get_rating_data_for_user($userid)) > 0;
-            /*
-            $sql = "SELECT * FROM {ratingallocate_ratings} r INNER JOIN {ratingallocate_choices} c on r.choiceid=c.id " .
-                "WHERE r.userid= :userid AND c.ratingallocateid= :ratingallocateid";
-            $votesofuser = $DB->get_records_sql($sql, ['userid' => $userid, 'ratingallocateid' => $ratingallocateid]);
-            $status = count($votesofuser) > 0;
-            */
         } else if ($rule == 'completionallocation') {
             $status = count($ratingallocate->get_allocations_for_user($userid)) > 0;
-            /*
-            $sql = "SELECT * FROM {ratingallocate_allocations} WHERE userid= :userid AND ratingallocateid= :ratingallocateid";
-            $allocationsofuser = $DB->get_records_sql($sql, ['userid' => $userid, 'ratingallocateid' => $ratingallocateid]);
-            $status = count($allocationsofuser) > 0;
-            */
         }
 
         return $status ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;
