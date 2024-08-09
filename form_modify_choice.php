@@ -113,10 +113,17 @@ class modify_choice_form extends moodleform {
         $mform->addHelpButton($elementname, 'choice_usegroups', RATINGALLOCATE_MOD_NAME);
 
         $elementname = 'groupselector';
-        $options = $this->ratingallocate->get_group_selections();
+        if ($teamvotegroupingid = $this->ratingallocate->get_teamvote_groupingid()) {
+            $options = $this->ratingallocate->get_group_selections(
+                $this->ratingallocate->get_coarser_groups_for_grouping($teamvotegroupingid)
+            );
+        } else {
+            $options = $this->ratingallocate->get_group_selections();
+        }
         $selector = $mform->addelement('searchableselector', $elementname,
             get_string('choice_groupselect', RATINGALLOCATE_MOD_NAME), $options);
         $selector->setMultiple(true);
+        $mform->addHelpButton($elementname, 'choice_groupselect');
         $mform->hideIf('groupselector', 'usegroups');
 
         if ($this->choice) {

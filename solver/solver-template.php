@@ -89,7 +89,7 @@ class distributor {
      */
     public function distribute_users(\ratingallocate $ratingallocate) {
 
-        $teamvote = $ratingallocate->get_teamvote_goups();
+        $teamvote = $ratingallocate->get_teamvote_groups();
 
         // Load data from database.
         $choicerecords = $ratingallocate->get_rateable_choices();

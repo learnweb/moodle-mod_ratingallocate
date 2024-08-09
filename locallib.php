@@ -1317,7 +1317,7 @@ class ratingallocate {
      * @return array|false Array of the form groupid => membercount if teamvote is enabled, false if not
      * @throws dml_exception
      */
-    public function get_teamvote_goups() {
+    public function get_teamvote_groups() {
         if ($this->db->get_field(this_db\ratingallocate::TABLE, 'teamvote', ['id' => $this->ratingallocateid]) == 1) {
 
             $groupingid = $this->db->get_field(this_db\ratingallocate::TABLE, 'teamvotegroupingid', ['id' => $this->ratingallocateid]);
@@ -1366,6 +1366,20 @@ class ratingallocate {
             return $groups;
         }
 
+        return false;
+    }
+
+    /**
+     * Return the teamvote groupingid if teamvote is enabled, false if not.
+     *
+     * @return false|mixed false or the groupingid
+     * @throws dml_exception
+     */
+    public function get_teamvote_groupingid()
+    {
+        if ($this->db->get_field(this_db\ratingallocate::TABLE, 'teamvote', ['id' => $this->ratingallocateid]) == 1) {
+            return $this->db->get_field(this_db\ratingallocate::TABLE, 'teamvotegroupingid', ['id' => $this->ratingallocateid]);
+        }
         return false;
     }
 
@@ -2389,6 +2403,54 @@ class ratingallocate {
                 'groupid' => $gid,
             ));
         }
+    }
+
+    /**
+     * Returns all groups that are coarser than the groups in the grouping.
+     * So all groups that only contain groups in the grouping completely or not at all.
+     *
+     * @param $groupingid
+     * @return array An array of groups
+     */
+    public function get_coarser_groups_for_grouping($groupingid) {
+
+        $courseid = $this->course->id;
+        $allgroups = groups_get_all_groups($courseid);
+        $groupsingrouping = groups_get_all_groups($courseid, 0, $groupingid);
+
+        $coarsergroups = [];
+
+        // Now iterate over all groups and check.
+        // If all groups in the grouping are either completely or not contained in the group.
+        foreach ($allgroups as $outergroup) {
+            $coarser = true;
+            foreach ($groupsingrouping as $innergroup) {
+                $innergroupmembers = groups_get_members($innergroup->id);
+
+                $notcontained = true;
+                $completelycontained = true;
+                foreach ($innergroupmembers as $groupmember) {
+                    // Check if innergroup is not at all conatained in outergroup.
+                    if (groups_is_member($outergroup, $groupmember->id)) {
+                        $notcontained = false;
+                    } else {
+                        // Now check if innergroup is completely contained in outergroup
+                        $completelycontained = false;
+                    }
+                }
+                // If innergroup is partially contained in outergroup, outergroup cannot be coarser.
+                if (!($notcontained || $completelycontained)) {
+                    $coarser = false;
+                }
+
+            }
+            if ($coarser) {
+                $coarsergroups[] = $outergroup;
+            }
+        }
+
+        return $coarsergroups;
+
     }
 
     /**

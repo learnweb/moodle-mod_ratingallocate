@@ -277,6 +277,8 @@ $string['choice_usegroups_help'] = '* If selected, this choice will only be visi
 * Disabling the restriction means that this choice will be available to anyone.
 * Enabling the restriction without specifying a single group means that this choice will be *not* available for anyone.';
 $string['choice_groupselect'] = 'Groups';
+$string['choice_groupselect_help'] = 'If voting in groups is enabled, the selection of groups to choose from has to be a coarser grouping than the grouping of vote in groups, in order to avoid interference.
+Please change the groupingid of the group-voting-grouping in the activity settings, if your desired group is not listed.';
 $string['edit_choice'] = 'Edit choice';
 $string['rating_endtime'] = 'Rating ends at';
 $string['rating_begintime'] = 'Rating begins at';
