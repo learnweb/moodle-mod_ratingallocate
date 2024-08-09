@@ -304,6 +304,13 @@ $string['strategy_altered_after_preferences'] = 'Strategy cannot be changed afte
 $string['err_required'] = 'You need to provide a value for this field.';
 $string['err_minimum'] = 'The minimum value for this field is {$a}.';
 $string['err_maximum'] = 'The maximum value for this field is {$a}.';
+
+$string['completionvote'] = "Vote in the activity";
+$string['completionallocation'] = "Been allocated to a choice";
+$string['completionvote_help'] = "To complete this activity, users have to submit a vote.";
+$string['completionallocation_help'] = "To complete this activity, users have to be allocated to a choice.";
+$string['completionvote_desc'] = "Vote";
+$string['completionallocation_desc'] = "Be allocated";
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Form to edit choices">
 $string['show_choices_header'] = 'List of all choices';

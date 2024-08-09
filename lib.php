@@ -70,6 +70,8 @@ function ratingallocate_supports($feature) {
             return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS:
             return true;
+        case FEATURE_COMPLETION_HAS_RULES:
+            return true;
         default :
             return null;
     }
@@ -760,12 +762,14 @@ function ratingallocate_reset_course_form_defaults($course) {
  * @param stdClass $coursemodule The coursemodule object (record).
  * @return cached_cm_info An object on information that the courses
  *                        will know about (most noticeably, an icon).
+ * @throws dml_exception
  */
 function ratingallocate_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    if (! $ratingallocate = $DB->get_record('ratingallocate', $dbparams)) {
+    $fields = 'id, name, intro, introformat, accesstimestart, accesstimestop, completionvote, completionallocation';
+    if (!$ratingallocate = $DB->get_record(RATINGALLOCATE_MOD_NAME, $dbparams, $fields)) {
         return false;
     }
 
@@ -774,7 +778,13 @@ function ratingallocate_get_coursemodule_info($coursemodule) {
 
     if ($coursemodule->showdescription) {
         // Convert intro to html. Do not filter cached version, filters run at display time.
-        $result->content = format_module_intro('ratingallocate', $ratingallocate, $coursemodule->id, false);
+        $result->content = format_module_intro(RATINGALLOCATE_MOD_NAME, $ratingallocate, $coursemodule->id, false);
+    }
+
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        $result->customdata['customcompletionrules']['completionvote'] = $ratingallocate->completionvote;
+        $result->customdata['customcompletionrules']['completionallocation'] = $ratingallocate->completionallocation;
     }
 
     // Populate some other values that can be used in calendar or on dashboard.
@@ -786,4 +796,38 @@ function ratingallocate_get_coursemodule_info($coursemodule) {
     }
 
     return $result;
+}
+
+/**
+ * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
+ *
+ * @param cm_info|stdClass $cm object with fields ->completion and ->customdata['customcompletionrules']
+ * @return array $descriptions the array of descriptions for the custom rules.
+ */
+function mod_ratingallocate_get_completion_active_rule_descriptions($cm) {
+    // Values will be present in cm_info, and we assume these are up to date.
+    if (empty($cm->customdata['customcompletionrules']) || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+        return [];
+    }
+
+    $descriptions = [];
+
+    foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
+        switch ($key) {
+            case 'completionvote':
+                if ($val == 1) {
+                    $descriptions[] = get_string('copletionvotedesc', RATINGALLOCATE_MOD_NAME);
+                }
+                break;
+            case 'completionallocation':
+                if ($val == 1) {
+                    $descriptions[] = get_string('copletionallocationdesc', RATINGALLOCATE_MOD_NAME);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    return $descriptions;
 }
