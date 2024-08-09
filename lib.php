@@ -72,8 +72,6 @@ function ratingallocate_supports($feature) {
             return true;
         case FEATURE_COMPLETION_HAS_RULES:
             return true;
-        case FEATURE_COMPLETION_HAS_RULES:
-            return true;
         default :
             return null;
     }
