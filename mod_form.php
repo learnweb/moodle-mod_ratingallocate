@@ -338,7 +338,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $usersingrouping = groups_get_grouping_members($data['teamvotegroupingid'], 'u.id');
         $userinmultipleteams = false;
         foreach ($usersingrouping as $user) {
-            if (count(groups_get_user_groups($COURSE->id, $user)[$data['teamvotegroupingid']]) > 1) {
+            if (count(groups_get_user_groups($COURSE->id, $user->id)[$data['teamvotegroupingid']]) > 1) {
                 $userinmultipleteams = true;
                 break;
             }

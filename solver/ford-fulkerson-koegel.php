@@ -83,7 +83,7 @@ class solver_ford_fulkerson extends distributor {
             $sink = $groupcount + $teamcount + 1;
             list($fromteamid, $toteamid, $fromgroupid, $togroupid) = $this->setup_id_conversions_for_teamvote($usercount, $ratings);
 
-            $this->setup_graph_for_teamvote($groupcount, $teamcount, $fromteamid, $fromgroupid, $ratings, $groupdata, $source, $sink);
+            $this->setup_graph_for_teamvote($groupcount, $teamcount, $fromteamid, $fromgroupid, $ratings, $groupdata, $source, $sink, $teamvote);
 
             // Now that the datastructure is complete, we can start the algorithm
             // This is an adaptation of the Ford-Fulkerson algorithm

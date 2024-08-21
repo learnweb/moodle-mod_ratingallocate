@@ -1925,12 +1925,14 @@ class ratingallocate {
                     $rating->groupid = $votegroupid;
                     $DB->insert_record('ratingallocate_ratings', $rating);
 
-                    // If teamvote is enabled, create ratings for all groupmembers.
+                    // If teamvote is enabled, create ratings for all other groupmembers.
                     if ($teamvote && $votegroup) {
                         $teammembers = groups_get_members($votegroupid, 'u.id');
                         foreach ($teammembers as $member) {
-                            $rating->userid = $member->id;
-                            $DB->insert_record('ratingallocate_ratings', $rating);
+                            if ($member->id != $userid) {
+                                $rating->userid = $member->id;
+                                $DB->insert_record('ratingallocate_ratings', $rating);
+                            }
                         }
                     }
 
@@ -2431,7 +2433,7 @@ class ratingallocate {
                 $completelycontained = true;
                 foreach ($innergroupmembers as $groupmember) {
                     // Check if innergroup is not at all conatained in outergroup.
-                    if (groups_is_member($outergroup, $groupmember->id)) {
+                    if (groups_is_member($outergroup->id, $groupmember->id)) {
                         $notcontained = false;
                     } else {
                         // Now check if innergroup is completely contained in outergroup

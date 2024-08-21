@@ -50,7 +50,7 @@ class solver_edmonds_karp extends distributor {
             $sink = $choicecount + $usercount + 1;
 
             list($fromuserid, $touserid, $fromchoiceid, $tochoiceid) = $this->setup_id_conversions($usercount, $ratings);
-
+            
             $this->setup_graph($choicecount, $usercount, $fromuserid, $fromchoiceid, $ratings, $choicedata, $source, $sink, -1);
 
             // Now that the datastructure is complete, we can start the algorithm
@@ -59,7 +59,7 @@ class solver_edmonds_karp extends distributor {
             // http://stackoverflow.com/questions/6681075/while-loop-in-php-with-assignment-operator
             // Look for an augmenting path (a shortest path from the source to the sink).
             while ($path = $this->find_shortest_path_bellf($source, $sink)) { // If the function returns null, the while will stop.
-                // Reverse the augmentin path, thereby distributing a user into a group.
+                // Reverse the augmenting path, thereby distributing a user into a group.
                 $this->augment_flow($path);
                 unset($path); // Clear up old path.
             }
@@ -73,7 +73,7 @@ class solver_edmonds_karp extends distributor {
 
             list($fromteamid, $toteamid, $fromchoiceid, $tochoiceid) = $this->setup_id_conversions_for_teamvote($teamcount, $ratings);
 
-            $this->setup_graph_for_teamvote($choicecount, $teamcount, $fromteamid, $fromchoiceid, $ratings, $choicedata, $source, $sink, -1);
+            $this->setup_graph_for_teamvote($choicecount, $teamcount, $fromteamid, $fromchoiceid, $ratings, $choicedata, $source, $sink,  $teamvote, -1);
 
             // Now that the datastructure is complete, we can start the algorithm
             // This is an adaptation of the Ford-Fulkerson algorithm
@@ -82,7 +82,7 @@ class solver_edmonds_karp extends distributor {
             // Look for an augmenting path (a shortest path from the source to the sink).
             while ($path = $this->find_shortest_path_bellf_cspf2($source, $sink, $teamvote, $toteamid)) { // If the function returns null, the while will stop.
                 // Reverse the augmentin path, thereby distributing a user into a group.
-                $this->augment_flow($path);
+                $this->augment_flow($path, $teamvote, $toteamid);
                 unset($path); // Clear up old path.
             }
             return $this->extract_allocation($toteamid, $tochoiceid);
@@ -105,10 +105,8 @@ class solver_edmonds_karp extends distributor {
 
         // Stop if no shortest path is found.
         $i=1;
-        while ($pathcandidate = $this->find_shortest_path_bellf($from, $to)) {
-            // var_dump($this->graph);
-            var_dump($i);
-            var_dump($pathcandidate);
+        while (($pathcandidate = $this->find_shortest_path_bellf($from, $to)) && $i<10) {
+
             $foundedge = null;
 
             foreach ($this->graph[$pathcandidate[1]] as $index => $edge) {
@@ -118,21 +116,27 @@ class solver_edmonds_karp extends distributor {
                     break;
                 }
             }
-            if ($foundedge->space > $teamvote[$toteamid[$pathcandidate[2]]]) {
+
+            if ($foundedge->space >= $teamvote[$toteamid[$pathcandidate[2]]]) {
                 // We just found the shortest path fulfilling the constraint.
                 return $pathcandidate;
+
             } else {
+
+                $foundedgetoremove = null;
+                foreach ($this->graph[$pathcandidate[2]] as $index => $edge) {
+                    if ($edge->to == $pathcandidate[1]) {
+                        $foundedgetoremove = $edge;
+                        $foundedgeidtoremove = $index;
+                    }
+                }
+
                 // Remove the edge since this path is impossible.
-                array_splice($this->graph[1], $foundedgeid, 1);
-                // Add a new edge in the opposite direction whose weight has an opposite sign
-                // array_push($this->graph[$to], new edge($to, $from, -1 * $edge->weight));
-                // according to php doc, this is faster.
-                // $this->graph[2][] = new edge(2, 1, -1 * $edge->weight);
+                array_splice($this->graph[$pathcandidate[2]], $foundedgeidtoremove, 1);
             }
             unset($pathcandidate);
             $i++;
         }
-        var_dump("nix gefunden");
         return null;
 
     }

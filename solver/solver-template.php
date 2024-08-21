@@ -117,10 +117,15 @@ class distributor {
             $userdistributions = $distributions;
         } else {
             // Map choiceids to every user of the team it is mapped to.
-            $userids = array();
+
             foreach ($distributions as $choiceid => $teamids) {
+                $userids = array();
                 foreach ($teamids as $teamid) {
-                    array_merge($userids, groups_get_members($teamid, 'u.id'));
+                    $userids = array_merge($userids,
+                        array_map(function($user) {
+                            return $user->id;
+                        }, groups_get_members($teamid, 'u.id'))
+                        );
                 }
                 $userdistributions[$choiceid] = $userids;
             }
@@ -143,7 +148,7 @@ class distributor {
      *
      * @param $touserid a map mapping from indexes in the graph to userids (or teamids)
      * @param $tochoiceid a map mapping from indexes in the graph to choiceids
-     * @return an array of the form array(groupid => array(userid, ...), ...)
+     * @return array of the form array(groupid => array(userid, ...), ...)
      */
     protected function extract_allocation($touserid, $tochoiceid) {
         $distribution = array();
@@ -157,6 +162,7 @@ class distributor {
                 }
             }
         }
+
         return $distribution;
     }
 
@@ -293,9 +299,10 @@ class distributor {
      * @param type $choicedata
      * @param type $source
      * @param type $sink
+     * @param type $teamvote
      */
     protected function setup_graph_for_teamvote($choicecount, $teamcount, $fromteamid, $fromchoiceid, $ratings, $choicedata, $source, $sink,
-                                   $weightmult = 1) {
+                                    $teamvote, $weightmult = 1) {
         // Construct the datastructures for the algorithm
         // A directed weighted bipartite graph.
         // A source is connected to all users with unit cost.
@@ -324,8 +331,9 @@ class distributor {
             $team = $fromteamid[$rating->groupid];
             $choice = $fromchoiceid[$rating->choiceid];
             $weight = $rating->rating;
+            $membercount = $teamvote[$rating->groupid];
             if ($weight > 0) {
-                $this->graph[$team][] = new edge($team, $choice, $weightmult * $weight);
+                $this->graph[$team][] = new edge($team, $choice, $weightmult * $weight * $membercount);
             }
         }
 
@@ -357,18 +365,21 @@ class distributor {
                     break;
                 }
             }
-            // The second to last node in a path has to be a choice-node.
+
             // The node before that has to be a teamnode (or usernode), distribute them to this choice.
             if (!$teamvote) {
                 // If teamvote=false, reduce its space by one, because one user just got distributed into it.
                 $space = 1;
             } else {
                 // If teamvote is enabled, reduce its space by amount of groupmembers.
-                $space = $teamvote[$toteamid[$path[$i + 1]]];
+                $space = $teamvote[$toteamid[$path[2]]];
             }
 
+            // The second to last node in a path has to be a choice-node.
             if ($i == 1 && $edge->space > $space) {
+
                 $edge->space = $edge->space - $space;
+
             } else {
                 // Remove the edge.
                 array_splice($this->graph[$from], $foundedgeid, 1);
