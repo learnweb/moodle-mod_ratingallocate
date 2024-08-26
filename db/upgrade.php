@@ -218,5 +218,24 @@ function xmldb_ratingallocate_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2023050900, 'ratingallocate');
     }
 
+    if ($oldversion < 2024080900) {
+
+        // Define completionrules fields to be added to ratingallocate.
+        $table = new xmldb_table('ratingallocate');
+        $votefield = new xmldb_field('completionvote', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, false, '0');
+        $allocationfield = new xmldb_field('completionallocation', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, false, '0');
+
+        // Conditionally launch add field notification_send.
+        if (!$dbman->field_exists($table, $votefield)) {
+            $dbman->add_field($table, $votefield);
+        }
+        if (!$dbman->field_exists($table, $allocationfield)) {
+            $dbman->add_field($table, $allocationfield);
+        }
+
+        // Ratingallocate savepoint reached.
+        upgrade_mod_savepoint(true, 2024080900, 'ratingallocate');
+    }
+
     return true;
 }

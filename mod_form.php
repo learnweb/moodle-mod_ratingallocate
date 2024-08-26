@@ -231,7 +231,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      * @throws coding_exception
      */
     public function definition_after_data() {
-        parent::definition_after_data();
+
         $mform = &$this->_form;
 
         $data = $this->current;
@@ -272,7 +272,11 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             }
             $mform->removeElement($strategyplaceholder);
         }
+
+        // Call parent function after, in order to have completiontracking working properly.
+        parent::definition_after_data();
     }
+
 
     /**
      * Checks that accesstimestart is before accesstimestop
@@ -324,4 +328,88 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     private function get_settingsfield_identifier($strategy, $key) {
         return self::STRATEGY_OPTIONS . '[' . $strategy . '][' . $key . ']';
     }
+
+    /**
+     * Add elements for setting the custom completion rules.
+     *
+     * @return array List of added element names.
+     */
+    public function add_completion_rules() {
+        $mform = $this->_form;
+
+        $mform->addElement('advcheckbox', $this->get_suffixed_name('vote'), ' ', get_string('completionvote', RATINGALLOCATE_MOD_NAME));
+        $mform->addElement('advcheckbox', $this->get_suffixed_name('allocation'), ' ', get_string('completionallocation', RATINGALLOCATE_MOD_NAME));
+
+        // Set default to not checked.
+        $mform->setDefault($this->get_suffixed_name('vote'), 0);
+        $mform->setDefault($this->get_suffixed_name('allocation'), 0);
+
+        // Add help buttons.
+        $mform->addHelpButton($this->get_suffixed_name('vote'), 'completionvote', RATINGALLOCATE_MOD_NAME);
+        $mform->addHelpButton($this->get_suffixed_name('allocation'), 'completionallocation', RATINGALLOCATE_MOD_NAME);
+
+        return [$this->get_suffixed_name('vote'), $this->get_suffixed_name('allocation')];
+    }
+
+    /**
+     * Returns the suffixed name for custom completion elements.
+     *
+     * @param string $fieldname
+     * @return string
+     */
+    protected function get_suffixed_name(string $fieldname): string {
+        // Counterintuitively don't use function get_suffix(), since data isn't saved correctly in DB otherwise.
+        return 'completion' . $fieldname;
+    }
+
+    /**
+     * Called during validaiton to see wether some activitiy-specific completion rules are selected.
+     *
+     * @param array $data Input data not yet validated.
+     * @return bool True if one or more rules are enabled, false if none are.
+     */
+    public function completion_rule_enabled($data) {
+        return ($data[$this->get_suffixed_name('vote')] == 1 || $data[$this->get_suffixed_name('allocation')] == 1);
+    }
+
+    /**
+     * Allows module to modify data returned by get_moduleinfo_data() or prepare_new_moduleinfo_data() before calling set_data().
+     * This method is also called in the bulk activity completion form.
+     * Only available on moodleform_mod.
+     *
+     * @param $defaultvalues
+     * @return void
+     */
+    public function data_preprocessing(&$defaultvalues) {
+        if (empty($defaultvalues[$this->get_suffixed_name('vote')])) {
+            $defaultvalues[$this->get_suffixed_name('vote')] = 0;
+        }
+        if (empty($defaultvalues[$this->get_suffixed_name('allocation')])) {
+            $defaultvalues[$this->get_suffixed_name('allocation')] = 0;
+        }
+    }
+
+    /**
+     * Allows module to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
+     */
+    public function data_postprocessing($data) {
+        parent::data_postprocessing($data);
+        // Turn off completion settings if the checkboxes aren't ticked.
+        if (!empty($data->completionunlocked)) {
+            $completion = $data->completion;
+            $autocompletion = !empty($completion) && $completion == COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->{$this->get_suffixed_name('vote')}) || !$autocompletion) {
+                $data->{$this->get_suffixed_name('vote')} = 0;
+            }
+            if (empty($data->{$this->get_suffixed_name('allocation')}) || !$autocompletion) {
+                $data->{$this->get_suffixed_name('allocation')} = 0;
+            }
+        }
+    }
+
 }
