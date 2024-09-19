@@ -124,6 +124,13 @@
     font-weight: bold;
 }
 
+.ratingallocate_ratings_table tbody td:first-child,
+.ratingallocate_ratings_table.includeteams tbody td:nth-child(2) {
+    background-color: #fff;
+    z-index: 1;
+    font-weight: bold;
+}
+
 .ratingallocate_ratings_table_container .no-overflow {
     overflow: unset;
 }

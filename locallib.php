@@ -1635,6 +1635,20 @@ class ratingallocate {
         return $records;
     }
 
+    public function get_teamids_for_allocation($allocationid) {
+        $sql = 'SELECT r.groupid
+        FROM {ratingallocate_allocations} al
+        LEFT JOIN {ratingallocate_choices} c ON al.choiceid = c.id
+        LEFT JOIN {ratingallocate_ratings} r
+        ON al.userid = r.userid AND al.choiceid = r.choiceid
+        WHERE al.ratingallocateid = :ratingallocateid AND c.active = 1 AND al.id = :allocationid';
+        $teamids = $this->db->get_fieldset_sql($sql, [
+            'ratingallocateid' => $this->ratingallocateid,
+            'allocationid' => $allocationid,
+        ]);
+        return $teamids;
+    }
+
     /**
      * Removes all allocations for choices in $ratingallocateid
      */

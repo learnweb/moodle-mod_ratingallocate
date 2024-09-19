@@ -51,6 +51,8 @@ class allocations_table extends \table_sql {
             $download = optional_param('download', '', PARAM_ALPHA);
             $this->is_downloading($download, $ratingallocate->ratingallocate->name . '-allocations', 'allocations');
         }
+        // If teamvote is enabled, show allocation of teams.
+        $this->showteams = (bool) $this->ratingallocate->get_teamvote_groups();
     }
 
     /**
@@ -106,6 +108,12 @@ class allocations_table extends \table_sql {
             $this->no_sorting('users');
         }
 
+        if ($this->showteams) {
+            $columns[] = 'teams';
+            $headers[] = get_string('teams', 'mod_ratingallocate');
+            $this->no_sorting('teams');
+        }
+
         $this->define_columns($columns);
         $this->define_headers($headers);
 
@@ -142,6 +150,7 @@ class allocations_table extends \table_sql {
             $allocations = $this->ratingallocate->get_allocations();
 
             $users = $this->ratingallocate->get_raters_in_course();
+            $listedteams = [];
 
             foreach ($allocations as $allocation) {
                 $userid = $allocation->userid;
@@ -157,12 +166,36 @@ class allocations_table extends \table_sql {
                     }
                     unset($userwithrating[$userid]);
                 }
+                if ($this->showteams) {
+
+                    $teamids = $this->ratingallocate->get_teamids_for_allocation($allocation->id);
+                    if (array_key_exists($allocation->choiceid, $data)) {
+                        foreach ($teamids as $teamid) {
+                            $teamname = groups_get_group_name($teamid);
+                            if (!in_array($teamname, $listedteams)) {
+                                if (object_property_exists($data[$allocation->choiceid], 'teams')) {
+                                    $data[$allocation->choiceid]->teams .= ', ';
+                                } else {
+                                    $data[$allocation->choiceid]->teams = '';
+                                }
+
+                                $data[$allocation->choiceid]->teams .= $teamname;
+                                $listedteams[] = $teamname;
+                            }
+
+                        }
+
+                    }
+                }
             }
 
             // Enrich data with empty string for choices with no allocation.
             foreach ($data as $row) {
                 if (!property_exists($row, 'users')) {
                     $row->users = '';
+                }
+                if ($this->showteams && !property_exists($row, 'teams')) {
+                    $row->teams = '';
                 }
             }
 
