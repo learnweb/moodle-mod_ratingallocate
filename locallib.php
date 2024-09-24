@@ -1234,7 +1234,11 @@ class ratingallocate {
             $choicestatus->showuserinfo = has_capability('mod/ratingallocate:give_rating', $this->context, null, false);
             $choicestatus->algorithmstarttime = $this->ratingallocate->algorithmstarttime;
             $choicestatus->algorithmstatus = $this->get_algorithm_status();
-            $choicestatus->teamid = $this->get_vote_group($USER->id)->id;
+            if ($this->get_vote_group($USER->id)) {
+                $choicestatus->teamid = $this->get_vote_group($USER->id)->id;
+            } else {
+                $choicestatus->teamid = false;
+            }
             $choicestatusoutput = $renderer->render($choicestatus);
         } else {
             $choicestatusoutput = "";
@@ -1367,6 +1371,16 @@ class ratingallocate {
         }
 
         return false;
+    }
+
+    /**
+     * Returns wether preventing users not in a group of the teamvote grouping from voting is enabled.
+     *
+     * @return bool preventvotenotingroup
+     * @throws dml_exception
+     */
+    public function get_preventvotenotingroup() {
+        return $this->db->get_field(this_db\ratingallocate::TABLE, 'preventvotenotingroup', ['id' => $this->ratingallocateid]) == 1;
     }
 
     /**
@@ -1635,6 +1649,13 @@ class ratingallocate {
         return $records;
     }
 
+    /**
+     * Returns the teamids related to this allocation
+     *
+     * @param $allocationid
+     * @return array of groupids
+     * @throws dml_exception
+     */
     public function get_teamids_for_allocation($allocationid) {
         $sql = 'SELECT r.groupid
         FROM {ratingallocate_allocations} al

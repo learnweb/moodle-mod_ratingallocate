@@ -100,7 +100,10 @@ class ratings_and_allocations_table extends \table_sql {
         $this->shownames = true;
         // We only show the group column if at least one group is being used in at least one active restriction setting of a choice.
         $this->showgroups = !empty($allgroupsofchoices);
-        $this->showteams = (bool) $this->ratingallocate->get_teamvote_groups();
+        $teamvote = $this->ratingallocate->get_teamvote_groups();
+        $this->ratingallocate->delete_groups_for_usersnogroup($teamvote);
+        $this->showteams = (bool) $teamvote;
+
     }
 
     /**
@@ -172,9 +175,20 @@ class ratings_and_allocations_table extends \table_sql {
                     $columns[] = 'email';
                     $headers[] = get_string('email');
                 }
+                if ($this->showteams) {
+                    $columns[] = 'teams';
+                    $headers[] = get_string('teams', 'mod_ratingallocate');
+                }
             } else {
-                $columns[] = 'fullname';
-                $headers[] = get_string('ratings_table_user', RATINGALLOCATE_MOD_NAME);
+                if ($this->showteams) {
+                    $columns[] = 'teams';
+                    $headers[] = get_string('teams', 'mod_ratingallocate');
+                    $columns[] = 'teammembers';
+                    $headers[] = get_string('allocations_table_users', RATINGALLOCATE_MOD_NAME);
+                } else {
+                    $columns[] = 'fullname';
+                    $headers[] = get_string('allocations_table_users', RATINGALLOCATE_MOD_NAME);
+                }
             }
             // We only want to add a group column, if at least one choice has an active group restriction.
             if ($this->showgroups) {
@@ -187,10 +201,7 @@ class ratings_and_allocations_table extends \table_sql {
                             $this->ratingallocate->get_choice_groups($choice->id));
                 }
             }
-            if ($this->showteams) {
-                $columns[] = 'teams';
-                $headers[] = get_string('teams', 'mod_ratingallocate');
-            }
+
         }
 
         // Setup filter.
@@ -257,34 +268,101 @@ class ratings_and_allocations_table extends \table_sql {
      */
     public function build_table_by_sql($ratings, $allocations, $writeable = false) {
 
+        global $COURSE;
         $this->writeable = $writeable;
 
         $users = $this->rawdata;
 
-        // Group all ratings per user to match table structure.
-        $ratingsbyuser = array();
-        foreach ($ratings as $rating) {
-            if (empty($ratingsbyuser[$rating->userid])) {
-                $ratingsbyuser[$rating->userid] = array();
+        if ($this->showteams) {
+            // Group all ratings per team to match table structure.
+            $ratingsbyteam = [];
+            foreach ($ratings as $rating) {
+                if (empty($ratingsbyteam[$rating->groupid])) {
+                    $ratingsbyteam[$rating->groupid] = [];
+                }
+                $ratingsbyteam[$rating->groupid][$rating->choiceid] = $rating->rating;
             }
-            $ratingsbyuser[$rating->userid][$rating->choiceid] = $rating->rating;
+            // Group all memberships per team per choice.
+            $allocationsbyteams = [];
+            foreach ($allocations as $allocation) {
+                foreach ($this->ratingallocate->get_teamids_for_allocation($allocation->id) as $teamid) {
+                    if (empty($allocationsbyteams[$teamid])) {
+                        $allocationsbyteams[$teamid] = [];
+                    }
+                    $allocationsbyteams[$teamid][$allocation->choiceid] = true;
+                }
+            }
+            // Add rating rows for each team.
+            $teamvotegrouping = $this->ratingallocate->get_teamvote_groupingid();
+            $teams = groups_get_all_groups($COURSE->id, 0, $teamvotegrouping);
+
+            foreach ($teams as $team) {
+                $teamratings = isset($ratingsbyteam[$team->id]) ? $ratingsbyteam[$team->id] : [];
+                $teamallocations = isset($allocationsbyteams[$team->id]) ? $allocationsbyteams[$team->id] : [];
+                $this->add_team_ratings_row($team, $teamratings, $teamallocations);
+            }
+
+            // We need to add seperate rows for users without team, if preventvotenotingroup is disabled.
+            if (!$preventvotenotingroup = $this->ratingallocate->get_preventvotenotingroup()) {
+                // There are users that voted, but are not in a team.
+                // Get all users not in a group of the teamvote grouping.
+                $usersnogroup = [];
+                foreach ($this->ratingallocate->get_raters_in_course() as $rater) {
+                    if (!in_array($rater, groups_get_grouping_members($teamvotegrouping))) {
+                        $usersnogroup[] = $rater;
+                    }
+                }
+                $ratingsbyuser = [];
+                foreach ($ratings as $rating) {
+                    if (empty($ratingsbyuser[$rating->userid])) {
+                        $ratingsbyuser[$rating->userid] = [];
+                    }
+                    $ratingsbyuser[$rating->userid][$rating->choiceid] = $rating->rating;
+                }
+                // Group all memberships per user per choice.
+                $allocationsbyuser = [];
+                foreach ($allocations as $allocation) {
+                    if (empty($allocationsbyuser[$allocation->userid])) {
+                        $allocationsbyuser[$allocation->userid] = [];
+                    }
+                    $allocationsbyuser[$allocation->userid][$allocation->choiceid] = true;
+                }
+
+                // Add rating rows for each user.
+                foreach ($usersnogroup as $user) {
+                    $userratings = isset($ratingsbyuser[$user->id]) ? $ratingsbyuser[$user->id] : [];
+                    $userallocations = isset($allocationsbyuser[$user->id]) ? $allocationsbyuser[$user->id] : array();
+                    $this->add_user_ratings_row_without_team($user, $userratings, $userallocations);
+                }
+
+            }
+        } else {
+            // Group all ratings per user to match table structure.
+            $ratingsbyuser = array();
+            foreach ($ratings as $rating) {
+                if (empty($ratingsbyuser[$rating->userid])) {
+                    $ratingsbyuser[$rating->userid] = array();
+                }
+                $ratingsbyuser[$rating->userid][$rating->choiceid] = $rating->rating;
+            }
+            // Group all memberships per user per choice.
+            $allocationsbyuser = array();
+            foreach ($allocations as $allocation) {
+                if (empty($allocationsbyuser[$allocation->userid])) {
+                    $allocationsbyuser[$allocation->userid] = array();
+                }
+                $allocationsbyuser[$allocation->userid][$allocation->choiceid] = true;
+            }
+
+            // Add rating rows for each user.
+            foreach ($users as $user) {
+                $userratings = isset($ratingsbyuser[$user->id]) ? $ratingsbyuser[$user->id] : array();
+                $userallocations = isset($allocationsbyuser[$user->id]) ? $allocationsbyuser[$user->id] : array();
+                $this->add_user_ratings_row($user, $userratings, $userallocations);
+            }
+
         }
 
-        // Group all memberships per user per choice.
-        $allocationsbyuser = array();
-        foreach ($allocations as $allocation) {
-            if (empty($allocationsbyuser[$allocation->userid])) {
-                $allocationsbyuser[$allocation->userid] = array();
-            }
-            $allocationsbyuser[$allocation->userid][$allocation->choiceid] = true;
-        }
-
-        // Add rating rows for each user.
-        foreach ($users as $user) {
-            $userratings = isset($ratingsbyuser[$user->id]) ? $ratingsbyuser[$user->id] : array();
-            $userallocations = isset($allocationsbyuser[$user->id]) ? $allocationsbyuser[$user->id] : array();
-            $this->add_user_ratings_row($user, $userratings, $userallocations);
-        }
 
         if (!$this->is_downloading()) {
             $this->add_summary_row();
@@ -346,18 +424,6 @@ class ratings_and_allocations_table extends \table_sql {
                 }, $groupsofuser);
                 $row['groups'] = implode(';', $groupnames);
             }
-            if ($this->showteams) {
-                $teamofuser = array_filter(array_keys($this->ratingallocate->get_teamvote_groups()),
-                    function($groupid) use ($user) {
-                        return groups_is_member($groupid,$user->id);
-                    }
-                );
-                $teamname = array_map(function ($team) {
-                    return groups_get_group($team, 'name')->name;
-                }, $teamofuser);
-                // We should only have one team for each user, but we cant ensure that at this point.
-                $row['teams'] = implode(';', $teamname);
-            }
         }
 
         foreach ($userratings as $choiceid => $userrating) {
@@ -381,6 +447,128 @@ class ratings_and_allocations_table extends \table_sql {
                 $row[$rowkey] = array(
                         'rating' => null,
                         'hasallocation' => true
+                );
+            } else {
+                // User has rated this choice.
+                $row[$rowkey]['hasallocation'] = true;
+            }
+        }
+
+        $this->add_data_keyed($this->format_row($row));
+    }
+
+    /**
+     * Adds one row for each team
+     *
+     * @param $team object of the group for which a row should be added.
+     * @param $teamratings array consisting of pairs of choiceid to rating for the team.
+     * @param $teamallocations array constisting of pairs of choiceid and allocation of the team.
+     */
+    private function add_team_ratings_row($team, array $teamratings, array $teamallocations) {
+
+        $row = convert_to_array($team);
+
+        if ($this->shownames) {
+            $row['teams'] = groups_get_group_name($team->id);
+
+            // Add names of the teammembers.
+            $teammembers = groups_get_members($team->id);
+            $namesofteammembers = implode(", ",
+                array_map(function($member) {
+                    return $member->firstname . " " . $member->lastname;
+                }, $teammembers)
+            );
+            $row['teammembers'] = $namesofteammembers;
+
+            // We only can add groups if at least one choice has an active group restriction.
+            if ($this->showgroups) {
+                // List groups, that all teammembers are in.
+                $groupsofteam = array_filter($this->groupsofallchoices, function($group) use ($teammembers) {
+                    foreach ($teammembers as $member) {
+                        if (!groups_is_member($group->id, $member->id)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+                $groupnames = array_map(function($group) {
+                    return $group->name;
+                }, $groupsofteam);
+                $row['groups'] = implode(';', $groupnames);
+            }
+        }
+
+        foreach ($teamratings as $choiceid => $teamrating) {
+            $row[self::CHOICE_COL . $choiceid] = array(
+                'rating' => $teamrating,
+                'hasallocation' => false // May be overridden later.
+            );
+        }
+
+        // Process allocations separately, since assignment can exist for choices that have not been rated.
+        // $teamallocations *currently* has 0..1 elements, so this loop is rather fast.
+        foreach ($teamallocations as $choiceid => $teamallocation) {
+            if (!$teamallocation) {
+                // Presumably, $userallocation is always true. But maybe that assumption is wrong someday?
+                continue;
+            }
+
+            $rowkey = self::CHOICE_COL . $choiceid;
+            if (!isset($row[$rowkey])) {
+                // Team has not rated this choice, but it was assigned to it.
+                $row[$rowkey] = array(
+                    'rating' => null,
+                    'hasallocation' => true
+                );
+            } else {
+                // Team has rated this choice.
+                $row[$rowkey]['hasallocation'] = true;
+            }
+        }
+
+        $this->add_data_keyed($this->format_row($row));
+    }
+
+    private function add_user_ratings_row_without_team($user, $userratings, $userallocations) {
+
+        $row = convert_to_array($user);
+
+        if ($this->shownames) {
+            $row['teams'] = '';
+            $row['teammembers'] = $user->firstname . ' ' . $user->lastname;
+            // We only can add groups if at least one choice has an active group restriction.
+            if ($this->showgroups) {
+                $groupsofuser = array_filter($this->groupsofallchoices, function($group) use ($user) {
+                    return groups_is_member($group->id, $user->id);
+                });
+                $groupnames = array_map(function($group) {
+                    return $group->name;
+                }, $groupsofuser);
+                $row['groups'] = implode(';', $groupnames);
+            }
+        }
+
+        foreach ($userratings as $choiceid => $userrating) {
+            $row[self::CHOICE_COL . $choiceid] = array(
+                'rating' => $userrating,
+                'hasallocation' => false // May be overridden later.
+            );
+        }
+
+        // Process allocations separately, since assignment can exist for choices that have not been rated.
+        // $userallocations *currently* has 0..1 elements, so this loop is rather fast.
+        foreach ($userallocations as $choiceid => $userallocation) {
+            if (!$userallocation) {
+                // Presumably, $userallocation is always true. But maybe that assumption is wrong someday?
+                continue;
+            }
+
+            $rowkey = self::CHOICE_COL . $choiceid;
+            if (!isset($row[$rowkey])) {
+                // User has not rated this choice, but it was assigned to him/her.
+                $row[$rowkey] = array(
+                    'rating' => null,
+                    'hasallocation' => true
                 );
             } else {
                 // User has rated this choice.
