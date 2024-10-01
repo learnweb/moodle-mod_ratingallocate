@@ -1316,7 +1316,9 @@ class ratingallocate {
     }
 
     /**
-     * Returns the groups in the teamvote grouping with the amount of groupmembers
+     * Returns the groups in the teamvote grouping with the amount of groupmembers.
+     * Since this function creates unnecessary groups, only use in advance of running the endmonds karp algorithm.
+     * In order to check wether teamvote is enabled, please use get_teamvote_groupingid().
      *
      * @return array|false Array of the form groupid => membercount if teamvote is enabled, false if not
      * @throws dml_exception
@@ -1337,6 +1339,7 @@ class ratingallocate {
                     }
                 }
 
+                // This is a little ugly, but the only way the algortihm can run including teams.
                 $groupdata = new stdClass();
                 $groupdata->courseid = $this->course->id;
                 $groupdata->idnumber = $this->ratingallocateid;
@@ -1385,6 +1388,7 @@ class ratingallocate {
 
     /**
      * Return the teamvote groupingid if teamvote is enabled, false if not.
+     * Use this method to check wether teamvote is enabled.
      *
      * @return false|mixed false or the groupingid
      * @throws dml_exception

@@ -52,7 +52,7 @@ class allocations_table extends \table_sql {
             $this->is_downloading($download, $ratingallocate->ratingallocate->name . '-allocations', 'allocations');
         }
         // If teamvote is enabled, show allocation of teams.
-        $this->showteams = (bool) $this->ratingallocate->get_teamvote_groups();
+        $this->showteams = (bool) $this->ratingallocate->get_teamvote_groupingid();
     }
 
     /**

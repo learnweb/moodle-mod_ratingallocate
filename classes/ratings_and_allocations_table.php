@@ -100,9 +100,7 @@ class ratings_and_allocations_table extends \table_sql {
         $this->shownames = true;
         // We only show the group column if at least one group is being used in at least one active restriction setting of a choice.
         $this->showgroups = !empty($allgroupsofchoices);
-        $teamvote = $this->ratingallocate->get_teamvote_groups();
-        $this->ratingallocate->delete_groups_for_usersnogroup($teamvote);
-        $this->showteams = (bool) $teamvote;
+        $this->showteams = (bool) $this->ratingallocate->get_teamvote_groupingid();
 
     }
 
