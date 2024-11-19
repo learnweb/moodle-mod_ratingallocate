@@ -1448,6 +1448,9 @@ class ratingallocate {
         $this->origdbrecord->algorithmstarttime = time();
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
 
+
+        // Since edmonds-karp algrothm is always used, we did not implement a teamvote-distribution algorithm.
+        // For ford-fulkerson-koegel. Keep this in mind if the distributor is changed in the future.
         $distributor = new solver_edmonds_karp();
         $timestart = microtime(true);
         $distributor->distribute_users($this);

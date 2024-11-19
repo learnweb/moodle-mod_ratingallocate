@@ -899,14 +899,6 @@ class ratings_and_allocations_table extends \table_sql {
 
         $sortfields = $this->get_sort_columns();
 
-
-        // To do vardumps entfernen.
-        var_dump($sortfields);
-        var_dump("</br> sortdata: ");
-        var_dump($this->sortdata);
-        var_dump("</br> sortorder: ");
-        var_dump($this->get_sort_order());
-
         // If we have teamvote enabled, always order by team first, in order to always show users in their teams.
         if ($this->showteams) {
 
@@ -928,13 +920,6 @@ class ratings_and_allocations_table extends \table_sql {
 
         }
         $sortfields = $this->get_sort_columns();
-
-        var_dump("</br> sortdata nach preferences: ");
-        var_dump($this->sortdata);
-        var_dump("</br> sortcolumns nach preferences: ");
-        var_dump($this->get_sort_columns());
-        var_dump("</br> sortorder nach preferences: ");
-        var_dump($this->get_sort_order());
 
 
         $fields = "u.*";

@@ -142,8 +142,6 @@ class solver_edmonds_karp extends distributor {
     }
 
 
-
-
     /**
      * Find the shortest path with constraint (enough space for all teammembers in choice).
      * This is a modified version of the Yen Algorithm for the constrained shortest path first problem.
