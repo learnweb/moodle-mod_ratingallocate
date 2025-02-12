@@ -13,9 +13,24 @@
     font-weight: bold;
 }
 
+.ratingallocate_ratings_table span.ratingallocate_member {
+    display: flex;
+    align-items: center;
+}
+
 /* Indicate selected choice in non-writeable tables */
 .ratingallocate_ratings_table span.ratingallocate_member::before {
     content: url('[[pix:i/checked]]');
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-right: 5px;
+}
+
+.ratingallocate_ratings_table span input[type=radio] ~ label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
 }
 
 /* Show a tickmark for a selected choice */
@@ -27,7 +42,10 @@
 .ratingallocate_ratings_table span input[type=radio]:checked ~ label::before {
     content: url('[[pix:i/checked]]');
     position: absolute;
-    margin-top: -2px;
+    top: 1px;
+    left: 2px;
+    width: 12px;
+    height: 12px;
 }
 
 /* Special highlight for values that were checked *initially* */
