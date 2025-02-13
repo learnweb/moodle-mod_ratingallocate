@@ -1956,7 +1956,7 @@ class ratingallocate {
             $transaction->allow_commit();
 
             $completion = new completion_info($this->course);
-            if ($completion->is_enabled() == COMPLETION_TRACKING_AUTOMATIC) {
+            if ($completion->is_enabled($this->coursemodule) == COMPLETION_TRACKING_AUTOMATIC) {
                 $completion->set_module_viewed($this->coursemodule, $userid);
                 $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $userid);
             }
