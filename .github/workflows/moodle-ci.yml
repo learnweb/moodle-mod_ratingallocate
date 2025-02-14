@@ -95,6 +95,7 @@ jobs:
         exclude:
           - php: '8.0'
             moodle-branch: 'MOODLE_404_STABLE'
+          - php: '8.0'
             moodle-branch: 'MOODLE_405_STABLE'
           - php: '8.2'
             moodle-branch: 'MOODLE_401_STABLE'
