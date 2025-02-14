@@ -32,6 +32,7 @@ final class mod_ratingallocate_processor_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $PAGE;
+        parent::setUp();
         $PAGE->set_url('/');
     }
 

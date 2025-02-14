@@ -37,6 +37,7 @@ final class mod_ratingallocate_status_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $PAGE;
+        parent::setUp();
         $PAGE->set_url('/');
         $this->resetAfterTest();
     }

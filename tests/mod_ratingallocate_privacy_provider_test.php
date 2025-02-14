@@ -46,6 +46,7 @@ final class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests
      * {@inheritdoc}
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->testmodule = new \mod_ratingallocate_generated_module($this);
     }
