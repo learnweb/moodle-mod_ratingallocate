@@ -724,8 +724,11 @@ function ratingallocate_reset_userdata($data) {
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
         shift_course_mod_dates(RATINGALLOCATE_MOD_NAME, ['accesstimestart', 'accesstimestop'], $data->timeshift, $data->courseid);
-        $status[] = ['component' => $componentstr, 'item' => get_string('datechanged'), 'error'
-        => false];
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('datechanged', RATINGALLOCATE_MOD_NAME),
+            'error' => false,
+        ];
     }
 
     return $status;

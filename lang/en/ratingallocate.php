@@ -473,3 +473,4 @@ and ratable choices by groups that had the ability to access them.
 // Language Strings for resetting.
 $string['remove_ratings_and_allocations'] = 'Delete all ratings and allocations';
 $string['ratings_and_allocations_deleted'] = 'Ratings and allocations deleted';
+$string['datechanged'] = 'Date changed';
