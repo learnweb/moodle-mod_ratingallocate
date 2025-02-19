@@ -42,9 +42,9 @@ require_once(dirname(__FILE__) . '/locallib.php');
 
 use mod_ratingallocate\db as this_db;
 
-// //////////////////////////////////////////////////////////////////////////////
-// Moodle core API //
-// //////////////////////////////////////////////////////////////////////////////
+/*
+ * Moodle core API
+ */
 
 /**
  * Returns the information on whether the module supports a feature
@@ -252,9 +252,9 @@ function ratingallocate_get_extra_capabilities() {
     return[];
 }
 
-// //////////////////////////////////////////////////////////////////////////////
-// File API //
-// //////////////////////////////////////////////////////////////////////////////
+/*
+ * File API
+ */
 
 /**
  * Returns the lists of all browsable file areas within the given module context
@@ -350,9 +350,9 @@ function ratingallocate_pluginfile($course, $cm, $context, $filearea, array $arg
     send_stored_file($file, 86400, 0, $forcedownload, $options);
 }
 
-// //////////////////////////////////////////////////////////////////////////////
-// Navigation API //
-// //////////////////////////////////////////////////////////////////////////////
+/*
+ * Navigation API
+ */
 
 /**
  * Extends the global navigation tree by adding ratingallocate nodes if there is a relevant content

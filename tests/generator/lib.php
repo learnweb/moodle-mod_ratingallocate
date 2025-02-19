@@ -45,7 +45,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
      * @return stdClass
      * @throws coding_exception
      */
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         $defaultvalues = self::get_default_values();
 
         // Set default values for unspecified attributes.
