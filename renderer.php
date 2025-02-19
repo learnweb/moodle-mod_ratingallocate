@@ -581,7 +581,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Output the ratingallocate modfify allocation
+     * Output the ratingallocate modify allocation
      */
     public function reports_group($ratingallocateid, $coursemoduleid, $status, $context, $action = '') {
         $output = '';
@@ -597,15 +597,6 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             ],
             $action
         );
-
-        /* TODO: File not readable
-        $output .= html_writer::empty_tag('br', []);
-
-        if (has_capability('mod/ratingallocate:export_ratings', $context)) {
-            $output .= $this->action_link(new moodle_url(
-                '/mod/ratingallocate/solver/export_lp_solve.php', ['id' => $coursemoduleid,
-                'ratingallocateid' => $ratingallocateid]), get_string('download_problem_mps_format', RATINGALLOCATE_MOD_NAME));
-        }*/
 
         $output .= $this->box_end();
         return $output;
