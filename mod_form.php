@@ -363,7 +363,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      */
     protected function get_suffixed_name(string $fieldname): string {
         // Counterintuitively don't use function get_suffix(), since data isn't saved correctly in DB otherwise.
-        return 'completion' . $fieldname;
+        return 'completion' . $fieldname. '_' .self::MOD_NAME;
     }
 
     /**
