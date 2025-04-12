@@ -160,10 +160,9 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $data->choiceid = $this->get_new_parentid(this_db\ratingallocate_choices::TABLE);
         if ((int) $data->groupid !== 0) {
             $data->groupid = $this->get_mappingid('group', $data->groupid);
+            $newitemid = $DB->insert_record(this_db\ratingallocate_group_choices::TABLE, $data);
+            $this->set_mapping(this_db\ratingallocate_group_choices::TABLE, $oldid, $newitemid);
         }
-
-        $newitemid = $DB->insert_record(this_db\ratingallocate_group_choices::TABLE, $data);
-        $this->set_mapping(this_db\ratingallocate_group_choices::TABLE, $oldid, $newitemid);
     }
 
     /**
@@ -180,10 +179,9 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $data->choiceid = $this->get_new_parentid(this_db\ratingallocate_choices::TABLE);
         if ((int) $data->groupid !== 0) {
             $data->groupid = $this->get_mappingid('group', $data->groupid);
+            $newitemid = $DB->insert_record(this_db\ratingallocate_ch_gengroups::TABLE, $data);
+            $this->set_mapping(this_db\ratingallocate_ch_gengroups::TABLE, $oldid, $newitemid);
         }
-
-        $newitemid = $DB->insert_record(this_db\ratingallocate_ch_gengroups::TABLE, $data);
-        $this->set_mapping(this_db\ratingallocate_ch_gengroups::TABLE, $oldid, $newitemid);
     }
 
     /**
@@ -200,10 +198,9 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $data->ratingallocateid = $this->get_new_parentid(this_db\ratingallocate::TABLE);
         if ((int) $data->groupingid !== 0) {
             $data->groupingid = $this->get_mappingid('grouping', $data->groupingid);
+            $newitemid = $DB->insert_record(this_db\ratingallocate_groupings::TABLE, $data);
+            $this->set_mapping(this_db\ratingallocate_groupings::TABLE, $oldid, $newitemid);
         }
-
-        $newitemid = $DB->insert_record(this_db\ratingallocate_groupings::TABLE, $data);
-        $this->set_mapping(this_db\ratingallocate_groupings::TABLE, $oldid, $newitemid);
     }
 
     /**

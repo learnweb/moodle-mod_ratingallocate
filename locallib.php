@@ -1468,24 +1468,26 @@ class ratingallocate {
      * @throws required_capability_exception
      */
     public function synchronize_allocation_and_grouping() {
+        global $DB;
+
         require_capability('moodle/course:managegroups', $this->context);
 
+        // Fix for github bug issue #316. Delete bad dataset with groupingid=0 after backup and restore without groups/groupings.
+        $where = "ratingallocateid = $this->ratingallocateid AND groupingid = 0";
+        $DB->delete_records_select(this_db\ratingallocate_groupings::TABLE, $where);
         // Search if there is already a grouping from us.
-        if (!$groupingids = $this->db->get_record(this_db\ratingallocate_groupings::TABLE,
-            ['ratingallocateid' => $this->ratingallocateid],
-            'groupingid')) {
+        $where = "ratingallocateid = $this->ratingallocateid AND groupingid <> 0";
+        if (!$groupingids = $this->db->get_record_select(this_db\ratingallocate_groupings::TABLE, $where, [], 'groupingid')) {
             // Create grouping.
             $data = new stdClass();
             $data->name = get_string('groupingname', RATINGALLOCATE_MOD_NAME, $this->ratingallocate->name);
             $data->courseid = $this->course->id;
             $groupingid = groups_create_grouping($data);
-
             // Insert groupingid and ratingallocateid into the table.
             $data = new stdClass();
             $data->groupingid = $groupingid;
             $data->ratingallocateid = $this->ratingallocateid;
             $this->db->insert_record(this_db\ratingallocate_groupings::TABLE, $data);
-
         } else {
             // If there is already a grouping for this allocation assign the corresponing id to groupingid.
             $groupingid = $groupingids->groupingid;
@@ -1497,22 +1499,17 @@ class ratingallocate {
         foreach ($choices as $choice) {
             if ($this->db->record_exists(this_db\ratingallocate_choices::TABLE,
                     ['id' => $choice->id])) {
-
                 // Checks if there is already a group for this choice.
-
-                if ($groupids = $this->db->get_record(this_db\ratingallocate_ch_gengroups::TABLE,
-                    ['choiceid' => $choice->id],
-                    'groupid')) {
-
+                $where = "choiceid = $choice->id AND groupid <> 0";
+                if ($groupids = $this->db->get_record_select(this_db\ratingallocate_ch_gengroups::TABLE,
+                    $where, [], 'groupid')) {
                     $groupid = $groupids->groupid;
                     $group = groups_get_group($groupid);
-
                     // Delete all the members from the existing group for this choice.
                     if ($group) {
                         groups_delete_group_members_by_group($group->id);
                         groups_assign_grouping($groupingid, $group->id);
                     }
-
                 } else {
                     // If the group for this choice does not exist yet, create it.
                     $data = new stdClass();
@@ -1521,7 +1518,6 @@ class ratingallocate {
                     $createdid = groups_create_group($data);
                     if ($createdid) {
                         groups_assign_grouping($groupingid, $createdid);
-
                         // Insert the mapping between group and choice into the Table.
                         $this->db->insert_record(this_db\ratingallocate_ch_gengroups::TABLE,
                             ['choiceid' => $choice->id, 'groupid' => $createdid]);
@@ -1529,21 +1525,20 @@ class ratingallocate {
                 }
             }
         }
-
         // Add all participants in the correct group.
         $allocations = $this->get_allocations();
         foreach ($allocations as $allocation) {
             $choiceid = $allocation->choiceid;
             $userid = $allocation->userid;
-
             // Get the group corresponding to the choiceid.
             $groupids = $this->db->get_record(this_db\ratingallocate_ch_gengroups::TABLE,
                 ['choiceid' => $choiceid],
                 'groupid');
-            $groupid = $groupids->groupid;
-            $group = groups_get_group($groupid);
-            if ($group) {
-                groups_add_member($group, $userid);
+            if ($groupid = $groupids->groupid) {
+                $group = groups_get_group($groupid);
+                if ($group) {
+                    groups_add_member($group, $userid);
+                }
             }
         }
         // Invalidate the grouping cache for the course.
