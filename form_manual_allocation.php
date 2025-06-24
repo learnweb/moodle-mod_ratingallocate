@@ -184,9 +184,6 @@ class manual_alloc_form extends moodleform {
     /**
      * Overriding formslib's add_action_buttons() method, to add an extra submit "save changes and continue" button.
      *
-     * @param bool $cancel show cancel button
-     * @param string $submitlabel null means default, false means none, string is label text
-     * @param string $submit2label null means default, false means none, string is label text
      * @return void
      */
     public function add_special_action_buttons() {

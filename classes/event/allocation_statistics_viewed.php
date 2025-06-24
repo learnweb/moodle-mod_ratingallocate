@@ -35,8 +35,9 @@ class allocation_statistics_viewed extends \core\event\base {
 
     /**
      * Create simple allocation_statistics_viewed event.
-     * @param $modulecontext
-     * @param $ratingallocateid
+     *
+     * @param \stdClass $modulecontext
+     * @param int $ratingallocateid
      * @return \core\event\base
      * @throws \coding_exception
      */

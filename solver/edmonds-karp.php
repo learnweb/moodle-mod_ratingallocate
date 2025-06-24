@@ -47,10 +47,10 @@ class solver_edmonds_karp extends distributor {
     /**
      * Compute distribution.
      *
-     * @param $choicerecords
-     * @param $ratings
-     * @param $usercount
-     * @return an|array
+     * @param array $choicerecords
+     * @param array $ratings
+     * @param int $usercount
+     * @return array
      * @throws moodle_exception
      */
     public function compute_distribution($choicerecords, $ratings, $usercount) {
@@ -84,8 +84,8 @@ class solver_edmonds_karp extends distributor {
     /**
      * Bellman-Ford acc. to Cormen
      *
-     * @param $from index of starting node
-     * @param $to index of end node
+     * @param int $from index of starting node
+     * @param int $to index of end node
      * @return array with the of the nodes in the path
      */
     private function find_shortest_path_bellf($from, $to) {

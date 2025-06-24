@@ -148,8 +148,8 @@ final class locallib_test extends \advanced_testcase {
     /**
      * Filter allocations by choice
      *
-     * @param $allocations
-     * @param $choiceid
+     * @param array $allocations
+     * @param int $choiceid
      * @return array
      */
     private static function filter_allocations_by_choice($allocations, $choiceid) {

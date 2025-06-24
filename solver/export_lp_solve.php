@@ -67,9 +67,6 @@ class lp_export_write {
     /**
      * Constructor for the csv export reader
      *
-     * @param string $delimiter The name of the character used to seperate fields. Supported
-     *        types(comma, tab, semicolon, colon, cfg)
-     * @param string $enclosure The character used for determining the enclosures.
      * @param string $mimetype Mime type of the file that we are exporting.
      */
     public function __construct($mimetype = 'application/download') {
@@ -129,7 +126,7 @@ class lp_export_write {
      * Set the filename for the uploaded csv file
      *
      * @param string $dataname The name of the module.
-     * @param string $extenstion File extension for the file.
+     * @param string|null $extension File extension for the file.
      */
     public function set_filename($dataname, $extension = '.txt') {
         $filename = clean_filename($dataname);

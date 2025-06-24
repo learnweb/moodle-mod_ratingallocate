@@ -44,9 +44,9 @@ class ratingallocate_header implements renderable {
      * Construct.
      *
      * @param ratingallocate_db_wrapper $ratingallocate
-     * @param $context
-     * @param $showintro
-     * @param $coursemoduleid
+     * @param \context $context
+     * @param bool $showintro
+     * @param int $coursemoduleid
      */
     public function __construct(ratingallocate_db_wrapper $ratingallocate, $context, $showintro, $coursemoduleid) {
         $this->ratingallocate = $ratingallocate;

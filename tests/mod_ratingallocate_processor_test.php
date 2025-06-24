@@ -235,10 +235,11 @@ final class mod_ratingallocate_processor_test extends \advanced_testcase {
 
     /**
      * Creates a ratings and allocation table with specific filter options
+     *
      * @param mixed $ratingallocate ratingallocate
-     * @param $hidenorating bool
-     * @param $showallocnecessary bool
-     * @param $groupselect int
+     * @param bool $hidenorating
+     * @param bool $showallocnecessary
+     * @param int $groupselect
      * @return \mod_ratingallocate\ratings_and_allocations_table
      */
     private function setup_ratings_table_with_filter_options($ratingallocate, $hidenorating, $showallocnecessary, $groupselect) {
@@ -288,7 +289,8 @@ final class mod_ratingallocate_processor_test extends \advanced_testcase {
     /**
      * Helper function - Map choice titles to IDs
      *
-     * @param array $choices
+     * @param \mod_ratingallocate $ratingallocate
+     * @param array|null $choices
      *
      * @return array
      */
@@ -307,7 +309,8 @@ final class mod_ratingallocate_processor_test extends \advanced_testcase {
     /**
      * Helper function - Map group selection names to IDs
      *
-     * @param array $groups
+     * @param \mod_ratingallocate $ratingallocate
+     * @param array|null $groupselections
      *
      * @return array
      */

@@ -94,11 +94,11 @@ class ratings_and_allocations_table extends \table_sql {
      * Construct.
      *
      * @param \mod_ratingallocate_renderer $renderer
-     * @param $titles
-     * @param $ratingallocate
-     * @param $action
-     * @param $uniqueid
-     * @param $downloadable
+     * @param array $titles
+     * @param \ratingallocate $ratingallocate
+     * @param int $action
+     * @param string|null $uniqueid
+     * @param bool $downloadable
      * @throws \coding_exception
      * @throws \dml_exception
      */
@@ -132,8 +132,9 @@ class ratings_and_allocations_table extends \table_sql {
      * Setup this table with choices and filter options
      *
      * @param array $choices an array of choices
-     * @param $hidenorating
-     * @param $showallocnecessary
+     * @param bool|null $hidenorating
+     * @param bool|null $showallocnecessary
+     * @param int|null $groupselect
      */
     public function setup_table($choices, $hidenorating = null, $showallocnecessary = null, $groupselect = 0) {
 
@@ -338,9 +339,9 @@ class ratings_and_allocations_table extends \table_sql {
     /**
      * Adds one row for each user
      *
-     * @param $user object of the user for who a row should be added.
-     * @param $userratings array consisting of pairs of choiceid to rating for the user.
-     * @param $userallocations array constisting of paris of choiceid and allocation of the user.
+     * @param object $user of the user for who a row should be added.
+     * @param array $userratings consisting of pairs of choiceid to rating for the user.
+     * @param array $userallocations constisting of pairs of choiceid and allocation of the user.
      */
     private function add_user_ratings_row($user, $userratings, $userallocations) {
 
@@ -524,7 +525,7 @@ class ratings_and_allocations_table extends \table_sql {
     /**
      * Prints one hidden field for every user currently displayed in the table.
      * Is used for checking, which allocation have to be deleted.
-     * @param $users array of users displayed for the current filter settings.
+     * @param array $users of users displayed for the current filter settings.
      */
     private function print_hidden_user_fields($users) {
         if ($this->writeable) {
@@ -551,8 +552,9 @@ class ratings_and_allocations_table extends \table_sql {
     /**
      * Setup for filtering the table.
      * Loads the filter settings from the user preferences and overrides them if wanted, with the two parameters.
-     * @param $hidenorating bool if true it shows also users with no rating.
-     * @param $showallocnecessary bool if true it shows only users without allocations.
+     * @param bool $hidenorating if true it shows also users with no rating.
+     * @param bool $showallocnecessary if true it shows only users without allocations.
+     * @param int $groupselect int if 0 it shows all users, if -1 it shows all users not in a group, otherwise it shows only users in the selected group.
      */
     private function setup_filter($hidenorating = null, $showallocnecessary = null, $groupselect = null) {
         // Get the filter settings.
@@ -597,7 +599,8 @@ class ratings_and_allocations_table extends \table_sql {
     /**
      * Filters a set of given userids in accordance of the two filter variables $hidenorating and $showallocnecessary
      * and the selected group
-     * @param $userids array ids, which should be filtered.
+     *
+     * @param array $userids ids, which should be filtered.
      * @return array of filtered user ids.
      */
     private function filter_userids($userids) {
@@ -657,7 +660,7 @@ class ratings_and_allocations_table extends \table_sql {
     /**
      * Filter choiceids.
      *
-     * @param $choiceids
+     * @param array $choiceids
      * @return array
      * @throws \dml_exception
      */

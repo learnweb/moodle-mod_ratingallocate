@@ -138,7 +138,7 @@ class ratingallocate_db_wrapper {
     /**
      * Construct.
      *
-     * @param $record
+     * @param stdClass $record
      */
     public function __construct($record) {
         $this->dbrecord = $record;
@@ -222,9 +222,9 @@ class ratingallocate {
     /**
      * Construct.
      *
-     * @param $ratingallocaterecord
-     * @param $course
-     * @param $coursem
+     * @param stdClass $ratingallocaterecord
+     * @param stdClass $course
+     * @param stdClass $coursem
      * @param context_module $context
      */
     public function __construct($ratingallocaterecord, $course, $coursem, context_module $context) {
@@ -1246,6 +1246,7 @@ class ratingallocate {
         global $PAGE, $USER;
         $action = optional_param('action', '', PARAM_TEXT);
 
+        // phpcs:ignore moodle.Commenting.TodoComment.MissingInfoInline
         $PAGE->set_cacheable(false); // TODO necessary.
 
         // Output starts here.
@@ -1383,7 +1384,7 @@ class ratingallocate {
 
     /**
      * Returns the number of all users that placed a rating on the current ratingallocate activity.
-     * @param int $courseid course id
+     *
      * @return int
      */
     public function get_number_of_active_raters() {
@@ -1687,8 +1688,6 @@ class ratingallocate {
 
     /**
      * Gets called by the adhoc_taskmanager and its task in send_distribution_notification
-     *
-     * @param stdClass $userfrom
      */
     public function notify_users_distribution() {
         global $CFG;
@@ -2034,7 +2033,7 @@ class ratingallocate {
     /**
      * Returns an array of choices with the given ids
      *
-     * @param $ids array choiceids
+     * @param array $ids choiceids
      * @return array choices
      * @throws dml_exception
      */
@@ -2046,6 +2045,8 @@ class ratingallocate {
 
     /**
      * Returns all memberships of a user for rateable choices in this instance of ratingallocate
+     *
+     * @param int $userid
      */
     public function get_allocations_for_user($userid) {
         $sql = 'SELECT m.id AS ratingallocateid, c.title, c.explanation, al.choiceid
@@ -2065,7 +2066,8 @@ class ratingallocate {
 
     /**
      * Adds the manual allocation to db. Does not perform checks if there is already an allocation user-choice
-     * @param $allocdata array of users to the choice ids they should be allocated to.
+     * @param array $allocdata of users to the choice ids they should be allocated to.
+     * @param array $userdata of users to their user data.
      * @throws dml_transaction_exception
      */
     public function save_manual_allocation_form($allocdata, $userdata) {
@@ -2110,7 +2112,7 @@ class ratingallocate {
     /**
      * Save form.
      *
-     * @param $data
+     * @param array $data
      * @return void
      * @throws dml_transaction_exception
      */
@@ -2445,7 +2447,7 @@ class ratingallocate {
     /**
      * Get File attachments.
      *
-     * @param int choiceid
+     * @param int $choiceid
      * @return array of file objects.
      */
     public function get_file_attachments_for_choice($choiceid) {
@@ -2533,6 +2535,7 @@ class ratingallocate_choice {
     /** Emulates the functionality as if there were explicit records by passing them to the original db record
      *
      * @param string $name
+     * @param mixed $value
      */
     public function __set($name, $value) {
         $this->dbrecord->{$name} = $value;
@@ -2541,7 +2544,7 @@ class ratingallocate_choice {
     /**
      * Construct.
      *
-     * @param $record
+     * @param stdClass $record
      */
     public function __construct($record) {
         $this->dbrecord = $record;
@@ -2574,6 +2577,7 @@ class ratingallocate_group_choices {
      * Emulates the functionality as if there were explicit records by passing them to the original db record.
      *
      * @param string $name
+     * @param mixed $value
      */
     public function __set($name, $value) {
         $this->dbrecord->{$name} = $value;
@@ -2582,7 +2586,7 @@ class ratingallocate_group_choices {
     /**
      * Construct.
      *
-     * @param $record
+     * @param stdClass $record
      */
     public function __construct($record) {
         $this->dbrecord = $record;
@@ -2592,7 +2596,7 @@ class ratingallocate_group_choices {
  * Remove all users (or one user) from one group, invented by MxS by copying from group/lib.php
  * because it didn't exist there
  *
- * @param int $courseid
+ * @param int $groupid
  * @return bool success
  */
 function groups_delete_group_members_by_group($groupid) {

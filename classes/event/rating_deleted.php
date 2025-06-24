@@ -34,8 +34,9 @@ class rating_deleted extends \core\event\base {
 
     /**
      * Create simple rating_deleted event.
-     * @param $modulecontext
-     * @param $ratingallocateid
+     *
+     * @param \stdClass $modulecontext
+     * @param int $ratingallocateid
      * @return \core\event\base
      * @throws \coding_exception
      */

@@ -129,9 +129,9 @@ final class mod_ratingallocate_notification_test extends \advanced_testcase {
 
     /**
      * Asserts that a message for a user exists and that it contains a certain search string
-     * @param $messages \stdClass[] received messages
-     * @param $userid int id of the user
-     * @param $needle string search string
+     * @param \stdClass[] $messages received messages
+     * @param int $userid id of the user
+     * @param string $needle search string
      */
     private function assert_message_contains($messages, $userid, $needle) {
         $messageexists = false;
@@ -146,9 +146,8 @@ final class mod_ratingallocate_notification_test extends \advanced_testcase {
 
     /**
      * Asserts that there is no message for a certain user.
-     * @param $messages \stdClass[] received messages
-     * @param $userid int id of the user
-     * @param $needle string search string
+     * @param \stdClass[] $messages received messages
+     * @param int $userid id of the user
      */
     private function assert_no_message_for_user($messages, $userid) {
         $messageexists = false;

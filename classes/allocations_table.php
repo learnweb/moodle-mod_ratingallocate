@@ -200,7 +200,7 @@ class allocations_table extends \table_sql {
 
     /**
      * Returns a link to a user profile labeled with the full name of the user.
-     * @param $user \stdClass user object.
+     * @param \stdClass $user user object.
      * @return string HTML code representing the link to the users profile.
      */
     private function get_user_link($user) {

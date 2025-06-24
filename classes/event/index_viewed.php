@@ -34,7 +34,8 @@ class index_viewed extends \core\event\base {
 
     /**
      * Create simple index_viewed event.
-     * @param $coursecontext
+     *
+     * @param \stdClass $coursecontext
      * @return \core\event\base
      * @throws \coding_exception
      */

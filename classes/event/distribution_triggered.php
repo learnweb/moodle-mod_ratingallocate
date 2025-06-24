@@ -42,9 +42,10 @@ class distribution_triggered extends \core\event\base {
 
     /**
      * Create simple distribution_triggered event.
-     * @param $modulecontext
-     * @param $ratingallocateid
-     * @param $timeneeded
+     *
+     * @param \stdClass $modulecontext
+     * @param int $ratingallocateid
+     * @param float $timeneeded
      * @return \core\event\base
      * @throws \coding_exception
      */

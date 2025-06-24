@@ -146,7 +146,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_options_strategyform 
 
     /**
      * Create new strategy.
-     * @param $strategyoptions
+     * @param array $strategyoptions
      * @return strategy
      */
     protected function construct_strategy($strategyoptions) {

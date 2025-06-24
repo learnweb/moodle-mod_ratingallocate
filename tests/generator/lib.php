@@ -40,7 +40,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
 
     /**
      * Creates instance of the module with default values.
-     * @param $record
+     * @param stdClass|null $record
      * @param array|null $options
      * @return stdClass
      * @throws coding_exception
@@ -205,10 +205,11 @@ class mod_ratingallocate_generator extends testing_module_generator {
 
     /**
      * Get open ratingallocate instance for teacher.
+     *
      * @param advanced_testcase $tc
-     * @param $choices
-     * @param $course
-     * @param $ratings
+     * @param array|null $choices
+     * @param stdClass|null $course
+     * @param array|null $ratings
      * @return ratingallocate
      */
     public static function get_open_ratingallocate_for_teacher(advanced_testcase $tc, $choices = null,
@@ -218,10 +219,11 @@ class mod_ratingallocate_generator extends testing_module_generator {
 
     /**
      * Get closed ratingallocate instance for teacher.
+     *
      * @param advanced_testcase $tc
-     * @param $choices
-     * @param $course
-     * @param $ratings
+     * @param array|null $choices
+     * @param stdClass|null $course
+     * @param array|null $ratings
      * @return ratingallocate
      */
     public static function get_closed_ratingallocate_for_teacher(advanced_testcase $tc, $choices = null,
@@ -231,11 +233,11 @@ class mod_ratingallocate_generator extends testing_module_generator {
 
     /**
      * Get ratingallocate instance for teachers which opens in specified number of days.
-     * @param $numdays
+     * @param int $numdays
      * @param advanced_testcase $tc
-     * @param $choices
-     * @param $course
-     * @param $ratings
+     * @param array|null $choices
+     * @param stdClass|null $course
+     * @param array|null $ratings
      * @return ratingallocate
      */
     private static function get_ratingallocate_for_teacher_open_in($numdays, advanced_testcase $tc, $choices = null,
@@ -255,7 +257,7 @@ class mod_ratingallocate_generator extends testing_module_generator {
     /**
      * Get small ratingallocate for filter tests.
      * @param advanced_testcase $tc
-     * @param $choices
+     * @param array|null $choices
      * @return ratingallocate
      */
     public static function get_small_ratingallocate_for_filter_tests(advanced_testcase $tc, $choices = null) {

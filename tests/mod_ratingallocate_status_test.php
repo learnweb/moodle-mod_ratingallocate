@@ -78,8 +78,15 @@ final class mod_ratingallocate_status_test extends \advanced_testcase {
 
     /**
      * Tests under different conditions if the returned status object is correct.
+     *
      * @dataProvider ratingallocate_provider
-     * @covers ::get_status()
+     * @param int $addtostart
+     * @param int $addtostop
+     * @param bool $published
+     * @param bool $hasallocations
+     * @param \stdClass $expected
+     * @return void
+     * @throws \coding_exception
      */
     public function test_get_status($addtostart, $addtostop, $published, $hasallocations, $expected): void {
         $record = [

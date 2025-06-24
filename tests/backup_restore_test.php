@@ -40,6 +40,7 @@ use mod_ratingallocate\db as this_db;
 final class backup_restore_test extends \advanced_testcase {
 
     public function test_backup_restore(): void {
+        // phpcs:ignore moodle.Commenting.TodoComment.MissingInfoInline
         // TODO this test does not check if userids are correctly mapped.
         global $CFG, $DB;
         \core_php_time_limit::raise();
@@ -54,6 +55,7 @@ final class backup_restore_test extends \advanced_testcase {
         $bc->execute_plan();
         $results = $bc->get_results();
         $file = $results['backup_destination'];
+        // phpcs:ignore moodle.Commenting.TodoComment.MissingInfoInline
         // TODO: Necessary to ensure backward compatibility.
         if (\tgz_packer::is_tgz_file($file)) {
             $fp = get_file_packer('application/x-gzip');

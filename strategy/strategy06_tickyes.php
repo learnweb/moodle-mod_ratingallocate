@@ -135,7 +135,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
     /**
      * Create a new strategy.
-     * @param $strategyoptions
+     * @param array $strategyoptions
      * @return strategy
      */
     protected function construct_strategy($strategyoptions) {
@@ -171,6 +171,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             $mform->setExpanded($headerelem);
 
             // Show max. number of allocations.
+            // phpcs:ignore moodle.Commenting.TodoComment.MissingInfoInline
             // TODO add setting in order to make this optional, as requested in issue #14.
             $mform->addElement('html', '<div class="mod-ratingallocate-choice-maxno">' .
                     '<span class="mod-ratingallocate-choice-maxno-desc">' .
@@ -206,8 +207,8 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
 
     /**
      * Validate form data.
-     * @param $data
-     * @param $files
+     * @param array $data
+     * @param array $files
      * @return array
      * @throws \coding_exception
      */

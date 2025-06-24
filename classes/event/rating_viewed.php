@@ -35,8 +35,9 @@ class rating_viewed extends \core\event\base {
 
     /**
      * Create simple rating_viewed event.
-     * @param $modulecontext
-     * @param $ratingallocateid
+     *
+     * @param \stdClass $modulecontext
+     * @param int $ratingallocateid
      * @return \core\event\base
      * @throws \coding_exception
      */

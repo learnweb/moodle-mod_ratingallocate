@@ -85,10 +85,11 @@ function ratingallocate_supports($feature) {
  * will create a new instance and return the id number
  * of the new instance.
  *
- * @param object $ratingallocate
+ * @param stdClass $ratingallocate
  *            An object from the form in mod_form.php
- * @param mod_ratingallocate_mod_form $mform
- * @return int The id of the newly inserted ratingallocate record
+ * @param mod_ratingallocate_mod_form|null $mform
+ * @return bool|int|void
+ * @throws dml_transaction_exception
  */
 function ratingallocate_add_instance(stdClass $ratingallocate, ?mod_ratingallocate_mod_form $mform) {
     global $DB, $COURSE;
@@ -117,10 +118,11 @@ function ratingallocate_add_instance(stdClass $ratingallocate, ?mod_ratingalloca
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  *
- * @param object $ratingallocate
+ * @param stdClass $ratingallocate
  *            An object from the form in mod_form.php
- * @param mod_ratingallocate_mod_form $mform
- * @return boolean Success/Fail
+ * @param mod_ratingallocate_mod_form|null $mform
+ * @return bool|void
+ * @throws dml_transaction_exception
  */
 function ratingallocate_update_instance(stdClass $ratingallocate, ?mod_ratingallocate_mod_form $mform) {
     global $DB;
@@ -208,7 +210,10 @@ function ratingallocate_delete_instance($id) {
  * that has occurred in ratingallocate activities and print it out.
  * Return true if there was output, or false is there was none.
  *
- * @return boolean
+ * @param stdClass $course
+ * @param bool $viewfullnames
+ * @param int $timestart
+ * @return bool
  */
 function ratingallocate_print_recent_activity($course, $viewfullnames, $timestart) {
     return false; // True if anything was printed, otherwise false.
@@ -219,7 +224,7 @@ function ratingallocate_print_recent_activity($course, $viewfullnames, $timestar
  *
  * This callback function is supposed to populate the passed array with
  * custom activity records. These records are then rendered into HTML via
- * {@link ratingallocate_print_recent_mod_activity()}.
+ * {@see ratingallocate_print_recent_mod_activity()}.
  *
  * @param array $activities sequentially indexed array of objects with the 'cmid' property
  * @param int $index the index in the $activities to use for the next record
@@ -237,6 +242,11 @@ function ratingallocate_get_recent_mod_activity(&$activities, &$index, $timestar
 /**
  * Prints single activity item prepared by {@see ratingallocate_get_recent_mod_activity()}
  *
+ * @param stdClass $activity
+ * @param int $courseid the id of the course we produce the report for
+ * @param bool $detail
+ * @param bool $modnames
+ * @param bool $viewfullnames
  * @return void
  */
 function ratingallocate_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
@@ -260,7 +270,7 @@ function ratingallocate_get_extra_capabilities() {
  * Returns the lists of all browsable file areas within the given module context
  *
  * The file area 'intro' for the activity introduction field is added automatically
- * by {@link file_browser::get_file_info_context_module()}
+ * by {@see file_browser::get_file_info_context_module()}
  *
  * @param stdClass $course
  * @param stdClass $cm
@@ -356,16 +366,16 @@ function ratingallocate_pluginfile($course, $cm, $context, $filearea, array $arg
 
 /**
  * Extends the global navigation tree by adding ratingallocate nodes if there is a relevant content
- *
  * This can be called by an AJAX request so do not rely on $PAGE as it might not be set up properly.
  *
  * @param navigation_node $navref
- *            An object representing the navigation tree node of the ratingallocate module instance
+ *             An object representing the navigation tree node of the ratingallocate module instance
  * @param stdClass $course
  * @param stdClass $module
  * @param cm_info $cm
+ * @return void
  */
-function ratingallocate_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, cm_info $cm) {
+function ratingallocate_extend_navigation(navigation_node $navref, stdClass $course, stdClass $module, cm_info $cm) {
 
 }
 
@@ -376,9 +386,9 @@ function ratingallocate_extend_navigation(navigation_node $navref, stdclass $cou
  * so it is safe to rely on the $PAGE.
  *
  * @param settings_navigation $settingsnav
- *            {@link settings_navigation}
- * @param navigation_node $ratingallocatenode
- *            {@link navigation_node}
+ *            {@see settings_navigation}
+ * @param navigation_node|null $ratingallocatenode
+ *            {@see navigation_node}
  */
 function ratingallocate_extend_settings_navigation(settings_navigation $settingsnav, ?navigation_node $ratingallocatenode) {
     $hassecondary = $settingsnav->get_page()->has_secondary_navigation();
@@ -449,7 +459,7 @@ function ratingallocate_refresh_events($courseid = 0, $instance = null, $cm = nu
 /**
  * Creates events for accesstimestart and accestimestop of a ratingallocate instance
  *
- * @param $ratingallocate
+ * @param stdClass $ratingallocate
  * @return void
  * @throws coding_exception
  * @throws dml_exception
@@ -559,7 +569,7 @@ function ratingallocate_set_events($ratingallocate) {
 /**
  * Is the event visible?
  *
- * @param calendar_event
+ * @param calendar_event $event
  * @return bool
  * @throws moodle_exception
  * @throws dml_exception
@@ -588,6 +598,9 @@ function mod_ratingallocate_core_is_event_visible(calendar_event $event): bool {
 /**
  * This function will update the ratingallocate module according to the event that has been modified.
  *
+ * @param calendar_event $event
+ * @param stdClass $ratingallocate
+ * @return void
  * @throws coding_exception
  * @throws dml_exception
  * @throws moodle_exception
@@ -687,7 +700,7 @@ function mod_ratingallocate_core_calendar_get_valid_event_timestart_range (\cale
  * This function will remove all ratings and allocations
  * and clean up any related data.
  *
- * @param $data stdClass the data submitted from the reset course.
+ * @param stdClass $data the data submitted from the reset course.
  * @return array status array
  */
 function ratingallocate_reset_userdata($data) {
@@ -749,6 +762,8 @@ function ratingallocate_reset_course_form_definition($mform) {
 
 /**
  * Course reset form defaults.
+ *
+ * @param stdClass $course
  * @return array the defaults.
  */
 function ratingallocate_reset_course_form_defaults($course) {
