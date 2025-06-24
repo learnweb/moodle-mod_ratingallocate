@@ -46,6 +46,9 @@ class solver_ford_fulkerson extends distributor {
      * groups (see clear_all_groups_in_course()) and redistributed
      * according to the computed distriution.
      *
+     * @param array $choicerecords
+     * @param array $ratings
+     * @param int $usercount
      */
     public function compute_distribution($choicerecords, $ratings, $usercount) {
         $groupdata = [];
@@ -84,8 +87,8 @@ class solver_ford_fulkerson extends distributor {
      * from $from to $to in $graph. We can't use Dijkstra here, because
      * the graph contains edges with negative weight.
      *
-     * @param $from index of starting node
-     * @param $to index of end node
+     * @param int $from index of starting node
+     * @param int $to index of end node
      * @return array with the of the nodes in the path
      * @throws moodle_exception
      */

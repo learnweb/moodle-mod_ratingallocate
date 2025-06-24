@@ -172,6 +172,7 @@ class behat_mod_ratingallocate extends behat_base {
             foreach ($entry as $key => $val) {
                 array_push($newrows, [$key, $val]);
             }
+            // phpcs:ignore moodle.Commenting.TodoComment.MissingInfoInline
             // TODO: Ensure backward-compatibility after changed TableNode constructor in Moodle 3.1.
             if ($CFG->version < 2016052300) {
                 $newrows = implode("\n", $newrows);
@@ -587,9 +588,9 @@ class behat_mod_ratingallocate extends behat_base {
      * Adds a new ratingallocate to the specified course and section and fills the form with values.
      *
      * @Given I add a ratingallocate to course :coursefullname section :sectionnum and I fill the form with:
-     * @param $courseshortname
-     * @param $sectionnumber
-     * @param $data
+     * @param string $courseshortname
+     * @param int $sectionnumber
+     * @param TableNode $data
      * @return void
      */
     public function i_add_a_ratingallocate_to_course_section_and_fill_form($courseshortname, $sectionnumber, TableNode $data) {
@@ -614,8 +615,8 @@ class behat_mod_ratingallocate extends behat_base {
      * Adds a new ratingallocate to the specified course and section.
      *
      * @Given I add a ratingallocate to course :coursefullname section :sectionnum
-     * @param $courseshortname
-     * @param $sectionnumber
+     * @param string $courseshortname
+     * @param int $sectionnumber
      * @return void
      */
     public function i_add_a_ratingallocate_to_course_section($courseshortname, $sectionnumber) {

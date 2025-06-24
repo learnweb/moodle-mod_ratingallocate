@@ -56,8 +56,14 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     private $msgerrorrequired;
 
     /**
-     * constructor
-     * @see moodleform_mod::moodleform_mod
+     * Constructor.
+     *
+     * @param stdClass $current
+     * @param stdClass $section
+     * @param stdClass $cm
+     * @param stdClass $course
+     * @throws coding_exception
+     * @throws moodle_exception
      */
     public function __construct($current, $section, $cm, $course) {
         // Pre parse mod data if exists (in case not new).
@@ -161,7 +167,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
     /**
      * If ratings have already been submitted by users, the ratingallocate strategy can no longer
      * be changend.
-     * @param $includeratingallocate
+     * @param bool|null $includeratingallocate
      * @return array|bool
      * @throws coding_exception
      * @throws dml_exception
@@ -197,7 +203,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      * @param array $value array with the element type and its caption
      *        (usually returned by the strategys get settingsfields methods).
      * @param string $strategyid id of the strategy it belongs to.
-     * @param $mform MoodleQuickForm form object the settings field should be added to.
+     * @param MoodleQuickForm $mform form object the settings field should be added to.
      */
     private function add_settings_field($stratfieldid, array $value, $strategyid, MoodleQuickForm $mform) {
         $attributes = [];
@@ -211,6 +217,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         } else if ($value[0] == "int") {
             $mform->addElement('text', $stratfieldid, $value[1], $attributes);
             $mform->setType($stratfieldid, PARAM_TEXT);
+            // phpcs:ignore moodle.Commenting.TodoComment.MissingInfoInline
             $mform->addRule($stratfieldid, null, 'numeric'); // TODO: Only validate if not disabled.
         } else if ($value[0] == "select") {
             $mform->addElement('select', $stratfieldid, $value[1], $value[3], $attributes);
@@ -280,6 +287,9 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
     /**
      * Checks that accesstimestart is before accesstimestop
+     *
+     * @param array $data
+     * @param array $files
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
@@ -321,8 +331,8 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
 
     /**
      * Returns a valid identifier for a settings field
-     * @param $strategy identifier of the strategy
-     * @param $key identifier of the key
+     * @param string $strategy identifier of the strategy
+     * @param string $key identifier of the key
      * @return string
      */
     private function get_settingsfield_identifier($strategy, $key) {
@@ -381,7 +391,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      * This method is also called in the bulk activity completion form.
      * Only available on moodleform_mod.
      *
-     * @param $defaultvalues
+     * @param array $defaultvalues
      * @return void
      */
     public function data_preprocessing(&$defaultvalues) {

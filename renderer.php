@@ -62,7 +62,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * Render strategyform.
      *
-     * @param $mform ratingallocate_strategyform
+     * @param ratingallocate_strategyform $mform
      * @return string
      * @throws coding_exception
      */
@@ -79,9 +79,9 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      * Displays the status of the allocation with buttons to start the algorithm, delete existing distributions,
      * and distribute unallocated users.
      *
-     * @param $coursemoduleid
-     * @param $status
-     * @param $undistributeduserscount
+     * @param int $coursemoduleid
+     * @param string $status
+     * @param int $undistributeduserscount
      * @return string
      * @throws coding_exception
      * @throws moodle_exception
@@ -199,9 +199,9 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      * Displays the status concerning publishing the allocation together with the buttons to publish the allocation
      * and to create groups.
      *
-     * @param $ratingallocateid
-     * @param $coursemoduleid
-     * @param $status
+     * @param int $ratingallocateid
+     * @param int $coursemoduleid
+     * @param string $status
      * @return string
      * @throws coding_exception
      * @throws moodle_exception
@@ -417,7 +417,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
     /**
      * Format text by enclosing it with div box.
-     * @param $text
+     * @param string $text
      * @return string
      */
     public function format_text($text) {
@@ -433,8 +433,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * Add a notification with the given $note to the renderer.
      * This notification will be rendered in the header of the site.
-     * @param $note string to be viewed in the notification
-     * @param $classes string class for the formatting of the notification
+     * @param string $note to be viewed in the notification
+     * @param string|null $classes class for the formatting of the notification
      */
     public function add_notification($note, $classes = 'notifyproblem') {
         array_push($this->notifications, $this->notification($note, $classes, false));
@@ -442,6 +442,10 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
     /**
      * Output the ratingallocate modfify choices links
+     *
+     * @param int $ratingallocateid
+     * @param int $coursemoduleid
+     * @param string $status
      */
     public function modify_choices_group($ratingallocateid, $coursemoduleid, $status) {
         $output = '';
@@ -469,6 +473,13 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
     /**
      * Output the ratingallocate modfify allocation
+     *
+     * @param int $ratingallocateid
+     * @param int $coursemoduleid
+     * @param string $status
+     * @param int $undistributeduserscount
+     * @param string $algorithmstatus
+     * @param bool $runalgorithmbycron
      */
     public function modify_allocation_group($ratingallocateid, $coursemoduleid,
             $status, $undistributeduserscount, $algorithmstatus, $runalgorithmbycron) {
@@ -552,6 +563,10 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
     /**
      * Output the ratingallocate modfify allocation
+     *
+     * @param int $ratingallocateid
+     * @param int $coursemoduleid
+     * @param string $status
      */
     public function publish_allocation_group($ratingallocateid, $coursemoduleid, $status) {
         $output = '';
@@ -582,6 +597,12 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
     /**
      * Output the ratingallocate modify allocation
+     *
+     * @param int $ratingallocateid
+     * @param int $coursemoduleid
+     * @param string $status
+     * @param context $context
+     * @param string|null $action
      */
     public function reports_group($ratingallocateid, $coursemoduleid, $status, $context, $action = '') {
         $output = '';
@@ -605,6 +626,8 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * Shows table containing information about the result of the distribution algorithm.
      *
+     * @param ratingallocate $ratingallocate
+     * @param bool $choicesmodifiably
      * @return HTML code
      */
     public function ratingallocate_show_choices_table(ratingallocate $ratingallocate, $choicesmodifiably) {
@@ -751,6 +774,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      * @param string $choice URL parameter to include in the link
      * @param string $icon The key to the icon to use (e.g. 't/up')
      * @param string $alt The string description of the link used as the title and alt text
+     * @param string|null $confirm Optional confirmation message to show before executing the action
      * @return string The icon/link
      */
     private function format_icon_link($action, $choice, $icon, $alt, $confirm = null) {
@@ -765,6 +789,9 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * Finish the page (Since the header renders the notifications, it needs to be rendered after the actions)
      *
+     * @param ratingallocate $ratingallocate
+     * @param context $context
+     * @param int $coursemodid
      * @return string
      */
     public function render_header($ratingallocate, $context, $coursemodid) {
@@ -785,6 +812,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * Shows table containing information about the result of the distribution algorithm.
      *
+     * @param ratingallocate $ratingallocate
      * @return string html code representing the distribution table
      */
     public function statistics_table_for_ratingallocate(ratingallocate $ratingallocate) {
@@ -863,6 +891,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * Shows table containing information about the allocation of users.
      *
+     * @param ratingallocate $ratingallocate
      * @return string html code representing ratings table
      */
     public function allocation_table_for_ratingallocate($ratingallocate) {
@@ -891,7 +920,14 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
      * Shows table containing information about the users' ratings
      * and their distribution over the choices (allocations).
      *
+     * @param array $choices
+     * @param array $ratings
+     * @param array $users
+     * @param array $memberships
+     * @param stdClass $ratingallocate
      * @return string html code representing ratings table
+     * @throws coding_exception
+     * @throws dml_exception
      */
     public function ratings_table_for_ratingallocate($choices, $ratings, $users, $memberships, $ratingallocate) {
 
@@ -921,6 +957,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * Formats the ratings
      * @param unknown $ratings
+     * @param ratingallocate $ratingallocate
      * @return multitype:Ambigous <string, lang_string>
      */
     private function get_options_titles($ratings, ratingallocate $ratingallocate) {
@@ -937,6 +974,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * Formats the rating
      * @param unknown $rating
+     * @param strategytemplate $strategy
      * @return multitype:Ambigous <string, lang_string>
      */
     private function get_option_title($rating, strategytemplate $strategy) {
@@ -987,6 +1025,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
     /**
      * Method to check if an adhoc task for distributing unallocated users has already been queued.
      *
+     * @param int $coursemoduleid
      * @return bool true if an adhoc task for the current course module can be found, false otherwise
      */
     private function is_distribution_of_unallocated_users_running(int $coursemoduleid): bool {

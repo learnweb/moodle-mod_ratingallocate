@@ -178,9 +178,9 @@ final class cron_test extends \advanced_testcase {
 
     /**
      * Create an ratingallocate module with 4 enroled students and their ratings.
-     * @param $ratingperiodended determines if the rating period should have ended.
+     * @param bool $ratingperiodended determines if the rating period should have ended.
      * @param int $algorithmstatus the algorithm status of the modul to be created.
-     * @param datetime $algorithmstarttime the start time of the algorithm.
+     * @param int $algorithmstarttime the start time of the algorithm.
      */
     private function create_ratingallocate($ratingperiodended,
             $algorithmstatus = \mod_ratingallocate\algorithm_status::NOTSTARTED, $algorithmstarttime = null) {

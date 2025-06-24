@@ -93,6 +93,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             $mform->setExpanded($headerelem);
 
             // Show max. number of allocations.
+            // phpcs:ignore moodle.Commenting.TodoComment.MissingInfoInline
             // TODO add setting in order to make this optional, as requested in issue #14.
             $mform->addElement('html', '<div class="mod-ratingallocate-choice-maxno">' .
                     '<span class="mod-ratingallocate-choice-maxno-desc">' .
@@ -139,8 +140,8 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
 
     /**
      * Validate form data.
-     * @param $data
-     * @param $files
+     * @param array $data
+     * @param array $files
      * @return array
      * @throws coding_exception
      */
@@ -184,6 +185,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
      */
     abstract protected function get_max_amount_of_nos();
 
+    // phpcs:ignore moodle.Commenting.TodoComment.MissingInfoInline
     // TODO remove and make identifier strategy_options specific not strategy specific.
 
     /**

@@ -50,10 +50,10 @@ class edge {
     /**
      * Construct.
      *
-     * @param $from
-     * @param $to
-     * @param $weight
-     * @param $space
+     * @param int $from
+     * @param int $to
+     * @param float $weight
+     * @param int|null $space
      */
     public function __construct($from, $to, $weight, $space = 0) {
         $this->from = $from;
@@ -129,9 +129,9 @@ class distributor {
     /**
      * Extracts a distribution/allocation from the graph.
      *
-     * @param $touserid a map mapping from indexes in the graph to userids
-     * @param $tochoiceid a map mapping from indexes in the graph to choiceids
-     * @return an array of the form array(groupid => array(userid, ...), ...)
+     * @param int $touserid a map mapping from indexes in the graph to userids
+     * @param int $tochoiceid a map mapping from indexes in the graph to choiceids
+     * @return array of the form array(groupid => array(userid, ...), ...)
      */
     protected function extract_allocation($touserid, $tochoiceid) {
         $distribution = [];
@@ -150,8 +150,8 @@ class distributor {
 
     /**
      * Setup conversions between ids of users and choices to their node-ids in the graph
-     * @param type $usercount
-     * @param type $ratings
+     * @param int $usercount
+     * @param array $ratings
      * @return array($fromuserid, $touserid, $fromchoiceid, $tochoiceid);
      */
     public static function setup_id_conversions($usercount, $ratings) {
@@ -188,14 +188,17 @@ class distributor {
 
     /**
      * Sets up $this->graph
-     * @param type $choicecount
-     * @param type $usercount
-     * @param type $fromuserid
-     * @param type $fromchoiceid
-     * @param type $ratings
-     * @param type $choicedata
-     * @param type $source
-     * @param type $sink
+     *
+     * @param int $choicecount
+     * @param int $usercount
+     * @param int $fromuserid
+     * @param int $fromchoiceid
+     * @param array $ratings
+     * @param array $choicedata
+     * @param stdClass $source
+     * @param stdClass $sink
+     * @param stdClass $weightmult
+     * @return void
      */
     protected function setup_graph($choicecount, $usercount, $fromuserid, $fromchoiceid, $ratings, $choicedata, $source, $sink,
             $weightmult = 1) {
@@ -237,7 +240,7 @@ class distributor {
      * Augments the flow in the network, i.e. augments the overall 'satisfaction'
      * by distributing users to choices
      * Reverses all edges along $path in $graph
-     * @param type $path path from t to s
+     * @param stdClass $path path from t to s
      * @throws moodle_exception
      */
     protected function augment_flow($path) {

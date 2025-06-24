@@ -60,7 +60,7 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
     /**
      * Process ratingallocate.
      *
-     * @param $data
+     * @param array $data
      * @return void
      * @throws base_step_exception
      * @throws dml_exception
@@ -89,7 +89,7 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
 
     /**
      * Restore data for ratingallocate choices.
-     * @param $data
+     * @param array $data
      * @return void
      * @throws dml_exception
      * @throws restore_step_exception
@@ -108,7 +108,7 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
 
     /**
      * Restore data for the ratingallocate ratings of users.
-     * @param $data
+     * @param array $data
      * @return void
      * @throws dml_exception
      * @throws restore_step_exception
@@ -128,7 +128,7 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
 
     /**
      * Restore data of allocations of users to choices.
-     * @param $data
+     * @param array $data
      * @return void
      * @throws dml_exception
      * @throws restore_step_exception
@@ -167,7 +167,7 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
 
     /**
      * Restore data for generated groups based on allocations.
-     * @param $data
+     * @param array $data
      * @return void
      * @throws dml_exception
      * @throws restore_step_exception
@@ -186,7 +186,7 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
 
     /**
      * Restore data for generated groupings based on allocations.
-     * @param $data
+     * @param array $data
      * @return void
      * @throws dml_exception
      * @throws restore_step_exception

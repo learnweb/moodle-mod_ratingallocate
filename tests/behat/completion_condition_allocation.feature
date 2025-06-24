@@ -31,9 +31,11 @@ Feature: Set a ratingallocate activity marked as completed when a user has been 
       | C1     | student2 | 0      |
       | C2     | student1 | 0      |
       | C2     | student2 | 0      |
+    And I log in as "admin"
+    And I run the scheduled task "\mod_ratingallocate\task\cron_task"
+    And I log out
     And I log in as "teacher1"
     And I am on the "My Fair Allocation" "mod_ratingallocate > View" page
-    And I run the scheduled task "mod_ratingallocate\task\cron_task"
     And I press "Publish Allocation"
     And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"

@@ -79,7 +79,7 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
     /**
      * Helper function - Map group selection names to IDs
      *
-     * @param array $groups
+     * @param array $groupselections
      *
      * @return array
      */

@@ -41,9 +41,9 @@ class rating_saved extends \core\event\base {
 
     /**
      * Create simple rating_saved event.
-     * @param $modulecontext
-     * @param $ratingallocateid
-     * @param $rating
+     * @param \stdClass $modulecontext
+     * @param int $ratingallocateid
+     * @param float $rating
      * @return \core\event\base
      * @throws \coding_exception
      */

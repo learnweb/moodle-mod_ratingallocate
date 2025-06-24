@@ -55,7 +55,9 @@ abstract class strategytemplate {
 
     /**
      * Retrieves the value of a settings field.
-     * @param $key of the settings field\
+     *
+     * @param int $key of the settings field.
+     * @param bool $default whether to return the default.
      * @return either the value of the setting the strategy was initialized with or the default value of the setting.
      */
     protected function get_settings_value($key, $default = true) {
@@ -68,7 +70,7 @@ abstract class strategytemplate {
 
     /**
      * Retrieves the default value of a settings field.
-     * @param $key of the settings field\
+     * @param int $key of the settings field.
      * @return the default value of the setting.
      */
     protected function get_settings_default_value($key) {
@@ -146,7 +148,7 @@ abstract class strategytemplate {
      * Searches for the given rating, if a setting for its title is set.
      * If so, it returns the title .
      * If not, it returns the ratings value.
-     * @param $rating
+     * @param mixed $rating
      * @return rating title
      */
     public function translate_rating_to_titles($rating) {
@@ -235,7 +237,9 @@ abstract class ratingallocate_strategyform extends \moodleform {
 
     /**
      * This method creates an instance of the strategy class for the form
-     * @return \strategytemplate
+     *
+     * @param array $strategyoptions
+     * @return \strategytemplate Returns a strategy class.
      */
     abstract protected function construct_strategy($strategyoptions);
 

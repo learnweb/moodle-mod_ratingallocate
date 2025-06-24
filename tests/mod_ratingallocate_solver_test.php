@@ -38,8 +38,8 @@ final class mod_ratingallocate_solver_test extends \basic_testcase {
     /**
      * Perform race.
      *
-     * @param $groupsnum
-     * @param $ratersnum
+     * @param int $groupsnum
+     * @param int $ratersnum
      * @return array
      */
     private function perform_race($groupsnum, $ratersnum) {

@@ -45,10 +45,13 @@ class modify_choice_form extends moodleform {
 
     /**
      * Constructor
+     *
      * @param string $url
      * @param ratingallocate $ratingallocate
-     * @param ratingallocate_choice $choice
-     * @param array $customdata
+     * @param ratingallocate_choice|null $choice
+     * @param array|null $customdata
+     * @return void
+     * @throws coding_exception
      */
     public function __construct($url, ratingallocate $ratingallocate,
             ?ratingallocate_choice $choice, ?array $customdata) {
@@ -172,6 +175,9 @@ class modify_choice_form extends moodleform {
 
     /**
      * Checks that accesstimestart is before accesstimestop
+     *
+     * @param array $data
+     * @param array $files
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
