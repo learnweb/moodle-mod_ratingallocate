@@ -1,6 +1,6 @@
 > **Note:** Please fill out all required sections and remove irrelevant ones.
 
-### 📋 Kind of PR
+### 📋 Kind of PR 
 
 - [ ] Fixes a bug
 - [ ] Updates for a new Moodle version
