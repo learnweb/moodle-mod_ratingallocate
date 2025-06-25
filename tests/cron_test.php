@@ -22,6 +22,8 @@ require_once(__DIR__ . '/generator/lib.php');
 require_once(__DIR__ . '/../locallib.php');
 
 use mod_ratingallocate\db as this_db;
+use mod_ratingallocate\task\cron_task;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * mod_ratingallocate cron tests
@@ -34,8 +36,8 @@ use mod_ratingallocate\db as this_db;
  * @group mod_ratingallocate
  * @copyright  T Reischmann 2015
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \classes\task\cron_task
  */
+#[CoversClass(cron_task::class)]
 final class cron_test extends \advanced_testcase {
 
     /** @var $teacher */
@@ -111,7 +113,7 @@ final class cron_test extends \advanced_testcase {
      * Creates a cron task and executes it.
      */
     private function run_cron() {
-        $task = new \mod_ratingallocate\task\cron_task();
+        $task = new cron_task();
         $this->setAdminUser();
         $task->execute();
     }
