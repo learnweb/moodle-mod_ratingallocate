@@ -87,6 +87,7 @@ final class mod_ratingallocate_status_test extends \advanced_testcase {
      * @param \stdClass $expected
      * @return void
      * @throws \coding_exception
+     * @covers \ratingallocate::get_status
      */
     public function test_get_status($addtostart, $addtostop, $published, $hasallocations, $expected): void {
         $record = [
@@ -105,7 +106,7 @@ final class mod_ratingallocate_status_test extends \advanced_testcase {
         }
 
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate($moddb);
-        $ratingallocate->ratingallocate->published = $published;
+        $ratingallocate->ratingallocate->__set("published", $published);
 
         $status = $ratingallocate->get_status();
         $this->assertEquals($expected, $status);

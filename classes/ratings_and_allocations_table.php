@@ -554,7 +554,7 @@ class ratings_and_allocations_table extends \table_sql {
      * Loads the filter settings from the user preferences and overrides them if wanted, with the two parameters.
      * @param bool $hidenorating if true it shows also users with no rating.
      * @param bool $showallocnecessary if true it shows only users without allocations.
-     * @param int $groupselect int if 0 it shows all users, if -1 it shows all users not in a group, otherwise it shows only users in the selected group.
+     * @param int $groupselect int shows 0 = all users, -1 = all users not in a group, otherwise = only users in the selected group.
      */
     private function setup_filter($hidenorating = null, $showallocnecessary = null, $groupselect = null) {
         // Get the filter settings.

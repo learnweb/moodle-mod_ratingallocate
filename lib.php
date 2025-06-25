@@ -715,21 +715,30 @@ function ratingallocate_reset_userdata($data) {
 
         // Delete all ratings.
         $ratingidssql = "SELECT r.id FROM {ratingallocate_ratings} r
-                      INNER JOIN {ratingallocate_choices} c ON r.choiceid=c.id
-                      INNER JOIN {ratingallocate} ra ON c.ratingallocateid=ra.id
-                      WHERE ra.course= :courseid";
-        $DB->delete_records_select('ratingallocate_ratings', "id IN ($ratingidssql)", $params);
+                         INNER JOIN {ratingallocate_choices} c ON r.choiceid=c.id
+                         INNER JOIN {ratingallocate} ra ON c.ratingallocateid=ra.id
+                         WHERE ra.course= :courseid";
+        $ratingids = $DB->get_fieldset_sql($ratingidssql, $params);
+        if ($ratingids) {
+            [$insql, $inparams] = $DB->get_in_or_equal($ratingids);
+            $DB->delete_records_select('ratingallocate_ratings', "id $insql", $inparams);
+        }
 
         // Delete all allocations.
         $allocationidssql = "SELECT a.id FROM {ratingallocate_allocations} a
-                            INNER JOIN {ratingallocate} r ON a.ratingallocateid=r.id
-                            WHERE r.course= :courseid";
-        $DB->delete_records_select('ratingallocate_allocations', "id IN ($allocationidssql)", $params);
+                             INNER JOIN {ratingallocate} r ON a.ratingallocateid=r.id
+                             WHERE r.course= :courseid";
+        $allocationids = $DB->get_fieldset_sql($allocationidssql, $params);
+        if ($allocationids) {
+            [$insql, $inparams] = $DB->get_in_or_equal($allocationids);
+            $DB->delete_records_select('ratingallocate_allocations', "id $insql", $inparams);
+        }
 
         $status[] = [
             'component' => $componentstr,
             'item' => get_string('ratings_and_allocations_deleted', RATINGALLOCATE_MOD_NAME),
-            'error' => false];
+            'error' => false
+        ];
     }
 
     // Updating dates - shift may be negative too.

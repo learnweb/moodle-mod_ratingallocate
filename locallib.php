@@ -135,6 +135,17 @@ class ratingallocate_db_wrapper {
         return $this->dbrecord->{$name};
     }
 
+
+    /**
+     * Emulates the functionality as if there were explicit records by passing them to the original db record
+     *
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value){
+        $this->dbrecord->{$name} = $value;
+    }
+
     /**
      * Construct.
      *
@@ -2309,13 +2320,13 @@ class ratingallocate {
      */
     public function get_status() {
         $now = time();
-        if ($this->ratingallocate->accesstimestart > $now) {
+        if ($this->ratingallocate->__get("accesstimestart") > $now) {
             return self::DISTRIBUTION_STATUS_TOO_EARLY;
         }
-        if ($this->ratingallocate->accesstimestop > $now) {
+        if ($this->ratingallocate->__get("accesstimestop")  > $now) {
             return self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS;
         }
-        if ($this->ratingallocate->published == true) {
+        if ($this->ratingallocate->__get("published") == true) {
             return self::DISTRIBUTION_STATUS_PUBLISHED;
         }
         if (count($this->get_allocations()) == 0) {

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_ratingallocate;
+use stdClass;
+
 defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/generator/lib.php');
 require_once(__DIR__ . '/../locallib.php');
@@ -30,6 +32,15 @@ require_once(__DIR__ . '/../locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
+
+    /** @var object The environment that will be used for testing
+     * This Class contains:
+     * - A Course
+     * - Users (teacher, 4 students)
+     * - Choicedata
+     * - A ratingallocate instance
+     */
+    private $env;
 
     /** Helper function - Create a range of choices.
      *
@@ -66,7 +77,7 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
      */
     private function get_choice_map($choices = null) {
         if (!$choices) {
-            $choices = $this->ratingallocate->get_rateable_choices();
+            $choices = $this->env->ratingallocate->get_rateable_choices();
         }
         $choiceidmap = array_flip(array_map(
             function($a) {
@@ -85,7 +96,7 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
      */
     private function get_group_map($groupselections = null) {
         if (!$groupselections) {
-            $groupselections = $this->ratingallocate->get_group_selections();
+            $groupselections = $this->env->ratingallocate->get_group_selections();
         }
         $groupidmap = array_flip($groupselections);
         return $groupidmap;
@@ -95,35 +106,37 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
     protected function setUp(): void {
         parent::setUp();
 
+        $this->env = new stdClass();
+
         $generator = $this->getDataGenerator();
 
         $course = $generator->create_course();
-        $this->course = $course;
-        $this->teacher = \mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
-        $this->setUser($this->teacher);
+        $this->env->course = $course;
+        $this->env->teacher = \mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
+        $this->setUser($this->env->teacher);
 
         // Make test groups and enrol students.
         $green = $generator->create_group(['name' => 'Green Group', 'courseid' => $course->id]);
         $blue = $generator->create_group(['name' => 'Blue Group', 'courseid' => $course->id]);
         $red = $generator->create_group(['name' => 'Red Group', 'courseid' => $course->id]);
 
-        $this->student1 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
-        groups_add_member($green, $this->student1);
-        $this->student2 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
-        groups_add_member($blue, $this->student2);
-        $this->student3 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
-        groups_add_member($red, $this->student3);
-        $this->student4 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        $this->env->student1 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        groups_add_member($green, $this->env->student1);
+        $this->env->student2 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        groups_add_member($blue, $this->env->student2);
+        $this->env->student3 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
+        groups_add_member($red, $this->env->student3);
+        $this->env->student4 = \mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         // No groups for student 4.
 
-        $this->choicedata = $this->get_choice_data();
-        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, ['course' => $course], $this->choicedata);
-        $this->ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
+        $this->env->choicedata = $this->get_choice_data();
+        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, ['course' => $course], $this->env->choicedata);
+        $this->env->ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->env->teacher);
     }
 
 
     protected function tearDown(): void {
-        $this->choicedata = null;
+        $this->env->choicedata = null;
 
         parent::tearDown();
     }
@@ -137,12 +150,12 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
     public function test_setup(): void {
         $this->resetAfterTest();
 
-        $this->assertEquals(5, count($this->choicedata));
-        $choices = $this->ratingallocate->get_rateable_choices();
+        $this->assertEquals(5, count($this->env->choicedata));
+        $choices = $this->env->ratingallocate->get_rateable_choices();
         $this->assertEquals(5, count($choices));
 
         // Candidates for groupselector match test fixture.
-        $groupselections = $this->ratingallocate->get_group_selections();
+        $groupselections = $this->env->ratingallocate->get_group_selections();
         $this->assertEquals(3, count($groupselections));
         $this->assertContains('Green Group', $groupselections);
         $this->assertContains('Blue Group', $groupselections);
@@ -159,9 +172,9 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         // Map choice titles to choice IDs, group names to group IDs.
-        $choices = $this->ratingallocate->get_rateable_choices();
+        $choices = $this->env->ratingallocate->get_rateable_choices();
         $choiceidmap = $this->get_choice_map($choices);
-        $groupselections = $this->ratingallocate->get_group_selections();
+        $groupselections = $this->env->ratingallocate->get_group_selections();
         $groupidmap = $this->get_group_map($groupselections);
 
         /* Populate choice-group mappings for visibility tests.
@@ -172,18 +185,18 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
          * Choice D: 'usegroups' is selected, but no groups; never available to students.
          * Choice E: 'usegroups' is not selected; always available.
          */
-        $this->ratingallocate->update_choice_groups($choiceidmap['Choice A'], [
+        $this->env->ratingallocate->update_choice_groups($choiceidmap['Choice A'], [
             $groupidmap['Green Group'],
         ]);
-        $this->ratingallocate->update_choice_groups($choiceidmap['Choice B'], [
+        $this->env->ratingallocate->update_choice_groups($choiceidmap['Choice B'], [
             $groupidmap['Green Group'], $groupidmap['Blue Group'],
         ]);
-        $this->ratingallocate->update_choice_groups($choiceidmap['Choice C'], [
+        $this->env->ratingallocate->update_choice_groups($choiceidmap['Choice C'], [
             $groupidmap['Red Group'],
         ]);
 
         // Teacher context: all choices shown in teacher view.
-        $basechoices = array_keys($this->ratingallocate->filter_choices_by_groups($choices, $this->teacher->id));
+        $basechoices = array_keys($this->env->ratingallocate->filter_choices_by_groups($choices, $this->env->teacher->id));
         $this->assertContains($choiceidmap['Choice A'], $basechoices);
         $this->assertContains($choiceidmap['Choice B'], $basechoices);
         $this->assertContains($choiceidmap['Choice C'], $basechoices);
@@ -191,8 +204,8 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
         $this->assertContains($choiceidmap['Choice E'], $basechoices);
 
         // Student 1, Green group: A, B, E but not C, D.
-        $this->setUser($this->student1);
-        $s1choices = array_keys($this->ratingallocate->filter_choices_by_groups($choices, $this->student1->id));
+        $this->setUser($this->env->student1);
+        $s1choices = array_keys($this->env->ratingallocate->filter_choices_by_groups($choices, $this->env->student1->id));
         $this->assertContains($choiceidmap['Choice A'], $s1choices);
         $this->assertContains($choiceidmap['Choice B'], $s1choices);
         $this->assertNotContains($choiceidmap['Choice C'], $s1choices);
@@ -200,8 +213,8 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
         $this->assertContains($choiceidmap['Choice E'], $s1choices);
 
         // Student 2, Blue group: B, E but not A, C, D.
-        $this->setUser($this->student2);
-        $s2choices = array_keys($this->ratingallocate->filter_choices_by_groups($choices, $this->student2->id));
+        $this->setUser($this->env->student2);
+        $s2choices = array_keys($this->env->ratingallocate->filter_choices_by_groups($choices, $this->env->student2->id));
         $this->assertNotContains($choiceidmap['Choice A'], $s2choices);
         $this->assertContains($choiceidmap['Choice B'], $s2choices);
         $this->assertNotContains($choiceidmap['Choice C'], $s2choices);
@@ -209,8 +222,8 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
         $this->assertContains($choiceidmap['Choice E'], $s2choices);
 
         // Student 3, Red group: C, E but not A, B, D.
-        $this->setUser($this->student3);
-        $s3choices = array_keys($this->ratingallocate->filter_choices_by_groups($choices, $this->student3->id));
+        $this->setUser($this->env->student3);
+        $s3choices = array_keys($this->env->ratingallocate->filter_choices_by_groups($choices, $this->env->student3->id));
         $this->assertNotContains($choiceidmap['Choice A'], $s3choices);
         $this->assertNotContains($choiceidmap['Choice B'], $s3choices);
         $this->assertContains($choiceidmap['Choice C'], $s3choices);
@@ -218,8 +231,8 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
         $this->assertContains($choiceidmap['Choice E'], $s3choices);
 
         // Student 4, no group: just E.
-        $this->setUser($this->student4);
-        $s4choices = array_keys($this->ratingallocate->filter_choices_by_groups($choices, $this->student4->id));
+        $this->setUser($this->env->student4);
+        $s4choices = array_keys($this->env->ratingallocate->filter_choices_by_groups($choices, $this->env->student4->id));
         $this->assertNotContains($choiceidmap['Choice A'], $s4choices);
         $this->assertNotContains($choiceidmap['Choice B'], $s4choices);
         $this->assertNotContains($choiceidmap['Choice C'], $s4choices);
@@ -240,29 +253,29 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
         $groupidmap = $this->get_group_map();
 
         // Start empty.
-        $groups = $this->ratingallocate->get_choice_groups($choiceidmap['Choice A']);
+        $groups = $this->env->ratingallocate->get_choice_groups($choiceidmap['Choice A']);
         $this->assertTrue(empty($groups));
 
         // Add one.
-        $this->ratingallocate->update_choice_groups($choiceidmap['Choice A'], [
+        $this->env->ratingallocate->update_choice_groups($choiceidmap['Choice A'], [
             $groupidmap['Green Group'],
         ]);
-        $groups = $this->ratingallocate->get_choice_groups($choiceidmap['Choice A']);
+        $groups = $this->env->ratingallocate->get_choice_groups($choiceidmap['Choice A']);
         $this->assertContains($groupidmap['Green Group'], array_keys($groups));
 
         // Update to two.
-        $this->ratingallocate->update_choice_groups($choiceidmap['Choice A'], [
+        $this->env->ratingallocate->update_choice_groups($choiceidmap['Choice A'], [
             $groupidmap['Green Group'], $groupidmap['Blue Group'],
         ]);
-        $groups = $this->ratingallocate->get_choice_groups($choiceidmap['Choice A']);
+        $groups = $this->env->ratingallocate->get_choice_groups($choiceidmap['Choice A']);
         $this->assertContains($groupidmap['Green Group'], array_keys($groups));
         $this->assertContains($groupidmap['Blue Group'], array_keys($groups));
 
         // Remove one.
-        $this->ratingallocate->update_choice_groups($choiceidmap['Choice A'], [
+        $this->env->ratingallocate->update_choice_groups($choiceidmap['Choice A'], [
             $groupidmap['Blue Group'],
         ]);
-        $groups = $this->ratingallocate->get_choice_groups($choiceidmap['Choice A']);
+        $groups = $this->env->ratingallocate->get_choice_groups($choiceidmap['Choice A']);
         $this->assertNotContains($groupidmap['Green Group'], array_keys($groups));
         $this->assertContains($groupidmap['Blue Group'], array_keys($groups));
     }
