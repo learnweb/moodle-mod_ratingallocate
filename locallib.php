@@ -142,7 +142,7 @@ class ratingallocate_db_wrapper {
      * @param string $name
      * @param mixed $value
      */
-    public function __set($name, $value){
+    public function __set($name, $value) {
         $this->dbrecord->{$name} = $value;
     }
 
@@ -2323,7 +2323,7 @@ class ratingallocate {
         if ($this->ratingallocate->__get("accesstimestart") > $now) {
             return self::DISTRIBUTION_STATUS_TOO_EARLY;
         }
-        if ($this->ratingallocate->__get("accesstimestop")  > $now) {
+        if ($this->ratingallocate->__get("accesstimestop") > $now) {
             return self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS;
         }
         if ($this->ratingallocate->__get("published") == true) {

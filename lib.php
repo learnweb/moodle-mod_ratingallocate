@@ -737,7 +737,7 @@ function ratingallocate_reset_userdata($data) {
         $status[] = [
             'component' => $componentstr,
             'item' => get_string('ratings_and_allocations_deleted', RATINGALLOCATE_MOD_NAME),
-            'error' => false
+            'error' => false,
         ];
     }
 
