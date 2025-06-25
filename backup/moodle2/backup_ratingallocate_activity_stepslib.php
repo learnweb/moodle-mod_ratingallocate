@@ -13,12 +13,18 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+namespace mod_ratingallocate;
 defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__) . '/backup_restore_helper.php');
 
+use backup;
+use backup_activity_structure_step;
+use backup_nested_element;
+use base_element_struct_exception;
+use base_step_exception;
 use mod_ratingallocate\db as this_db;
+use ReflectionException;
 
 /**
  * Class to define the complete ratingallocate structure for backup, with [file and] id annotations

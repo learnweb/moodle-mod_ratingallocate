@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_ratingallocate;
+use stdClass;
+
 defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/generator/lib.php');
 require_once(__DIR__ . '/../locallib.php');
@@ -31,6 +33,16 @@ require_once(__DIR__ . '/../locallib.php');
  * @covers \choice_importer
  */
 final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
+
+    /** @var object The environment that will be used for testing
+     * This Class contains:
+     * - A course
+     * - A teacher
+     * - Three groups: Green, Blue, Red
+     * - A ratingallocate instance
+     * - The ratingallocate instance ID
+     */
+    private $env;
 
     /**
      * Return lines of text for a sample CSV file.
@@ -57,40 +69,42 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
     protected function setUp(): void {
         parent::setUp();
 
+        $this->env = new stdClass();
+
         $generator = $this->getDataGenerator();
 
         $course = $generator->create_course();
-        $this->course = $course;
-        $this->teacher = \mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
+        $this->env->course = $course;
+        $this->env->teacher = \mod_ratingallocate_generator::create_user_and_enrol($this, $course, true);
 
         // Make test groups.
-        $this->green = $generator->create_group(['name' => 'Green Group', 'courseid' => $course->id]);
-        $this->blue = $generator->create_group(['name' => 'Blue Group', 'courseid' => $course->id]);
-        $this->red = $generator->create_group(['name' => 'Red Group', 'courseid' => $course->id]);
+        $this->env->green = $generator->create_group(['name' => 'Green Group', 'courseid' => $course->id]);
+        $this->env->blue = $generator->create_group(['name' => 'Blue Group', 'courseid' => $course->id]);
+        $this->env->red = $generator->create_group(['name' => 'Red Group', 'courseid' => $course->id]);
 
         $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, ['course' => $course]);
 
-        $this->ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
-        $this->ratingallocateid = $mod->id;
+        $this->env->ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->env->teacher);
+        $this->env->ratingallocateid = $mod->id;
     }
 
     public function test_setup(): void {
         $this->resetAfterTest();
 
         // Groups in course context.
-        $groupselections = $this->ratingallocate->get_group_selections();
+        $groupselections = $this->env->ratingallocate->get_group_selections();
         $this->assertEquals(3, count($groupselections));
         $this->assertContains('Green Group', $groupselections);
         $this->assertContains('Blue Group', $groupselections);
         $this->assertContains('Red Group', $groupselections);
 
-        $choices = $this->ratingallocate->get_choices();
+        $choices = $this->env->ratingallocate->get_choices();
         $this->assertEquals(2, count($choices), 'Generator default: two pre-existing choices.');
     }
 
     public function test_choice_importer_testmode(): void {
         $this->resetAfterTest();
-        $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
+        $choiceimporter = new \mod_ratingallocate\choice_importer($this->env->ratingallocateid, $this->env->ratingallocate);
         $this->assertTrue($choiceimporter instanceof \mod_ratingallocate\choice_importer);
 
         // Test import.
@@ -110,7 +124,7 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
 
     public function test_choice_importer_livemode(): void {
         $this->resetAfterTest();
-        $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
+        $choiceimporter = new \mod_ratingallocate\choice_importer($this->env->ratingallocateid, $this->env->ratingallocate);
         $this->assertTrue($choiceimporter instanceof \mod_ratingallocate\choice_importer);
 
         // Live import.
@@ -122,13 +136,13 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals($importstatus->status_message,
             get_string('csvupload_live_success', 'ratingallocate', ['importcount' => $importstatus->importcount])
         );
-        $choices = $this->ratingallocate->get_choices();
+        $choices = $this->env->ratingallocate->get_choices();
         $this->assertEquals(5, count($choices), 'Three new choices imported');
     }
 
     public function test_adding_groups(): void {
         $this->resetAfterTest();
-        $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
+        $choiceimporter = new \mod_ratingallocate\choice_importer($this->env->ratingallocateid, $this->env->ratingallocate);
 
         $contents = $this->get_choice_lines(false);
         // Some new groups of groups, some with questionable whitespace and empty values in group names.
@@ -143,7 +157,7 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $importstatus = $choiceimporter->import($csv);
         $this->assertEquals($importstatus->status, \mod_ratingallocate\choice_importer::IMPORT_STATUS_OK);
 
-        $choices = $this->ratingallocate->get_choices();
+        $choices = $this->env->ratingallocate->get_choices();
         $this->assertEquals(10, count($choices), 'Eight new choices imported');
 
         // Get ordered list of keys of all added choices.
@@ -151,56 +165,56 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $keylist = array_keys($choices);
 
         // 3: No groups
-        $choicegroups3 = array_keys($this->ratingallocate->get_choice_groups($keylist[2]));
+        $choicegroups3 = array_keys($this->env->ratingallocate->get_choice_groups($keylist[2]));
         $this->assertEquals(count($choicegroups3), 0);
 
         // 4: Green
-        $choicegroups4 = array_keys($this->ratingallocate->get_choice_groups($keylist[3]));
+        $choicegroups4 = array_keys($this->env->ratingallocate->get_choice_groups($keylist[3]));
         $this->assertEquals(count($choicegroups4), 1);
         // Convert to integers here, because later PHP versions check type more strictly.
-        $this->assertContains(intval($this->green->id), $choicegroups4);
+        $this->assertContains(intval($this->env->green->id), $choicegroups4);
 
         // 5: Blue
-        $choicegroups5 = array_keys($this->ratingallocate->get_choice_groups($keylist[4]));
+        $choicegroups5 = array_keys($this->env->ratingallocate->get_choice_groups($keylist[4]));
         $this->assertEquals(count($choicegroups5), 1);
-        $this->assertContains(intval($this->blue->id), $choicegroups5);
+        $this->assertContains(intval($this->env->blue->id), $choicegroups5);
 
         // 6: Blue, Green
-        $choicegroups6 = array_keys($this->ratingallocate->get_choice_groups($keylist[5]));
+        $choicegroups6 = array_keys($this->env->ratingallocate->get_choice_groups($keylist[5]));
         $this->assertEquals(count($choicegroups6), 2);
-        $this->assertContains(intval($this->blue->id), $choicegroups6);
-        $this->assertContains(intval($this->green->id), $choicegroups6);
+        $this->assertContains(intval($this->env->blue->id), $choicegroups6);
+        $this->assertContains(intval($this->env->green->id), $choicegroups6);
 
         // 7: Blue, Green, Red
-        $choicegroups7 = array_keys($this->ratingallocate->get_choice_groups($keylist[6]));
+        $choicegroups7 = array_keys($this->env->ratingallocate->get_choice_groups($keylist[6]));
         $this->assertEquals(count($choicegroups7), 3);
-        $this->assertContains(intval($this->blue->id), $choicegroups7);
-        $this->assertContains(intval($this->green->id), $choicegroups7);
-        $this->assertContains(intval($this->red->id), $choicegroups7);
+        $this->assertContains(intval($this->env->blue->id), $choicegroups7);
+        $this->assertContains(intval($this->env->green->id), $choicegroups7);
+        $this->assertContains(intval($this->env->red->id), $choicegroups7);
 
         // 8: Green, Red, empty values ignored
-        $choicegroups8 = array_keys($this->ratingallocate->get_choice_groups($keylist[7]));
+        $choicegroups8 = array_keys($this->env->ratingallocate->get_choice_groups($keylist[7]));
         $this->assertEquals(count($choicegroups8), 2);
-        $this->assertContains(intval($this->green->id), $choicegroups8);
-        $this->assertContains(intval($this->red->id), $choicegroups8);
+        $this->assertContains(intval($this->env->green->id), $choicegroups8);
+        $this->assertContains(intval($this->env->red->id), $choicegroups8);
 
         // 9: Green, Red, empty values ignored
-        $choicegroups9 = array_keys($this->ratingallocate->get_choice_groups($keylist[8]));
+        $choicegroups9 = array_keys($this->env->ratingallocate->get_choice_groups($keylist[8]));
         $this->assertEquals(count($choicegroups9), 2);
-        $this->assertContains(intval($this->green->id), $choicegroups9);
-        $this->assertContains(intval($this->red->id), $choicegroups9);
+        $this->assertContains(intval($this->env->green->id), $choicegroups9);
+        $this->assertContains(intval($this->env->red->id), $choicegroups9);
 
         // 10: Red, Green, Blue with whitespaces and quotation marks
-        $choicegroups10 = array_keys($this->ratingallocate->get_choice_groups($keylist[9]));
+        $choicegroups10 = array_keys($this->env->ratingallocate->get_choice_groups($keylist[9]));
         $this->assertEquals(count($choicegroups10), 3);
-        $this->assertContains(intval($this->green->id), $choicegroups10);
-        $this->assertContains(intval($this->red->id), $choicegroups10);
-        $this->assertContains(intval($this->blue->id), $choicegroups10);
+        $this->assertContains(intval($this->env->green->id), $choicegroups10);
+        $this->assertContains(intval($this->env->red->id), $choicegroups10);
+        $this->assertContains(intval($this->env->blue->id), $choicegroups10);
     }
 
     public function test_bad_group(): void {
         $this->resetAfterTest();
-        $choiceimporter = new \mod_ratingallocate\choice_importer($this->ratingallocateid, $this->ratingallocate);
+        $choiceimporter = new \mod_ratingallocate\choice_importer($this->env->ratingallocateid, $this->env->ratingallocate);
 
         $contents = $this->get_choice_lines(false);
         $contents[] = 'Bad Test Choice 6,Explain Bad Choice 6, 1000, 1,Blue Man Group ';
@@ -216,7 +230,7 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals($importstatus->status_message,
             get_string('csvupload_live_problems', 'ratingallocate', 1)
         );
-        $choices = $this->ratingallocate->get_choices();
+        $choices = $this->env->ratingallocate->get_choices();
         $this->assertEquals(6, count($choices), 'Choice with bad group still imported');
         ksort($choices);
 
@@ -225,7 +239,7 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals($badchoice->title, 'Bad Test Choice 6');
         $this->assertEquals($badchoice->usegroups, 1);
 
-        $badgroups = $this->ratingallocate->get_choice_groups($badchoice->id);
+        $badgroups = $this->env->ratingallocate->get_choice_groups($badchoice->id);
         $this->assertEquals(count($badgroups), 0, 'Bad group has not been added');
     }
 

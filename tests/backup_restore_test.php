@@ -26,17 +26,18 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
 use mod_ratingallocate\db as this_db;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * mod_ratingallocate backup restore procedure test
  *
  * @package    mod_ratingallocate
  * @category   test
- * @group mod_ratingallocate
+ * @group      mod_ratingallocate
  * @copyright  usener
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \backup\moodle2
  */
+#[CoversClass(backup_ratingallocate_activity_structure_step::class)]
 final class backup_restore_test extends \advanced_testcase {
 
     public function test_backup_restore(): void {
