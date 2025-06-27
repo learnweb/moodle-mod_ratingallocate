@@ -714,17 +714,17 @@ function ratingallocate_reset_userdata($data) {
     if (!empty($data->reset_ratings_and_allocations)) {
 
         // Delete all ratings.
-        $ratingidssql = "SELECT r.id FROM {ratingallocate_ratings} r
+        $deleteratingssql = "DELETE r FROM {ratingallocate_ratings} r
                       INNER JOIN {ratingallocate_choices} c ON r.choiceid=c.id
                       INNER JOIN {ratingallocate} ra ON c.ratingallocateid=ra.id
                       WHERE ra.course= :courseid";
-        $DB->delete_records_select('ratingallocate_ratings', "id IN ($ratingidssql)", $params);
+        $DB->execute($deleteratingssql, $params);
 
         // Delete all allocations.
-        $allocationidssql = "SELECT a.id FROM {ratingallocate_allocations} a
+        $deleteallocationssql = "DELETE a FROM {ratingallocate_allocations} a
                             INNER JOIN {ratingallocate} r ON a.ratingallocateid=r.id
                             WHERE r.course= :courseid";
-        $DB->delete_records_select('ratingallocate_allocations', "id IN ($allocationidssql)", $params);
+        $DB->execute($deleteallocationssql, $params);
 
         $status[] = [
             'component' => $componentstr,
