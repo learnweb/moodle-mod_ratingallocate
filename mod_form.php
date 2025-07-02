@@ -27,6 +27,7 @@
  */
 
 use mod_ratingallocate\manager\strategymanager;
+use mod_ratingallocate\ratingallocate;
 
 defined('MOODLE_INTERNAL') || die();
 

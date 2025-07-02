@@ -104,13 +104,13 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
 
     public function test_choice_importer_testmode(): void {
         $this->resetAfterTest();
-        $choiceimporter = new \mod_ratingallocate\choice_importer($this->env->ratingallocateid, $this->env->ratingallocate);
-        $this->assertTrue($choiceimporter instanceof \mod_ratingallocate\choice_importer);
+        $choiceimporter = new choice_importer($this->env->ratingallocateid, $this->env->ratingallocate);
+        $this->assertTrue($choiceimporter instanceof choice_importer);
 
         // Test import.
         $csv = $this->get_choice_lines(true);
         $importstatus = $choiceimporter->import($csv, false);
-        $this->assertEquals($importstatus->status, \mod_ratingallocate\choice_importer::IMPORT_STATUS_OK);
+        $this->assertEquals($importstatus->status, choice_importer::IMPORT_STATUS_OK);
         $this->assertEquals($importstatus->readcount, 4);
         $this->assertEquals($importstatus->importcount, 3);
         $this->assertEquals($importstatus->status_message,
@@ -124,13 +124,13 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
 
     public function test_choice_importer_livemode(): void {
         $this->resetAfterTest();
-        $choiceimporter = new \mod_ratingallocate\choice_importer($this->env->ratingallocateid, $this->env->ratingallocate);
-        $this->assertTrue($choiceimporter instanceof \mod_ratingallocate\choice_importer);
+        $choiceimporter = new choice_importer($this->env->ratingallocateid, $this->env->ratingallocate);
+        $this->assertTrue($choiceimporter instanceof choice_importer);
 
         // Live import.
         $csv = $this->get_choice_lines(true);
         $importstatus = $choiceimporter->import($csv);
-        $this->assertEquals($importstatus->status, \mod_ratingallocate\choice_importer::IMPORT_STATUS_OK);
+        $this->assertEquals($importstatus->status, choice_importer::IMPORT_STATUS_OK);
         $this->assertEquals($importstatus->readcount, 4);
         $this->assertEquals($importstatus->importcount, 3);
         $this->assertEquals($importstatus->status_message,
@@ -142,7 +142,7 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
 
     public function test_adding_groups(): void {
         $this->resetAfterTest();
-        $choiceimporter = new \mod_ratingallocate\choice_importer($this->env->ratingallocateid, $this->env->ratingallocate);
+        $choiceimporter = new choice_importer($this->env->ratingallocateid, $this->env->ratingallocate);
 
         $contents = $this->get_choice_lines(false);
         // Some new groups of groups, some with questionable whitespace and empty values in group names.
@@ -155,7 +155,7 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         // file, but it is being supported anyway, so we can test this right here.
         $csv = join("\n", $contents) . "\n";
         $importstatus = $choiceimporter->import($csv);
-        $this->assertEquals($importstatus->status, \mod_ratingallocate\choice_importer::IMPORT_STATUS_OK);
+        $this->assertEquals($importstatus->status, choice_importer::IMPORT_STATUS_OK);
 
         $choices = $this->env->ratingallocate->get_choices();
         $this->assertEquals(10, count($choices), 'Eight new choices imported');
@@ -214,13 +214,13 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
 
     public function test_bad_group(): void {
         $this->resetAfterTest();
-        $choiceimporter = new \mod_ratingallocate\choice_importer($this->env->ratingallocateid, $this->env->ratingallocate);
+        $choiceimporter = new choice_importer($this->env->ratingallocateid, $this->env->ratingallocate);
 
         $contents = $this->get_choice_lines(false);
         $contents[] = 'Bad Test Choice 6,Explain Bad Choice 6, 1000, 1,Blue Man Group ';
         $csv = join("\n", $contents) . "\n";
         $importstatus = $choiceimporter->import($csv);
-        $this->assertEquals($importstatus->status, \mod_ratingallocate\choice_importer::IMPORT_STATUS_DATA_ERROR);
+        $this->assertEquals($importstatus->status, choice_importer::IMPORT_STATUS_DATA_ERROR);
         $this->assertEquals($importstatus->readcount, 5);
         $this->assertEquals($importstatus->importcount, 4); // Will import, but no group association.
         $this->assertEquals($importstatus->errors[0], get_string('csvupload_missing_groups', 'ratingallocate', [

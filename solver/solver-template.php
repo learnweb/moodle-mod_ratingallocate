@@ -30,6 +30,9 @@
 /**
  * Represents an Edge in the graph to have fixed fields instead of array-fields
  */
+
+use mod_ratingallocate\ratingallocate;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -97,10 +100,10 @@ class distributor {
     }
 
     /**
-     * Entry-point for the \ratingallocate object to call a solver
-     * @param \ratingallocate $ratingallocate
+     * Entry-point for the ratingallocate object to call a solver
+     * @param ratingallocate $ratingallocate
      */
-    public function distribute_users(\ratingallocate $ratingallocate) {
+    public function distribute_users(ratingallocate $ratingallocate) {
 
         // Load data from database.
         $choicerecords = $ratingallocate->get_rateable_choices();

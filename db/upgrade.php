@@ -29,6 +29,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_ratingallocate\algorithm_status;
+
 /**
  * Execute newmodule upgrade from the given old version
  *
@@ -116,7 +118,7 @@ function xmldb_ratingallocate_upgrade($oldversion) {
             foreach ($results as $singleresult) {
                 $allocations = $DB->get_records('ratingallocate_allocations', ['ratingallocateid' => $singleresult->id]);
                 $singleresult->algorithmstatus = (count($allocations) === 0 ?
-                        \mod_ratingallocate\algorithm_status::NOTSTARTED : \mod_ratingallocate\algorithm_status::FINISHED);
+                        algorithm_status::NOTSTARTED : algorithm_status::FINISHED);
                 $DB->update_record('ratingallocate', $singleresult);
             }
 

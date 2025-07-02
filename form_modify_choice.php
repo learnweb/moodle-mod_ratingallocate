@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use mod_ratingallocate\choice\ratingallocate_choice;
+use mod_ratingallocate\ratingallocate;
 
 defined('MOODLE_INTERNAL') || die();
 

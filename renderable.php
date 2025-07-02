@@ -24,6 +24,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  */
+
+use mod_ratingallocate\wrapper\ratingallocate_db_wrapper;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -48,7 +51,7 @@ class ratingallocate_header implements renderable {
      * @param bool $showintro
      * @param int $coursemoduleid
      */
-    public function __construct(mod_ratingallocate\wrapper\ratingallocate_db_wrapper $ratingallocate, $context, $showintro, $coursemoduleid) {
+    public function __construct(ratingallocate_db_wrapper $ratingallocate, $context, $showintro, $coursemoduleid) {
         $this->ratingallocate = $ratingallocate;
         $this->context = $context;
         $this->showintro = $showintro;

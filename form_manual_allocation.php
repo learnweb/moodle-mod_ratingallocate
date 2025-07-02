@@ -25,6 +25,9 @@
  * @copyright  based on code by M Schulze copyright (C) 2014 M Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use mod_ratingallocate\ratingallocate;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');

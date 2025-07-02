@@ -37,13 +37,13 @@ require_once($CFG->dirroot . '/user/lib.php');
 class allocations_table extends \table_sql {
 
     /**
-     * @var \ratingallocate
+     * @var ratingallocate
      */
     private $ratingallocate;
 
     /**
      * allocations_table constructor.
-     * @param \ratingallocate $ratingallocate
+     * @param ratingallocate $ratingallocate
      */
     public function __construct($ratingallocate) {
         parent::__construct('mod_ratingallocate_allocation_table');

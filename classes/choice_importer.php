@@ -61,7 +61,7 @@ class choice_importer {
     private $reader;
 
     /**
-     * @var \ratingallocate
+     * @var ratingallocate
      */
     private $ratingallocate;
 
@@ -84,7 +84,7 @@ class choice_importer {
      * Construct.
      *
      * @param int $ratingallocateid
-     * @param \ratingallocate $ratingallocate
+     * @param ratingallocate $ratingallocate
      */
     public function __construct($ratingallocateid, $ratingallocate) {
         $this->ratingallocate = $ratingallocate;
