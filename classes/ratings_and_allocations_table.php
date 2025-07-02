@@ -24,6 +24,8 @@
 
 namespace mod_ratingallocate;
 
+use mod_ratingallocate_renderer;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -81,29 +83,30 @@ class ratings_and_allocations_table extends \table_sql {
     private $writeable;
 
     /**
-     * @var \ratingallocate
+     * @var ratingallocate
      */
     private $ratingallocate;
 
     /**
-     * @var \mod_ratingallocate_renderer
+     * @var mod_ratingallocate_renderer
      */
     private $renderer;
 
     /**
      * Construct.
      *
-     * @param \mod_ratingallocate_renderer $renderer
+     * @param mod_ratingallocate_renderer $renderer
      * @param array $titles
-     * @param \ratingallocate $ratingallocate
+     * @param ratingallocate $ratingallocate
      * @param int $action
      * @param string|null $uniqueid
      * @param bool $downloadable
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public function __construct(\mod_ratingallocate_renderer $renderer, $titles, $ratingallocate,
-            $action = ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE, $uniqueid = 'mod_ratingallocate_table', $downloadable = true) {
+    public function __construct(mod_ratingallocate_renderer $renderer, $titles, $ratingallocate,
+                                                            $action = ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE,
+                                $uniqueid = 'mod_ratingallocate_table', $downloadable = true) {
         parent::__construct($uniqueid);
         global $PAGE;
         $url = $PAGE->url;

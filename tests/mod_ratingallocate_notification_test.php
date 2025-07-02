@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_ratingallocate;
+use mod_ratingallocate\task\send_distribution_notification;
+
 defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/../locallib.php');
 
@@ -108,7 +110,7 @@ final class mod_ratingallocate_notification_test extends \advanced_testcase {
         $messagesink = $this->redirectMessages();
 
         // Create a notification task.
-        $task = new \mod_ratingallocate\task\send_distribution_notification();
+        $task = new send_distribution_notification();
 
         // Add custom data.
         $task->set_component('mod_ratingallocate');

@@ -26,6 +26,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_ratingallocate\ratingallocate;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
@@ -207,7 +209,7 @@ abstract class strategytemplate {
  * @package mod_ratingallocate
  */
 abstract class ratingallocate_strategyform extends \moodleform {
-    /** @var \ratingallocate pointer to the parent \ratingallocate object */
+    /** @var ratingallocate pointer to the parent ratingallocate object */
     protected $ratingallocate;
 
     /** @var array|mixed $strategyoptions */
@@ -219,9 +221,9 @@ abstract class ratingallocate_strategyform extends \moodleform {
     /**
      *
      * @param string $url The page url
-     * @param \ratingallocate $ratingallocate The calling ratingallocate instance
+     * @param ratingallocate $ratingallocate The calling ratingallocate instance
      */
-    public function __construct($url, \ratingallocate $ratingallocate) {
+    public function __construct($url, ratingallocate $ratingallocate) {
         $this->ratingallocate = $ratingallocate;
         // Load strategy options.
         $allstrategyoptions = json_decode($this->ratingallocate->ratingallocate->setting, true);

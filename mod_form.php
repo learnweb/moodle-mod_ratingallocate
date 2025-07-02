@@ -25,6 +25,10 @@
  * @copyright  based on code by M Schulze copyright (C) 2014 M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use mod_ratingallocate\manager\strategymanager;
+use mod_ratingallocate\ratingallocate;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
@@ -111,7 +115,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $elementname = 'strategy';
         // Define options for select.
         $selectoptions = [];
-        foreach (\strategymanager::get_strategies() as $strategy) {
+        foreach (strategymanager::get_strategies() as $strategy) {
             $selectoptions[$strategy] = get_string($strategy . '_name', self::MOD_NAME);
         }
         $mform->addElement('select', $elementname, get_string('select_strategy', self::MOD_NAME), $selectoptions,
@@ -144,7 +148,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->addElement('header', $headerid, get_string('strategyspecificoptions', RATINGALLOCATE_MOD_NAME));
         $mform->setExpanded($headerid);
 
-        foreach (\strategymanager::get_strategies() as $strategy) {
+        foreach (strategymanager::get_strategies() as $strategy) {
             // Load strategy class.
             $strategyclassp = 'mod_ratingallocate\\' . $strategy . '\\strategy';
             $strategyclass = new $strategyclassp();
@@ -250,7 +254,7 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             $allstrategyoptions = json_decode($data->setting, true);
         }
         // Add dynamic settings fields.
-        foreach (\strategymanager::get_strategies() as $strategy) {
+        foreach (strategymanager::get_strategies() as $strategy) {
             // Load strategy class.
             $strategyclassp = 'mod_ratingallocate\\' . $strategy . '\\strategy';
             if (isset($allstrategyoptions) && array_key_exists($strategy, $allstrategyoptions)) {

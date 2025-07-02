@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(__FILE__) . '/../../locallib.php');
 
 use mod_ratingallocate\db as this_db;
+use mod_ratingallocate\ratingallocate;
 
 /**
  * mod_ratinallocate generator tests

@@ -36,10 +36,19 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @group      mod_ratingallocate
  * @copyright  usener
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \mod_ratingallocate\backup_ratingallocate_activity_structure_step
  */
 #[CoversClass(backup_ratingallocate_activity_structure_step::class)]
 final class backup_restore_test extends \advanced_testcase {
 
+    /**
+     * Test backup and restore of ratingallocate activity.
+     *
+     * @return void
+     * @throws \dml_exception
+     * @throws \restore_controller_exception
+     * @covers \mod_ratingallocate\backup_ratingallocate_activity_structure_step
+     */
     public function test_backup_restore(): void {
         // phpcs:ignore moodle.Commenting.TodoComment.MissingInfoInline
         // TODO this test does not check if userids are correctly mapped.

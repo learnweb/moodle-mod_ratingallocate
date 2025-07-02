@@ -41,6 +41,7 @@ require_once(dirname(__FILE__) . '/db/db_structure.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 
 use mod_ratingallocate\db as this_db;
+use mod_ratingallocate\ratingallocate;
 
 /*
  * Moodle core API
@@ -198,9 +199,7 @@ function ratingallocate_delete_instance($id) {
     // Delete associated events.
     $DB->delete_records('event', ['modulename' => 'ratingallocate', 'instance' => $ratingallocate->id]);
 
-    $DB->delete_records('ratingallocate', [
-            'id' => $ratingallocate->id,
-    ]);
+    $DB->delete_records('ratingallocate', ['id' => $ratingallocate->id]);
 
     return true;
 }
