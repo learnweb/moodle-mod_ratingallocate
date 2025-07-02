@@ -28,6 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use core_availability\info_module;
+use mod_ratingallocate\choice\ratingallocate_choice;
 use mod_ratingallocate\task\distribute_unallocated_task;
 use mod_ratingallocate\db as this_db;
 
@@ -54,32 +55,6 @@ require_once(dirname(__FILE__) . '/strategy/strategy04_points.php');
 require_once(dirname(__FILE__) . '/strategy/strategy05_order.php');
 require_once(dirname(__FILE__) . '/strategy/strategy06_tickyes.php');
 
-/**
- * Simulate a static/singleton class that holds all the strategies that registered with him
- */
-class strategymanager {
-
-    /** @var array of string-identifier of all registered strategies */
-    private static $strategies = [];
-
-    /**
-     * Add a strategy to the strategymanager
-     * @param string $strategyname
-     */
-    public static function add_strategy($strategyname) {
-        self::$strategies[] = $strategyname;
-    }
-
-    /**
-     * Get the current list of strategies
-     * @return array
-     */
-    public static function get_strategies() {
-        return self::$strategies;
-    }
-
-}
-
 define('ACTION_GIVE_RATING', 'give_rating');
 define('ACTION_DELETE_RATING', 'delete_rating');
 define('ACTION_SHOW_CHOICES', 'show_choices');
@@ -101,63 +76,6 @@ define('ACTION_SHOW_STATISTICS', 'show_statistics');
 define('ACTION_ALLOCATION_TO_GROUPING', 'allocation_to_gropuping');
 
 /**
- * Wrapper for db-record to have IDE autocomplete feature of fields
- * @property int $id
- * @property int $course
- * @property string $name
- * @property string $intro
- * @property string $strategy
- * @property int $accesstimestart
- * @property int $accesstimestop
- * @property int $publishdate
- * @property int $published
- * @property int $notificationsend
- * @property int $runalgorithmbycron
- * @property int $algorithmstarttime
- * @property int $algorithmstatus
- * -1 failure while running algorithm;
- * 0 algorithm has not been running;
- * 1 algorithm running;
- * 2 algorithm finished;
- * @property string $setting
- */
-class ratingallocate_db_wrapper {
-
-    /** @var stdClass */
-    public $dbrecord;
-
-    /** Emulates the functionality as if there were explicit records by passing them to the original db record
-     *
-     * @param string $name
-     * @return mixed
-     */
-    public function __get($name) {
-        return $this->dbrecord->{$name};
-    }
-
-
-    /**
-     * Emulates the functionality as if there were explicit records by passing them to the original db record
-     *
-     * @param string $name
-     * @param mixed $value
-     */
-    public function __set($name, $value) {
-        $this->dbrecord->{$name} = $value;
-    }
-
-    /**
-     * Construct.
-     *
-     * @param stdClass $record
-     */
-    public function __construct($record) {
-        $this->dbrecord = $record;
-    }
-
-}
-
-/**
  * Kapselt eine Instanz von ratingallocate
  *
  * @author max
@@ -168,7 +86,7 @@ class ratingallocate {
     /** @var int */
     private $ratingallocateid;
 
-    /** @var ratingallocate_db_wrapper */
+    /** @var mod_ratingallocate\wrapper\ratingallocate_db_wrapper */
     public $ratingallocate;
 
     /** @var stdClass original db_record of this instance */
@@ -243,7 +161,7 @@ class ratingallocate {
         $this->db = &$DB;
 
         $this->origdbrecord = $ratingallocaterecord;
-        $this->ratingallocate = new ratingallocate_db_wrapper($ratingallocaterecord);
+        $this->ratingallocate = new mod_ratingallocate\wrapper\ratingallocate_db_wrapper($ratingallocaterecord);
         $this->ratingallocateid = $this->ratingallocate->id;
         $this->course = $course;
         $this->coursemodule = $coursem;
@@ -1566,7 +1484,7 @@ class ratingallocate {
         $this->origdbrecord->{this_db\ratingallocate::PUBLISHED} = true;
         $this->origdbrecord->{this_db\ratingallocate::PUBLISHDATE} = time();
         $this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} = -1;
-        $this->ratingallocate = new ratingallocate_db_wrapper($this->origdbrecord);
+        $this->ratingallocate = new mod_ratingallocate\wrapper\ratingallocate_db_wrapper($this->origdbrecord);
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
 
         // Create the instance.
@@ -1778,7 +1696,7 @@ class ratingallocate {
 
         // Update the 'notified' flag.
         $this->origdbrecord->{this_db\ratingallocate::NOTIFICATIONSEND} = 1;
-        $this->ratingallocate = new ratingallocate_db_wrapper($this->origdbrecord);
+        $this->ratingallocate = new mod_ratingallocate\wrapper\ratingallocate_db_wrapper($this->origdbrecord);
 
         $this->db->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
     }
@@ -2216,7 +2134,8 @@ class ratingallocate {
      * @param int $userid
      * @return boolean
      */
-    public function alter_allocation($oldchoiceid, $newchoiceid, $userid) {
+    public function alter_allocation($oldchoiceid, $newchoiceid, $userid): bool
+    {
         $this->db->set_field(this_db\ratingallocate_allocations::TABLE, this_db\ratingallocate_allocations::CHOICEID,
                 $newchoiceid, [
                         'choiceid' => $oldchoiceid,
@@ -2519,90 +2438,6 @@ class ratingallocate {
 
 }
 
-/**
- * Kapselt eine Instanz von ratingallocate_choice
- *
- * @property int $id
- * @property int $ratingallocateid
- * @property string $title
- * @property string explanation
- * @property int $maxsize
- * @property bool $active
- * @property bool $usegroups Whether to restrict the visibility of this choice to the members of specified groups.
- */
-class ratingallocate_choice {
-    /** @var stdClass original db record */
-    public $dbrecord;
-
-    /** Emulates the functionality as if there were explicit records by passing them to the original db record
-     *
-     * @param string $name
-     * @return mixed
-     */
-    public function __get($name) {
-        return $this->dbrecord->{$name};
-    }
-
-    /** Emulates the functionality as if there were explicit records by passing them to the original db record
-     *
-     * @param string $name
-     * @param mixed $value
-     */
-    public function __set($name, $value) {
-        $this->dbrecord->{$name} = $value;
-    }
-
-    /**
-     * Construct.
-     *
-     * @param stdClass $record
-     */
-    public function __construct($record) {
-        $this->dbrecord = $record;
-    }
-
-}
-/**
- * Kapselt eine Instanz von ratingallocate_group_choices.
- * (Encapsulating an instance of ratingallocate_group_choices.)
- *
- * @property int $id
- * @property int $choiceid
- * @property int $groupid
- */
-class ratingallocate_group_choices {
-    /** @var stdClass original db record */
-    public $dbrecord;
-
-    /**
-     * Emulates the functionality as if there were explicit records by passing them to the original db record.
-     *
-     * @param string $name
-     * @return mixed
-     */
-    public function __get($name) {
-        return $this->dbrecord->{$name};
-    }
-
-    /**
-     * Emulates the functionality as if there were explicit records by passing them to the original db record.
-     *
-     * @param string $name
-     * @param mixed $value
-     */
-    public function __set($name, $value) {
-        $this->dbrecord->{$name} = $value;
-    }
-
-    /**
-     * Construct.
-     *
-     * @param stdClass $record
-     */
-    public function __construct($record) {
-        $this->dbrecord = $record;
-    }
-}
 /**
  * Remove all users (or one user) from one group, invented by MxS by copying from group/lib.php
  * because it didn't exist there

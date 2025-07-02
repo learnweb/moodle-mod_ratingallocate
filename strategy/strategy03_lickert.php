@@ -28,6 +28,8 @@
 // Namespace is mandatory!
 namespace mod_ratingallocate\strategy_lickert;
 
+use mod_ratingallocate\manager\strategymanager;
+
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
@@ -168,7 +170,7 @@ class strategy extends \strategytemplate_options {
 }
 
 // Register with the strategymanager.
-\strategymanager::add_strategy(strategy::STRATEGYID);
+strategymanager::add_strategy(strategy::STRATEGYID);
 
 /**
  * View form.

@@ -127,7 +127,7 @@ class strategy extends \strategytemplate_options {
 }
 
 // Register with the strategymanager.
-\strategymanager::add_strategy(strategy::STRATEGYID);
+\mod_ratingallocate\manager\strategymanager::add_strategy(strategy::STRATEGYID);
 
 /**
  * View form

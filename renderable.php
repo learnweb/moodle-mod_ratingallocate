@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @package   mod_ratingallocate
  */
 class ratingallocate_header implements renderable {
-    /** @var ratingallocate_db_wrapper the ratingallocate class */
+    /** @var mod_ratingallocate\wrapper\ratingallocate_db_wrapper the ratingallocate class */
     public $ratingallocate = null;
     /** @var mixed context|null the context record */
     public $context = null;
@@ -43,12 +43,12 @@ class ratingallocate_header implements renderable {
     /**
      * Construct.
      *
-     * @param ratingallocate_db_wrapper $ratingallocate
+     * @param mod_ratingallocate\wrapper\ratingallocate_db_wrapper $ratingallocate
      * @param \context $context
      * @param bool $showintro
      * @param int $coursemoduleid
      */
-    public function __construct(ratingallocate_db_wrapper $ratingallocate, $context, $showintro, $coursemoduleid) {
+    public function __construct(mod_ratingallocate\wrapper\ratingallocate_db_wrapper $ratingallocate, $context, $showintro, $coursemoduleid) {
         $this->ratingallocate = $ratingallocate;
         $this->context = $context;
         $this->showintro = $showintro;
