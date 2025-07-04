@@ -36,7 +36,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @group      mod_ratingallocate
  * @copyright  usener
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \mod_ratingallocate\backup_ratingallocate_activity_structure_step
+ * @covers     \mod_ratingallocate\backup_ratingallocate_activity_structure_step (This is deprecated from phpunit 12 onwards)
  */
 #[CoversClass(backup_ratingallocate_activity_structure_step::class)]
 final class backup_restore_test extends \advanced_testcase {

@@ -24,6 +24,7 @@ require_once(__DIR__ . '/../locallib.php');
 use mod_ratingallocate\db as this_db;
 use mod_ratingallocate\task\cron_task;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversFunction;
 
 /**
  * mod_ratingallocate cron tests
@@ -39,6 +40,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @covers \mod_ratingallocate\task\cron_task
  */
 #[CoversClass(cron_task::class)]
+#[CoversFunction('execute')]
 final class cron_test extends \advanced_testcase {
 
     /** @var $teacher */
@@ -131,7 +133,7 @@ final class cron_test extends \advanced_testcase {
     /**
      * Assert, that the algorithm status is not_started and the algorithm has created no allocation.
      */
-    private function assert_not_started() {
+    private function assert_not_started(): void {
         global $DB;
         $record = $DB->get_record(this_db\ratingallocate::TABLE, []);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
@@ -143,7 +145,7 @@ final class cron_test extends \advanced_testcase {
     /**
      * Assert, that the algorithm status is running and the algorithm has created no allocation.
      */
-    private function assert_running() {
+    private function assert_running(): void {
         global $DB;
         $record = $DB->get_record(this_db\ratingallocate::TABLE, []);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
@@ -155,7 +157,7 @@ final class cron_test extends \advanced_testcase {
     /**
      * Assert, that the algorithm status is failure and the algorithm has created no allocation.
      */
-    private function assert_failure() {
+    private function assert_failure(): void {
         global $DB;
         $record = $DB->get_record(this_db\ratingallocate::TABLE, []);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
@@ -167,7 +169,7 @@ final class cron_test extends \advanced_testcase {
     /**
      * Assert, that the algorithm status is finished and the algorithm has created 4 allocations.
      */
-    private function assert_finish() {
+    private function assert_finish(): void {
         global $DB;
         $record = $DB->get_record(this_db\ratingallocate::TABLE, []);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
@@ -179,7 +181,7 @@ final class cron_test extends \advanced_testcase {
     /**
      * Assert, that the algorithm status is still finished and the algorithm has created no allocation.
      */
-    private function assert_already_finish() {
+    private function assert_already_finish(): void {
         global $DB;
         $record = $DB->get_record(this_db\ratingallocate::TABLE, []);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
@@ -195,7 +197,7 @@ final class cron_test extends \advanced_testcase {
      * @param int $algorithmstarttime the start time of the algorithm.
      */
     private function create_ratingallocate($ratingperiodended,
-                                           $algorithmstatus = algorithm_status::NOTSTARTED, $algorithmstarttime = null) {
+                                           $algorithmstatus = algorithm_status::NOTSTARTED, $algorithmstarttime = null): void {
         global $DB;
 
         $this->resetAfterTest();

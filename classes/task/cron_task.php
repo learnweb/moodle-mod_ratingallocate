@@ -80,7 +80,7 @@ class cron_task extends \core\task\scheduled_task {
                 // Clear eventually scheduled distribution of unallocated users.
                 $ratingallocate->clear_distribute_unallocated_tasks();
                 // Run allocation.
-                $ratingallocate->distrubute_choices();
+                $ratingallocate->distribute_choices();
             }
         }
         return true;
