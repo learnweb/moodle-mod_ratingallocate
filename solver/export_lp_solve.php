@@ -25,6 +25,9 @@
  * @copyright  2014 Max Schulze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use mod_ratingallocate\ratingallocate;
+
 require_once(dirname(__FILE__) . '/../../../config.php'); // To include $CFG, for example.
 require_once(dirname(__FILE__) . '/../locallib.php');
 

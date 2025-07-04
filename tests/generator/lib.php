@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(__FILE__) . '/../../locallib.php');
 
 use mod_ratingallocate\db as this_db;
+use mod_ratingallocate\ratingallocate;
 
 /**
  * mod_ratinallocate generator tests
@@ -422,7 +423,7 @@ class mod_ratingallocate_generated_module {
         // Allocate choices.
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($tc,
                 $this->moddb, $this->teacher);
-        $timeneeded = $ratingallocate->distrubute_choices();
+        $timeneeded = $ratingallocate->distribute_choices();
         $tc->assertGreaterThan(0, $timeneeded);
         $tc->assertLessThan(2.0, $timeneeded, 'Allocation is very slow');
         $this->allocations = $ratingallocate->get_allocations();

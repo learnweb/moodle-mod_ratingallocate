@@ -22,6 +22,10 @@
  * @author     David Thompson <david.thompson@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use mod_ratingallocate\choice_importer;
+use mod_ratingallocate\ratingallocate;
+
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
@@ -51,7 +55,7 @@ class upload_choices_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
 
-        $requiredfields = \mod_ratingallocate\choice_importer::print_fields();
+        $requiredfields = choice_importer::print_fields();
         $elementname = 'description';
         $mform->addElement('static', $elementname, get_string('upload_choices_required_fields', 'ratingallocate'),
         get_string('upload_choices_fields_desc', 'ratingallocate', $requiredfields));

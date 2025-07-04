@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_ratingallocate;
+use mod_ratingallocate\choice\ratingallocate_choice;
 use mod_ratingallocate\db as this_db;
 
 defined('MOODLE_INTERNAL') || die();
@@ -60,7 +61,7 @@ class choice_importer {
     private $reader;
 
     /**
-     * @var \ratingallocate
+     * @var ratingallocate
      */
     private $ratingallocate;
 
@@ -83,7 +84,7 @@ class choice_importer {
      * Construct.
      *
      * @param int $ratingallocateid
-     * @param \ratingallocate $ratingallocate
+     * @param ratingallocate $ratingallocate
      */
     public function __construct($ratingallocateid, $ratingallocate) {
         $this->ratingallocate = $ratingallocate;
@@ -237,7 +238,7 @@ class choice_importer {
 
                         // Create and insert a choice record.
                         // Note: this will add duplicates if run multiple times.
-                        $choice = new \ratingallocate_choice($recordmap);
+                        $choice = new ratingallocate_choice($recordmap);
                         $choice->{this_db\ratingallocate_choices::RATINGALLOCATEID} = $this->ratingallocateid;
 
                         $recordmap->id = $DB->insert_record(this_db\ratingallocate_choices::TABLE, $choice->dbrecord);

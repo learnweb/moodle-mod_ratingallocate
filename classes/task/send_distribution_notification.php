@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(__FILE__) . '/../../db/db_structure.php');
 
 use mod_ratingallocate\db as this_db;
+use mod_ratingallocate\ratingallocate;
 
 /**
  * Send distribution notification
@@ -65,7 +66,7 @@ class send_distribution_notification extends \core\task\adhoc_task {
         $cm = get_coursemodule_from_instance('ratingallocate', $ratingallocate->id, $courseid);
         $context = \context_module::instance($cm->id);
 
-        $ratingallocateobj = new \ratingallocate($ratingallocate, $course, $cm, $context);
+        $ratingallocateobj = new ratingallocate($ratingallocate, $course, $cm, $context);
 
         $ratingallocateobj->notify_users_distribution();
 

@@ -17,6 +17,7 @@
 namespace mod_ratingallocate\task;
 
 use mod_ratingallocate\db as this_db;
+use mod_ratingallocate\ratingallocate;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -61,7 +62,7 @@ class cron_task extends \core\task\scheduled_task {
                 $course = $DB->get_record('course', ['id' => $record->{this_db\ratingallocate::COURSE}], '*', MUST_EXIST);
             }
             // Create ratingallocate instance from record.
-            $ratingallocate = new \ratingallocate($record, $course, $cm, \context_module::instance($cm->id));
+            $ratingallocate = new ratingallocate($record, $course, $cm, \context_module::instance($cm->id));
             $currenttime = time();
             $timetoterminate = $CFG->ratingallocate_algorithm_timeout + $ratingallocate->ratingallocate->algorithmstarttime;
 
@@ -79,7 +80,7 @@ class cron_task extends \core\task\scheduled_task {
                 // Clear eventually scheduled distribution of unallocated users.
                 $ratingallocate->clear_distribute_unallocated_tasks();
                 // Run allocation.
-                $ratingallocate->distrubute_choices();
+                $ratingallocate->distribute_choices();
             }
         }
         return true;

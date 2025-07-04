@@ -28,10 +28,14 @@
 
 namespace mod_ratingallocate\strategy_yesno;
 
+use mod_ratingallocate\manager\strategymanager;
+
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
-require_once(dirname(__FILE__) . '/../locallib.php');
+require_once(dirname(__FILE__) . '/../classes/manager/strategymanager.php');
+require_once(dirname(__FILE__) . '/strategy01_yes_no.php');
 require_once(dirname(__FILE__) . '/strategy_template_options.php');
+
 
 /**
  * Strategy
@@ -127,7 +131,7 @@ class strategy extends \strategytemplate_options {
 }
 
 // Register with the strategymanager.
-\strategymanager::add_strategy(strategy::STRATEGYID);
+strategymanager::add_strategy(\mod_ratingallocate\strategy_yesno\strategy::STRATEGYID);
 
 /**
  * View form

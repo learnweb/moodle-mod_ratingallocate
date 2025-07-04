@@ -28,7 +28,7 @@ namespace mod_ratingallocate\task;
 use context_module;
 use core\task\adhoc_task;
 use moodle_exception;
-use ratingallocate;
+use mod_ratingallocate\ratingallocate;
 
 /**
  * Task for distributing unallocated users in the background.

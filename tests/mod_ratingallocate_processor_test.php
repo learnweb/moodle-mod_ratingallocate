@@ -38,7 +38,7 @@ final class mod_ratingallocate_processor_test extends \advanced_testcase {
 
     /**
      * Tests if process_publish_allocations is working after time runs out
-     * Assert, that the ratingallocate can be published
+     * Assert that the ratingallocate can be published
      * @covers ::publish_allocation()
      */
     public function test_publishing(): void {
@@ -240,12 +240,12 @@ final class mod_ratingallocate_processor_test extends \advanced_testcase {
      * @param bool $hidenorating
      * @param bool $showallocnecessary
      * @param int $groupselect
-     * @return \mod_ratingallocate\ratings_and_allocations_table
+     * @return ratings_and_allocations_table
      */
     private function setup_ratings_table_with_filter_options($ratingallocate, $hidenorating, $showallocnecessary, $groupselect) {
         // Create and set up the flextable for ratings and allocations.
         $choices = $ratingallocate->get_rateable_choices();
-        $table = new \mod_ratingallocate\ratings_and_allocations_table($ratingallocate->get_renderer(),
+        $table = new ratings_and_allocations_table($ratingallocate->get_renderer(),
                 [], $ratingallocate, 'show_alloc_table', 'mod_ratingallocate_test', false);
         $table->setup_table($choices, $hidenorating, $showallocnecessary, $groupselect);
 

@@ -24,6 +24,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  */
+
+use mod_ratingallocate\wrapper\ratingallocate_db_wrapper;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -31,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @package   mod_ratingallocate
  */
 class ratingallocate_header implements renderable {
-    /** @var ratingallocate_db_wrapper the ratingallocate class */
+    /** @var mod_ratingallocate\wrapper\ratingallocate_db_wrapper the ratingallocate class */
     public $ratingallocate = null;
     /** @var mixed context|null the context record */
     public $context = null;
@@ -43,7 +46,7 @@ class ratingallocate_header implements renderable {
     /**
      * Construct.
      *
-     * @param ratingallocate_db_wrapper $ratingallocate
+     * @param mod_ratingallocate\wrapper\ratingallocate_db_wrapper $ratingallocate
      * @param \context $context
      * @param bool $showintro
      * @param int $coursemoduleid

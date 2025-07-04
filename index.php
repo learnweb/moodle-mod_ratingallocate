@@ -26,6 +26,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_ratingallocate\event\index_viewed;
+
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 require_once(dirname(__FILE__) . '/locallib.php');
@@ -49,7 +51,7 @@ echo $OUTPUT->heading(get_string('modulenameplural', RATINGALLOCATE_MOD_NAME), 2
 
 require_capability('mod/ratingallocate:view', $coursecontext);
 
-$event = \mod_ratingallocate\event\index_viewed::create_simple(
+$event = index_viewed::create_simple(
         context_course::instance($course->id));
 $event->trigger();
 
