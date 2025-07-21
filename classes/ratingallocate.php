@@ -67,7 +67,7 @@ use stdClass;
 use upload_choices_form;
 
 /**
- * Encapsalates an instance of the ratingallocate module.
+ * Encapsulates an instance of the ratingallocate module.
  *
  * @author max
  *
@@ -237,7 +237,7 @@ class ratingallocate {
     }
 
     /**
-     * Delete sutdent ratings.
+     * Delete student ratings.
      *
      * @return void
      * @throws coding_exception
@@ -696,7 +696,7 @@ class ratingallocate {
     }
 
     /**
-     * Helper method returning an array of groupids belonging to the groups the user is member in.
+     * Helper method returning an array of groupids belonging to the groups the user is a member of.
      *
      * If the user is not a member of any group an empty array is being returned. Only group ids of groups defined in the
      * choices restrictions are being considered here.
@@ -1156,7 +1156,7 @@ class ratingallocate {
         return $output;
     }
 
-    /** @var bool $showinfo States if the ratingallocate info schould be displayed. */
+    /** @var bool $showinfo States if the ratingallocate info should be displayed. */
     private $showinfo = true;
 
     /**
@@ -1785,7 +1785,7 @@ class ratingallocate {
     }
 
     /**
-     * Delete all ratings of a users
+     * Delete all ratings of a user.
      * @param int $userid
      */
     public function delete_ratings_of_user($userid) {
