@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_ratingallocate;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversFunction;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -31,6 +33,10 @@ require_once(__DIR__ . '/../locallib.php');
  * @author     David Thompson <david.thompson@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[CoversClass(ratingallocate::class)]
+#[CoversFunction('get_group_selections')]
+#[CoversFunction('filter_choices_by_groups')]
+#[CoversFunction('update_choice_groups')]
 final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
 
     /** @var object The environment that will be used for testing

@@ -24,6 +24,7 @@ require_once(__DIR__ . '/../locallib.php');
 use mod_ratingallocate\db as this_db;
 use mod_ratingallocate\task\cron_task;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversFunction;
 
 /**
  * mod_ratingallocate cron tests
@@ -39,6 +40,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @covers \mod_ratingallocate\task\cron_task
  */
 #[CoversClass(cron_task::class)]
+#[CoversFunction('execute')]
 final class cron_test extends \advanced_testcase {
 
     /** @var $teacher */

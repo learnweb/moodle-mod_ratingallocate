@@ -22,19 +22,36 @@ require_once(dirname(__FILE__) . '/generator/lib.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 
 use mod_ratingallocate\db as this_db;
+use mod_ratingallocate_generator;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversFunction;
 
 /**
  * mod_ratingallocate generator tests
  *
  * @package    mod_ratingallocate
  * @category   test
- * @group mod_ratingallocate
+ * @group      mod_ratingallocate
  * @copyright  usener
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \locallib
+ * @covers \mod_ratingallocate\ratingallocate
  */
+#[CoversClass(ratingallocate::class)]
+#[CoversFunction('get_choices_with_allocationcount')]
+#[CoversFunction('distribute_choices')]
+#[CoversFunction('get_options_titles')]
+#[CoversFunction('get_allocations')]
+#[CoversFunction('get_ratings_for_rateable_choices')]
 final class locallib_test extends \advanced_testcase {
 
+    /**
+     * Tests a simple allocation scenario.
+     *
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @covers \mod_ratingallocate\ratingallocate::distribute_choices
+     */
     public function test_simple(): void {
         global $DB;
         \core_php_time_limit::raise();
@@ -221,7 +238,9 @@ final class locallib_test extends \advanced_testcase {
     }
 
     /**
-     * Test if option titles are returned according to a mixture of defined and custom values,
+     * Test if option titles are returned according to a mixture of defined and custom values
+     *
+     * @covers \mod_ratingallocate\ratingallocate::get_options_titles
      */
     public function test_get_option_titles_mixed(): void {
         $settings = [1 => 'Ja1234']; // Test data.
@@ -239,6 +258,11 @@ final class locallib_test extends \advanced_testcase {
         $this->assertEquals($expectedresult, $result);
     }
 
+    /**
+     * Test if reset_userdata works as expected.
+     *
+     * @covers \mod_ratingallocate\ratingallocate::distribute_choices
+     */
     public function test_reset_userdata(): void {
         global $DB;
 

@@ -15,6 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_ratingallocate;
+use mod_ratingallocate_generator;
+use PHPUnit\Framework\Attributes\CoversClass;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -30,8 +33,14 @@ require_once(dirname(__FILE__) . '/../locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_ratingallocate_generator
  */
+#[CoversClass(mod_ratingallocate_generator::class)]
 final class mod_generator_test extends \advanced_testcase {
 
+    /**
+     * Test the creation of a mod_ratingallocate instance with choices.
+     *
+     * @covers \mod_ratingallocate_generator::create_instance_with_choices
+     */
     public function test_create_instance(): void {
 
         global $DB, $USER;

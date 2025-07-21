@@ -18,6 +18,9 @@ namespace mod_ratingallocate;
 
 use coding_exception;
 use mod_ratingallocate_generator;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversFunction;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -36,6 +39,14 @@ require_once(__DIR__ . '/../locallib.php');
  * @author     Philipp Memmel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[CoversClass(ratingallocate::class)]
+#[CoversFunction('get_choice_groups')]
+#[CoversFunction('get_all_groups_of_choices')]
+#[CoversFunction('get_user_groupids')]
+#[CoversFunction('get_undistributed_users_with_groupscount')]
+#[CoversFunction('get_undistributed_users')]
+#[CoversFunction('get_choices_with_allocationcount')]
+#[CoversFunction('get_allocations_for_user')]
 final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase {
 
     /** @var stdClass Course object. */
@@ -91,6 +102,7 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
      * Asserts that there is no allocation violating the group restrictions. This should be called after the algorithms have been
      * run to assert that the algorithm did respect the group restrictions when allocating.
      *
+     * @covers ::get_choice_groups
      * @return void
      */
     private function test_group_memberships(): void {
@@ -322,6 +334,7 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
      * Helper method to retrieve the choice id by the title.
      *
      * @param string $title title of the choice to get the id
+     * @covers ::get_rateable_choices
      * @return int the id of the choice object
      */
     private function get_choice_id_by_title(string $title): int {
@@ -395,6 +408,7 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
      * Test distribution without groups.
      *
      * @return void
+     * @covers ::queue_distribution_of_users_without_choice
      * @throws coding_exception
      */
     public function test_distribution_without_groups(): void {
@@ -464,6 +478,7 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
      *  test_allocation_with_groups function.
      *
      * @param string $algorithm the algorithm to use for running this test function
+     * @covers ::queue_distribution_of_users_without_choice
      * @return void
      */
     private function test_allocation_with_groups_with_algorithm(string $algorithm): void {
@@ -524,6 +539,7 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
     /**
      * Test the distribution of users to choices with group restrictions, using both algorithms.
      *
+     * @covers ::queue_distribution_of_users_without_choice
      * @return void
      * @throws coding_exception
      */
@@ -538,6 +554,7 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
      * This is a private method because she is being called twice to test both algorithms.
      *
      * @param string $algorithm the algorithm to use for the distribution
+     * @covers ::queue_distribution_of_users_without_choice
      * @return void
      * @throws coding_exception
      */
@@ -586,6 +603,7 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
      * Test the EQUALLY algorithm without groups. The algorithm tries to distribute the users so that each choice has equal places
      * left or at most there is a difference of one user for the left places per choice.
      *
+     * @covers ::queue_distribution_of_users_without_choice
      * @return void
      * @throws dml_exception
      */
@@ -638,6 +656,7 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
      * Test the FILL algorithm without groups. This algorithm just fills up every choice. Choices with least places left are
      * being filled up first.
      *
+     * @covers ::queue_distribution_of_users_without_choice
      * @return void
      */
     public function test_distribute_fill_without_groups(): void {
