@@ -195,7 +195,8 @@ final class cron_test extends \advanced_testcase {
      * @param int $algorithmstarttime the start time of the algorithm.
      */
     private function create_ratingallocate($ratingperiodended,
-                                           $algorithmstatus = algorithm_status::NOTSTARTED, $algorithmstarttime = null) {
+                                           $algorithmstatus = algorithm_status::NOTSTARTED,
+                                           $algorithmstarttime = null): void {
         global $DB;
 
         $this->resetAfterTest();

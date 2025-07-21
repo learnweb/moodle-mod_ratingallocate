@@ -104,9 +104,12 @@ class ratings_and_allocations_table extends \table_sql {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public function __construct(mod_ratingallocate_renderer $renderer, $titles, $ratingallocate,
-                                                            $action = ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE,
-                                $uniqueid = 'mod_ratingallocate_table', $downloadable = true) {
+    public function __construct(mod_ratingallocate_renderer $renderer,
+                                $titles,
+                                $ratingallocate,
+                                $action = ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE,
+                                $uniqueid = 'mod_ratingallocate_table',
+                                $downloadable = true) {
         parent::__construct($uniqueid);
         global $PAGE;
         $url = $PAGE->url;
