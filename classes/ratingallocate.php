@@ -1455,11 +1455,8 @@ class ratingallocate {
             $groupids = $this->db->get_record(this_db\ratingallocate_ch_gengroups::TABLE,
                 ['choiceid' => $choiceid],
                 'groupid');
-            if ($groupid = $groupids->groupid) {
-                $group = groups_get_group($groupid);
-                if ($group) {
-                    groups_add_member($group, $userid);
-                }
+            if (($groupid = $groupids->groupid) && ($group = groups_get_group($groupid))) {
+                groups_add_member($group, $userid);
             }
         }
         // Invalidate the grouping cache for the course.
