@@ -39,36 +39,32 @@ require_once(__DIR__ . '/../locallib.php');
 #[CoversFunction('update_choice_groups')]
 final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
 
-    /** @var object The environment that will be used for testing
+    /**
+     * @var stdClass The environment that will be used for testing
      * This Class contains:
      * - A Course
      * - Users (teacher, 4 students)
      * - Choicedata
      * - A ratingallocate instance
      */
-    private $env;
+    private stdClass $env;
 
-    /** Helper function - Create a range of choices.
-     *
-     * A thru D use groups, E does not.
+    /**
+     * Helper function - Create a range of choices.
+     * A through D use groups, E does not.
      */
-    private function get_choice_data() {
+    private function get_choice_data(): array {
         $choices = [];
 
         $letters = range('A', 'E');
         foreach ($letters as $key => $letter) {
-            $choice = [
+            $choices[] = [
                 'title' => "Choice $letter",
                 'explanation' => "Explain Choice $letter",
                 'maxsize' => 10,
                 'active' => true,
+                'usegroups' => $letter !== 'E',
             ];
-            if ($letter === 'E') {
-                $choice['usegroups'] = false;
-            } else {
-                $choice['usegroups'] = true;
-            }
-            $choices[] = $choice;
         }
 
         return $choices;
@@ -77,37 +73,34 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
     /**
      * Helper function - Map choice titles to IDs
      *
-     * @param array $choices
+     * @param array|null $choices
      *
      * @return array
      */
-    private function get_choice_map($choices = null) {
+    private function get_choice_map(array|null $choices = null): array {
         if (!$choices) {
             $choices = $this->env->ratingallocate->get_rateable_choices();
         }
-        $choiceidmap = array_flip(array_map(
+        return array_flip(array_map(
             function($a) {
                 return $a->title;
             },
             $choices));
-        return $choiceidmap;
     }
 
     /**
      * Helper function - Map group selection names to IDs
      *
-     * @param array $groupselections
+     * @param array|null $groupselections
      *
      * @return array
      */
-    private function get_group_map($groupselections = null) {
+    private function get_group_map(array|null $groupselections = null): array {
         if (!$groupselections) {
             $groupselections = $this->env->ratingallocate->get_group_selections();
         }
-        $groupidmap = array_flip($groupselections);
-        return $groupidmap;
+        return array_flip($groupselections);
     }
-
 
     protected function setUp(): void {
         parent::setUp();
@@ -140,10 +133,8 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
         $this->env->ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->env->teacher);
     }
 
-
     protected function tearDown(): void {
         $this->env->choicedata = null;
-
         parent::tearDown();
     }
 

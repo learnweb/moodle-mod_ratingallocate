@@ -133,7 +133,7 @@ final class cron_test extends \advanced_testcase {
     /**
      * Assert, that the algorithm status is not_started and the algorithm has created no allocation.
      */
-    private function assert_not_started() {
+    private function assert_not_started(): void {
         global $DB;
         $record = $DB->get_record(this_db\ratingallocate::TABLE, []);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
@@ -145,7 +145,7 @@ final class cron_test extends \advanced_testcase {
     /**
      * Assert, that the algorithm status is running and the algorithm has created no allocation.
      */
-    private function assert_running() {
+    private function assert_running(): void {
         global $DB;
         $record = $DB->get_record(this_db\ratingallocate::TABLE, []);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
@@ -157,7 +157,7 @@ final class cron_test extends \advanced_testcase {
     /**
      * Assert, that the algorithm status is failure and the algorithm has created no allocation.
      */
-    private function assert_failure() {
+    private function assert_failure(): void {
         global $DB;
         $record = $DB->get_record(this_db\ratingallocate::TABLE, []);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
@@ -169,7 +169,7 @@ final class cron_test extends \advanced_testcase {
     /**
      * Assert, that the algorithm status is finished and the algorithm has created 4 allocations.
      */
-    private function assert_finish() {
+    private function assert_finish(): void {
         global $DB;
         $record = $DB->get_record(this_db\ratingallocate::TABLE, []);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);
@@ -181,7 +181,7 @@ final class cron_test extends \advanced_testcase {
     /**
      * Assert, that the algorithm status is still finished and the algorithm has created no allocation.
      */
-    private function assert_already_finish() {
+    private function assert_already_finish(): void {
         global $DB;
         $record = $DB->get_record(this_db\ratingallocate::TABLE, []);
         $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $record, $this->teacher);

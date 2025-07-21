@@ -67,8 +67,8 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
     private array $studentsred = [];
     /** @var array Students belonging to no group. */
     private array $studentsnogroup = [];
-    /** @var object Rating allocate object. */
-    private object $ratingallocate;
+    /** @var ratingallocate Ratingallocate object. */
+    private ratingallocate $ratingallocate;
 
     protected function setUp(): void {
         parent::setUp();
@@ -135,19 +135,14 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
 
         $letters = range('A', 'E');
         foreach ($letters as $letter) {
-            $choice = [
+            // Append to choices an array with the choice data.
+            $choices[] = [
                 'title' => "$letter",
                 'explanation' => "Explain Choice $letter",
                 'maxsize' => 8,
                 'active' => true,
+                'usegroups' => in_array($letter, ['C', 'D', 'E']),
             ];
-
-            if ($letter === 'C' || $letter === 'D' || $letter === 'E') {
-                $choice['usegroups'] = true;
-            } else {
-                $choice['usegroups'] = false;
-            }
-            $choices[] = $choice;
         }
 
         $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
@@ -183,19 +178,13 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
 
         $letters = range('A', 'E');
         foreach ($letters as $letter) {
-            $choice = [
+            $choices[] = [
                 'title' => "$letter",
                 'explanation' => "Explain Choice $letter",
                 'maxsize' => 8,
                 'active' => true,
+                'usegroups' => in_array($letter, ['D', 'E']),
             ];
-
-            if ($letter === 'D' || $letter === 'E') {
-                $choice['usegroups'] = true;
-            } else {
-                $choice['usegroups'] = false;
-            }
-            $choices[] = $choice;
         }
 
         $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
@@ -241,19 +230,13 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
 
         $letters = range('A', 'E');
         foreach ($letters as $letter) {
-            $choice = [
+            $choices[] = [
                 'title' => "$letter",
                 'explanation' => "Explain Choice $letter",
                 'maxsize' => 8,
                 'active' => true,
+                'usegroups' => in_array($letter, ['D', 'E']),
             ];
-
-            if ($letter === 'D' || $letter === 'E') {
-                $choice['usegroups'] = true;
-            } else {
-                $choice['usegroups'] = false;
-            }
-            $choices[] = $choice;
         }
 
         $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
@@ -296,15 +279,13 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
         $i = 0;
         foreach ($users as $user) {
             $groupscount = count($this->ratingallocate->get_user_groupids($user));
-            if ($i < 25) {
-                $this->assertEquals(1, $groupscount);
-            } else if ($i >= 25 && $i < 28) {
-                $this->assertEquals(2, $groupscount);
-            } else if ($i >= 28 && $i < 30) {
-                $this->assertEquals(3, $groupscount);
-            } else {
-                $this->assertEquals(0, $groupscount);
-            }
+            $expectedgroupscount = match (true) {
+                $i < 25 => 1,
+                $i >= 25 && $i < 28 => 2,
+                $i >= 28 && $i < 30 => 3,
+                default => 0,
+            };
+            $this->assertEquals($expectedgroupscount, $groupscount);
             $i++;
         }
 
@@ -416,14 +397,13 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
 
         $letters = range('A', 'E');
         foreach ($letters as $letter) {
-            $choice = [
+            $choices[] = [
                 'title' => "$letter",
                 'explanation' => "Explain Choice $letter",
                 'maxsize' => 8,
                 'active' => true,
                 'usegroups' => false,
             ];
-            $choices[] = $choice;
         }
         $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
             ['course' => $this->course,
@@ -486,19 +466,13 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
 
         $letters = range('A', 'E');
         foreach ($letters as $letter) {
-            $choice = [
+            $choices[] = [
                 'title' => "$letter",
                 'explanation' => "Explain Choice $letter",
                 'maxsize' => 8,
                 'active' => true,
+                'usegroups' => in_array($letter, ['D', 'E']),
             ];
-
-            if ($letter === 'D' || $letter === 'E') {
-                $choice['usegroups'] = true;
-            } else {
-                $choice['usegroups'] = false;
-            }
-            $choices[] = $choice;
         }
 
         $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
@@ -665,7 +639,7 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
         $letters = range('A', 'E');
         $i = 14;
         foreach ($letters as $letter) {
-            $choice = [
+            $choices[] = [
                 'title' => "$letter",
                 'explanation' => "Explain Choice $letter",
                 'active' => true,
@@ -674,8 +648,6 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
                 // This means 50 places for 40 users in the course.
                 'maxsize' => $i,
             ];
-
-            $choices[] = $choice;
             $i -= 2;
         }
         $mod = mod_ratingallocate_generator::create_instance_with_choices($this,

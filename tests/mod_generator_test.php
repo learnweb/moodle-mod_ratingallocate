@@ -58,7 +58,7 @@ final class mod_generator_test extends \advanced_testcase {
         $this->assertEquals(0, count($records));
 
         // Create activity.
-        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this,
+        $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
                 ['course' => $course]);
         $records = $DB->get_records('ratingallocate', ['course' => $course->id,
         ], 'id');
@@ -118,7 +118,7 @@ final class mod_generator_test extends \advanced_testcase {
         // Create an other mod_ratingallocate within the course.
         $params = ['course' => $course->id, 'name' => 'Another mod_ratingallocate',
         ];
-        $mod = \mod_ratingallocate_generator::create_instance_with_choices($this, $params);
+        $mod = mod_ratingallocate_generator::create_instance_with_choices($this, $params);
         $records = $DB->get_records('ratingallocate', ['course' => $course->id,
         ], 'id');
         // Are there 2 modules within the course?
@@ -136,20 +136,25 @@ final class mod_generator_test extends \advanced_testcase {
         $this->assertEquals(0, count($records));
     }
 
+    /**
+     * Test the creation of a mod_ratingallocate instance with choices and students.
+     *
+     * @covers \mod_ratingallocate_generator::get_ratingallocate_for_user
+     */
     public function test_mod_ratingallocate_generated_module(): void {
-        $choicedata = \mod_ratingallocate_generator::get_default_choice_data();
+        $choicedata = mod_ratingallocate_generator::get_default_choice_data();
         foreach ($choicedata as $id => $choice) {
             $choice['maxsize'] = 10;
             $choice['active'] = true;
             $choicedata[$id] = $choice;
         }
-        $moduledata = \mod_ratingallocate_generator::get_default_values();
+        $moduledata = mod_ratingallocate_generator::get_default_values();
         $moduledata['num_students'] = 22;
         $testmodule = new \mod_ratingallocate_generated_module($this, $moduledata, $choicedata);
         $this->assertCount($moduledata['num_students'], $testmodule->students);
         $this->assertCount(20, $testmodule->allocations);
 
-        $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user(
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user(
                 $this, $testmodule->moddb, $testmodule->teacher);
         foreach ($ratingallocate->get_choices_with_allocationcount() as $choice) {
             $this->assertEquals(10, $choice->{'usercount'});
