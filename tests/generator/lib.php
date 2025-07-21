@@ -423,7 +423,7 @@ class mod_ratingallocate_generated_module {
         // Allocate choices.
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($tc,
                 $this->moddb, $this->teacher);
-        $timeneeded = $ratingallocate->distrubute_choices();
+        $timeneeded = $ratingallocate->distribute_choices();
         $tc->assertGreaterThan(0, $timeneeded);
         $tc->assertLessThan(2.0, $timeneeded, 'Allocation is very slow');
         $this->allocations = $ratingallocate->get_allocations();

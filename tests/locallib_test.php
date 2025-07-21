@@ -99,8 +99,7 @@ final class locallib_test extends \advanced_testcase {
         \mod_ratingallocate_generator::save_rating_for_user($this, $mod, $student4, $preferssecond);
 
         // Allocate choices.
-        $ratingallocate = \mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $teacher);
-        $timeneeded = $ratingallocate->distrubute_choices();
+        $timeneeded = $ratingallocate->distribute_choices();
         $this->assertGreaterThan(0, $timeneeded);
         $this->assertLessThan(0.1, $timeneeded, 'Allocation is very slow');
 
@@ -138,7 +137,7 @@ final class locallib_test extends \advanced_testcase {
 
         $manualenrolplugin->unenrol_user($enrolinstance, $student3->id);
         // Re-distributing will first clear all allocations, so afterwards we will see if the unenrolled user has been considered.
-        $ratingallocate->distrubute_choices();
+        $ratingallocate->distribute_choices();
 
         $numallocations = $DB->count_records(this_db\ratingallocate_allocations::TABLE);
         $this->assertEquals(3, $numallocations, 'There should be only 3 allocations, because we unenrolled '
@@ -292,7 +291,7 @@ final class locallib_test extends \advanced_testcase {
             $course, $ratings);
 
         // Simulate Allocation.
-        $ratingallocate->distrubute_choices();
+        $ratingallocate->distribute_choices();
 
         // There should be two ratings in the course.
         $this->assertEquals(2, count($ratingallocate->get_users_with_ratings()));

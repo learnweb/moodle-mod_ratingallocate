@@ -211,7 +211,7 @@ class ratingallocate {
                 raise_memory_limit(MEMORY_EXTRA);
                 core_php_time_limit::raise();
                 // Distribute choices.
-                $timeneeded = $this->distrubute_choices();
+                $timeneeded = $this->distribute_choices();
 
                 // Logging.
                 $event = distribution_triggered::create_simple(
@@ -1352,7 +1352,7 @@ class ratingallocate {
      * distribution of choices for each user
      * take care about max_execution_time and memory_limit
      */
-    public function distrubute_choices() {
+    public function distribute_choices() {
         require_capability('mod/ratingallocate:start_distribution', $this->context);
 
         // Set algorithm status to running.
