@@ -685,14 +685,21 @@ class ratingallocate {
      * @return array of group ids used in rateable choices
      */
     public function get_all_groups_of_choices(): array {
-        $rateablechoiceswithgrouprestrictions = array_filter($this->get_rateable_choices(),
-            fn($choice) => !empty($choice->usegroups) && !empty($this->get_choice_groups($choice->id)));
-        $rateablechoiceids = array_map(fn($choice) => $choice->id, $rateablechoiceswithgrouprestrictions);
-        $groupids = [];
-        foreach ($rateablechoiceids as $choiceid) {
-            $groupids = array_merge($groupids, array_map(fn($group) => $group->id, $this->get_choice_groups($choiceid)));
-        }
-        return array_unique($groupids);
+        $sql = '
+            SELECT DISTINCT
+              g.id
+            FROM
+              {ratingallocate_choices} c
+              JOIN {ratingallocate_group_choices} gc ON gc.choiceid = c.id
+              JOIN {groups} g ON gc.groupid = g.id
+            WHERE
+              c.ratingallocateid = :id
+              AND c.usegroups = 1
+              AND c.active = 1';
+
+        $groupids = $this->db->get_fieldset_sql($sql, ['id' => $this->ratingallocateid]);
+
+        return $groupids;
     }
 
     /**
