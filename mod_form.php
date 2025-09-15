@@ -376,7 +376,12 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
      * @return string
      */
     protected function get_suffixed_name(string $fieldname): string {
-        return "completion{$fieldname}_{$this->get_suffix()}";
+        global $CFG;
+        if ($CFG->version < 2023100900) {
+            return "completion{$fieldname}";
+        } else {
+            return "completion{$fieldname}_{$this->get_suffix()}";
+        }
     }
 
     /**
