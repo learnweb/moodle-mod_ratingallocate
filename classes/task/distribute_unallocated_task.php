@@ -38,7 +38,6 @@ use mod_ratingallocate\ratingallocate;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class distribute_unallocated_task extends adhoc_task {
-
     /**
      * Executes the distribution of unallocated users.
      *
@@ -50,8 +49,10 @@ class distribute_unallocated_task extends adhoc_task {
         require_once($CFG->dirroot . '/mod/ratingallocate/locallib.php');
 
         $data = $this->get_custom_data();
-        if (empty($data->distributionalgorithm) ||
-            !in_array($data->distributionalgorithm, [ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY, ACTION_DISTRIBUTE_UNALLOCATED_FILL])) {
+        if (
+            empty($data->distributionalgorithm) ||
+            !in_array($data->distributionalgorithm, [ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY, ACTION_DISTRIBUTE_UNALLOCATED_FILL])
+        ) {
             mtrace('No distribution algorithm has been specified, exiting.');
             return;
         }

@@ -23,9 +23,9 @@
  */
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use Behat\Gherkin\Node\TableNode as TableNode,
-        Behat\Mink\Exception\ExpectationException as ExpectationException,
-        Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+use Behat\Gherkin\Node\TableNode,
+        Behat\Mink\Exception\ExpectationException,
+        Behat\Mink\Exception\ElementNotFoundException;
 
 /**
  * Class for Behat tests
@@ -35,7 +35,6 @@ use Behat\Gherkin\Node\TableNode as TableNode,
  * @package mod_ratingallocate
  */
 class behat_mod_ratingallocate extends behat_base {
-
     /**
      * Creates the specified choices.
      *
@@ -49,20 +48,22 @@ class behat_mod_ratingallocate extends behat_base {
         global $DB;
 
         foreach ($data->getColumnsHash() as $record) {
-
             if (!isset($record['title'])) {
                 throw new coding_exception(
-                    'title must be present in behat_mod_ratingallocate::the_following_choices_exist() $data');
+                    'title must be present in behat_mod_ratingallocate::the_following_choices_exist() $data'
+                );
             }
 
             if (!isset($record['maxsize'])) {
                 throw new coding_exception(
-                    'maxsize must be present in behat_mod_ratingallocate::the_following_choices_exist() $data');
+                    'maxsize must be present in behat_mod_ratingallocate::the_following_choices_exist() $data'
+                );
             }
 
             if (!isset($record['ratingallocate'])) {
                 throw new coding_exception(
-                    'ratingallocate must be present in behat_mod_ratingallocate::the_following_choices_exist() $data');
+                    'ratingallocate must be present in behat_mod_ratingallocate::the_following_choices_exist() $data'
+                );
             }
 
             $ratingallocate = $DB->get_record('ratingallocate', ['name' => $record['ratingallocate']]);
@@ -73,7 +74,6 @@ class behat_mod_ratingallocate extends behat_base {
 
             // Add the subscription.
             $record->id = $DB->insert_record('ratingallocate_choices', $record);
-
         }
     }
 
@@ -90,20 +90,22 @@ class behat_mod_ratingallocate extends behat_base {
         global $DB;
 
         foreach ($data->getColumnsHash() as $record) {
-
             if (!isset($record['choice'])) {
                 throw new coding_exception(
-                    'choice must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data');
+                    'choice must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data'
+                );
             }
 
             if (!isset($record['user'])) {
                 throw new coding_exception(
-                    'user must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data');
+                    'user must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data'
+                );
             }
 
             if (!isset($record['rating'])) {
                 throw new coding_exception(
-                    'rating must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data');
+                    'rating must be present in behat_mod_ratingallocate::the_following_ratings_exist() $data'
+                );
             }
 
             $user = $DB->get_record('user', ['username' => $record['user']]);
@@ -116,7 +118,6 @@ class behat_mod_ratingallocate extends behat_base {
 
             // Add the subscription.
             $record->id = $DB->insert_record('ratingallocate_ratings', $record);
-
         }
     }
 
@@ -384,9 +385,11 @@ class behat_mod_ratingallocate extends behat_base {
     public function the_choice_should_be_active($title) {
         $choice = $this->get_choice($title);
         if (!$choice->active) {
-            throw new ExpectationException('The choice "' . $title .
+            throw new ExpectationException(
+                'The choice "' . $title .
                     '" should be active.',
-                    $this->getSession());
+                $this->getSession()
+            );
         }
     }
 
@@ -401,8 +404,10 @@ class behat_mod_ratingallocate extends behat_base {
     public function the_choice_should_not_be_active($title) {
         $choice = $this->get_choice($title);
         if ($choice->active) {
-            throw new ExpectationException('The choice "' . $title . '" should not be active',
-                    $this->getSession());
+            throw new ExpectationException(
+                'The choice "' . $title . '" should not be active',
+                $this->getSession()
+            );
         }
     }
 
@@ -418,9 +423,11 @@ class behat_mod_ratingallocate extends behat_base {
     public function the_choice_should_have_explanation_equal($title, $value) {
         $choice = $this->get_choice($title);
         if ($choice->explanation !== $value) {
-            throw new ExpectationException('The explanation of the choice ' . $title .
+            throw new ExpectationException(
+                'The explanation of the choice ' . $title .
                     ' was expected to be "' . $value . '" but was "' . $choice->explanation . '".',
-                    $this->getSession());
+                $this->getSession()
+            );
         }
     }
 
@@ -435,9 +442,11 @@ class behat_mod_ratingallocate extends behat_base {
     public function the_user_should_have_ratings($username) {
         $ratings = $this->get_ratings_for_username($username);
         if (count($ratings) == 0) {
-            throw new ExpectationException("It was expected that the user $username has ratings, " .
+            throw new ExpectationException(
+                "It was expected that the user $username has ratings, " .
                     "but there were none.",
-                    $this->getSession());
+                $this->getSession()
+            );
         }
     }
 
@@ -452,9 +461,11 @@ class behat_mod_ratingallocate extends behat_base {
     public function the_user_should_not_have_ratings($username) {
         $ratings = $this->get_ratings_for_username($username);
         if (count($ratings) > 0) {
-            throw new ExpectationException("It was expected that the user $username has no ratings, " .
+            throw new ExpectationException(
+                "It was expected that the user $username has no ratings, " .
                     "but there were some.",
-                    $this->getSession());
+                $this->getSession()
+            );
         }
     }
 
@@ -482,9 +493,11 @@ class behat_mod_ratingallocate extends behat_base {
     public function the_choice_should_have_maxsize_equal($title, $value) {
         $choice = $this->get_choice($title);
         if ($choice->maxsize !== $value) {
-            throw new ExpectationException('The maxsize of the choice ' . $title .
+            throw new ExpectationException(
+                'The maxsize of the choice ' . $title .
                     ' was expected to be "' . $value . '" but was "' . $choice->explanation . '".',
-                    $this->getSession());
+                $this->getSession()
+            );
         }
     }
 
@@ -557,8 +570,10 @@ class behat_mod_ratingallocate extends behat_base {
                 $option = $this->find('xpath', $fieldxpath);
                 $option->click();
             } catch (ElementNotFoundException $e) {
-                throw new ExpectationException('Option "' . $value . '"  was not found for choice "' . $choice . '".' . $value,
-                        $this->getSession());
+                throw new ExpectationException(
+                    'Option "' . $value . '"  was not found for choice "' . $choice . '".' . $value,
+                    $this->getSession()
+                );
             }
         }
     }
@@ -673,8 +688,10 @@ class behat_mod_ratingallocate extends behat_base {
 
         switch (strtolower($type)) {
             case 'view':
-                return new moodle_url('/mod/ratingallocate/view.php',
-                    ['id' => $this->get_cm_by_ratingallocate_name($identifier)->id]);
+                return new moodle_url(
+                    '/mod/ratingallocate/view.php',
+                    ['id' => $this->get_cm_by_ratingallocate_name($identifier)->id]
+                );
 
             case 'edit':
                 return new moodle_url('/course/modedit.php', [
@@ -717,5 +734,4 @@ class behat_mod_ratingallocate extends behat_base {
         $ratingallocate = $this->get_ratingallocate_by_name($name);
         return get_coursemodule_from_instance('ratingallocate', $ratingallocate->id, $ratingallocate->course);
     }
-
 }

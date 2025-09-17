@@ -170,12 +170,11 @@ class lp_export_write {
     public function __destruct() {
         fclose($this->fp);
     }
-
 }
 
 global $DB;
 
-$writer = new lp_export_write ();
+$writer = new lp_export_write();
 $writer->set_filename("lp_solve_export_course_" . $ratingallocate->id);
 
 $choices = $ratingallocateobj->get_rateable_choices();
@@ -241,4 +240,3 @@ if ($action == ACTION_SOLVE_LP_SOLVE) {
 }
 
 $writer->download_file();
-

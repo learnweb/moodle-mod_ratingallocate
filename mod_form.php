@@ -118,8 +118,13 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         foreach (strategymanager::get_strategies() as $strategy) {
             $selectoptions[$strategy] = get_string($strategy . '_name', self::MOD_NAME);
         }
-        $mform->addElement('select', $elementname, get_string('select_strategy', self::MOD_NAME), $selectoptions,
-            $disablestrategy ? ['disabled' => ''] : null);
+        $mform->addElement(
+            'select',
+            $elementname,
+            get_string('select_strategy', self::MOD_NAME),
+            $selectoptions,
+            $disablestrategy ? ['disabled' => ''] : null
+        );
         $mform->addHelpButton($elementname, 'select_strategy', self::MOD_NAME);
         if (!$disablestrategy) {
             // Disabled elements don't get posted so disable the required rule if strategy selection is disabled.
@@ -135,8 +140,12 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform->setDefault($elementname, time() + 7 * 24 * 60 * 60); // Default: now + one week.
 
         $elementname = 'publishdate';
-        $mform->addElement('date_time_selector', $elementname, get_string($elementname, self::MOD_NAME),
-               ['optional' => true]);
+        $mform->addElement(
+            'date_time_selector',
+            $elementname,
+            get_string($elementname, self::MOD_NAME),
+            ['optional' => true]
+        );
         $mform->setDefault($elementname, time() + 9 * 24 * 60 * 60);
 
         $elementname = 'runalgorithmbycron';
@@ -268,18 +277,21 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             foreach ($dynamicsettingsfields as $key => $value) {
                 $fieldid = $this->get_settingsfield_identifier($strategy, $key);
                 $this->add_settings_field($fieldid, $value, $strategy, $mform);
-                $mform->insertElementBefore($mform->removeElement($fieldid, false),
-                        $strategyplaceholder);
+                $mform->insertElementBefore(
+                    $mform->removeElement($fieldid, false),
+                    $strategyplaceholder
+                );
             }
             // If any dynamic field is present, add a no submit button to refresh the page.
             if (count($dynamicsettingsfields) > 0) {
                 $buttonname = self::STRATEGY_OPTIONS . $strategy . 'refresh';
                 $mform->registerNoSubmitButton($buttonname);
                 $mform->addElement('submit', $buttonname, get_string('refresh'));
-                $mform->insertElementBefore($mform->removeElement($buttonname, false),
-                        $strategyplaceholder);
+                $mform->insertElementBefore(
+                    $mform->removeElement($buttonname, false),
+                    $strategyplaceholder
+                );
                 $mform->hideIf($buttonname, 'strategy', 'neq', $strategy);
-
             }
             $mform->removeElement($strategyplaceholder);
         }
@@ -352,11 +364,17 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
         $mform = $this->_form;
 
         $mform->addElement(
-            'advcheckbox', $this->get_suffixed_name('vote'), ' ',
-            get_string('completionvote', RATINGALLOCATE_MOD_NAME));
+            'advcheckbox',
+            $this->get_suffixed_name('vote'),
+            ' ',
+            get_string('completionvote', RATINGALLOCATE_MOD_NAME)
+        );
         $mform->addElement(
-            'advcheckbox', $this->get_suffixed_name('allocation'), ' ',
-            get_string('completionallocation', RATINGALLOCATE_MOD_NAME));
+            'advcheckbox',
+            $this->get_suffixed_name('allocation'),
+            ' ',
+            get_string('completionallocation', RATINGALLOCATE_MOD_NAME)
+        );
 
         // Set default to not checked.
         $mform->setDefault($this->get_suffixed_name('vote'), 0);
@@ -433,5 +451,4 @@ class mod_ratingallocate_mod_form extends moodleform_mod {
             }
         }
     }
-
 }

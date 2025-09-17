@@ -35,7 +35,6 @@ require_once(dirname(__FILE__) . '/../locallib.php');
  */
 #[CoversClass(mod_ratingallocate_generator::class)]
 final class mod_generator_test extends \advanced_testcase {
-
     /**
      * Test the creation of a mod_ratingallocate instance with choices.
      *
@@ -52,14 +51,17 @@ final class mod_generator_test extends \advanced_testcase {
 
         // There should not be any module for that course first.
         $this->assertFalse(
-                $DB->record_exists('ratingallocate', ['course' => $course->id,
-                ]));
+            $DB->record_exists('ratingallocate', ['course' => $course->id,
+            ])
+        );
         $records = $DB->get_records('ratingallocate_choices', [], 'id');
         $this->assertEquals(0, count($records));
 
         // Create activity.
-        $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
-                ['course' => $course]);
+        $mod = mod_ratingallocate_generator::create_instance_with_choices(
+            $this,
+            ['course' => $course]
+        );
         $records = $DB->get_records('ratingallocate', ['course' => $course->id,
         ], 'id');
         $this->assertEquals(1, count($records));
@@ -88,9 +90,12 @@ final class mod_generator_test extends \advanced_testcase {
 
         $this->assertEquals(json_decode(json_encode($expectedvaluesdb, false)), reset($records));
         // Must have two choices.
-        $records = $DB->get_records('ratingallocate_choices',
-                ['ratingallocateid' => $mod->id,
-                ], 'title');
+        $records = $DB->get_records(
+            'ratingallocate_choices',
+            ['ratingallocateid' => $mod->id,
+            ],
+            'title'
+        );
         $this->assertEquals(2, count($records));
         $choiceids = array_keys($records);
         $expectedchoices = [
@@ -155,7 +160,10 @@ final class mod_generator_test extends \advanced_testcase {
         $this->assertCount(20, $testmodule->allocations);
 
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user(
-                $this, $testmodule->moddb, $testmodule->teacher);
+            $this,
+            $testmodule->moddb,
+            $testmodule->teacher
+        );
         foreach ($ratingallocate->get_choices_with_allocationcount() as $choice) {
             $this->assertEquals(10, $choice->{'usercount'});
         }

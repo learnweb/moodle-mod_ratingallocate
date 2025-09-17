@@ -39,7 +39,6 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 #[CoversClass(ratingallocate::class)]
 #[CoversMethod(ratingallocate::class, 'get_status')]
 final class mod_ratingallocate_status_test extends \advanced_testcase {
-
     public function setUp(): void {
         global $PAGE;
         parent::setUp();
@@ -116,5 +115,4 @@ final class mod_ratingallocate_status_test extends \advanced_testcase {
         $status = $ratingallocate->get_status();
         $this->assertEquals($expected, $status);
     }
-
 }

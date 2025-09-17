@@ -24,7 +24,6 @@ use mod_ratingallocate\db as this_db;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_ratingallocate_activity_structure_step extends restore_activity_structure_step {
-
     /**
      * Define the complete ratingallocate structure for restore.
      * @return mixed
@@ -39,18 +38,28 @@ class restore_ratingallocate_activity_structure_step extends restore_activity_st
         $choicespath =
                 $ratingallocatepath . '/' . this_db\ratingallocate_choices::TABLE . 's/' . this_db\ratingallocate_choices::TABLE;
         $paths[] = new restore_path_element(this_db\ratingallocate_choices::TABLE, $choicespath);
-        $paths[] = new restore_path_element(this_db\ratingallocate_group_choices::TABLE,
-            $choicespath .'/' . this_db\ratingallocate_group_choices::TABLE .'s/' . this_db\ratingallocate_group_choices::TABLE);
-        $paths[] = new restore_path_element(this_db\ratingallocate_ch_gengroups::TABLE,
-            $choicespath .'/'. this_db\ratingallocate_ch_gengroups::TABLE . 's/' . this_db\ratingallocate_ch_gengroups::TABLE);
-        $paths[] = new restore_path_element(this_db\ratingallocate_groupings::TABLE,
-            $ratingallocatepath . '/' . this_db\ratingallocate_groupings::TABLE . 's/' . this_db\ratingallocate_groupings::TABLE);
+        $paths[] = new restore_path_element(
+            this_db\ratingallocate_group_choices::TABLE,
+            $choicespath . '/' . this_db\ratingallocate_group_choices::TABLE . 's/' . this_db\ratingallocate_group_choices::TABLE
+        );
+        $paths[] = new restore_path_element(
+            this_db\ratingallocate_ch_gengroups::TABLE,
+            $choicespath . '/' . this_db\ratingallocate_ch_gengroups::TABLE . 's/' . this_db\ratingallocate_ch_gengroups::TABLE
+        );
+        $paths[] = new restore_path_element(
+            this_db\ratingallocate_groupings::TABLE,
+            $ratingallocatepath . '/' . this_db\ratingallocate_groupings::TABLE . 's/' . this_db\ratingallocate_groupings::TABLE
+        );
         if ($userinfo) {
-            $paths[] = new restore_path_element(this_db\ratingallocate_ratings::TABLE,
-                    $choicespath . '/' . this_db\ratingallocate_ratings::TABLE . 's/' . this_db\ratingallocate_ratings::TABLE);
-            $paths[] = new restore_path_element(this_db\ratingallocate_allocations::TABLE,
-                    $choicespath . '/' . this_db\ratingallocate_allocations::TABLE . 's/' .
-                    this_db\ratingallocate_allocations::TABLE);
+            $paths[] = new restore_path_element(
+                this_db\ratingallocate_ratings::TABLE,
+                $choicespath . '/' . this_db\ratingallocate_ratings::TABLE . 's/' . this_db\ratingallocate_ratings::TABLE
+            );
+            $paths[] = new restore_path_element(
+                this_db\ratingallocate_allocations::TABLE,
+                $choicespath . '/' . this_db\ratingallocate_allocations::TABLE . 's/' .
+                this_db\ratingallocate_allocations::TABLE
+            );
         }
 
         // Return the paths wrapped into standard activity structure.

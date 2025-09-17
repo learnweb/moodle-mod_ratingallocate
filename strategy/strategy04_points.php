@@ -42,7 +42,6 @@ require_once(dirname(__FILE__) . '/strategy_template.php');
  * @package mod_ratingallocate
  */
 class strategy extends \strategytemplate {
-
     /**
      * Strategyid.
      */
@@ -126,7 +125,6 @@ class strategy extends \strategytemplate {
                 self::MAXPERCHOICE => [true, 1],
         ];
     }
-
 }
 
 // Register with the strategymanager.
@@ -138,7 +136,6 @@ strategymanager::add_strategy(strategy::STRATEGYID);
  * @package mod_ratingallocate
  */
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
-
     /**
      * Create new strategy.
      * @param array $strategyoptions
@@ -208,14 +205,23 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
      * @throws \coding_exception
      */
     public function describe_strategy() {
-        $output = get_string(strategy::STRATEGYID . '_explain_distribute_points', RATINGALLOCATE_MOD_NAME,
-                $this->get_strategysetting(strategy::TOTALPOINTS));
+        $output = get_string(
+            strategy::STRATEGYID . '_explain_distribute_points',
+            RATINGALLOCATE_MOD_NAME,
+            $this->get_strategysetting(strategy::TOTALPOINTS)
+        );
         $output .= '<br />';
-        $output .= get_string(strategy::STRATEGYID . '_explain_max_zero', RATINGALLOCATE_MOD_NAME,
-                $this->get_strategysetting(strategy::MAXZERO));
+        $output .= get_string(
+            strategy::STRATEGYID . '_explain_max_zero',
+            RATINGALLOCATE_MOD_NAME,
+            $this->get_strategysetting(strategy::MAXZERO)
+        );
         $output .= '<br />';
-        $output .= get_string(strategy::STRATEGYID . '_explain_max_per_choice', RATINGALLOCATE_MOD_NAME,
-            $this->get_strategysetting(strategy::MAXPERCHOICE));
+        $output .= get_string(
+            strategy::STRATEGYID . '_explain_max_per_choice',
+            RATINGALLOCATE_MOD_NAME,
+            $this->get_strategysetting(strategy::MAXPERCHOICE)
+        );
         return $output;
     }
 
@@ -268,5 +274,4 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         }
         return $errors;
     }
-
 }

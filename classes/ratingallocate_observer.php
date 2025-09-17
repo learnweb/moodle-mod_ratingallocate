@@ -32,7 +32,6 @@ use dml_exception;
  * @package mod_ratingallocate
  */
 class ratingallocate_observer {
-
     /**
      * Triggered if group_deleted event is triggered.
      *
@@ -45,17 +44,18 @@ class ratingallocate_observer {
         global $DB;
 
         $eventdata = $event->get_record_snapshot('groups', $event->objectid);
-        if ($DB->record_exists(
-            'ratingallocate_ch_gengroups',
-            ['groupid' => $eventdata->id])) {
-
+        if (
+            $DB->record_exists(
+                'ratingallocate_ch_gengroups',
+                ['groupid' => $eventdata->id]
+            )
+        ) {
             // Delete the group from ratingallocate_ch_gengroups table.
             $DB->delete_records(
                 'ratingallocate_ch_gengroups',
                 ['groupid' => $eventdata->id]
             );
         }
-
     }
 
     /**
@@ -70,17 +70,17 @@ class ratingallocate_observer {
         global $DB;
 
         $eventdata = $event->get_record_snapshot('groupings', $event->objectid);
-        if ($DB->record_exists(
-            'ratingallocate_groupings',
-            ['groupingid' => $eventdata->id])) {
-
+        if (
+            $DB->record_exists(
+                'ratingallocate_groupings',
+                ['groupingid' => $eventdata->id]
+            )
+        ) {
             // Delete the grouping from the ratingallocate_groupings table.
             $DB->delete_records(
                 'ratingallocate_groupings',
                 ['groupingid' => $eventdata->id]
             );
-
         }
     }
-
 }

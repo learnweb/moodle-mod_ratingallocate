@@ -41,7 +41,6 @@ require_once(dirname(__FILE__) . '/strategy_template.php');
  * @package mod_ratingallocate
  */
 class strategy extends \strategytemplate {
-
     /**
      * Strategyid.
      */
@@ -111,7 +110,6 @@ class strategy extends \strategytemplate {
     protected function getvalidationinfo() {
         return [self::COUNTOPTIONS => [true, 1]];
     }
-
 }
 
 // Register with the strategymanager.
@@ -124,7 +122,6 @@ strategymanager::add_strategy(strategy::STRATEGYID);
  * - shows a drop down menu from which the user can choose a rating
  */
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
-
     /**
      * Create new strategy.
      * @param array $strategyoptions
@@ -168,14 +165,19 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             // If there is a valid value in the databse, choose the according rating
             // from the dropdown.
             // Else use a default value.
-            if (is_numeric($data->rating) && $data->rating >= 0 &&
-                    $mform->elementExists('choice[' . ($choicecounter - ($data->rating - 1)) . ']')) {
+            if (
+                is_numeric($data->rating) && $data->rating >= 0 &&
+                    $mform->elementExists('choice[' . ($choicecounter - ($data->rating - 1)) . ']')
+            ) {
                 $mform->getElement('choice[' . ($choicecounter - ($data->rating - 1)) . ']')->setSelected($data->choiceid);
             }
         }
 
-        $mform->addElement('header', 'choice_descriptions',
-                get_string(strategy::STRATEGYID . '_header_description', RATINGALLOCATE_MOD_NAME));
+        $mform->addElement(
+            'header',
+            'choice_descriptions',
+            get_string(strategy::STRATEGYID . '_header_description', RATINGALLOCATE_MOD_NAME)
+        );
 
         foreach ($ratingdata as $data) {
             // Show max. number of allocations.
@@ -204,8 +206,11 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
     private function fill_select($select, $i, array $choices) {
         $select->setName('choice[' . $i . ']');
         $select->setLabel(get_string(strategy::STRATEGYID . '_no_choice', RATINGALLOCATE_MOD_NAME, $i));
-        $select->addOption(get_string(strategy::STRATEGYID . '_choice_none', RATINGALLOCATE_MOD_NAME, $i),
-                '', ['disabled' => 'disabled']);
+        $select->addOption(
+            get_string(strategy::STRATEGYID . '_choice_none', RATINGALLOCATE_MOD_NAME, $i),
+            '',
+            ['disabled' => 'disabled']
+        );
         foreach ($choices as $id => $name) {
             $select->addOption($name, $id);
         }
@@ -272,5 +277,4 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         }
         return $errors;
     }
-
 }

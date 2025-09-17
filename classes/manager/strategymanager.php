@@ -27,7 +27,6 @@ namespace mod_ratingallocate\manager;
  * Simulate a static/singleton class that holds all the strategies that registered with him
  */
 class strategymanager {
-
     /** @var array of string-identifier of all registered strategies */
     private static $strategies = [];
 
@@ -46,5 +45,4 @@ class strategymanager {
     public static function get_strategies() {
         return self::$strategies;
     }
-
 }

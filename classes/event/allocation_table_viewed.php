@@ -32,7 +32,6 @@ namespace mod_ratingallocate\event;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 class allocation_table_viewed extends \core\event\base {
-
     /**
      * Create simple allocation_table_viewed event.
      *
@@ -70,8 +69,11 @@ class allocation_table_viewed extends \core\event\base {
      * @throws \coding_exception
      */
     public function get_description() {
-        return get_string('log_allocation_table_viewed_description', 'mod_ratingallocate',
-                ['userid' => $this->userid, 'ratingallocateid' => $this->objectid]);
+        return get_string(
+            'log_allocation_table_viewed_description',
+            'mod_ratingallocate',
+            ['userid' => $this->userid, 'ratingallocateid' => $this->objectid]
+        );
     }
 
     /**

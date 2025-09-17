@@ -89,8 +89,12 @@ function groups_delete_group_members_by_group($groupid): bool {
     $groups = $DB->get_recordset('groups', ['id' => $groupid]);
 
     foreach ($groups as $group) {
-        $userids = $DB->get_fieldset_select('groups_members', 'userid', 'groupid = :groupid',
-                ['groupid' => $group->id]);
+        $userids = $DB->get_fieldset_select(
+            'groups_members',
+            'userid',
+            'groupid = :groupid',
+            ['groupid' => $group->id]
+        );
 
         // Very ugly hack because some group-management functions are not provided in lib/grouplib.php
         // but does not add too much overhead since it does not include more files...

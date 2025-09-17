@@ -34,7 +34,6 @@ require_once(dirname(__FILE__) . '/solver-template.php');
  * @package mod_ratingallocate
  */
 class solver_edmonds_karp extends distributor {
-
     /**
      * Return name.
      *
@@ -64,7 +63,7 @@ class solver_edmonds_karp extends distributor {
         $source = 0;
         $sink = $choicecount + $usercount + 1;
 
-        list($fromuserid, $touserid, $fromchoiceid, $tochoiceid) = $this->setup_id_conversions($usercount, $ratings);
+        [$fromuserid, $touserid, $fromchoiceid, $tochoiceid] = $this->setup_id_conversions($usercount, $ratings);
 
         $this->setup_graph($choicecount, $usercount, $fromuserid, $fromchoiceid, $ratings, $choicedata, $source, $sink, -1);
 
@@ -144,5 +143,4 @@ class solver_edmonds_karp extends distributor {
         $path[] = $from;
         return $path;
     }
-
 }

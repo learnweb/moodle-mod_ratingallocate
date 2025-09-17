@@ -32,7 +32,6 @@ require_once(dirname(__FILE__) . '/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class modify_choice_form extends moodleform {
-
     /** @var $ratingallocate ratingallocate */
     private $ratingallocate;
 
@@ -56,8 +55,12 @@ class modify_choice_form extends moodleform {
      * @return void
      * @throws coding_exception
      */
-    public function __construct($url, ratingallocate $ratingallocate,
-            ?ratingallocate_choice $choice, ?array $customdata) {
+    public function __construct(
+        $url,
+        ratingallocate $ratingallocate,
+        ?ratingallocate_choice $choice,
+        ?array $customdata
+    ) {
         $this->ratingallocate = $ratingallocate;
         if ($choice) {
             $this->choice = $choice;
@@ -87,8 +90,12 @@ class modify_choice_form extends moodleform {
         $mform->setType($elementname, PARAM_TEXT);
         $mform->addHelpButton($elementname, 'choice_title', RATINGALLOCATE_MOD_NAME);
         $mform->addRule($elementname, get_string('err_required', 'form'), 'required', null, 'server');
-        $mform->addRule($elementname, get_string('title_too_long_error', RATINGALLOCATE_MOD_NAME),
-            'maxlength', '255');
+        $mform->addRule(
+            $elementname,
+            get_string('title_too_long_error', RATINGALLOCATE_MOD_NAME),
+            'maxlength',
+            '255'
+        );
 
         $elementname = 'explanation';
         $editoroptions = [
@@ -112,19 +119,35 @@ class modify_choice_form extends moodleform {
         $this->set_data($this->_customdata['attachment_data']);
 
         $elementname = 'active';
-        $mform->addElement('advcheckbox', $elementname, get_string('choice_active', RATINGALLOCATE_MOD_NAME),
-                null, null, [0, 1]);
+        $mform->addElement(
+            'advcheckbox',
+            $elementname,
+            get_string('choice_active', RATINGALLOCATE_MOD_NAME),
+            null,
+            null,
+            [0, 1]
+        );
         $mform->addHelpButton($elementname, 'choice_active', RATINGALLOCATE_MOD_NAME);
 
         $elementname = 'usegroups';
-        $mform->addelement('advcheckbox', $elementname, get_string('choice_usegroups', RATINGALLOCATE_MOD_NAME),
-            null, null, [0, 1]);
+        $mform->addelement(
+            'advcheckbox',
+            $elementname,
+            get_string('choice_usegroups', RATINGALLOCATE_MOD_NAME),
+            null,
+            null,
+            [0, 1]
+        );
         $mform->addHelpButton($elementname, 'choice_usegroups', RATINGALLOCATE_MOD_NAME);
 
         $elementname = 'groupselector';
         $options = $this->ratingallocate->get_group_selections();
-        $selector = $mform->addelement('searchableselector', $elementname,
-            get_string('choice_groupselect', RATINGALLOCATE_MOD_NAME), $options);
+        $selector = $mform->addelement(
+            'searchableselector',
+            $elementname,
+            get_string('choice_groupselect', RATINGALLOCATE_MOD_NAME),
+            $options
+        );
         $selector->setMultiple(true);
         $mform->hideIf('groupselector', 'usegroups');
 
@@ -157,8 +180,11 @@ class modify_choice_form extends moodleform {
         $buttonarray = [];
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         if ($this->addnew) {
-            $buttonarray[] = &$mform->createElement('submit', 'submitbutton2',
-                    get_string('saveandnext', RATINGALLOCATE_MOD_NAME));
+            $buttonarray[] = &$mform->createElement(
+                'submit',
+                'submitbutton2',
+                get_string('saveandnext', RATINGALLOCATE_MOD_NAME)
+            );
         }
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
@@ -186,5 +212,4 @@ class modify_choice_form extends moodleform {
         $errors = parent::validation($data, $files);
         return $errors;
     }
-
 }

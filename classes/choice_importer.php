@@ -76,7 +76,7 @@ class choice_importer {
      * @param array $fields
      * @return void
      */
-    public static function print_fields($fields=self::REQUIRED_FIELDS) {
+    public static function print_fields($fields = self::REQUIRED_FIELDS) {
         return '[' . join(', ', $fields) . ']';
     }
 
@@ -137,12 +137,12 @@ class choice_importer {
      * - rowcount: The number of being row processed. (Once finished, should add up to readcount.)
      * - importcount: The number of rows successfully processed.
      */
-    public function import($content, $live=true) {
+    public function import($content, $live = true) {
         global $DB;
 
         $reader = $this->get_reader();
 
-        $importstatus = new \stdClass;
+        $importstatus = new \stdClass();
         $importstatus->status = self::IMPORT_STATUS_OK;  // Unless we hear otherwise.
         $importstatus->live = $live;  // Only commit live transactions.
         $importstatus->errors = [];
@@ -169,8 +169,11 @@ class choice_importer {
                 $missingfields = array_diff(self::REQUIRED_FIELDS, $fieldnames);
                 if ($missingfields) {
                     $importstatus->status = self::IMPORT_STATUS_SETUP_ERROR;
-                    $importstatus->errors[] = get_string('csvupload_missing_fields', 'ratingallocate',
-                        self::print_fields($missingfields));
+                    $importstatus->errors[] = get_string(
+                        'csvupload_missing_fields',
+                        'ratingallocate',
+                        self::print_fields($missingfields)
+                    );
                     return $importstatus;
                 }
 
@@ -181,7 +184,6 @@ class choice_importer {
                 // Start DB transaction.
                 $transaction = $this->ratingallocate->db->start_delegated_transaction();
                 try {
-
                     $reader->init();
                     while ($record = $reader->next()) {
                         $importstatus->rowcount++;
@@ -200,8 +202,11 @@ class choice_importer {
 
                             if ($fieldname === 'title' && mb_strlen($cell, 'UTF-8') > 255) {
                                 $importstatus->status = self::IMPORT_STATUS_DATA_ERROR;
-                                $importstatus->errors[] = get_string('csvupload_too_long_title',
-                                        RATINGALLOCATE_MOD_NAME, $cell);
+                                $importstatus->errors[] = get_string(
+                                    'csvupload_too_long_title',
+                                    RATINGALLOCATE_MOD_NAME,
+                                    $cell
+                                );
                                 $ischoiceimportable = false;
                             }
 
@@ -275,13 +280,11 @@ class choice_importer {
                         $transaction->allow_commit();
                     }
                     $transaction->dispose();
-
                 } catch (\Exception $e) {
                     if (isset($transaction)) {
                         $transaction->rollback($e);
                     }
                 }
-
             }
         }
 
@@ -296,11 +299,15 @@ class choice_importer {
             }
         } else {
             if ($live) {
-                $importstatus->status_message = get_string('csvupload_live_problems', 'ratingallocate',
+                $importstatus->status_message = get_string(
+                    'csvupload_live_problems',
+                    'ratingallocate',
                     count($importstatus->errors)
                 );
             } else {
-                $importstatus->status_message = get_string('csvupload_test_problems', 'ratingallocate',
+                $importstatus->status_message = get_string(
+                    'csvupload_test_problems',
+                    'ratingallocate',
                     count($importstatus->errors)
                 );
             }
@@ -321,9 +328,10 @@ class choice_importer {
      * @param int $max Maximum number of individual notifications to send.
      * @return void
      */
-    public function issue_notifications($errors,
-        $notificationtype=\core\output\notification::NOTIFY_WARNING,
-        $max=self::MAX_WARNING_COUNT
+    public function issue_notifications(
+        $errors,
+        $notificationtype = \core\output\notification::NOTIFY_WARNING,
+        $max = self::MAX_WARNING_COUNT
     ) {
         $errorcount = count($errors);
 

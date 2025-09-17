@@ -42,7 +42,6 @@ require_once(dirname(__FILE__) . '/strategy_template.php');
  * @package mod_ratingallocate
  */
 class strategy extends \strategytemplate {
-
     /**
      * Strategyid.
      */
@@ -134,7 +133,6 @@ strategymanager::add_strategy(strategy::STRATEGYID);
  * - shows a drop down menu from which the user can choose a rating
  */
 class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
-
     /**
      * Create a new strategy.
      * @param array $strategyoptions
@@ -181,8 +179,14 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
                     ':</span> <span class="mod-ratingallocate-choice-maxno-value">' . $data->maxsize . '</span></div>');
 
             // Use explanation as title/label of checkbox to align with other strategies.
-            $mform->addElement('advcheckbox', $ratingelem, format_text($data->explanation),
-                    $this->get_strategy()->get_accept_label(), null, [0, 1]);
+            $mform->addElement(
+                'advcheckbox',
+                $ratingelem,
+                format_text($data->explanation),
+                $this->get_strategy()->get_accept_label(),
+                null,
+                [0, 1]
+            );
             $mform->setType($ratingelem, PARAM_INT);
 
             if (is_numeric($data->rating) && $data->rating >= 0) {
@@ -203,8 +207,11 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
      * @throws \coding_exception
      */
     public function describe_strategy() {
-        return get_string(strategy::STRATEGYID . '_explain_mintickyes', RATINGALLOCATE_MOD_NAME,
-                $this->get_strategysetting(strategy::MINTICKYES));
+        return get_string(
+            strategy::STRATEGYID . '_explain_mintickyes',
+            RATINGALLOCATE_MOD_NAME,
+            $this->get_strategysetting(strategy::MINTICKYES)
+        );
     }
 
     /**
@@ -240,5 +247,4 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
         }
         return $errors;
     }
-
 }

@@ -47,7 +47,6 @@ use stdClass;
  * @property string $setting
  */
 class ratingallocate_db_wrapper {
-
     /** @var stdClass */
     public $dbrecord;
 
@@ -79,5 +78,4 @@ class ratingallocate_db_wrapper {
     public function __construct($record) {
         $this->dbrecord = $record;
     }
-
 }

@@ -64,14 +64,12 @@ class edge {
         $this->weight = $weight;
         $this->space = $space;
     }
-
 }
 
 /**
  * Template Class for distribution algorithms
  */
 class distributor {
-
     /** @var $graph Flow-Graph built */
     protected $graph;
 
@@ -203,8 +201,17 @@ class distributor {
      * @param stdClass $weightmult
      * @return void
      */
-    protected function setup_graph($choicecount, $usercount, $fromuserid, $fromchoiceid, $ratings, $choicedata, $source, $sink,
-            $weightmult = 1) {
+    protected function setup_graph(
+        $choicecount,
+        $usercount,
+        $fromuserid,
+        $fromchoiceid,
+        $ratings,
+        $choicedata,
+        $source,
+        $sink,
+        $weightmult = 1
+    ) {
         // Construct the datastructures for the algorithm
         // A directed weighted bipartite graph.
         // A source is connected to all users with unit cost.
@@ -278,5 +285,4 @@ class distributor {
             }
         }
     }
-
 }

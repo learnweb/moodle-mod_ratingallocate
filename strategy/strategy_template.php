@@ -39,7 +39,6 @@ require_once($CFG->libdir . '/formslib.php');
  * @package mod_ratingallocate
  */
 abstract class strategytemplate {
-
     /** STRATEGYID string identifier, for language translation, etc. */
     const STRATEGYID = '';
 
@@ -63,8 +62,10 @@ abstract class strategytemplate {
      * @return either the value of the setting the strategy was initialized with or the default value of the setting.
      */
     protected function get_settings_value($key, $default = true) {
-        if (isset($this->_strategy_settings) && array_key_exists($key, $this->_strategy_settings) &&
-                $this->_strategy_settings[$key] !== '') {
+        if (
+            isset($this->_strategy_settings) && array_key_exists($key, $this->_strategy_settings) &&
+                $this->_strategy_settings[$key] !== ''
+        ) {
             return $value = $this->_strategy_settings[$key];
         }
         return $default ? $this->get_settings_default_value($key) : null;
@@ -169,8 +170,10 @@ abstract class strategytemplate {
         $errors = [];
         foreach ($validationinfo as $key => $info) {
             if (isset($info[0]) && $info[0] === true) {
-                if (array_key_exists($key, $this->_strategy_settings) &&
-                        (!isset($this->_strategy_settings[$key]) || $this->_strategy_settings[$key] === "")) {
+                if (
+                    array_key_exists($key, $this->_strategy_settings) &&
+                        (!isset($this->_strategy_settings[$key]) || $this->_strategy_settings[$key] === "")
+                ) {
                     $errors[$key] = get_string('err_required', RATINGALLOCATE_MOD_NAME);
                     break;
                 }

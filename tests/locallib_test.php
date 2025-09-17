@@ -43,7 +43,6 @@ use PHPUnit\Framework\Attributes\CoversFunction;
 #[CoversFunction('get_allocations')]
 #[CoversFunction('get_ratings_for_rateable_choices')]
 final class locallib_test extends \advanced_testcase {
-
     /**
      * Tests a simple allocation scenario.
      *
@@ -65,9 +64,10 @@ final class locallib_test extends \advanced_testcase {
 
         // There should not be any module for that course first.
         $this->assertFalse(
-                $DB->record_exists(this_db\ratingallocate::TABLE,
-                       [this_db\ratingallocate::COURSE => $course->id]
-                )
+            $DB->record_exists(
+                this_db\ratingallocate::TABLE,
+                [this_db\ratingallocate::COURSE => $course->id]
+            )
         );
 
         // Set default data for category.
@@ -83,8 +83,11 @@ final class locallib_test extends \advanced_testcase {
 
         // Create activity.
         $mod = mod_ratingallocate_generator::create_instance_with_choices($this, $moduledata, $choicedata);
-        $this->assertEquals(2, $DB->count_records(this_db\ratingallocate_choices::TABLE),
-                "Failure, debug info: " . implode(",", [this_db\ratingallocate_choices::ID => $mod->id]));
+        $this->assertEquals(
+            2,
+            $DB->count_records(this_db\ratingallocate_choices::TABLE),
+            "Failure, debug info: " . implode(",", [this_db\ratingallocate_choices::ID => $mod->id])
+        );
 
         $student1 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
         $student2 = mod_ratingallocate_generator::create_user_and_enrol($this, $course);
@@ -128,11 +131,13 @@ final class locallib_test extends \advanced_testcase {
         $numallocations = $DB->count_records(this_db\ratingallocate_allocations::TABLE);
 
         $this->assertEquals(4, $numallocations, 'There should be only 4 allocations, since there are only 4 choices.');
-        $allocations = $DB->get_records(this_db\ratingallocate_allocations::TABLE,
-                [this_db\ratingallocate_allocations::RATINGALLOCATEID => $mod->{this_db\ratingallocate::ID}],
-                '');
+        $allocations = $DB->get_records(
+            this_db\ratingallocate_allocations::TABLE,
+            [this_db\ratingallocate_allocations::RATINGALLOCATEID => $mod->{this_db\ratingallocate::ID}],
+            ''
+        );
 
-        $mapuserid = function($elem) {
+        $mapuserid = function ($elem) {
             return $elem->{this_db\ratingallocate_allocations::USERID};
         };
 
@@ -151,7 +156,8 @@ final class locallib_test extends \advanced_testcase {
         // We now unenrol a user and make sure he will not be considered in distribution.
         $manualenrolplugin = enrol_get_plugin('manual');
         $enrolinstance = array_values(
-            array_filter(enrol_get_instances($course->id, true), fn($instance) => $instance->enrol == "manual"))[0];
+            array_filter(enrol_get_instances($course->id, true), fn($instance) => $instance->enrol == "manual")
+        )[0];
 
         $manualenrolplugin->unenrol_user($enrolinstance, $student3->id);
         // Re-distributing will first clear all allocations, so afterwards we will see if the unenrolled user has been considered.
@@ -170,7 +176,7 @@ final class locallib_test extends \advanced_testcase {
      * @return array
      */
     private static function filter_allocations_by_choice($allocations, $choiceid) {
-        $filterchoiceid = function($elem) use ($choiceid) {
+        $filterchoiceid = function ($elem) use ($choiceid) {
             return $elem->{this_db\ratingallocate_allocations::CHOICEID} == $choiceid;
         };
         return array_filter($allocations, $filterchoiceid);
@@ -202,7 +208,10 @@ final class locallib_test extends \advanced_testcase {
         $record = mod_ratingallocate_generator::get_default_values();
         $testmodule = new \mod_ratingallocate_generated_module($this, $record);
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user(
-                $this, $testmodule->moddb, $testmodule->teacher);
+            $this,
+            $testmodule->moddb,
+            $testmodule->teacher
+        );
 
         $result = $ratingallocate->get_options_titles($ratings);
         $this->assertEquals($expectedresult, $result);
@@ -221,7 +230,10 @@ final class locallib_test extends \advanced_testcase {
         $record['strategyopt']['strategy_yesno'] = $expectedresult;
         $testmodule = new \mod_ratingallocate_generated_module($this, $record);
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user(
-                $this, $testmodule->moddb, $testmodule->teacher);
+            $this,
+            $testmodule->moddb,
+            $testmodule->teacher
+        );
 
         $result = $ratingallocate->get_options_titles($ratings);
         $this->assertEquals($expectedresult, $result);
@@ -240,7 +252,10 @@ final class locallib_test extends \advanced_testcase {
         $record['strategyopt']['strategy_yesno'] = $expectedresult;
         $testmodule = new \mod_ratingallocate_generated_module($this, $record);
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user(
-                $this, $testmodule->moddb, $testmodule->teacher);
+            $this,
+            $testmodule->moddb,
+            $testmodule->teacher
+        );
 
         $result = $ratingallocate->get_options_titles($ratings);
         $this->assertEquals($expectedresult, $result);
@@ -261,7 +276,10 @@ final class locallib_test extends \advanced_testcase {
         $record['strategyopt']['strategy_yesno'] = $settings;
         $testmodule = new \mod_ratingallocate_generated_module($this, $record);
         $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user(
-                $this, $testmodule->moddb, $testmodule->teacher);
+            $this,
+            $testmodule->moddb,
+            $testmodule->teacher
+        );
 
         $result = $ratingallocate->get_options_titles($ratings);
         $this->assertEquals($expectedresult, $result);
@@ -291,8 +309,12 @@ final class locallib_test extends \advanced_testcase {
         ];
 
         // Create ratingallocate instance.
-        $ratingallocate = mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this, $choices,
-            $course, $ratings);
+        $ratingallocate = mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher(
+            $this,
+            $choices,
+            $course,
+            $ratings
+        );
 
         // Simulate Allocation.
         $ratingallocate->distribute_choices();
@@ -336,5 +358,4 @@ final class locallib_test extends \advanced_testcase {
         $this->assertEquals($accesstimestart + (2 * DAYSECS), $ra->accesstimestart);
         $this->assertEquals($accesstimestop + (2 * DAYSECS), $ra->accesstimestop);
     }
-
 }
