@@ -48,7 +48,6 @@ require_once(__DIR__ . '/../locallib.php');
 #[CoversFunction('get_choices_with_allocationcount')]
 #[CoversFunction('get_allocations_for_user')]
 final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase {
-
     /** @var stdClass Course object. */
     private stdClass $course;
     /** @var stdClass Enrolled teacher. */
@@ -110,8 +109,12 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
             foreach ($students as $student) {
                 $allocations = $this->ratingallocate->get_allocations_for_user($student->id);
                 foreach ($allocations as $allocation) {
-                    if (empty(array_filter($this->ratingallocate->get_rateable_choices(),
-                        fn($choice) => $choice->id === $allocation->choiceid)[0]->usegroups)) {
+                    if (
+                        empty(array_filter(
+                            $this->ratingallocate->get_rateable_choices(),
+                            fn($choice) => $choice->id === $allocation->choiceid
+                        )[0]->usegroups)
+                    ) {
                         // If the choice has no group restrictions active we do not have to assert anything.
                         continue;
                     }
@@ -145,11 +148,13 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
             ];
         }
 
-        $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
+        $mod = mod_ratingallocate_generator::create_instance_with_choices(
+            $this,
             ['course' => $this->course,
                 'strategyopt' => ['countoptions' => 3],
                 'strategy' => 'strategy_order'],
-            $choices);
+            $choices
+        );
         $this->ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
 
         // Assign blue group to choice D, green group to choice E.
@@ -187,11 +192,13 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
             ];
         }
 
-        $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
+        $mod = mod_ratingallocate_generator::create_instance_with_choices(
+            $this,
             ['course' => $this->course,
                 'strategyopt' => ['countoptions' => 3],
                 'strategy' => 'strategy_order'],
-            $choices);
+            $choices
+        );
         $this->ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
 
         // Pick random red group user, also assign to group blue and green.
@@ -239,16 +246,20 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
             ];
         }
 
-        $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
+        $mod = mod_ratingallocate_generator::create_instance_with_choices(
+            $this,
             ['course' => $this->course,
                 'strategyopt' => ['countoptions' => 3],
                 'strategy' => 'strategy_order'],
-            $choices);
+            $choices
+        );
         $this->ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
 
         // Assign blue and green group to choice D, red group to choice E.
-        $this->ratingallocate->update_choice_groups($this->get_choice_id_by_title('D'),
-            [$this->blue->id, $this->green->id, $this->red->id]);
+        $this->ratingallocate->update_choice_groups(
+            $this->get_choice_id_by_title('D'),
+            [$this->blue->id, $this->green->id, $this->red->id]
+        );
         $this->ratingallocate->update_choice_groups($this->get_choice_id_by_title('E'), [$this->red->id]);
 
         $studentonetwogroups = $this->studentsred[7];
@@ -292,22 +303,32 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
         $raters = array_values($this->ratingallocate->get_raters_in_course());
         // Additionally check that the original order of the users has been preserved if group count is equal.
         // For groupcount 2.
-        $this->assertEquals(array_search($studentonetwogroups, $raters) > array_search($studenttwotwogroups, $raters),
-            array_search($studentonetwogroups->id, $users) > array_search($studenttwotwogroups->id, $users));
-        $this->assertEquals(array_search($studenttwotwogroups, $raters) > array_search($studentthreetwogroups, $raters),
-            array_search($studenttwotwogroups->id, $users) > array_search($studentthreetwogroups->id, $users));
+        $this->assertEquals(
+            array_search($studentonetwogroups, $raters) > array_search($studenttwotwogroups, $raters),
+            array_search($studentonetwogroups->id, $users) > array_search($studenttwotwogroups->id, $users)
+        );
+        $this->assertEquals(
+            array_search($studenttwotwogroups, $raters) > array_search($studentthreetwogroups, $raters),
+            array_search($studenttwotwogroups->id, $users) > array_search($studentthreetwogroups->id, $users)
+        );
         // For groupcount 3.
-        $this->assertEquals(array_search($studentonethreegroups, $raters) > array_search($studenttwothreegroups, $raters),
-            array_search($studentonethreegroups->id, $users) > array_search($studenttwothreegroups->id, $users));
+        $this->assertEquals(
+            array_search($studentonethreegroups, $raters) > array_search($studenttwothreegroups, $raters),
+            array_search($studentonethreegroups->id, $users) > array_search($studenttwothreegroups->id, $users)
+        );
         // For groupcount 1.
         for ($i = 0; $i < 25; $i++) {
-            $this->assertEquals(array_values(array_filter($raters,
-                    fn($rater) => count($this->ratingallocate->get_user_groupids($rater->id)) == 1))[$i]->id, $users[$i]);
+            $this->assertEquals(array_values(array_filter(
+                $raters,
+                fn($rater) => count($this->ratingallocate->get_user_groupids($rater->id)) == 1
+            ))[$i]->id, $users[$i]);
         }
         // For groupcount 0.
         for ($i = 0; $i < 10; $i++) {
-            $this->assertEquals(array_values(array_filter($raters,
-                fn($rater) => count($this->ratingallocate->get_user_groupids($rater->id)) == 0))[$i]->id, $users[$i + 30]);
+            $this->assertEquals(array_values(array_filter(
+                $raters,
+                fn($rater) => count($this->ratingallocate->get_user_groupids($rater->id)) == 0
+            ))[$i]->id, $users[$i + 30]);
         }
     }
 
@@ -329,8 +350,10 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
      * @return stdClass the choice object
      */
     private function get_choice_by_title(string $title): stdClass {
-        return array_values(array_filter($this->ratingallocate->get_rateable_choices(),
-            fn($choice) => $choice->title === $title))[0];
+        return array_values(array_filter(
+            $this->ratingallocate->get_rateable_choices(),
+            fn($choice) => $choice->title === $title
+        ))[0];
     }
 
     /**
@@ -352,8 +375,10 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
      * @return array
      */
     private function get_allocations_for_choice(string $title): array {
-        $allocationsofchoice = array_filter($this->ratingallocate->get_allocations(),
-            fn($allocation) => $allocation->choiceid == $this->get_choice_id_by_title($title));
+        $allocationsofchoice = array_filter(
+            $this->ratingallocate->get_allocations(),
+            fn($allocation) => $allocation->choiceid == $this->get_choice_id_by_title($title)
+        );
         return array_map(fn($allocation) => $allocation->userid, $allocationsofchoice);
     }
 
@@ -375,14 +400,22 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
      * @return void
      */
     private function assert_allocation_of_random_users(): void {
-        $this->assertEquals($this->get_choice_id_by_title('B'),
-            array_values($this->ratingallocate->get_allocations_for_user($this->studentsgreen[3]->id))[0]->choiceid);
-        $this->assertEquals($this->get_choice_id_by_title('B'),
-            array_values($this->ratingallocate->get_allocations_for_user($this->studentsred[7]->id))[0]->choiceid);
-        $this->assertEquals($this->get_choice_id_by_title('C'),
-            array_values($this->ratingallocate->get_allocations_for_user($this->studentsblue[9]->id))[0]->choiceid);
-        $this->assertEquals($this->get_choice_id_by_title('D'),
-            array_values($this->ratingallocate->get_allocations_for_user($this->studentsnogroup[2]->id))[0]->choiceid);
+        $this->assertEquals(
+            $this->get_choice_id_by_title('B'),
+            array_values($this->ratingallocate->get_allocations_for_user($this->studentsgreen[3]->id))[0]->choiceid
+        );
+        $this->assertEquals(
+            $this->get_choice_id_by_title('B'),
+            array_values($this->ratingallocate->get_allocations_for_user($this->studentsred[7]->id))[0]->choiceid
+        );
+        $this->assertEquals(
+            $this->get_choice_id_by_title('C'),
+            array_values($this->ratingallocate->get_allocations_for_user($this->studentsblue[9]->id))[0]->choiceid
+        );
+        $this->assertEquals(
+            $this->get_choice_id_by_title('D'),
+            array_values($this->ratingallocate->get_allocations_for_user($this->studentsnogroup[2]->id))[0]->choiceid
+        );
     }
 
     /**
@@ -405,11 +438,13 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
                 'usegroups' => false,
             ];
         }
-        $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
+        $mod = mod_ratingallocate_generator::create_instance_with_choices(
+            $this,
             ['course' => $this->course,
                 'strategyopt' => ['countoptions' => 3],
                 'strategy' => 'strategy_order'],
-            $choices);
+            $choices
+        );
         $this->ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
 
         $this->ratingallocate->add_allocation($this->get_choice_id_by_title('A'), $this->studentsnogroup[0]->id);
@@ -475,11 +510,13 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
             ];
         }
 
-        $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
+        $mod = mod_ratingallocate_generator::create_instance_with_choices(
+            $this,
             ['course' => $this->course,
                 'strategyopt' => ['countoptions' => 3],
                 'strategy' => 'strategy_order'],
-            $choices);
+            $choices
+        );
         $this->ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
         // Assign blue and green group to choice D. So D is only available to green and blue students.
         $this->ratingallocate->update_choice_groups($this->get_choice_id_by_title('D'), [$this->blue->id, $this->green->id]);
@@ -546,11 +583,13 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
             $choices[] = $choice;
         }
 
-        $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
+        $mod = mod_ratingallocate_generator::create_instance_with_choices(
+            $this,
             ['course' => $this->course,
                 'strategyopt' => ['countoptions' => 3],
                 'strategy' => 'strategy_order'],
-            $choices);
+            $choices
+        );
         $this->ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
 
         // We now test what happens with more users than places in the choices.
@@ -600,11 +639,13 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
             $choices[] = $choice;
             $i -= 2;
         }
-        $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
+        $mod = mod_ratingallocate_generator::create_instance_with_choices(
+            $this,
             ['course' => $this->course,
                 'strategyopt' => ['countoptions' => 3],
                 'strategy' => 'strategy_order'],
-            $choices);
+            $choices
+        );
         $this->ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
 
         // Randomly manually allocate some students to some choices to see if the algorithm can deal with that.
@@ -650,11 +691,13 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
             ];
             $i -= 2;
         }
-        $mod = mod_ratingallocate_generator::create_instance_with_choices($this,
+        $mod = mod_ratingallocate_generator::create_instance_with_choices(
+            $this,
             ['course' => $this->course,
                 'strategyopt' => ['countoptions' => 3],
                 'strategy' => 'strategy_order'],
-            $choices);
+            $choices
+        );
         $this->ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
 
         // Randomly manually allocate some students to some choices to see if the algorithm can deal with that.

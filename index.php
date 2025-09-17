@@ -52,12 +52,15 @@ echo $OUTPUT->heading(get_string('modulenameplural', RATINGALLOCATE_MOD_NAME), 2
 require_capability('mod/ratingallocate:view', $coursecontext);
 
 $event = index_viewed::create_simple(
-        context_course::instance($course->id));
+    context_course::instance($course->id)
+);
 $event->trigger();
 
 if (!$ratingallocates = get_all_instances_in_course('ratingallocate', $course, $USER->id)) {
-    notice(get_string('noratingallocates', RATINGALLOCATE_MOD_NAME),
-            new moodle_url('/course/view.php', ['id' => $course->id]));
+    notice(
+        get_string('noratingallocates', RATINGALLOCATE_MOD_NAME),
+        new moodle_url('/course/view.php', ['id' => $course->id])
+    );
 }
 
 $table = new html_table();
@@ -72,18 +75,19 @@ foreach ($ratingallocates as $ratingallocate) {
     $ratingallocateinstance = $DB->get_record('ratingallocate', ['id' => $ratingallocate->id]);
     if (!$ratingallocate->visible) {
         $link = html_writer::link(
-                new moodle_url('/mod/ratingallocate/view.php', ['id' => $ratingallocate->coursemodule]),
-                format_string($ratingallocate->name, true),
-               ['class' => 'dimmed']);
+            new moodle_url('/mod/ratingallocate/view.php', ['id' => $ratingallocate->coursemodule]),
+            format_string($ratingallocate->name, true),
+            ['class' => 'dimmed']
+        );
     } else {
         $link = html_writer::link(
-                new moodle_url('/mod/ratingallocate/view.php', ['id' => $ratingallocate->coursemodule]),
-                format_string($ratingallocate->name, true));
+            new moodle_url('/mod/ratingallocate/view.php', ['id' => $ratingallocate->coursemodule]),
+            format_string($ratingallocate->name, true)
+        );
     }
     $table->data[] = [$link, userdate($ratingallocateinstance->accesstimestart),
             userdate($ratingallocateinstance->accesstimestop),
             $ratingallocateinstance->published == 0 ? get_string('no') : get_string('yes')];
-
 }
 
 echo html_writer::table($table);

@@ -31,7 +31,6 @@ namespace mod_ratingallocate\event;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 class index_viewed extends \core\event\base {
-
     /**
      * Create simple index_viewed event.
      *

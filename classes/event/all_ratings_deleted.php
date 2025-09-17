@@ -30,7 +30,6 @@ namespace mod_ratingallocate\event;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 class all_ratings_deleted extends \core\event\base {
-
     /**
      * Create simple all_ratings_deleted event.
      *
@@ -68,8 +67,11 @@ class all_ratings_deleted extends \core\event\base {
      * @throws \coding_exception
      */
     public function get_description() {
-        return get_string('log_all_ratings_deleted_description', 'mod_ratingallocate',
-            ['userid' => $this->userid, 'ratingallocateid' => $this->objectid]);
+        return get_string(
+            'log_all_ratings_deleted_description',
+            'mod_ratingallocate',
+            ['userid' => $this->userid, 'ratingallocateid' => $this->objectid]
+        );
     }
 
     /**

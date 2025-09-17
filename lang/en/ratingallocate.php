@@ -414,39 +414,3 @@ $string['userid'] = 'User ID';
 $string['you_are_not_allocated'] = 'You were not allocated to any choice!';
 $string['your_allocated_choice'] = 'Your Allocation';
 $string['your_rating'] = 'Your Rating';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -35,7 +35,6 @@ require_once($CFG->dirroot . '/user/lib.php');
  * @package mod_ratingallocate
  */
 class allocations_table extends \table_sql {
-
     /**
      * @var ratingallocate
      */
@@ -95,8 +94,10 @@ class allocations_table extends \table_sql {
             $headers[] = get_string('firstname');
             $columns[] = 'lastname';
             $headers[] = get_string('lastname');
-            if (in_array('email', $additionalfields) &&
-                    has_capability('moodle/course:useremail', $this->ratingallocate->get_context())) {
+            if (
+                in_array('email', $additionalfields) &&
+                    has_capability('moodle/course:useremail', $this->ratingallocate->get_context())
+            ) {
                 $columns[] = 'email';
                 $headers[] = get_string('email');
             }
@@ -128,7 +129,7 @@ class allocations_table extends \table_sql {
         $data = $this->rawdata;
 
         // Retrieve all users, who rated within the course.
-        $userwithratingids = array_map(function($x) {
+        $userwithratingids = array_map(function ($x) {
             return $x->userid;
         },
                 $this->ratingallocate->get_users_with_ratings());
@@ -175,8 +176,9 @@ class allocations_table extends \table_sql {
             if (count($userwithrating) > 0 && ($this->currpage + 1) * $this->pagesize >= $this->totalrows) {
                 $noallocation = new \stdClass();
                 $noallocation->choicetitle = get_string(
-                        'allocations_table_noallocation',
-                        RATINGALLOCATE_MOD_NAME);
+                    'allocations_table_noallocation',
+                    RATINGALLOCATE_MOD_NAME
+                );
 
                 foreach ($userwithrating as $userid => $user) {
                     if (object_property_exists($noallocation, 'users')) {
@@ -210,8 +212,10 @@ class allocations_table extends \table_sql {
         if ($COURSE->id == SITEID) {
             $profileurl = new \moodle_url('/user/profile.php', ['id' => $user->id]);
         } else {
-            $profileurl = new \moodle_url('/user/view.php',
-                   ['id' => $user->id, 'course' => $COURSE->id]);
+            $profileurl = new \moodle_url(
+                '/user/view.php',
+                ['id' => $user->id, 'course' => $COURSE->id]
+            );
         }
         return \html_writer::link($profileurl, $name);
     }
@@ -241,5 +245,4 @@ class allocations_table extends \table_sql {
 
         $this->query_db(20);
     }
-
 }

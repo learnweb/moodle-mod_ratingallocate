@@ -34,7 +34,6 @@ use mod_ratingallocate\strategy_yesno\strategy;
  * @package mod_ratingallocate
  */
 final class mod_ratingallocate_strategy_test extends \advanced_testcase {
-
     /**
      * Test for correct validation of settings
      *
@@ -191,5 +190,4 @@ final class mod_ratingallocate_strategy_test extends \advanced_testcase {
         $strategy = new \mod_ratingallocate\strategy_tickyes\strategy($settings);
         $this->assertCount(0, $strategy->validate_settings());
     }
-
 }

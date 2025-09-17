@@ -41,7 +41,6 @@ require_once(dirname(__FILE__) . '/strategy_template_options.php');
  * @package mod_ratingallocate
  */
 class strategy extends \strategytemplate_options {
-
     /**
      * Strategyid.
      */

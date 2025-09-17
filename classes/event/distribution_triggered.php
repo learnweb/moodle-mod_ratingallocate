@@ -39,7 +39,6 @@ namespace mod_ratingallocate\event;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 class distribution_triggered extends \core\event\base {
-
     /**
      * Create simple distribution_triggered event.
      *
@@ -80,10 +79,13 @@ class distribution_triggered extends \core\event\base {
      * @throws \coding_exception
      */
     public function get_description() {
-        return get_string('log_distribution_triggered_description', 'mod_ratingallocate',
-                ['userid' => $this->userid,
+        return get_string(
+            'log_distribution_triggered_description',
+            'mod_ratingallocate',
+            ['userid' => $this->userid,
                         'ratingallocateid' => $this->objectid,
-                        'time_needed' => $this->other['time_needed']]);
+            'time_needed' => $this->other['time_needed']]
+        );
     }
 
     /**

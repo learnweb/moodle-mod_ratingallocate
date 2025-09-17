@@ -35,7 +35,6 @@ require_once(dirname(__FILE__) . '/locallib.php');
  * A form to upload multiple choices
  */
 class upload_choices_form extends moodleform {
-
     /** @var $ratingallocate ratingallocate */
     private $ratingallocate;
 
@@ -57,18 +56,32 @@ class upload_choices_form extends moodleform {
 
         $requiredfields = choice_importer::print_fields();
         $elementname = 'description';
-        $mform->addElement('static', $elementname, get_string('upload_choices_required_fields', 'ratingallocate'),
-        get_string('upload_choices_fields_desc', 'ratingallocate', $requiredfields));
+        $mform->addElement(
+            'static',
+            $elementname,
+            get_string('upload_choices_required_fields', 'ratingallocate'),
+            get_string('upload_choices_fields_desc', 'ratingallocate', $requiredfields)
+        );
 
         $elementname = 'uploadfile';
-        $mform->addElement('filepicker', $elementname, get_string('csvupload', 'ratingallocate'), null,
+        $mform->addElement(
+            'filepicker',
+            $elementname,
+            get_string('csvupload', 'ratingallocate'),
+            null,
             ['accepted_types' => 'text/csv']
         );
-        $mform->addRule($elementname, get_string('err_required', 'form') , 'required', null, 'server');
+        $mform->addRule($elementname, get_string('err_required', 'form'), 'required', null, 'server');
 
         $elementname = 'testimport';
-        $mform->addElement('advcheckbox', $elementname, get_string('csvupload_test_upload', 'ratingallocate'),
-            null, null, [0, 1]);
+        $mform->addElement(
+            'advcheckbox',
+            $elementname,
+            get_string('csvupload_test_upload', 'ratingallocate'),
+            null,
+            null,
+            [0, 1]
+        );
         $mform->addHelpButton($elementname, 'csvupload_test_upload', 'ratingallocate');
 
         $this->add_buttons();
