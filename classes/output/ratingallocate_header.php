@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,26 +12,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-/**
- * This file contains the definition for the renderable classes for the ratingallocate module
- *
- * @package mod_ratingallocate
- * @copyright 2014 C Usener, T Reischmann
- * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- */
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 use mod_ratingallocate\wrapper\ratingallocate_db_wrapper;
-
-defined('MOODLE_INTERNAL') || die();
+use core\output\renderable;
 
 /**
  * Renderable header
  * @package   mod_ratingallocate
+ * @copyright 2014 M. Schulze
+ * @copyright 2014 C. Usener
+ * @copyright 2014 T. Reischmann
+ * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class ratingallocate_header implements renderable {
     /** @var mod_ratingallocate\wrapper\ratingallocate_db_wrapper the ratingallocate class */
@@ -57,38 +49,4 @@ class ratingallocate_header implements renderable {
         $this->showintro = $showintro;
         $this->coursemoduleid = $coursemoduleid;
     }
-}
-
-/**
- * Choice status
- *
- * @package mod_ratingallocate
- */
-class ratingallocate_choice_status implements renderable {
-    /** @var $accesstimestop */
-    public $accesstimestop;
-    /** @var $accesstimestart */
-    public $accesstimestart;
-    /** @var $ispublished */
-    public $ispublished;
-    /** @var $publishdate */
-    public $publishdate;
-    /** @var $availablechoices */
-    public $availablechoices;
-    /** @var $necessarychoices */
-    public $necessarychoices;
-    /** @var $ownchoices */
-    public $ownchoices;
-    /** @var $allocations */
-    public $allocations;
-    /** @var $strategy */
-    public $strategy;
-    /** @var bool show_distribution_info specifies if the info regarding the distribution should be displayed. * */
-    public $showdistributioninfo;
-    /** @var bool show_user_info specifies if the current ratings of the user shoulld be renderer. * */
-    public $showuserinfo;
-    /** @var $algorithmstarttime */
-    public $algorithmstarttime;
-    /** @var $algorithmstatus */
-    public $algorithmstatus;
 }

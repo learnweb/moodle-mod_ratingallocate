@@ -33,7 +33,6 @@ require_once(dirname(__FILE__) . '/lib.php');
 require_once(dirname(__FILE__) . '/form_manual_allocation.php');
 require_once(dirname(__FILE__) . '/form_modify_choice.php');
 require_once(dirname(__FILE__) . '/form_upload_choices.php');
-require_once(dirname(__FILE__) . '/renderable.php');
 require_once($CFG->dirroot . '/group/lib.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once(__DIR__ . '/classes/algorithm_status.php');
