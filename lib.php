@@ -37,7 +37,6 @@ define('RATINGALLOCATE_MOD_NAME', 'ratingallocate');
 define('RATINGALLOCATE_EVENT_TYPE_START', 'start');
 define('RATINGALLOCATE_EVENT_TYPE_STOP', 'stop');
 
-require_once(dirname(__FILE__) . '/db/db_structure.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 
 use mod_ratingallocate\db as this_db;

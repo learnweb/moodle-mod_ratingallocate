@@ -24,10 +24,6 @@
 
 namespace mod_ratingallocate\task;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once(dirname(__FILE__) . '/../../db/db_structure.php');
-
 use mod_ratingallocate\db as this_db;
 use mod_ratingallocate\ratingallocate;
 
