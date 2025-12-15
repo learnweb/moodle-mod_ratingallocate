@@ -37,7 +37,6 @@ use mod_ratingallocate\ratingallocate;
  * @package mod_ratingallocate
  */
 class send_distribution_notification extends \core\task\adhoc_task {
-
     /**
      * Gets executed by the task runner. Will lookup the ratingallocation object and command it
      * to notify users.
@@ -58,8 +57,12 @@ class send_distribution_notification extends \core\task\adhoc_task {
 
         // Get instance of ratingallocate.
         $ratingallocate =
-                $DB->get_record(this_db\ratingallocate::TABLE, [this_db\ratingallocate::ID => $ratingallocateid], '*',
-                        MUST_EXIST);
+                $DB->get_record(
+                    this_db\ratingallocate::TABLE,
+                    [this_db\ratingallocate::ID => $ratingallocateid],
+                    '*',
+                    MUST_EXIST
+                );
 
         $courseid = $ratingallocate->course;
         $course = get_course($courseid);
@@ -69,7 +72,5 @@ class send_distribution_notification extends \core\task\adhoc_task {
         $ratingallocateobj = new ratingallocate($ratingallocate, $course, $cm, $context);
 
         $ratingallocateobj->notify_users_distribution();
-
     }
 }
-

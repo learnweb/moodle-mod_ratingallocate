@@ -145,8 +145,11 @@ final class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests
         $count = $DB->count_records('ratingallocate_ratings');
         $this->assertEquals(20, $count);
 
-        $contextlist = new \core_privacy\local\request\approved_contextlist($student, 'ratingallocate',
-                [$context->id]);
+        $contextlist = new \core_privacy\local\request\approved_contextlist(
+            $student,
+            'ratingallocate',
+            [$context->id]
+        );
         provider::delete_data_for_user($contextlist);
 
         // After deletion, the ratings and allocations for the first student should have been deleted.
@@ -212,16 +215,22 @@ final class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests
         ];
 
         // Before deletion, we should have 20 responses and 10 allocations in instance 1.
-        $count = $DB->count_records_select('ratingallocate_ratings',
-                "choiceid IN (SELECT id FROM {ratingallocate_choices} " .
-                "WHERE ratingallocateid = :ratingallocateid)", $params1);
+        $count = $DB->count_records_select(
+            'ratingallocate_ratings',
+            "choiceid IN (SELECT id FROM {ratingallocate_choices} " .
+            "WHERE ratingallocateid = :ratingallocateid)",
+            $params1
+        );
         $this->assertEquals(20, $count);
         $count = $DB->count_records('ratingallocate_allocations', $params1);
         $this->assertEquals(10, $count);
         // Before deletion, we should have 20 responses and 10 allocations in instance 2.
-        $count = $DB->count_records_select('ratingallocate_ratings',
-                "choiceid IN (SELECT id FROM {ratingallocate_choices} " .
-                "WHERE ratingallocateid = :ratingallocateid)", $params2);
+        $count = $DB->count_records_select(
+            'ratingallocate_ratings',
+            "choiceid IN (SELECT id FROM {ratingallocate_choices} " .
+            "WHERE ratingallocateid = :ratingallocateid)",
+            $params2
+        );
         $this->assertEquals(20, $count);
         $count = $DB->count_records('ratingallocate_allocations', $params2);
         $this->assertEquals(10, $count);
@@ -239,24 +248,32 @@ final class mod_ratingallocate_privacy_provider_test extends \core_privacy\tests
         // Select one assigned student.
         $userlist[] = array_pop($this->testmodule->allocations)->userid;
 
-        $approveduserlist = new \core_privacy\local\request\approved_userlist($cmcontext, 'mod_ratingallocate',
-                $userlist);
+        $approveduserlist = new \core_privacy\local\request\approved_userlist(
+            $cmcontext,
+            'mod_ratingallocate',
+            $userlist
+        );
         provider::delete_data_for_users($approveduserlist);
 
         // Afterwards 2 ratings and 1 allocation should be missing.
-        $count = $DB->count_records_select('ratingallocate_ratings',
-                "choiceid IN (SELECT id FROM {ratingallocate_choices} " .
-                "WHERE ratingallocateid = :ratingallocateid)", $params1);
+        $count = $DB->count_records_select(
+            'ratingallocate_ratings',
+            "choiceid IN (SELECT id FROM {ratingallocate_choices} " .
+            "WHERE ratingallocateid = :ratingallocateid)",
+            $params1
+        );
         $this->assertEquals(18, $count);
         $count = $DB->count_records('ratingallocate_allocations', $params1);
         $this->assertEquals(9, $count);
         // The second instance should not be touched.
-        $count = $DB->count_records_select('ratingallocate_ratings',
-                "choiceid IN (SELECT id FROM {ratingallocate_choices} " .
-                "WHERE ratingallocateid = :ratingallocateid)", $params2);
+        $count = $DB->count_records_select(
+            'ratingallocate_ratings',
+            "choiceid IN (SELECT id FROM {ratingallocate_choices} " .
+            "WHERE ratingallocateid = :ratingallocateid)",
+            $params2
+        );
         $this->assertEquals(20, $count);
         $count = $DB->count_records('ratingallocate_allocations', $params2);
         $this->assertEquals(10, $count);
     }
-
 }

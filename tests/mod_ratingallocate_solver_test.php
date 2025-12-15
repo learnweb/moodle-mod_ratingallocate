@@ -34,7 +34,6 @@ require_once($CFG->dirroot . '/mod/ratingallocate/solver/ford-fulkerson-koegel.p
  * @covers \solver
  */
 final class mod_ratingallocate_solver_test extends \basic_testcase {
-
     /**
      * Perform race.
      *
@@ -84,7 +83,7 @@ final class mod_ratingallocate_solver_test extends \basic_testcase {
 
         $solvers = ['solver_edmonds_karp', 'solver_ford_fulkerson'];
         foreach ($solvers as $solver) {
-            $solver1 = new $solver;
+            $solver1 = new $solver();
             $timestart = microtime(true);
             $distribution1 = $solver1->compute_distribution($groups, $ratings, $usercount);
             $result[$solver1->get_name()]['elapsed_sec'] = (microtime(true) - $timestart);
@@ -114,8 +113,10 @@ final class mod_ratingallocate_solver_test extends \basic_testcase {
             $rundenergebnis = [];
             for ($i = 0; $i < 10; $i++) {
                 $ergebnis = $this->perform_race($paramgroups, $paramusers);
-                $this->assertEquals($ergebnis['ford-fulkerson Koegel2014']['gesamtpunktzahl'],
-                        $ergebnis['edmonds_karp']['gesamtpunktzahl']);
+                $this->assertEquals(
+                    $ergebnis['ford-fulkerson Koegel2014']['gesamtpunktzahl'],
+                    $ergebnis['edmonds_karp']['gesamtpunktzahl']
+                );
                 $rundenergebnis[] = $ergebnis;
             }
             $durchschnitt = [];
@@ -216,8 +217,10 @@ final class mod_ratingallocate_solver_test extends \basic_testcase {
         $solverkoe = new \solver_ford_fulkerson();
         $distributionkoe = $solverkoe->compute_distribution($choices, $ratings, $usercount);
         $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe), 15);
-        $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe),
-                $solver::compute_target_function($ratings, $distribution));
+        $this->assertEquals(
+            $solverkoe::compute_target_function($ratings, $distributionkoe),
+            $solver::compute_target_function($ratings, $distribution)
+        );
     }
 
     /**
@@ -266,8 +269,10 @@ final class mod_ratingallocate_solver_test extends \basic_testcase {
         $distributionkoe = $solverkoe->compute_distribution($choices, $ratings, $usercount);
 
         $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe), 10);
-        $this->assertEquals($solverkoe::compute_target_function($ratings, $distributionkoe),
-                $solver::compute_target_function($ratings, $distribution));
+        $this->assertEquals(
+            $solverkoe::compute_target_function($ratings, $distributionkoe),
+            $solver::compute_target_function($ratings, $distribution)
+        );
     }
 
     /**
@@ -329,7 +334,7 @@ final class mod_ratingallocate_solver_test extends \basic_testcase {
         $ratings[4]->rating = 2;
 
         $usercount = 2;
-        list($fromuserid, $touserid, $fromchoiceid, $tochoiceid) = \solver_edmonds_karp::setup_id_conversions($usercount, $ratings);
+        [$fromuserid, $touserid, $fromchoiceid, $tochoiceid] = \solver_edmonds_karp::setup_id_conversions($usercount, $ratings);
 
         $this->assertEquals([3 => 1, 2 => 2], $fromuserid);
         $this->assertEquals([1 => 3, 2 => 2], $touserid);
@@ -337,5 +342,4 @@ final class mod_ratingallocate_solver_test extends \basic_testcase {
         $this->assertEquals([1 => 3, 2 => 4], $fromchoiceid);
         $this->assertEquals([3 => 1, 4 => 2], $tochoiceid);
     }
-
 }

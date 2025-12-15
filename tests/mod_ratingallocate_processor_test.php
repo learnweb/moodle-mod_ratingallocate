@@ -29,7 +29,6 @@ require_once(__DIR__ . '/../locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class mod_ratingallocate_processor_test extends \advanced_testcase {
-
     public function setUp(): void {
         global $PAGE;
         parent::setUp();
@@ -110,26 +109,37 @@ final class mod_ratingallocate_processor_test extends \advanced_testcase {
 
         // Count of users with ratings should equal to 4.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, true, false, 0);
-        self::assertEquals(4, count($table->rawdata),
-                "Filtering the users to those with ratings should return 4 users.");
+        self::assertEquals(
+            4,
+            count($table->rawdata),
+            "Filtering the users to those with ratings should return 4 users."
+        );
 
         // Count of users in total should be equal to 6.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false, 0);
-        self::assertEquals(6, count($table->rawdata),
-                "Filtering the users to those with or without ratings should return 6 users.");
+        self::assertEquals(
+            6,
+            count($table->rawdata),
+            "Filtering the users to those with or without ratings should return 6 users."
+        );
 
         // Count of users with ratings where a allocation is necessary equal to 1.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, true, true, 0);
-        self::assertEquals(1, count($table->rawdata),
-                'Filtering the users to those with ratings and' .
-                'where a allocation is necessary should return 1 user.');
+        self::assertEquals(
+            1,
+            count($table->rawdata),
+            'Filtering the users to those with ratings and' .
+            'where a allocation is necessary should return 1 user.'
+        );
 
         // Count of users with or without ratings where a allocation is necessary equal to 1.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, true, 0);
-        self::assertEquals(2, count($table->rawdata),
-                'Filtering the users to those with or without ratings and' .
-                'where a allocation is necessary should return 2 users.');
-
+        self::assertEquals(
+            2,
+            count($table->rawdata),
+            'Filtering the users to those with or without ratings and' .
+            'where a allocation is necessary should return 2 users.'
+        );
     }
 
     /**
@@ -190,23 +200,35 @@ final class mod_ratingallocate_processor_test extends \advanced_testcase {
 
         // Count of participants in total should be equal to 4.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false, 0);
-        self::assertEquals(4, count($table->rawdata),
-            "Filtering the users to all course participants who could access the activity should return 4 users.");
+        self::assertEquals(
+            4,
+            count($table->rawdata),
+            "Filtering the users to all course participants who could access the activity should return 4 users."
+        );
 
         // Count of users in group1 should be equal to 2.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false, $groupidmap['group1']);
-        self::assertEquals(2, count($table->rawdata),
-            "Filtering the users to those in group1 should return 2 users.");
+        self::assertEquals(
+            2,
+            count($table->rawdata),
+            "Filtering the users to those in group1 should return 2 users."
+        );
 
         // Count of users in group1 should be equal to 2.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false, $groupidmap['group2']);
-        self::assertEquals(2, count($table->rawdata),
-            "Filtering the users to those in group2 should return 2 users.");
+        self::assertEquals(
+            2,
+            count($table->rawdata),
+            "Filtering the users to those in group2 should return 2 users."
+        );
 
         // Count of users in neither group used in the ratingallocate activity should be equal to 1.
         $table = $this->setup_ratings_table_with_filter_options($ratingallocate, false, false, -1);
-        self::assertEquals(1, count($table->rawdata),
-            "Filtering the users to those in neither group should return 1 user.");
+        self::assertEquals(
+            1,
+            count($table->rawdata),
+            "Filtering the users to those in neither group should return 1 user."
+        );
     }
 
     /**
@@ -223,13 +245,17 @@ final class mod_ratingallocate_processor_test extends \advanced_testcase {
         $ratingallocate->remove_allocation(reset($allocationsofuser)->choiceid, $userwithoutallocation->id);
 
         // Enrol a new user without ratings to the course.
-        \mod_ratingallocate_generator::create_user_and_enrol($this,
-                get_course($ratingallocate->ratingallocate->course));
+        \mod_ratingallocate_generator::create_user_and_enrol(
+            $this,
+            get_course($ratingallocate->ratingallocate->course)
+        );
 
         $choices = $ratingallocate->get_rateable_choices();
         // Enrol a new user without ratings to the course and create an allocation for her.
-        $userwithoutratingwithallocation = \mod_ratingallocate_generator::create_user_and_enrol($this,
-                get_course($ratingallocate->ratingallocate->course));
+        $userwithoutratingwithallocation = \mod_ratingallocate_generator::create_user_and_enrol(
+            $this,
+            get_course($ratingallocate->ratingallocate->course)
+        );
         $ratingallocate->add_allocation(reset($choices)->id, $userwithoutratingwithallocation->id);
     }
 
@@ -245,8 +271,14 @@ final class mod_ratingallocate_processor_test extends \advanced_testcase {
     private function setup_ratings_table_with_filter_options($ratingallocate, $hidenorating, $showallocnecessary, $groupselect) {
         // Create and set up the flextable for ratings and allocations.
         $choices = $ratingallocate->get_rateable_choices();
-        $table = new ratings_and_allocations_table($ratingallocate->get_renderer(),
-                [], $ratingallocate, 'show_alloc_table', 'mod_ratingallocate_test', false);
+        $table = new ratings_and_allocations_table(
+            $ratingallocate->get_renderer(),
+            [],
+            $ratingallocate,
+            'show_alloc_table',
+            'mod_ratingallocate_test',
+            false
+        );
         $table->setup_table($choices, $hidenorating, $showallocnecessary, $groupselect);
 
         return $table;
@@ -299,10 +331,11 @@ final class mod_ratingallocate_processor_test extends \advanced_testcase {
             $choices = $ratingallocate->get_rateable_choices();
         }
         $choiceidmap = array_flip(array_map(
-            function($a) {
+            function ($a) {
                 return $a->title;
             },
-            $choices));
+            $choices
+        ));
         return $choiceidmap;
     }
 

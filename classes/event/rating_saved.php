@@ -38,7 +38,6 @@ namespace mod_ratingallocate\event;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 class rating_saved extends \core\event\base {
-
     /**
      * Create simple rating_saved event.
      * @param \stdClass $modulecontext
@@ -81,8 +80,11 @@ class rating_saved extends \core\event\base {
      * @throws \coding_exception
      */
     public function get_description() {
-        return get_string('log_rating_saved_description', 'mod_ratingallocate',
-                ['userid' => $this->userid, 'ratingallocateid' => $this->objectid]);
+        return get_string(
+            'log_rating_saved_description',
+            'mod_ratingallocate',
+            ['userid' => $this->userid, 'ratingallocateid' => $this->objectid]
+        );
     }
 
     /**

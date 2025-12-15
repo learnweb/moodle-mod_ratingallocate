@@ -33,7 +33,6 @@ require_once(__DIR__ . '/../locallib.php');
  * @covers \choice_importer
  */
 final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
-
     /** @var object The environment that will be used for testing
      * This Class contains:
      * - A course
@@ -51,7 +50,7 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
      *
      * @return array Lines of text.
      */
-    private function get_choice_lines($joined=false) {
+    private function get_choice_lines($joined = false) {
         // Whitespace should be trimmed by the importer.
         $contents = [];
         $contents[] = 'title, explanation, maxsize, active, groups';
@@ -113,7 +112,8 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals($importstatus->status, choice_importer::IMPORT_STATUS_OK);
         $this->assertEquals($importstatus->readcount, 4);
         $this->assertEquals($importstatus->importcount, 3);
-        $this->assertEquals($importstatus->status_message,
+        $this->assertEquals(
+            $importstatus->status_message,
             get_string('csvupload_test_success', 'ratingallocate', ['importcount' => $importstatus->importcount])
         );
 
@@ -133,7 +133,8 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $this->assertEquals($importstatus->status, choice_importer::IMPORT_STATUS_OK);
         $this->assertEquals($importstatus->readcount, 4);
         $this->assertEquals($importstatus->importcount, 3);
-        $this->assertEquals($importstatus->status_message,
+        $this->assertEquals(
+            $importstatus->status_message,
             get_string('csvupload_live_success', 'ratingallocate', ['importcount' => $importstatus->importcount])
         );
         $choices = $this->env->ratingallocate->get_choices();
@@ -227,7 +228,8 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
             'row' => 5,
             'invalidgroups' => 'Blue Man Group',
         ]));
-        $this->assertEquals($importstatus->status_message,
+        $this->assertEquals(
+            $importstatus->status_message,
             get_string('csvupload_live_problems', 'ratingallocate', 1)
         );
         $choices = $this->env->ratingallocate->get_choices();
@@ -242,5 +244,4 @@ final class mod_ratingallocate_choice_importer_test extends \advanced_testcase {
         $badgroups = $this->env->ratingallocate->get_choice_groups($badchoice->id);
         $this->assertEquals(count($badgroups), 0, 'Bad group has not been added');
     }
-
 }

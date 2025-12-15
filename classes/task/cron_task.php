@@ -31,7 +31,6 @@ require_once(__DIR__ . '/../../locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cron_task extends \core\task\scheduled_task {
-
     /**
      * Get a descriptive name for this task (shown to admins).
      *
@@ -67,16 +66,20 @@ class cron_task extends \core\task\scheduled_task {
             $timetoterminate = $CFG->ratingallocate_algorithm_timeout + $ratingallocate->ratingallocate->algorithmstarttime;
 
             // If last execution exeeds timeout limit assume failure of algorithm run.
-            if ($ratingallocate->ratingallocate->algorithmstarttime &&
+            if (
+                $ratingallocate->ratingallocate->algorithmstarttime &&
                     $currenttime >= $timetoterminate &&
-                    $ratingallocate->get_algorithm_status() === \mod_ratingallocate\algorithm_status::RUNNING) {
+                    $ratingallocate->get_algorithm_status() === \mod_ratingallocate\algorithm_status::RUNNING
+            ) {
                 $ratingallocate->set_algorithm_failed();
                 return true;
             }
 
             // Only start the algorithm, if it should be run by the cron and hasn't been started somehow, yet.
-            if ($ratingallocate->ratingallocate->runalgorithmbycron === "1" &&
-                    $ratingallocate->get_algorithm_status() === \mod_ratingallocate\algorithm_status::NOTSTARTED) {
+            if (
+                $ratingallocate->ratingallocate->runalgorithmbycron === "1" &&
+                    $ratingallocate->get_algorithm_status() === \mod_ratingallocate\algorithm_status::NOTSTARTED
+            ) {
                 // Clear eventually scheduled distribution of unallocated users.
                 $ratingallocate->clear_distribute_unallocated_tasks();
                 // Run allocation.
@@ -85,5 +88,4 @@ class cron_task extends \core\task\scheduled_task {
         }
         return true;
     }
-
 }

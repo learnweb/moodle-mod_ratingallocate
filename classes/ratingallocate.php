@@ -73,7 +73,6 @@ use upload_choices_form;
  *
  */
 class ratingallocate {
-
     /** @var int */
     private $ratingallocateid;
 
@@ -169,23 +168,31 @@ class ratingallocate {
         global $CFG, $DB, $PAGE;
         // Process form: Start distribution and call default page after finishing.
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
-
             if ($this->get_algorithm_status() === algorithm_status::RUNNING) {
                 // Don't run, if an instance is already running.
-                redirect(new moodle_url('/mod/ratingallocate/view.php',
-                    ['id' => $this->coursemodule->id]),
+                redirect(
+                    new moodle_url(
+                        '/mod/ratingallocate/view.php',
+                        ['id' => $this->coursemodule->id]
+                    ),
                     get_string('algorithm_already_running', RATINGALLOCATE_MOD_NAME),
                     null,
-                    notification::NOTIFY_INFO);
-            } else if ($this->ratingallocate->runalgorithmbycron === "1" &&
+                    notification::NOTIFY_INFO
+                );
+            } else if (
+                $this->ratingallocate->runalgorithmbycron === "1" &&
                 $this->get_algorithm_status() === algorithm_status::NOTSTARTED
             ) {
                 // Don't run, if the cron has not started yet, but is set as priority.
-                redirect(new moodle_url('/mod/ratingallocate/view.php',
-                    ['id' => $this->coursemodule->id]),
+                redirect(
+                    new moodle_url(
+                        '/mod/ratingallocate/view.php',
+                        ['id' => $this->coursemodule->id]
+                    ),
                     get_string('algorithm_scheduled_for_cron', RATINGALLOCATE_MOD_NAME),
                     null,
-                    notification::NOTIFY_INFO);
+                    notification::NOTIFY_INFO
+                );
             } else if ($CFG->ratingallocate_algorithm_force_background_execution === '1') {
                 // Force running algorithm by cron.
                 $this->ratingallocate->runalgorithmbycron = 1;
@@ -198,11 +205,15 @@ class ratingallocate {
                 // Clear all previous allocations so cron job picks up this task and calculates new allocation.
                 $this->clear_all_allocations();
                 $DB->update_record(this_db\ratingallocate::TABLE, $this->origdbrecord);
-                redirect(new moodle_url('/mod/ratingallocate/view.php',
-                    ['id' => $this->coursemodule->id]),
+                redirect(
+                    new moodle_url(
+                        '/mod/ratingallocate/view.php',
+                        ['id' => $this->coursemodule->id]
+                    ),
                     get_string('algorithm_now_scheduled_for_cron', RATINGALLOCATE_MOD_NAME),
                     null,
-                    notification::NOTIFY_INFO);
+                    notification::NOTIFY_INFO
+                );
             } else {
                 $this->clear_distribute_unallocated_tasks();
                 $this->origdbrecord->{this_db\ratingallocate::ALGORITHMSTATUS} = algorithm_status::RUNNING;
@@ -215,13 +226,18 @@ class ratingallocate {
 
                 // Logging.
                 $event = distribution_triggered::create_simple(
-                    context_module::instance($this->coursemodule->id), $this->ratingallocateid, $timeneeded);
+                    context_module::instance($this->coursemodule->id),
+                    $this->ratingallocateid,
+                    $timeneeded
+                );
                 $event->trigger();
 
-                redirect(new moodle_url($PAGE->url->out()),
+                redirect(
+                    new moodle_url($PAGE->url->out()),
                     get_string('distribution_saved', RATINGALLOCATE_MOD_NAME, $timeneeded),
                     null,
-                    notification::NOTIFY_SUCCESS);
+                    notification::NOTIFY_SUCCESS
+                );
             }
         }
         $raters = $this->get_raters_in_course();
@@ -231,8 +247,10 @@ class ratingallocate {
                 $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $rater->id);
             }
         }
-        redirect(new moodle_url('/mod/ratingallocate/view.php',
-            ['id' => $this->coursemodule->id]));
+        redirect(new moodle_url(
+            '/mod/ratingallocate/view.php',
+            ['id' => $this->coursemodule->id]
+        ));
         return;
     }
 
@@ -247,20 +265,26 @@ class ratingallocate {
         global $USER;
         // Disallow to delete ratings for students and tutors.
         if (!has_capability('mod/ratingallocate:start_distribution', $this->context, null, false)) {
-            redirect(new moodle_url('/mod/ratingallocate/view.php', ['id' => $this->coursemodule->id]),
-                get_string('error_deleting_all_insufficient_permission', RATINGALLOCATE_MOD_NAME));
+            redirect(
+                new moodle_url('/mod/ratingallocate/view.php', ['id' => $this->coursemodule->id]),
+                get_string('error_deleting_all_insufficient_permission', RATINGALLOCATE_MOD_NAME)
+            );
             return;
         }
         // Disallow deletion when there can't be new ratings submitted.
         $status = $this->get_status();
         if ($status !== self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS && $status !== self::DISTRIBUTION_STATUS_TOO_EARLY) {
-            redirect(new moodle_url('/mod/ratingallocate/view.php', ['id' => $this->coursemodule->id]),
-                get_string('error_deleting_all_no_rating_possible', RATINGALLOCATE_MOD_NAME));
+            redirect(
+                new moodle_url('/mod/ratingallocate/view.php', ['id' => $this->coursemodule->id]),
+                get_string('error_deleting_all_no_rating_possible', RATINGALLOCATE_MOD_NAME)
+            );
             return;
         }
         $this->delete_all_ratings();
-        redirect(new moodle_url('/mod/ratingallocate/view.php', ['id' => $this->coursemodule->id]),
-            get_string('success_deleting_all', RATINGALLOCATE_MOD_NAME));
+        redirect(
+            new moodle_url('/mod/ratingallocate/view.php', ['id' => $this->coursemodule->id]),
+            get_string('success_deleting_all', RATINGALLOCATE_MOD_NAME)
+        );
     }
 
     /**
@@ -305,7 +329,8 @@ class ratingallocate {
                     redirect(
                         "$CFG->wwwroot/mod/ratingallocate/view.php?id=" . $this->coursemodule->id,
                         get_string('ratings_saved', RATINGALLOCATE_MOD_NAME),
-                        null, notification::NOTIFY_SUCCESS
+                        null,
+                        notification::NOTIFY_SUCCESS
                     );
                 }
 
@@ -314,7 +339,9 @@ class ratingallocate {
                 $output .= $renderer->render_ratingallocate_strategyform($mform);
                 // Logging.
                 $event = rating_viewed::create_simple(
-                    context_module::instance($this->coursemodule->id), $this->ratingallocateid);
+                    context_module::instance($this->coursemodule->id),
+                    $this->ratingallocateid
+                );
                 $event->trigger();
             }
         }
@@ -337,11 +364,15 @@ class ratingallocate {
                 $this->delete_ratings_of_user($USER->id);
                 $renderer->add_notification(get_string('ratings_deleted', RATINGALLOCATE_MOD_NAME), self::NOTIFY_SUCCESS);
 
-                redirect(new moodle_url('/mod/ratingallocate/view.php',
-                    ['id' => $this->coursemodule->id]),
+                redirect(
+                    new moodle_url(
+                        '/mod/ratingallocate/view.php',
+                        ['id' => $this->coursemodule->id]
+                    ),
                     get_string('ratings_deleted', RATINGALLOCATE_MOD_NAME),
                     null,
-                    notification::NOTIFY_SUCCESS);
+                    notification::NOTIFY_SUCCESS
+                );
             }
         }
         redirect(new moodle_url('/mod/ratingallocate/view.php', ['id' => $this->coursemodule->id]));
@@ -384,11 +415,12 @@ class ratingallocate {
             echo $renderer->format_text($description);
 
             $renderer->ratingallocate_show_choices_table($this, true);
-            echo $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
-                ['id' => $this->coursemodule->id]), get_string('back'), 'get');
+            echo $OUTPUT->single_button(new moodle_url(
+                '/mod/ratingallocate/view.php',
+                ['id' => $this->coursemodule->id]
+            ), get_string('back'), 'get');
             echo $renderer->render_footer();
         }
-
     }
 
     /**
@@ -418,20 +450,32 @@ class ratingallocate {
 
             $data = new stdClass();
             $options = ['subdirs' => false, 'maxfiles' => -1, 'accepted_types' => '*', 'return_types' => FILE_INTERNAL];
-            file_prepare_standard_filemanager($data, 'attachments', $options, $this->context,
-                'mod_ratingallocate', 'choice_attachment', $choiceid);
+            file_prepare_standard_filemanager(
+                $data,
+                'attachments',
+                $options,
+                $this->context,
+                'mod_ratingallocate',
+                'choice_attachment',
+                $choiceid
+            );
 
-            $mform = new modify_choice_form(new moodle_url('/mod/ratingallocate/view.php',
-                ['id' => $this->coursemodule->id,
+            $mform = new modify_choice_form(
+                new moodle_url(
+                    '/mod/ratingallocate/view.php',
+                    ['id' => $this->coursemodule->id,
                     'ratingallocateid' => $this->ratingallocateid,
                     'action' => ACTION_EDIT_CHOICE,
-                ]),
-                $this, $choice, ['attachment_data' => $data]);
+                    ]
+                ),
+                $this,
+                $choice,
+                ['attachment_data' => $data]
+            );
 
             $renderer = $this->get_renderer();
 
             if ($mform->is_submitted() && $data = $mform->get_submitted_data()) {
-
                 if (!$mform->is_cancelled()) {
                     if ($mform->is_validated()) {
                         // Processing for editor element (FORMAT_HTML is assumed).
@@ -442,15 +486,23 @@ class ratingallocate {
 
                         $this->save_modify_choice_form($data);
 
-                        $data = file_postupdate_standard_filemanager($data, 'attachments', $options, $this->context,
-                            'mod_ratingallocate', 'choice_attachment', $data->choiceid);
-                        $renderer->add_notification(get_string("choice_added_notification", RATINGALLOCATE_MOD_NAME),
-                            self::NOTIFY_SUCCESS);
+                        $data = file_postupdate_standard_filemanager(
+                            $data,
+                            'attachments',
+                            $options,
+                            $this->context,
+                            'mod_ratingallocate',
+                            'choice_attachment',
+                            $data->choiceid
+                        );
+                        $renderer->add_notification(
+                            get_string("choice_added_notification", RATINGALLOCATE_MOD_NAME),
+                            self::NOTIFY_SUCCESS
+                        );
 
                         if ($data->usegroups) {
                             $this->update_choice_groups($data->choiceid, $data->groupselector);
                         }
-
                     } else {
                         $output .= $OUTPUT->heading(get_string('edit_choice', RATINGALLOCATE_MOD_NAME), 2);
                         $output .= $mform->to_html();
@@ -459,20 +511,27 @@ class ratingallocate {
                 }
                 if (object_property_exists($data, 'submitbutton2')) {
                     // If form was submitted using submit2, redirect to the empty edit choice form.
-                    redirect(new moodle_url('/mod/ratingallocate/view.php',
+                    redirect(new moodle_url(
+                        '/mod/ratingallocate/view.php',
                         ['id' => $this->coursemodule->id,
                             'ratingallocateid' => $this->ratingallocateid,
-                            'action' => ACTION_EDIT_CHOICE, 'next' => true]));
+                        'action' => ACTION_EDIT_CHOICE,
+                        'next' => true]
+                    ));
                 } else {
                     // If form was submitted using save or cancel, redirect to the choices table.
-                    redirect(new moodle_url('/mod/ratingallocate/view.php',
-                        ['id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES]));
+                    redirect(new moodle_url(
+                        '/mod/ratingallocate/view.php',
+                        ['id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES]
+                    ));
                 }
             } else {
                 $isnext = optional_param('next', false, PARAM_BOOL);
                 if ($isnext) {
-                    $renderer->add_notification(get_string("choice_added_notification", RATINGALLOCATE_MOD_NAME),
-                        self::NOTIFY_SUCCESS);
+                    $renderer->add_notification(
+                        get_string("choice_added_notification", RATINGALLOCATE_MOD_NAME),
+                        self::NOTIFY_SUCCESS
+                    );
                 }
                 $output .= $OUTPUT->heading(get_string('edit_choice', RATINGALLOCATE_MOD_NAME), 2);
                 $output .= $mform->to_html();
@@ -492,7 +551,8 @@ class ratingallocate {
             global $OUTPUT;
             $PAGE->set_secondary_active_tab('mod_ratingallocate_choices');
 
-            $url = new moodle_url('/mod/ratingallocate/view.php',
+            $url = new moodle_url(
+                '/mod/ratingallocate/view.php',
                 ['id' => $this->coursemodule->id,
                     'ratingallocateid' => $this->ratingallocateid,
                     'action' => ACTION_UPLOAD_CHOICES,
@@ -522,13 +582,17 @@ class ratingallocate {
                             case choice_importer::IMPORT_STATUS_SETUP_ERROR:
                             default:
                                 \core\notification::error($importstatus->status_message);
-                                $choiceimporter->issue_notifications($importstatus->errors,
-                                    notification::NOTIFY_ERROR);
+                                $choiceimporter->issue_notifications(
+                                    $importstatus->errors,
+                                    notification::NOTIFY_ERROR
+                                );
                         }
                     }
                 }
-                redirect(new moodle_url('/mod/ratingallocate/view.php',
-                    ['id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES]));
+                redirect(new moodle_url(
+                    '/mod/ratingallocate/view.php',
+                    ['id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES]
+                ));
             }
 
             $output .= $OUTPUT->heading(get_string('upload_choices', 'ratingallocate'), 2);
@@ -547,13 +611,17 @@ class ratingallocate {
             $choiceid = optional_param('choiceid', 0, PARAM_INT);
 
             if ($choiceid) {
-                $DB->set_field(this_db\ratingallocate_choices::TABLE,
+                $DB->set_field(
+                    this_db\ratingallocate_choices::TABLE,
                     this_db\ratingallocate_choices::ACTIVE,
                     $active,
-                    ['id' => $choiceid]);
+                    ['id' => $choiceid]
+                );
             }
-            redirect(new moodle_url('/mod/ratingallocate/view.php',
-                ['id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES]));
+            redirect(new moodle_url(
+                '/mod/ratingallocate/view.php',
+                ['id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES]
+            ));
         }
     }
 
@@ -581,22 +649,35 @@ class ratingallocate {
                         }
                     }
 
-                    redirect(new moodle_url('/mod/ratingallocate/view.php',
-                        ['id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES]),
-                        get_string('choice_deleted_notification', RATINGALLOCATE_MOD_NAME,
-                            $choice->{this_db\ratingallocate_choices::TITLE}),
+                    redirect(
+                        new moodle_url(
+                            '/mod/ratingallocate/view.php',
+                            ['id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES]
+                        ),
+                        get_string(
+                            'choice_deleted_notification',
+                            RATINGALLOCATE_MOD_NAME,
+                            $choice->{this_db\ratingallocate_choices::TITLE}
+                        ),
                         null,
-                        notification::NOTIFY_SUCCESS);
+                        notification::NOTIFY_SUCCESS
+                    );
                 } else {
-                    redirect(new moodle_url('/mod/ratingallocate/view.php',
-                        ['id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES]),
+                    redirect(
+                        new moodle_url(
+                            '/mod/ratingallocate/view.php',
+                            ['id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES]
+                        ),
                         get_string('choice_deleted_notification_error', RATINGALLOCATE_MOD_NAME),
                         null,
-                        notification::NOTIFY_ERROR);
+                        notification::NOTIFY_ERROR
+                    );
                 }
             }
-            redirect(new moodle_url('/mod/ratingallocate/view.php',
-                ['id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES]));
+            redirect(new moodle_url(
+                '/mod/ratingallocate/view.php',
+                ['id' => $this->coursemodule->id, 'action' => ACTION_SHOW_CHOICES]
+            ));
         }
     }
 
@@ -621,8 +702,10 @@ class ratingallocate {
                 if (!$mform->is_cancelled()) {
                     $renderer = $this->get_renderer();
                     $status = $this->get_status();
-                    if ($status === self::DISTRIBUTION_STATUS_TOO_EARLY ||
-                        $status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
+                    if (
+                        $status === self::DISTRIBUTION_STATUS_TOO_EARLY ||
+                        $status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS
+                    ) {
                         $notification = get_string('modify_allocation_group_desc_' . $status, RATINGALLOCATE_MOD_NAME);
                         $notificationtype = notification::NOTIFY_WARNING;
                     } else {
@@ -637,30 +720,42 @@ class ratingallocate {
                         }
                     }
                 } else {
-                    redirect(new moodle_url('/mod/ratingallocate/view.php',
-                        ['id' => $this->coursemodule->id]));
+                    redirect(new moodle_url(
+                        '/mod/ratingallocate/view.php',
+                        ['id' => $this->coursemodule->id]
+                    ));
                 }
                 // If form was submitted using save or cancel, retirect to the default page.
                 if (property_exists($data, "submitbutton")) {
                     if ($notification) {
-                        redirect(new moodle_url('/mod/ratingallocate/view.php',
-                            ['id' => $this->coursemodule->id]), $notification, null, $notificationtype);
-
+                        redirect(new moodle_url(
+                            '/mod/ratingallocate/view.php',
+                            ['id' => $this->coursemodule->id]
+                        ), $notification, null, $notificationtype);
                     } else {
-                        redirect(new moodle_url('/mod/ratingallocate/view.php',
-                            ['id' => $this->coursemodule->id]));
+                        redirect(new moodle_url(
+                            '/mod/ratingallocate/view.php',
+                            ['id' => $this->coursemodule->id]
+                        ));
                     }
                     // If the save and continue button was pressed,
                     // redirect to the manual allocation form to refresh the checked radiobuttons.
                 } else if (property_exists($data, "submitbutton2")) {
                     if ($notification) {
-                        redirect(new moodle_url('/mod/ratingallocate/view.php',
-                            ['id' => $this->coursemodule->id, 'action' => ACTION_MANUAL_ALLOCATION]), $notification, null,
-                            $notificationtype);
-
+                        redirect(
+                            new moodle_url(
+                                '/mod/ratingallocate/view.php',
+                                ['id' => $this->coursemodule->id, 'action' => ACTION_MANUAL_ALLOCATION]
+                            ),
+                            $notification,
+                            null,
+                            $notificationtype
+                        );
                     } else {
-                        redirect(new moodle_url('/mod/ratingallocate/view.php',
-                            ['id' => $this->coursemodule->id, 'action' => ACTION_MANUAL_ALLOCATION]));
+                        redirect(new moodle_url(
+                            '/mod/ratingallocate/view.php',
+                            ['id' => $this->coursemodule->id, 'action' => ACTION_MANUAL_ALLOCATION]
+                        ));
                     }
                 }
                 $raters = $this->get_raters_in_course();
@@ -732,8 +827,10 @@ class ratingallocate {
     private function get_undistributed_users_with_groupscount(): array {
         $cachedallocations = $this->get_allocations();
         $raters = $this->get_raters_in_course();
-        $undistributedusers = array_map(fn($user) => $user->id, array_values(array_filter($raters,
-            fn($user) => !in_array($user->id, array_keys($cachedallocations)))));
+        $undistributedusers = array_map(fn($user) => $user->id, array_values(array_filter(
+            $raters,
+            fn($user) => !in_array($user->id, array_keys($cachedallocations))
+        )));
 
         $undistributeduserswithgroups = [];
         foreach ($undistributedusers as $user) {
@@ -951,7 +1048,6 @@ class ratingallocate {
         $usertoassign = array_shift($possibleusers);
         // As long as we have a user to assign, we try to assign him.
         while ($usertoassign != null) {
-
             // Calculate the choice to assign the user to depending on the given algorithm.
             $choicetoassign = $this->get_next_choice_to_assign_user($distributionalgorithm, $usertoassign);
             if ($choicetoassign === -2) {
@@ -995,18 +1091,29 @@ class ratingallocate {
             $PAGE->set_secondary_active_tab('mod_ratingallocate_reports');
             $renderer = $this->get_renderer();
             $status = $this->get_status();
-            $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id,
-                $status, $this->context, ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE);
+            $output .= $renderer->reports_group(
+                $this->ratingallocateid,
+                $this->coursemodule->id,
+                $status,
+                $this->context,
+                ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE
+            );
 
-            $output .= $renderer->ratings_table_for_ratingallocate($this->get_rateable_choices(),
-                $this->get_ratings_for_rateable_choices(), $this->get_raters_in_course(),
-                $this->get_allocations(), $this);
+            $output .= $renderer->ratings_table_for_ratingallocate(
+                $this->get_rateable_choices(),
+                $this->get_ratings_for_rateable_choices(),
+                $this->get_raters_in_course(),
+                $this->get_allocations(),
+                $this
+            );
 
             $output = html_writer::div($output, 'ratingallocate_ratings_table_container');
 
             // Logging.
             $event = ratings_and_allocation_table_viewed::create_simple(
-                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
+                context_module::instance($this->coursemodule->id),
+                $this->ratingallocateid
+            );
             $event->trigger();
         }
         return $output;
@@ -1028,14 +1135,21 @@ class ratingallocate {
             $PAGE->set_secondary_active_tab('mod_ratingallocate_reports');
             $renderer = $this->get_renderer();
             $status = $this->get_status();
-            $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id,
-                $status, $this->context, ACTION_SHOW_ALLOCATION_TABLE);
+            $output .= $renderer->reports_group(
+                $this->ratingallocateid,
+                $this->coursemodule->id,
+                $status,
+                $this->context,
+                ACTION_SHOW_ALLOCATION_TABLE
+            );
 
             $output .= $renderer->allocation_table_for_ratingallocate($this);
 
             // Logging.
             $event = allocation_table_viewed::create_simple(
-                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
+                context_module::instance($this->coursemodule->id),
+                $this->ratingallocateid
+            );
             $event->trigger();
         }
         return $output;
@@ -1056,14 +1170,21 @@ class ratingallocate {
             $PAGE->set_secondary_active_tab('mod_ratingallocate_reports');
             $renderer = $this->get_renderer();
             $status = $this->get_status();
-            $output .= $renderer->reports_group($this->ratingallocateid, $this->coursemodule->id,
-                $status, $this->context, ACTION_SHOW_STATISTICS);
+            $output .= $renderer->reports_group(
+                $this->ratingallocateid,
+                $this->coursemodule->id,
+                $status,
+                $this->context,
+                ACTION_SHOW_STATISTICS
+            );
 
             $output .= $renderer->statistics_table_for_ratingallocate($this);
 
             // Logging.
             $event = allocation_statistics_viewed::create_simple(
-                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
+                context_module::instance($this->coursemodule->id),
+                $this->ratingallocateid
+            );
             $event->trigger();
         }
         return $output;
@@ -1079,18 +1200,23 @@ class ratingallocate {
     private function process_publish_allocations() {
         $status = $this->get_status();
         if ($status === self::DISTRIBUTION_STATUS_READY_ALLOC_STARTED) {
-
             $this->publish_allocation();
 
-            redirect(new moodle_url('/mod/ratingallocate/view.php',
-                ['id' => $this->coursemodule->id]),
+            redirect(
+                new moodle_url(
+                    '/mod/ratingallocate/view.php',
+                    ['id' => $this->coursemodule->id]
+                ),
                 get_string('distribution_published', RATINGALLOCATE_MOD_NAME),
                 null,
-                notification::NOTIFY_SUCCESS);
+                notification::NOTIFY_SUCCESS
+            );
         }
 
-        redirect(new moodle_url('/mod/ratingallocate/view.php',
-            ['id' => $this->coursemodule->id]));
+        redirect(new moodle_url(
+            '/mod/ratingallocate/view.php',
+            ['id' => $this->coursemodule->id]
+        ));
     }
 
     /**
@@ -1104,11 +1230,15 @@ class ratingallocate {
     private function process_action_allocation_to_grouping() {
         $this->synchronize_allocation_and_grouping();
 
-        redirect(new moodle_url('/mod/ratingallocate/view.php',
-            ['id' => $this->coursemodule->id]),
+        redirect(
+            new moodle_url(
+                '/mod/ratingallocate/view.php',
+                ['id' => $this->coursemodule->id]
+            ),
             get_string('moodlegroups_created', RATINGALLOCATE_MOD_NAME),
             null,
-            notification::NOTIFY_SUCCESS);
+            notification::NOTIFY_SUCCESS
+        );
     }
 
     /**
@@ -1126,15 +1256,25 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:give_rating', $this->context, null, false)) {
             if ($status === self::DISTRIBUTION_STATUS_RATING_IN_PROGRESS) {
                 if ($this->is_setup_ok()) {
-                    $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
-                        ['id' => $this->coursemodule->id,
-                            'action' => ACTION_GIVE_RATING]),
-                        get_string('edit_rating', RATINGALLOCATE_MOD_NAME), 'get');
+                    $output .= $OUTPUT->single_button(
+                        new moodle_url(
+                            '/mod/ratingallocate/view.php',
+                            ['id' => $this->coursemodule->id,
+                            'action' => ACTION_GIVE_RATING]
+                        ),
+                        get_string('edit_rating', RATINGALLOCATE_MOD_NAME),
+                        'get'
+                    );
 
-                    $output .= $OUTPUT->single_button(new moodle_url('/mod/ratingallocate/view.php',
-                        ['id' => $this->coursemodule->id,
-                            'action' => ACTION_DELETE_RATING]),
-                        get_string('delete_rating', RATINGALLOCATE_MOD_NAME), 'get');
+                    $output .= $OUTPUT->single_button(
+                        new moodle_url(
+                            '/mod/ratingallocate/view.php',
+                            ['id' => $this->coursemodule->id,
+                            'action' => ACTION_DELETE_RATING]
+                        ),
+                        get_string('delete_rating', RATINGALLOCATE_MOD_NAME),
+                        'get'
+                    );
                 } else {
                     $renderer->add_notification(get_string('no_rating_possible', RATINGALLOCATE_MOD_NAME));
                 }
@@ -1145,11 +1285,16 @@ class ratingallocate {
         if (has_capability('mod/ratingallocate:start_distribution', $this->context)) {
             $undistributeduserscount = count($this->get_undistributed_users());
 
-            $output .= $renderer->render_ratingallocate_allocation_status($this->coursemodule->id,
-                $status, $undistributeduserscount);
-            $output .= $renderer->render_ratingallocate_publish_allocation($this->ratingallocateid,
-                $this->coursemodule->id, $status);
-
+            $output .= $renderer->render_ratingallocate_allocation_status(
+                $this->coursemodule->id,
+                $status,
+                $undistributeduserscount
+            );
+            $output .= $renderer->render_ratingallocate_publish_allocation(
+                $this->ratingallocateid,
+                $this->coursemodule->id,
+                $status
+            );
         }
 
         $completion = new completion_info($this->course);
@@ -1157,7 +1302,9 @@ class ratingallocate {
 
         // Logging.
         $event = ratingallocate_viewed::create_simple(
-            context_module::instance($this->coursemodule->id), $this->ratingallocateid);
+            context_module::instance($this->coursemodule->id),
+            $this->ratingallocateid
+        );
         $event->trigger();
 
         return $output;
@@ -1248,10 +1395,12 @@ class ratingallocate {
             case ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY:
             case ACTION_DISTRIBUTE_UNALLOCATED_FILL:
                 $this->queue_distribution_of_users_without_choice($action);
-                redirect(new moodle_url('/mod/ratingallocate/view.php', ['id' => $this->coursemodule->id]),
+                redirect(
+                    new moodle_url('/mod/ratingallocate/view.php', ['id' => $this->coursemodule->id]),
                     get_string('distributing_unallocated_users_started', RATINGALLOCATE_MOD_NAME),
                     null,
-                    notification::NOTIFY_SUCCESS);
+                    notification::NOTIFY_SUCCESS
+                );
                 break;
 
             case ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE:
@@ -1377,7 +1526,6 @@ class ratingallocate {
             foreach ($raters as $rater) {
                 $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $rater->id);
             }
-
         }
         $timeneeded = (microtime(true) - $timestart);
 
@@ -1425,12 +1573,22 @@ class ratingallocate {
 
         // Loop through existing choices.
         foreach ($choices as $choice) {
-            if ($this->db->record_exists(this_db\ratingallocate_choices::TABLE,
-                ['id' => $choice->id])) {
+            if (
+                $this->db->record_exists(
+                    this_db\ratingallocate_choices::TABLE,
+                    ['id' => $choice->id]
+                )
+            ) {
                 // Checks if there is already a group for this choice.
                 $where = "choiceid = $choice->id AND groupid <> 0";
-                if ($groupids = $this->db->get_record_select(this_db\ratingallocate_ch_gengroups::TABLE,
-                    $where, [], 'groupid')) {
+                if (
+                    $groupids = $this->db->get_record_select(
+                        this_db\ratingallocate_ch_gengroups::TABLE,
+                        $where,
+                        [],
+                        'groupid'
+                    )
+                ) {
                     $groupid = $groupids->groupid;
                     $group = groups_get_group($groupid);
                     // Delete all the members from the existing group for this choice.
@@ -1447,8 +1605,10 @@ class ratingallocate {
                     if ($createdid) {
                         groups_assign_grouping($groupingid, $createdid);
                         // Insert the mapping between group and choice into the Table.
-                        $this->db->insert_record(this_db\ratingallocate_ch_gengroups::TABLE,
-                            ['choiceid' => $choice->id, 'groupid' => $createdid]);
+                        $this->db->insert_record(
+                            this_db\ratingallocate_ch_gengroups::TABLE,
+                            ['choiceid' => $choice->id, 'groupid' => $createdid]
+                        );
                     }
                 }
             }
@@ -1459,9 +1619,11 @@ class ratingallocate {
             $choiceid = $allocation->choiceid;
             $userid = $allocation->userid;
             // Get the group corresponding to the choiceid.
-            $groupids = $this->db->get_record(this_db\ratingallocate_ch_gengroups::TABLE,
+            $groupids = $this->db->get_record(
+                this_db\ratingallocate_ch_gengroups::TABLE,
                 ['choiceid' => $choiceid],
-                'groupid');
+                'groupid'
+            );
             if (($groupid = $groupids->groupid) && ($group = groups_get_group($groupid))) {
                 groups_add_member($group, $userid);
             }
@@ -1496,7 +1658,9 @@ class ratingallocate {
 
         // Logging.
         $event = allocation_published::create_simple(
-            context_module::instance($this->coursemodule->id), $this->ratingallocateid);
+            context_module::instance($this->coursemodule->id),
+            $this->ratingallocateid
+        );
         $event->trigger();
     }
 
@@ -1607,7 +1771,6 @@ class ratingallocate {
                 $completion->update_state($this->coursemodule, COMPLETION_INCOMPLETE, $rater->id);
             }
         }
-
     }
 
     /**
@@ -1631,7 +1794,6 @@ class ratingallocate {
         $choices = $this->get_choices_with_allocationcount();
         $allocations = $this->get_allocations();
         foreach ($users as $userid => $allocobj) {
-
             // Prepare the email to be sent to the user.
             $userto = get_complete_user_data('id', $userid);
             if ($CFG->branch >= 402) {
@@ -1641,8 +1803,11 @@ class ratingallocate {
             }
 
             $notificationsubject = format_string($this->course->shortname, true) . ': ' .
-                get_string('allocation_notification_message_subject', 'ratingallocate',
-                    $this->ratingallocate->name);
+                get_string(
+                    'allocation_notification_message_subject',
+                    'ratingallocate',
+                    $this->ratingallocate->name
+                );
 
             $notificationtext = '';
             if (array_key_exists($userid, $allocations) && $allocobj = $allocations[$userid]) {
@@ -1660,7 +1825,6 @@ class ratingallocate {
 
             // Send message to all users with an allocation or a rating.
             if (!empty($notificationtext)) {
-
                 // Prepare the message.
                 $eventdata = new \core\message\message();
                 $eventdata->courseid = $this->course->id;
@@ -1676,15 +1840,18 @@ class ratingallocate {
                 $eventdata->fullmessagehtml = '';
 
                 $eventdata->smallmessage = '';
-                $eventdata->contexturl = new moodle_url('/mod/ratingallocate/view.php',
-                    ['id' => $this->coursemodule->id]);
+                $eventdata->contexturl = new moodle_url(
+                    '/mod/ratingallocate/view.php',
+                    ['id' => $this->coursemodule->id]
+                );
                 $eventdata->contexturlname = $this->ratingallocate->name;
 
                 $mailresult = message_send($eventdata);
                 if (!$mailresult) {
                     mtrace(
                         "ERROR: mod/ratingallocate/locallib.php: Could not send notification to user $userto->id " .
-                        "... not trying again.");
+                        "... not trying again."
+                    );
                 }
             }
         }
@@ -1735,7 +1902,8 @@ class ratingallocate {
             function ($rater) {
                 return $rater->id;
             },
-            $this->get_raters_in_course());
+            $this->get_raters_in_course()
+        );
 
         $sql = "SELECT DISTINCT r.userid
                 FROM {ratingallocate_choices} c
@@ -1746,7 +1914,6 @@ class ratingallocate {
         return $this->db->get_records_sql($sql, [
             'ratingallocateid' => $this->ratingallocateid,
         ]);
-
     }
 
     /**
@@ -1781,7 +1948,9 @@ class ratingallocate {
 
             // Logging.
             $event = all_ratings_deleted::create_simple(
-                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
+                context_module::instance($this->coursemodule->id),
+                $this->ratingallocateid
+            );
             $event->trigger();
         } catch (Exception $e) {
             $transaction->rollback($e);
@@ -1798,7 +1967,6 @@ class ratingallocate {
         $transaction = $DB->start_delegated_transaction();
 
         try {
-
             $choices = $this->get_choices();
 
             foreach ($choices as $id => $choice) {
@@ -1820,7 +1988,9 @@ class ratingallocate {
 
             // Logging.
             $event = rating_deleted::create_simple(
-                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
+                context_module::instance($this->coursemodule->id),
+                $this->ratingallocateid
+            );
             $event->trigger();
         } catch (Exception $e) {
             $transaction->rollback($e);
@@ -1838,7 +2008,7 @@ class ratingallocate {
         $loggingdata = [];
         try {
             foreach ($data as $id => $rdata) {
-                $rating = new stdClass ();
+                $rating = new stdClass();
                 $rating->rating = $rdata['rating'];
 
                 $ratingexists = [
@@ -1855,8 +2025,10 @@ class ratingallocate {
                         $DB->update_record('ratingallocate_ratings', $rating);
 
                         // Logging.
-                        array_push($loggingdata,
-                            ['choiceid' => $oldrating->choiceid, 'rating' => $rating->rating]);
+                        array_push(
+                            $loggingdata,
+                            ['choiceid' => $oldrating->choiceid, 'rating' => $rating->rating]
+                        );
                     }
                 } else {
                     // Create a new rating in the table.
@@ -1867,8 +2039,10 @@ class ratingallocate {
                     $DB->insert_record('ratingallocate_ratings', $rating);
 
                     // Logging.
-                    array_push($loggingdata,
-                        ['choiceid' => $rating->choiceid, 'rating' => $rating->rating]);
+                    array_push(
+                        $loggingdata,
+                        ['choiceid' => $rating->choiceid, 'rating' => $rating->rating]
+                    );
                 }
             }
             $transaction->allow_commit();
@@ -1881,7 +2055,10 @@ class ratingallocate {
 
             // Logging.
             $event = rating_saved::create_simple(
-                context_module::instance($this->coursemodule->id), $this->ratingallocateid, $loggingdata);
+                context_module::instance($this->coursemodule->id),
+                $this->ratingallocateid,
+                $loggingdata
+            );
             $event->trigger();
         } catch (Exception $e) {
             $transaction->rollback($e);
@@ -1893,10 +2070,13 @@ class ratingallocate {
      */
     public function get_rateable_choices() {
         global $DB;
-        return $DB->get_records(this_db\ratingallocate_choices::TABLE,
+        return $DB->get_records(
+            this_db\ratingallocate_choices::TABLE,
             [this_db\ratingallocate_choices::RATINGALLOCATEID => $this->ratingallocateid,
                 this_db\ratingallocate_choices::ACTIVE => true,
-            ], this_db\ratingallocate_choices::TITLE);
+            ],
+            this_db\ratingallocate_choices::TITLE
+        );
     }
 
     /**
@@ -1910,8 +2090,10 @@ class ratingallocate {
     public function filter_choices_by_groups($choices, $userid) {
 
         // See all the choices, if you have the capability to modify them.
-        if (has_capability('mod/ratingallocate:modify_choices', $this->context)
-            || has_capability('mod/ratingallocate:export_ratings', $this->context)) {
+        if (
+            has_capability('mod/ratingallocate:modify_choices', $this->context)
+            || has_capability('mod/ratingallocate:export_ratings', $this->context)
+        ) {
             return $choices;
         }
 
@@ -1942,9 +2124,12 @@ class ratingallocate {
      */
     public function get_choices() {
         global $DB;
-        return $DB->get_records(this_db\ratingallocate_choices::TABLE,
+        return $DB->get_records(
+            this_db\ratingallocate_choices::TABLE,
             [this_db\ratingallocate_choices::RATINGALLOCATEID => $this->ratingallocateid,
-            ], this_db\ratingallocate_choices::TITLE);
+            ],
+            this_db\ratingallocate_choices::TITLE
+        );
     }
 
     /**
@@ -1963,8 +2148,11 @@ class ratingallocate {
      */
     public function get_choices_by_id($ids) {
         global $DB;
-        return $DB->get_records_list(this_db\ratingallocate_choices::TABLE,
-            'id', $ids);
+        return $DB->get_records_list(
+            this_db\ratingallocate_choices::TABLE,
+            'id',
+            $ids
+        );
     }
 
     /**
@@ -2014,7 +2202,9 @@ class ratingallocate {
             }
             // Logging.
             $event = manual_allocation_saved::create_simple(
-                context_module::instance($this->coursemodule->id), $this->ratingallocateid);
+                context_module::instance($this->coursemodule->id),
+                $this->ratingallocateid
+            );
             $event->trigger();
 
             $transaction->allow_commit();
@@ -2025,7 +2215,6 @@ class ratingallocate {
                     $completion->update_state($this->coursemodule, COMPLETION_UNKNOWN, $rater->id);
                 }
             }
-
         } catch (Exception $e) {
             if (isset($transaction)) {
                 $transaction->rollback($e);
@@ -2066,7 +2255,6 @@ class ratingallocate {
                 $transaction->rollback($e);
             }
         }
-
     }
 
     /**
@@ -2130,8 +2318,11 @@ class ratingallocate {
      * @return boolean
      */
     public function alter_allocation($oldchoiceid, $newchoiceid, $userid): bool {
-        $this->db->set_field(this_db\ratingallocate_allocations::TABLE, this_db\ratingallocate_allocations::CHOICEID,
-            $newchoiceid, [
+        $this->db->set_field(
+            this_db\ratingallocate_allocations::TABLE,
+            this_db\ratingallocate_allocations::CHOICEID,
+            $newchoiceid,
+            [
                 'choiceid' => $oldchoiceid,
                 'userid' => $userid,
             ]
@@ -2429,5 +2620,4 @@ class ratingallocate {
         // If we did not exit with 'false' before, we could clear all scheduled adhoc tasks or there was no task at all.
         return true;
     }
-
 }

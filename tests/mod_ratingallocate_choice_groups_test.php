@@ -38,7 +38,6 @@ require_once(__DIR__ . '/../locallib.php');
 #[CoversFunction('filter_choices_by_groups')]
 #[CoversFunction('update_choice_groups')]
 final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
-
     /**
      * @var stdClass The environment that will be used for testing
      * This Class contains:
@@ -82,10 +81,11 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
             $choices = $this->env->ratingallocate->get_rateable_choices();
         }
         return array_flip(array_map(
-            function($a) {
+            function ($a) {
                 return $a->title;
             },
-            $choices));
+            $choices
+        ));
     }
 
     /**
@@ -276,5 +276,4 @@ final class mod_ratingallocate_choice_groups_test extends \advanced_testcase {
         $this->assertNotContains($groupidmap['Green Group'], array_keys($groups));
         $this->assertContains($groupidmap['Blue Group'], array_keys($groups));
     }
-
 }

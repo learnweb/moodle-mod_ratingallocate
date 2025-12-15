@@ -65,7 +65,6 @@ class ratingallocate_header implements renderable {
  * @package mod_ratingallocate
  */
 class ratingallocate_choice_status implements renderable {
-
     /** @var $accesstimestop */
     public $accesstimestop;
     /** @var $accesstimestart */

@@ -30,7 +30,6 @@ require_once(__DIR__ . '/../locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class mod_ratingallocate_notification_test extends \advanced_testcase {
-
     /**
      * Choice 1.
      */
@@ -96,8 +95,12 @@ final class mod_ratingallocate_notification_test extends \advanced_testcase {
                 ],
         ];
 
-        $ratingallocate = \mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher($this, $choices,
-                $course, $ratings);
+        $ratingallocate = \mod_ratingallocate_generator::get_closed_ratingallocate_for_teacher(
+            $this,
+            $choices,
+            $course,
+            $ratings
+        );
         $allocations = $ratingallocate->get_allocations();
         $this->assertArrayHasKey($students[1]->id, $allocations);
         $this->assertArrayHasKey($students[2]->id, $allocations);

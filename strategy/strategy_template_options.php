@@ -36,7 +36,6 @@ require_once(dirname(__FILE__) . '/strategy_template.php');
  * @package mod_ratingallocate
  */
 abstract class strategytemplate_options extends \strategytemplate {
-
     /**
      * Return the different options for each choice (including titles)
      * @return array: value_of_option => title_of_option
@@ -65,7 +64,6 @@ abstract class strategytemplate_options extends \strategytemplate {
  * - shows a drop down menu from which the user can choose a rating
  */
 abstract class ratingallocate_options_strategyform extends \ratingallocate_strategyform {
-
     /**
      * Defines forms elements
      */
@@ -165,8 +163,11 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
         if ($impossibles > $maxno) {
             foreach ($ratings as $cid => $rating) {
                 if ($rating['rating'] == 0) {
-                    $errors['radioarr_' . $cid] = get_string($this->get_max_nos_string_identyfier(),
-                            RATINGALLOCATE_MOD_NAME, $maxno);
+                    $errors['radioarr_' . $cid] = get_string(
+                        $this->get_max_nos_string_identyfier(),
+                        RATINGALLOCATE_MOD_NAME,
+                        $maxno
+                    );
                 }
             }
         }
@@ -193,5 +194,4 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
      * @return mixed
      */
     abstract protected function get_max_nos_string_identyfier();
-
 }

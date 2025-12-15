@@ -40,7 +40,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
  */
 #[CoversClass(backup_ratingallocate_activity_structure_step::class)]
 final class backup_restore_test extends \advanced_testcase {
-
     /**
      * Test backup and restore of ratingallocate activity.
      *
@@ -60,8 +59,14 @@ final class backup_restore_test extends \advanced_testcase {
         $genmod = new \mod_ratingallocate_generated_module($this);
         $course1 = $genmod->course;
         // Create backup file and save it to the backup location.
-        $bc = new \backup_controller(\backup::TYPE_1ACTIVITY, $genmod->moddb->cmid, \backup::FORMAT_MOODLE,
-                \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, 2);
+        $bc = new \backup_controller(
+            \backup::TYPE_1ACTIVITY,
+            $genmod->moddb->cmid,
+            \backup::FORMAT_MOODLE,
+            \backup::INTERACTIVE_NO,
+            \backup::MODE_GENERAL,
+            2
+        );
         $bc->execute_plan();
         $results = $bc->get_results();
         $file = $results['backup_destination'];
@@ -80,12 +85,18 @@ final class backup_restore_test extends \advanced_testcase {
         // Create a course that we are going to restore the other course to.
         $course2 = $this->getDataGenerator()->create_course();
         // Now restore the course.
-        $rc = new \restore_controller('test-restore-course', $course2->id, \backup::INTERACTIVE_NO,
-                \backup::MODE_GENERAL, 2, \backup::TARGET_NEW_COURSE);
+        $rc = new \restore_controller(
+            'test-restore-course',
+            $course2->id,
+            \backup::INTERACTIVE_NO,
+            \backup::MODE_GENERAL,
+            2,
+            \backup::TARGET_NEW_COURSE
+        );
         $rc->execute_precheck();
         $rc->execute_plan();
 
-        $unsetvalues = function($elem1, $elem2, $varname) {
+        $unsetvalues = function ($elem1, $elem2, $varname) {
             $this->assertNotEquals($elem1->{$varname}, $elem2->{$varname});
             $result = [$elem1->{$varname}, $elem2->{$varname}];
             unset($elem1->{$varname});
@@ -93,20 +104,28 @@ final class backup_restore_test extends \advanced_testcase {
             return $result;
         };
 
-        $ratingallocate1 = $DB->get_record(this_db\ratingallocate::TABLE,
-               [this_db\ratingallocate::COURSE => $course1->id]);
-        $ratingallocate2 = $DB->get_record(this_db\ratingallocate::TABLE,
-               [this_db\ratingallocate::COURSE => $course2->id]);
-        list($ratingid1, $ratingid2) = $unsetvalues($ratingallocate1, $ratingallocate2, this_db\ratingallocate::ID);
+        $ratingallocate1 = $DB->get_record(
+            this_db\ratingallocate::TABLE,
+            [this_db\ratingallocate::COURSE => $course1->id]
+        );
+        $ratingallocate2 = $DB->get_record(
+            this_db\ratingallocate::TABLE,
+            [this_db\ratingallocate::COURSE => $course2->id]
+        );
+        [$ratingid1, $ratingid2] = $unsetvalues($ratingallocate1, $ratingallocate2, this_db\ratingallocate::ID);
         $unsetvalues($ratingallocate1, $ratingallocate2, this_db\ratingallocate::COURSE);
         $this->assertEquals($ratingallocate1, $ratingallocate2);
 
-        $choices1 = $DB->get_records(this_db\ratingallocate_choices::TABLE,
-               [this_db\ratingallocate_choices::RATINGALLOCATEID => $ratingid1],
-                this_db\ratingallocate_choices::TITLE);
-        $choices2 = $DB->get_records(this_db\ratingallocate_choices::TABLE,
-                [this_db\ratingallocate_choices::RATINGALLOCATEID => $ratingid2],
-                this_db\ratingallocate_choices::TITLE);
+        $choices1 = $DB->get_records(
+            this_db\ratingallocate_choices::TABLE,
+            [this_db\ratingallocate_choices::RATINGALLOCATEID => $ratingid1],
+            this_db\ratingallocate_choices::TITLE
+        );
+        $choices2 = $DB->get_records(
+            this_db\ratingallocate_choices::TABLE,
+            [this_db\ratingallocate_choices::RATINGALLOCATEID => $ratingid2],
+            this_db\ratingallocate_choices::TITLE
+        );
         $this->assertCount(2, $choices1);
         $this->assertCount(2, array_values($choices2));
         $choice2copy = $choices2;
@@ -114,16 +133,20 @@ final class backup_restore_test extends \advanced_testcase {
             // Work with copies.
             $choice2 = json_decode(json_encode(array_shift($choice2copy)));
             $choice1 = json_decode(json_encode($choice1));
-            list($choiceid1, $choiceid2) = $unsetvalues($choice1, $choice2, this_db\ratingallocate_choices::ID);
+            [$choiceid1, $choiceid2] = $unsetvalues($choice1, $choice2, this_db\ratingallocate_choices::ID);
             $unsetvalues($choice1, $choice2, this_db\ratingallocate_choices::RATINGALLOCATEID);
             $this->assertEquals($choice1, $choice2);
             // Compare ratings for this choice.
-            $ratings1 = array_values($DB->get_records(this_db\ratingallocate_ratings::TABLE,
-                    [this_db\ratingallocate_ratings::CHOICEID => $choiceid1],
-                    this_db\ratingallocate_ratings::USERID));
-            $ratings2 = array_values($DB->get_records(this_db\ratingallocate_ratings::TABLE,
-                    [this_db\ratingallocate_ratings::CHOICEID => $choiceid2],
-                    this_db\ratingallocate_ratings::USERID));
+            $ratings1 = array_values($DB->get_records(
+                this_db\ratingallocate_ratings::TABLE,
+                [this_db\ratingallocate_ratings::CHOICEID => $choiceid1],
+                this_db\ratingallocate_ratings::USERID
+            ));
+            $ratings2 = array_values($DB->get_records(
+                this_db\ratingallocate_ratings::TABLE,
+                [this_db\ratingallocate_ratings::CHOICEID => $choiceid2],
+                this_db\ratingallocate_ratings::USERID
+            ));
             $this->assertEquals(count($ratings1), count($ratings2));
             $ratings2copy = $ratings2;
             foreach ($ratings1 as $rating1) {
@@ -136,16 +159,20 @@ final class backup_restore_test extends \advanced_testcase {
         }
 
         // Compare allocations.
-        $allocations1 = $DB->get_records(this_db\ratingallocate_allocations::TABLE,
-                [this_db\ratingallocate_allocations::RATINGALLOCATEID => $ratingid1],
-                this_db\ratingallocate_allocations::USERID);
-        $allocations2 = $DB->get_records(this_db\ratingallocate_allocations::TABLE,
-                [this_db\ratingallocate_allocations::RATINGALLOCATEID => $ratingid2],
-                this_db\ratingallocate_allocations::USERID);
+        $allocations1 = $DB->get_records(
+            this_db\ratingallocate_allocations::TABLE,
+            [this_db\ratingallocate_allocations::RATINGALLOCATEID => $ratingid1],
+            this_db\ratingallocate_allocations::USERID
+        );
+        $allocations2 = $DB->get_records(
+            this_db\ratingallocate_allocations::TABLE,
+            [this_db\ratingallocate_allocations::RATINGALLOCATEID => $ratingid2],
+            this_db\ratingallocate_allocations::USERID
+        );
         // Number of allocations is equal.
         $this->assertCount(count($genmod->allocations), $allocations2);
         // Create function that can be used to replace.
-        $mapallocationtochoicetitle = function(&$alloc, $choices) {
+        $mapallocationtochoicetitle = function (&$alloc, $choices) {
             $alloc->{'choice_title'} =
                     $choices[$alloc->{this_db\ratingallocate_allocations::CHOICEID}]->{this_db\ratingallocate_choices::TITLE};
         };

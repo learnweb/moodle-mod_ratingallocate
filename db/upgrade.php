@@ -70,7 +70,6 @@ function xmldb_ratingallocate_upgrade($oldversion) {
     }
 
     if ($oldversion < 2014111800) {
-
         // Define field notification_send to be added to ratingallocate.
         $table = new xmldb_table('ratingallocate');
         $field = new xmldb_field('notificationsend', XMLDB_TYPE_INTEGER, '4', null, null, null, '0', 'published');
@@ -129,11 +128,9 @@ function xmldb_ratingallocate_upgrade($oldversion) {
             $transaction->rollback($e);
             return false;
         }
-
     }
 
     if ($oldversion < 2021062900) {
-
         // Changing type of field explanation on table ratingallocate_choices to text.
         $table = new xmldb_table('ratingallocate_choices');
         $field = new xmldb_field('explanation', XMLDB_TYPE_TEXT, null, null, null, null, null, 'title');
@@ -146,7 +143,6 @@ function xmldb_ratingallocate_upgrade($oldversion) {
     }
 
     if ($oldversion < 2022120100) {
-
         // Define table ratingallocate_group_choices to be created.
         $table = new xmldb_table('ratingallocate_group_choices');
 
@@ -179,7 +175,6 @@ function xmldb_ratingallocate_upgrade($oldversion) {
     }
 
     if ($oldversion < 2023050900) {
-
         // Define table ratingallocate_ch_gengroups to be created.
         $table = new xmldb_table('ratingallocate_ch_gengroups');
 
@@ -221,7 +216,6 @@ function xmldb_ratingallocate_upgrade($oldversion) {
     }
 
     if ($oldversion < 2024080900) {
-
         // Define completionrules fields to be added to ratingallocate.
         $table = new xmldb_table('ratingallocate');
         $votefield = new xmldb_field('completionvote', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, false, '0');

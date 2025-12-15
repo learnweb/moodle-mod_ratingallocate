@@ -63,9 +63,9 @@ function ratingallocate_supports($feature) {
     }
 
     switch ($feature) {
-        case FEATURE_MOD_INTRO :
+        case FEATURE_MOD_INTRO:
             return true;
-        case FEATURE_SHOW_DESCRIPTION :
+        case FEATURE_SHOW_DESCRIPTION:
             return true;
         case FEATURE_BACKUP_MOODLE2:
             return true;
@@ -73,7 +73,7 @@ function ratingallocate_supports($feature) {
             return true;
         case FEATURE_COMPLETION_HAS_RULES:
             return true;
-        default :
+        default:
             return null;
     }
 }
@@ -163,9 +163,11 @@ function ratingallocate_update_instance(stdClass $ratingallocate, ?mod_ratingall
 function ratingallocate_delete_instance($id) {
     global $DB;
 
-    if (!$ratingallocate = $DB->get_record('ratingallocate', [
+    if (
+        !$ratingallocate = $DB->get_record('ratingallocate', [
             'id' => $id,
-    ])) {
+        ])
+    ) {
         return false;
     }
 
@@ -179,11 +181,17 @@ function ratingallocate_delete_instance($id) {
             ], '', 'id'));
 
     if (!empty($deleteids)) {
-        list ($insql, $params) = $DB->get_in_or_equal($deleteids);
-        $DB->delete_records_select('ratingallocate_group_choices',
-            'choiceid ' . $insql, $params);
-        $DB->delete_records_select('ratingallocate_ch_gengroups',
-            'choiceid ' . $insql, $params);
+         [$insql, $params] = $DB->get_in_or_equal($deleteids);
+        $DB->delete_records_select(
+            'ratingallocate_group_choices',
+            'choiceid ' . $insql,
+            $params
+        );
+        $DB->delete_records_select(
+            'ratingallocate_ch_gengroups',
+            'choiceid ' . $insql,
+            $params
+        );
     }
 
     $DB->delete_records('ratingallocate_groupings', [
@@ -234,8 +242,15 @@ function ratingallocate_print_recent_activity($course, $viewfullnames, $timestar
  * @param int $groupid check for a particular group's activity only, defaults to 0 (all groups)
  * @return void adds items into $activities and increases $index
  */
-function ratingallocate_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid,
-        $userid = 0, $groupid = 0) {
+function ratingallocate_get_recent_mod_activity(
+    &$activities,
+    &$index,
+    $timestart,
+    $courseid,
+    $cmid,
+    $userid = 0,
+    $groupid = 0
+) {
 }
 
 /**
@@ -249,7 +264,6 @@ function ratingallocate_get_recent_mod_activity(&$activities, &$index, $timestar
  * @return void
  */
 function ratingallocate_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
-
 }
 
 /**
@@ -375,7 +389,6 @@ function ratingallocate_pluginfile($course, $cm, $context, $filearea, array $arg
  * @return void
  */
 function ratingallocate_extend_navigation(navigation_node $navref, stdClass $course, stdClass $module, cm_info $cm) {
-
 }
 
 /**
@@ -395,21 +408,28 @@ function ratingallocate_extend_settings_navigation(settings_navigation $settings
         throw new \moodle_exception('badcontext');
     }
     if (has_capability('mod/ratingallocate:modify_choices', $context)) {
-        $choicenode = navigation_node::create(get_string('choice_navigation', RATINGALLOCATE_MOD_NAME),
+        $choicenode = navigation_node::create(
+            get_string('choice_navigation', RATINGALLOCATE_MOD_NAME),
             new moodle_url('/mod/ratingallocate/view.php', ['id' => $settingsnav->get_page()->cm->id,
                 'action' => ACTION_SHOW_CHOICES]),
-            navigation_node::TYPE_CUSTOM, null, 'mod_ratingallocate_choices');
+            navigation_node::TYPE_CUSTOM,
+            null,
+            'mod_ratingallocate_choices'
+        );
         $ratingallocatenode->add_node($choicenode);
     }
 
     if (has_capability('mod/ratingallocate:start_distribution', $context)) {
-        $reportsnode = navigation_node::create(get_string('reports_group', RATINGALLOCATE_MOD_NAME),
+        $reportsnode = navigation_node::create(
+            get_string('reports_group', RATINGALLOCATE_MOD_NAME),
             new moodle_url('/mod/ratingallocate/view.php', ['id' => $settingsnav->get_page()->cm->id,
                 'action' => ACTION_SHOW_RATINGS_AND_ALLOCATION_TABLE]),
-            navigation_node::TYPE_CUSTOM, null, 'mod_ratingallocate_reports');
+            navigation_node::TYPE_CUSTOM,
+            null,
+            'mod_ratingallocate_reports'
+        );
         $ratingallocatenode->add_node($reportsnode);
     }
-
 }
 
 /**
@@ -467,19 +487,21 @@ function ratingallocate_refresh_events($courseid = 0, $instance = null, $cm = nu
 function ratingallocate_set_events($ratingallocate) {
     global $DB, $CFG;
 
-    require_once($CFG->dirroot.'/calendar/lib.php');
+    require_once($CFG->dirroot . '/calendar/lib.php');
 
     // Get CMID if not sent as part of $ratingallocate.
     if (!isset($ratingallocate->coursemodule)) {
-
         $cm = get_fast_modinfo($ratingallocate->course)->instances['ratingallocate'][$ratingallocate->id];
 
         $ratingallocate->coursemodule = $cm->id;
     }
 
     // Ratingallocate-accessstart calendar events.
-    $eventid = $DB->get_field('event', 'id',
-        ['modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_START]);
+    $eventid = $DB->get_field(
+        'event',
+        'id',
+        ['modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_START]
+    );
 
     $timestart = $DB->get_field('ratingallocate', 'accesstimestart', ['id' => $ratingallocate->id]);
 
@@ -522,8 +544,11 @@ function ratingallocate_set_events($ratingallocate) {
     }
 
     // Ratingallocate-accessstop calendar events.
-    $eventid = $DB->get_field('event', 'id',
-        ['modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_STOP]);
+    $eventid = $DB->get_field(
+        'event',
+        'id',
+        ['modulename' => 'ratingallocate', 'instance' => $ratingallocate->id, 'eventtype' => RATINGALLOCATE_EVENT_TYPE_STOP]
+    );
 
     $timestop = $DB->get_field('ratingallocate', 'accesstimestop', ['id' => $ratingallocate->id]);
 
@@ -591,7 +616,6 @@ function mod_ratingallocate_core_is_event_visible(calendar_event $event): bool {
     $raters = $ratingallocate->get_raters_in_course();
 
     return in_array($USER, $raters);
-
 }
 
 /**
@@ -604,7 +628,7 @@ function mod_ratingallocate_core_is_event_visible(calendar_event $event): bool {
  * @throws dml_exception
  * @throws moodle_exception
  */
-function mod_ratingallocate_core_calendar_event_timestart_updated (\calendar_event $event, \stdClass $ratingallocate) {
+function mod_ratingallocate_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $ratingallocate) {
 
     global $CFG, $DB;
 
@@ -672,7 +696,7 @@ function mod_ratingallocate_core_calendar_event_timestart_updated (\calendar_eve
  * @throws coding_exception
  * @throws dml_exception
  */
-function mod_ratingallocate_core_calendar_get_valid_event_timestart_range (\calendar_event $event, \stdClass $instance): array {
+function mod_ratingallocate_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $instance): array {
 
     global $DB;
 
@@ -711,7 +735,6 @@ function ratingallocate_reset_userdata($data) {
     $params = ['courseid' => $data->courseid];
 
     if (!empty($data->reset_ratings_and_allocations)) {
-
         // Delete all ratings.
         $ratingidssql = "SELECT r.id FROM {ratingallocate_ratings} r
                          INNER JOIN {ratingallocate_choices} c ON r.choiceid=c.id
@@ -763,9 +786,11 @@ function ratingallocate_reset_userdata($data) {
 function ratingallocate_reset_course_form_definition($mform) {
 
     $mform->addElement('header', 'ratingallocateheader', get_string('modulenameplural', RATINGALLOCATE_MOD_NAME));
-    $mform->addElement('advcheckbox', 'reset_ratings_and_allocations',
-        get_string('remove_ratings_and_allocations', RATINGALLOCATE_MOD_NAME));
-
+    $mform->addElement(
+        'advcheckbox',
+        'reset_ratings_and_allocations',
+        get_string('remove_ratings_and_allocations', RATINGALLOCATE_MOD_NAME)
+    );
 }
 
 /**

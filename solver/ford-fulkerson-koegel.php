@@ -36,7 +36,6 @@ require_once(dirname(__FILE__) . '/solver-template.php');
  * @package mod_ratingallocate
  */
 class solver_ford_fulkerson extends distributor {
-
     /**
      * Starts the distribution algorithm.
      * Uses the users' ratings and a minimum-cost maximum-flow algorithm
@@ -60,7 +59,7 @@ class solver_ford_fulkerson extends distributor {
         // Index of source and sink in the graph.
         $source = 0;
         $sink = $groupcount + $usercount + 1;
-        list($fromuserid, $touserid, $fromgroupid, $togroupid) = $this->setup_id_conversions($usercount, $ratings);
+        [$fromuserid, $touserid, $fromgroupid, $togroupid] = $this->setup_id_conversions($usercount, $ratings);
 
         $this->setup_graph($groupcount, $usercount, $fromuserid, $fromgroupid, $ratings, $groupdata, $source, $sink);
 
@@ -168,5 +167,4 @@ class solver_ford_fulkerson extends distributor {
     public function get_name() {
         return "ford-fulkerson Koegel2014";
     }
-
 }

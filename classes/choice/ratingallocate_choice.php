@@ -67,5 +67,4 @@ class ratingallocate_choice {
     public function __construct($record) {
         $this->dbrecord = $record;
     }
-
 }
