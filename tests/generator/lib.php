@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+
 require_once(dirname(__FILE__) . '/../../locallib.php');
 
 use mod_ratingallocate\db as this_db;

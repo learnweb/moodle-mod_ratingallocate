@@ -31,6 +31,8 @@
  * Represents an Edge in the graph to have fixed fields instead of array-fields
  */
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+
 use mod_ratingallocate\ratingallocate;
 
 defined('MOODLE_INTERNAL') || die();

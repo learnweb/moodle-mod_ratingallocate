@@ -25,8 +25,11 @@
  * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 // Namespace is mandatory!
 namespace mod_ratingallocate\strategy_order;
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
 
 use mod_ratingallocate\manager\strategymanager;
 

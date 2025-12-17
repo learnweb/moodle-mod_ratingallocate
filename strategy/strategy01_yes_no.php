@@ -28,6 +28,8 @@
 
 namespace mod_ratingallocate\strategy_yesno;
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+
 use mod_ratingallocate\manager\strategymanager;
 
 defined('MOODLE_INTERNAL') || die();

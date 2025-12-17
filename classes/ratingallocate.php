@@ -60,7 +60,7 @@ use moodle_database;
 use moodle_exception;
 use moodle_url;
 use moodleform;
-use ratingallocate_choice_status;
+use mod_ratingallocate\output\ratingallocate_choice_status;
 use required_capability_exception;
 use solver_edmonds_karp;
 use stdClass;

@@ -29,6 +29,8 @@
 // Namespace is mandatory!
 namespace mod_ratingallocate\strategy_points;
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+
 use mod_ratingallocate\manager\strategymanager;
 
 defined('MOODLE_INTERNAL') || die();
