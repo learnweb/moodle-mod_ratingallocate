@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+namespace mod_ratingallocate\output;
+
 /**
  * Choice status
  *
@@ -23,7 +25,7 @@
  * @copyright 2014 T. Reischmann
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ratingallocate_choice_status implements renderable {
+class ratingallocate_choice_status implements \renderable {
     /** @var $accesstimestop */
     public $accesstimestop;
     /** @var $accesstimestart */

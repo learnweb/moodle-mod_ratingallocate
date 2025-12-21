@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+namespace mod_ratingallocate\output;
+
 use mod_ratingallocate\wrapper\ratingallocate_db_wrapper;
 use core\output\renderable;
 
@@ -25,7 +27,7 @@ use core\output\renderable;
  * @copyright 2014 T. Reischmann
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ratingallocate_header implements renderable {
+class ratingallocate_header implements \renderable {
     /** @var mod_ratingallocate\wrapper\ratingallocate_db_wrapper the ratingallocate class */
     public $ratingallocate = null;
     /** @var mixed context|null the context record */

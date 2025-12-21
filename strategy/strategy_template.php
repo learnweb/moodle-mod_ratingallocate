@@ -28,6 +28,9 @@
 
 use mod_ratingallocate\ratingallocate;
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+// phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');

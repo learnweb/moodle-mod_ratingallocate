@@ -16,7 +16,7 @@ Feature: Creating a new rating allocation, where new choices need to
       | student1 | C1     | student        |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a ratingallocate to course "Course 1" section "0" and I fill the form with:
+    And I add a ratingallocate activity to course "Course 1" section 0 and I fill the form with:
       | id_name | My Fair Allocation |
     And I am on the "My Fair Allocation" "mod_ratingallocate > Choices" page
     And I add a new choice with the values:
@@ -33,7 +33,7 @@ Feature: Creating a new rating allocation, where new choices need to
       | maxsize                | 2               |
     And the default editor is set to "textarea"
 
-  Scenario: Create a new rating alloation and add an additonal new choice.
+  Scenario: Create a new rating allocation and add an additional new choice.
     Given I add a new choice with the values:
       | title                  | My fourth choice |
       | Description (optional) | Test 4           |
@@ -43,7 +43,7 @@ Feature: Creating a new rating allocation, where new choices need to
     And I should see the choice with the title "My third choice"
     And I should see the choice with the title "My fourth choice"
 
-  Scenario: Create a new rating alloation and add two additonal new choices using the add next button.
+  Scenario: Create a new rating allocation and add two additional new choices using the add next button.
     Given I add new choices with the values:
       | title            | Description (optional) | maxsize |
       | My fourth choice | Test 4                 | 2       |
@@ -54,7 +54,7 @@ Feature: Creating a new rating allocation, where new choices need to
     And I should see the choice with the title "My fourth choice"
     And I should see the choice with the title "My fifth choice"
 
-  Scenario: Create a new rating alloation and add two additonal new choices, but delete two old and one new.
+  Scenario: Create a new rating allocation and add two additional new choices, but delete two old and one new.
     When I add new choices with the values:
       | title            | Description (optional) | maxsize |
       | My fourth choice | Test 4                 | 2       |
@@ -69,7 +69,7 @@ Feature: Creating a new rating allocation, where new choices need to
     And I should see the choice with the title "My fourth choice"
     And I should not see the choice with the title "My fifth choice"
 
-  Scenario: Create a new rating alloation and add an additonal new active choice.
+  Scenario: Create a new rating allocation and add an additional new active choice.
     When I add a new choice with the values:
       | title                  | My fourth choice |
       | Description (optional) | Test 4           |
@@ -80,7 +80,7 @@ Feature: Creating a new rating allocation, where new choices need to
     And the choice with name "My fourth choice" should have maxsize being equal to 1337
     And the choice with name "My fourth choice" should be active
 
-  Scenario: Create a new rating alloation and add an additonal new inactive choice.
+  Scenario: Create a new rating allocation and add an additional new inactive choice.
     When I add a new choice with the values:
       | title                  | My fourth choice |
       | Description (optional) | Test 4           |
@@ -91,40 +91,40 @@ Feature: Creating a new rating allocation, where new choices need to
     And the choice with name "My fourth choice" should have maxsize being equal to 1337
     And the choice with name "My fourth choice" should not be active
 
-  Scenario: Create a new rating alloation and add an additonal new inactive choice. Change the the choice to active.
+  Scenario: Create a new rating allocation and add an additional new inactive choice. Change the the choice to active.
     When I add a new choice with the values:
       | title                  | My fourth choice       |
-      | Description (optional) | This is my discription |
+      | Description (optional) | This is my description |
       | maxsize                | 1231243                |
       | active                 | false                  |
     Then I set the choice with the title "My fourth choice" to active
     And I should see "My fourth choice"
     And the choice with name "My fourth choice" should be active
 
-  Scenario: Create a new rating alloation and add an additonal new active choice. Change the the choice to inactive.
+  Scenario: Create a new rating allocation and add an additional new active choice. Change the the choice to inactive.
     When I add a new choice with the values:
       | title                  | My fourth choice       |
-      | Description (optional) | This is my discription |
+      | Description (optional) | This is my description |
       | maxsize                | 1231243                |
       | active                 | true                   |
     Then I set the choice with the title "My fourth choice" to inactive
     And I should see "My fourth choice"
     And the choice with name "My fourth choice" should not be active
 
-  Scenario: Create a new rating alloation and check the field runalgorithmbycron. It should be saved as true.
+  Scenario: Create a new rating allocation and check the field runalgorithmbycron. It should be saved as true.
     When I am on the "My Fair Allocation" "mod_ratingallocate > Edit" page
     And I set the field "runalgorithmbycron" to "1"
     And I press "id_submitbutton"
     And I am on the "My Fair Allocation" "mod_ratingallocate > Edit" page
     Then the field "runalgorithmbycron" matches value "1"
 
-  Scenario: Create a new rating alloation and uncheck the field runalgorithmbycron. It should be saved as false.
+  Scenario: Create a new rating allocation and uncheck the field runalgorithmbycron. It should be saved as false.
     When I am on the "My Fair Allocation" "mod_ratingallocate > Edit" page
     And I set the field "runalgorithmbycron" to ""
     And I press "id_submitbutton"
     And I am on the "My Fair Allocation" "mod_ratingallocate > Edit" page
     Then the field "runalgorithmbycron" matches value ""
 
-  Scenario: Create a new rating alloation and assume the default for the field runalgorithmbycron is true.
+  Scenario: Create a new rating allocation and assume the default for the field runalgorithmbycron is true.
     When I am on the "My Fair Allocation" "mod_ratingallocate > Edit" page
     Then the field "runalgorithmbycron" matches value "1"
