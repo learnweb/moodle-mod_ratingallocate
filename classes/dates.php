@@ -35,6 +35,12 @@ use core\activity_dates;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dates extends activity_dates {
+    /** @var int|null $timeopen the activity open date */
+    private ?int $timeopen;
+
+    /** @var int|null $timeclose the activity close date */
+    private ?int $timeclose;
+
     /**
      * Returns a list of important dates in mod_ratingallocate
      *
@@ -43,28 +49,57 @@ class dates extends activity_dates {
     protected function get_dates(): array {
         global $DB;
 
+        $this->timeopen = null;
+        $this->timeclose = null;
+
         $timeopen = $this->cm->customdata['accesstimestart'] ?? null;
         $timeclose = $this->cm->customdata['accesstimestop'] ?? null;
 
-        $now = time();
+        $now = \core\di::get(\core\clock::class)->time();
         $dates = [];
 
         if ($timeopen) {
+            $this->timeopen = (int) $timeopen;
             $openlabelid = $timeopen > $now ? 'activitydate:opens' : 'activitydate:opened';
             $dates[] = [
+                'dataid' => 'timeopen',
                 'label' => get_string($openlabelid, 'core_course'),
-                'timestamp' => (int) $timeopen,
+                'timestamp' => $this->timeopen,
             ];
         }
 
         if ($timeclose) {
+            $this->timeclose = (int) $timeclose;
             $closelabelid = $timeclose > $now ? 'activitydate:closes' : 'activitydate:closed';
             $dates[] = [
+                'dataid' => 'timeclose',
                 'label' => get_string($closelabelid, 'core_course'),
-                'timestamp' => (int) $timeclose,
+                'timestamp' => $this->timeclose,
             ];
         }
 
         return $dates;
+    }
+
+    /**
+     * Returns the open date data, if any.
+     * @return int|null the open date timestamp or null if not set.
+     */
+    public function get_timeopen(): ?int {
+        if (!isset($this->timeopen)) {
+            $this->get_dates();
+        }
+        return $this->timeopen;
+    }
+
+    /**
+     * Returns the close date data, if any.
+     * @return int|null the close date timestamp or null if not set.
+     */
+    public function get_timeclose(): ?int {
+        if (!isset($this->timeclose)) {
+            $this->get_dates();
+        }
+        return $this->timeclose;
     }
 }
