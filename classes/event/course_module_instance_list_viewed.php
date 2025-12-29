@@ -15,19 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the version of ratingallocate
+ * Contains event class for a list of mod_ratingallocates in a course being viewed
  *
- * @package    mod_ratingallocate
- * @copyright 2014 T Reischmann, C Usener
- * @copyright based on code by M Schulze copyright (C) 2014 M Schulze
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_ratingallocate
+ * @copyright 2025 Luca Bösch <luca.boesch@bfh.ch>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace mod_ratingallocate\event;
 
-$plugin->version   = 2025070201;        // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2022112800;         // Requires Moodle 4.1 and higher.
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '5.0.0-dev';
-$plugin->supports  = [405, 501];
-$plugin->component = 'mod_ratingallocate';  // To check on upgrade, that module sits in correct place.
+/**
+ * All instances in the course have been viewed in this event
+ *
+ * @package   mod_ratingallocate
+ * @copyright 2025 Luca Bösch <luca.boesch@bfh.ch>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {
+}

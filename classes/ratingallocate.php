@@ -1917,6 +1917,74 @@ class ratingallocate {
     }
 
     /**
+     * Check if the current user has responded in the ratingallocate.
+     *
+     * @return bool true if the user has answered, false otherwise
+     */
+    public function has_answered(): bool {
+        global $USER;
+
+        $sql = 'SELECT 1 FROM {ratingallocate_ratings} r
+            WHERE r.userid = :userid
+              AND r.choiceid IN (
+                  SELECT c.id FROM {ratingallocate_choices} c
+                  WHERE c.ratingallocateid = :ratingallocateid
+              )';
+        $params = ['userid' => $USER->id, 'ratingallocateid' => $this->ratingallocateid];
+        return $this->db->record_exists_sql($sql, $params);
+    }
+
+
+    /**
+     * Return the count of users who can submit ratings to this ratingallocate module, that the current user can see.
+     *
+     * @param int[] $groupids the group identifiers to filter by, empty array means no filtering
+     * @return int the number of answers that the user can see
+     */
+    public function count_all_users(
+        array $groupids = [],
+    ): int {
+        if (!has_capability('mod/ratingallocate:start_distribution', $this->context)) {
+            return 0;
+        }
+
+        // Get all users with the capability to give ratings in this context.
+        $users = get_users_by_capability($this->context, 'mod/ratingallocate:give_rating', 'u.id');
+
+        if (empty($users)) {
+            return 0;
+        }
+
+        // No group filtering requested: simply count users with the capability.
+        if (empty($groupids)) {
+            return count($users);
+        }
+
+        // With group filtering: count users that are in any of the requested groups
+        // or that are not in any group (group 0 semantics).
+        $groupids = array_unique($groupids);
+        $count = 0;
+        foreach ($users as $userid => $unused) {
+            $usergroups = groups_get_user_groups($this->course->id, $userid);
+            $ug = isset($usergroups[0]) ? $usergroups[0] : [];
+            if (!empty(array_intersect($ug, $groupids)) || empty($ug)) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * Return the current count of users who have submitted ratings to this ratingallocate module, that the current user can see.
+     *
+     * @return int the number of answers that the user can see
+     */
+    public function count_all_users_answered(): int {
+        return count($this->get_users_with_ratings());
+    }
+
+    /**
      * Deletes all ratings in this ratingallocate
      */
     public function delete_all_ratings() {
