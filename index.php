@@ -31,8 +31,13 @@ use mod_ratingallocate\event\index_viewed;
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 require_once(dirname(__FILE__) . '/locallib.php');
+global $CFG;
 
 $id = required_param('id', PARAM_INT);   // Courseid.
+
+if ($CFG->version > 2025041400) {
+    \core_courseformat\activityoverviewbase::redirect_to_overview_page($id, 'ratingallocate');
+}
 
 $course = get_course($id);
 
