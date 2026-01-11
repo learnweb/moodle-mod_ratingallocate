@@ -242,7 +242,24 @@ $string['modify_choices_group_desc_ready_alloc_started'] =
 $string['modify_choices_group_desc_too_early'] = 'Here, the choices can be specified, which should be available to the students.';
 $string['modulename'] = 'Fair Allocation';
 $string['modulename_help'] =
-        'The Fair Allocation module lets you define choices your participants can then rate. The participants can then be distributed automatically to the available choices according to their ratings.';
+        '###### Key features
+
+- Define choices that participants can rate according to their preferences
+- Support for multiple rating strategies (Yes-No, Order, Points, Likert-scale)
+- Automatic allocation using an algorithm that maximizes overall satisfaction
+- Choices can have maximum capacity limits
+- Manual adjustments possible after automated distribution (including unassigned participants)
+- Email notifications to participants about their allocation
+
+
+###### Ways to use it
+
+- Allocate students to seminar slots or study groups based on their preferences
+- Distribute thesis topics fairly among students
+- Assign participants to limited resources in a way perceived as fair
+- Use in schools, universities, or any context where fair allocation is needed
+- Combine automated allocation with manual fine-tuning for optimal results';
+$string['modulename_summary'] = 'Enables fair distribution of participants to limited resources by letting them rate choices and using an algorithm to maximize overall satisfaction.';
 $string['modulenameplural'] = 'Fair Allocations';
 $string['moodlegroups_created'] = 'The corresponding Moodle groups and groupings have been created.';
 $string['newchoice'] = 'Add new choice';
