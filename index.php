@@ -34,6 +34,10 @@ require_once(dirname(__FILE__) . '/locallib.php');
 
 $id = required_param('id', PARAM_INT);   // Courseid.
 
+if ($CFG->version > 2025041400) {
+    \core_courseformat\activityoverviewbase::redirect_to_overview_page($id, 'ratingallocate');
+}
+
 $course = get_course($id);
 
 require_course_login($course);
