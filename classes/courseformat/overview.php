@@ -34,20 +34,6 @@ use mod_ratingallocate\ratingallocate;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class overview extends \core_courseformat\activityoverviewbase {
-    /**
-     * Constructor.
-     *
-     * @param \cm_info $cm the course module instance.
-     * @param \core\output\renderer_helper $rendererhelper the renderer helper.
-     */
-    public function __construct(
-        \cm_info $cm,
-        /** @var \core\output\renderer_helper $rendererhelper the renderer helper */
-        protected readonly \core\output\renderer_helper $rendererhelper,
-    ) {
-        parent::__construct($cm);
-    }
-
     #[\Override]
     public function get_actions_overview(): ?overviewitem {
         $url = new url(
@@ -56,18 +42,8 @@ class overview extends \core_courseformat\activityoverviewbase {
         );
 
         $text = get_string('view');
+        $content = new action_link($url, $text, null, ['class' => $this->action_link_classes()]);
 
-        if (
-            class_exists(button::class) &&
-            (new \ReflectionClass(button::class))->hasConstant('BODY_OUTLINE')
-        ) {
-            $bodyoutline = button::BODY_OUTLINE;
-            $buttonclass = $bodyoutline->classes();
-        } else {
-            $buttonclass = "btn btn-outline-secondary";
-        }
-
-        $content = new action_link($url, $text, null, ['class' => $buttonclass]);
         return new overviewitem(get_string('actions'), $text, $content, text_align::CENTER);
     }
 
@@ -193,16 +169,6 @@ class overview extends \core_courseformat\activityoverviewbase {
         $submissions = $ratingallocate->count_all_users_answered();
         $total = $ratingallocate->count_all_users($groupids);
 
-        if (
-            class_exists(button::class) &&
-            (new \ReflectionClass(button::class))->hasConstant('BODY_OUTLINE')
-        ) {
-            $bodyoutline = button::BODY_OUTLINE;
-            $buttonclass = $bodyoutline->classes();
-        } else {
-            $buttonclass = "btn btn-outline-secondary";
-        }
-
         $content = new action_link(
             url: new url('/mod/ratingallocate/view.php', ['id' => $this->cm->id, 'action' => 'show_ratings_and_allocation_table']),
             text: get_string(
@@ -210,7 +176,7 @@ class overview extends \core_courseformat\activityoverviewbase {
                 'core',
                 ['count' => $submissions, 'total' => $total]
             ),
-            attributes: ['class' => $buttonclass],
+            attributes: ['class' => $this->action_link_classes()],
         );
 
         return new overviewitem(
@@ -219,5 +185,24 @@ class overview extends \core_courseformat\activityoverviewbase {
             content: $content,
             textalign: text_align::CENTER,
         );
+    }
+
+    /**
+     * Return class list for action links in this overview.
+     * @return string class list for action links
+     */
+    private function action_link_classes(): string {
+        // A new button style was introduced in Moodle 5.1 which is a
+        // better fit for the course overview.
+        $bodyoutlinesupported = class_exists(button::class) &&
+            (new \ReflectionClass(button::class))->hasConstant('BODY_OUTLINE');
+
+        if ($bodyoutlinesupported) {
+            $buttonclass = button::BODY_OUTLINE->classes();
+        } else {
+            $buttonclass = "btn btn-outline-secondary";
+        }
+
+        return $buttonclass;
     }
 }
