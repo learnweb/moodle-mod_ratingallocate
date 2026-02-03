@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains event class for a list of mod_ratingallocates in a course being viewed
- *
- * @package   mod_ratingallocate
- * @copyright 2025 Luca Bösch <luca.boesch@bfh.ch>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_ratingallocate\event;
 
 /**
