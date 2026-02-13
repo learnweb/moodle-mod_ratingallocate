@@ -1550,7 +1550,19 @@ class ratingallocate {
 
         // Fix for github bug issue #316. Delete bad dataset with groupingid=0 after backup and restore without groups/groupings.
         $where = "ratingallocateid = $this->ratingallocateid AND groupingid = 0";
-        $DB->delete_records_select(this_db\ratingallocate_groupings::TABLE, $where);
+        $this->db->delete_records_select(this_db\ratingallocate_groupings::TABLE, $where);
+
+        /* Delete records with invalid group ids introduced via faulty
+         * backup/restore process.
+         *
+         * FIXME: Do not introduce records with groupid = 0 during
+         * backup/restore
+         */
+        $this->db->delete_records(
+            this_db\ratingallocate_ch_gengroups::TABLE,
+            ['groupid' => 0]
+        );
+
         // Search if there is already a grouping from us.
         $where = "ratingallocateid = $this->ratingallocateid AND groupingid <> 0";
         if (!$groupingids = $this->db->get_record_select(this_db\ratingallocate_groupings::TABLE, $where, [], 'groupingid')) {
@@ -1619,8 +1631,10 @@ class ratingallocate {
             $choiceid = $allocation->choiceid;
             $userid = $allocation->userid;
             // Get the group corresponding to the choiceid.
-            $groupids = $this->db->get_record(
+            $groupids = $this->db->get_record_select(
                 this_db\ratingallocate_ch_gengroups::TABLE,
+                // Filter out records with groupip=0 which might exists because of backup/restore.
+                'choiceid = :choiceid AND groupid <> 0',
                 ['choiceid' => $choiceid],
                 'groupid'
             );
