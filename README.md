@@ -73,4 +73,7 @@ Distributing 500 users to 21 choices takes around 11sec.
 
 Changelog
 =========
-The changes for every release are listed here: https://github.com/learnweb/moodle-mod_ratingallocate/wiki/Changelog.
+
+The list of user-visible changes for every release are listed in
+[CHANGES.md](CHANGES.md). Previous (older) ChangeLogs can be found in
+[CHANGES.old.md](CHANGES.old.md).
