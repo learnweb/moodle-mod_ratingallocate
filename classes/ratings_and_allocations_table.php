@@ -69,7 +69,7 @@ class ratings_and_allocations_table extends \table_sql {
     /**
      * @var array Array of all group names assigned to the choices, with choice id as key.
      */
-    private $groupnamesofchoices;
+    private $groupnamesofchoices = [];
 
     /**
      * @var bool if true the table should show a column with the groups in this ratingallocate instance which the user belongs to.
@@ -336,7 +336,7 @@ class ratings_and_allocations_table extends \table_sql {
             $choices = $this->ratingallocate->get_choices_by_id($this->filter_choiceids($choiceids));
             $row = [];
             foreach ($choices as $choice) {
-                $choicegroups = $this->groupnamesofchoices[$choice->id];
+                $choicegroups = $this->groupnamesofchoices[$choice->id] ?? [];
                 if (empty($choice->usegroups) || empty($choicegroups)) {
                     continue;
                 }
