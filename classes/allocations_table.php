@@ -234,23 +234,25 @@ class allocations_table extends \table_sql {
      * Sets up the sql statement for querying the table data.
      */
     public function init_sql() {
-        if ($this->is_downloading()) {
-            $fields = "a.userid AS id, c.title as choicetitle";
-
-            $from = "{ratingallocate_allocations} a JOIN {ratingallocate_choices} c ON a.choiceid = c.id";
-        } else {
-            $fields = "c.id, c.title as choicetitle";
-
-            $from = "{ratingallocate_choices} c";
-        }
-
-        $where = "c.ratingallocateid = :ratingallocateid";
-
         $params = [];
         $params['ratingallocateid'] = $this->ratingallocate->ratingallocate->id;
 
-        $this->set_sql($fields, $from, $where, $params);
+        if ($this->is_downloading()) {
+            $fields = "a.userid AS id, c.title as choicetitle";
+            $from = "{ratingallocate_allocations} a JOIN {ratingallocate_choices} c ON a.choiceid = c.id";
+            $raters = array_map(fn ($rater) => $rater->id, $this->ratingallocate->get_raters_in_course());
+            if (!empty($raters)) {
+                $where = " c.ratingallocateid = :ratingallocateid AND a.userid IN (" . implode(',', $raters) . ")";
+            } else {
+                $where = " c.ratingallocateid = :ratingallocateid AND 1 = 0";
+            }
+        } else {
+            $fields = "c.id, c.title as choicetitle";
+            $from = "{ratingallocate_choices} c";
+            $where = "c.ratingallocateid = :ratingallocateid";
+        }
 
+        $this->set_sql($fields, $from, $where, $params);
         $this->query_db(20);
     }
 }
