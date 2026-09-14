@@ -1270,7 +1270,7 @@ class ratingallocate {
                         new moodle_url(
                             '/mod/ratingallocate/view.php',
                             ['id' => $this->coursemodule->id,
-                            'action' => ACTION_DELETE_RATING]
+                            'action' => ACTION_DELETE_RATING, 'sesskey' => sesskey()]
                         ),
                         get_string('delete_rating', RATINGALLOCATE_MOD_NAME),
                         'get'
@@ -1319,6 +1319,16 @@ class ratingallocate {
     public function handle_view() {
         global $PAGE, $USER;
         $action = optional_param('action', '', PARAM_TEXT);
+
+        $statechanging = [
+            ACTION_START_DISTRIBUTION, ACTION_DELETE_RATING, ACTION_DELETE_ALL_RATINGS,
+            ACTION_ENABLE_CHOICE, ACTION_DISABLE_CHOICE, ACTION_DELETE_CHOICE,
+            ACTION_PUBLISH_ALLOCATIONS, ACTION_ALLOCATION_TO_GROUPING,
+            ACTION_DISTRIBUTE_UNALLOCATED_FILL, ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY,
+        ];
+        if (in_array($action, $statechanging, true)) {
+            require_sesskey();
+        }
 
         // phpcs:ignore moodle.Commenting.TodoComment.MissingInfoInline
         $PAGE->set_cacheable(false); // TODO necessary.

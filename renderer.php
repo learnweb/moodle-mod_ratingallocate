@@ -101,8 +101,10 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $ratingover = $status !== ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY &&
             $status !== ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS;
 
-        $starturl = new moodle_url($this->page->url, ['action' => ACTION_START_DISTRIBUTION]);
-        $deleteurl = new moodle_url($this->page->url, ['id' => $coursemoduleid, 'action' => ACTION_DELETE_ALL_RATINGS]);
+        $starturl = new moodle_url($this->page->url, ['action' => ACTION_START_DISTRIBUTION, 'sesskey' => sesskey()]);
+        $deleteurl = new moodle_url($this->page->url, [
+            'id' => $coursemoduleid, 'action' => ACTION_DELETE_ALL_RATINGS, 'sesskey' => sesskey(),
+        ]);
 
         // Get description dependent on status.
         $descriptionbaseid = 'modify_allocation_group_desc_';
@@ -151,7 +153,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
                 $distributeunallocatedurleq = new moodle_url(
                     $this->page->url,
-                    ['action' => ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY]
+                    ['action' => ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY, 'sesskey' => sesskey()]
                 );
                 $buttondisteq = new single_button(
                     $distributeunallocatedurleq,
@@ -166,7 +168,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
                 $distributeunallocatedurlfill = new moodle_url(
                     $this->page->url,
-                    ['action' => ACTION_DISTRIBUTE_UNALLOCATED_FILL]
+                    ['action' => ACTION_DISTRIBUTE_UNALLOCATED_FILL, 'sesskey' => sesskey()]
                 );
                 $buttondistfill = new single_button(
                     $distributeunallocatedurlfill,
@@ -247,14 +249,21 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
             $this->single_button(
                 new moodle_url('/mod/ratingallocate/view.php', ['id' => $coursemoduleid,
                 'ratingallocateid' => $ratingallocateid,
-                'action' => ACTION_PUBLISH_ALLOCATIONS]),
+                'action' => ACTION_PUBLISH_ALLOCATIONS, 'sesskey' => sesskey()]),
                 get_string('publish_allocation', RATINGALLOCATE_MOD_NAME),
                 'get',
                 ['disabled' => !$isready]
             ),
-            $this->single_button(new moodle_url('/mod/ratingallocate/view.php', ['id' => $coursemoduleid,
-                'ratingallocateid' => $ratingallocateid,
-                'action' => ACTION_ALLOCATION_TO_GROUPING]), get_string('create_moodle_groups', RATINGALLOCATE_MOD_NAME), 'get')
+            $this->single_button(
+                new moodle_url('/mod/ratingallocate/view.php', [
+                    'id' => $coursemoduleid,
+                    'ratingallocateid' => $ratingallocateid,
+                    'action' => ACTION_ALLOCATION_TO_GROUPING,
+                    'sesskey' => sesskey(),
+                ]),
+                get_string('create_moodle_groups', RATINGALLOCATE_MOD_NAME),
+                'get'
+            )
         );
 
         $output .= html_writer::table($table);
@@ -536,8 +545,10 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $ratingover = $status !== ratingallocate::DISTRIBUTION_STATUS_TOO_EARLY &&
                 $status !== ratingallocate::DISTRIBUTION_STATUS_RATING_IN_PROGRESS;
 
-        $starturl = new moodle_url($this->page->url, ['action' => ACTION_START_DISTRIBUTION]);
-        $deleteurl = new moodle_url($this->page->url, ['id' => $coursemoduleid, 'action' => ACTION_DELETE_ALL_RATINGS]);
+        $starturl = new moodle_url($this->page->url, ['action' => ACTION_START_DISTRIBUTION, 'sesskey' => sesskey()]);
+        $deleteurl = new moodle_url($this->page->url, [
+            'id' => $coursemoduleid, 'action' => ACTION_DELETE_ALL_RATINGS, 'sesskey' => sesskey(),
+        ]);
 
         // Get description dependent on status.
         $descriptionbaseid = 'modify_allocation_group_desc_';
@@ -575,7 +586,9 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         if (has_capability('mod/ratingallocate:distribute_unallocated', context_module::instance($coursemoduleid))) {
             $output .= html_writer::start_div('ratingallocate_distribute_unallocated');
 
-            $distributeunallocatedurl = new moodle_url($this->page->url, ['action' => ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY]);
+            $distributeunallocatedurl = new moodle_url($this->page->url, [
+                'action' => ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY, 'sesskey' => sesskey(),
+            ]);
 
             $button = new single_button(
                 $distributeunallocatedurl,
@@ -590,7 +603,9 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
 
             $output .= $this->render($button);
 
-            $distributeunallocatedurl = new moodle_url($this->page->url, ['action' => ACTION_DISTRIBUTE_UNALLOCATED_FILL]);
+            $distributeunallocatedurl = new moodle_url($this->page->url, [
+                'action' => ACTION_DISTRIBUTE_UNALLOCATED_FILL, 'sesskey' => sesskey(),
+            ]);
             $button = new single_button(
                 $distributeunallocatedurl,
                 get_string('distributefill', RATINGALLOCATE_MOD_NAME),
@@ -641,15 +656,22 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         $output .= $this->single_button(
             new moodle_url('/mod/ratingallocate/view.php', ['id' => $coursemoduleid,
                 'ratingallocateid' => $ratingallocateid,
-                'action' => ACTION_PUBLISH_ALLOCATIONS]),
+                'action' => ACTION_PUBLISH_ALLOCATIONS, 'sesskey' => sesskey()]),
             get_string('publish_allocation', RATINGALLOCATE_MOD_NAME),
             'get',
             ['disabled' => !$isready]
         );
 
-        $output .= $this->single_button(new moodle_url('/mod/ratingallocate/view.php', ['id' => $coursemoduleid,
+        $output .= $this->single_button(
+            new moodle_url('/mod/ratingallocate/view.php', [
+                'id' => $coursemoduleid,
                 'ratingallocateid' => $ratingallocateid,
-                'action' => ACTION_ALLOCATION_TO_GROUPING]), get_string('create_moodle_groups', RATINGALLOCATE_MOD_NAME), 'get');
+                'action' => ACTION_ALLOCATION_TO_GROUPING,
+                'sesskey' => sesskey(),
+            ]),
+            get_string('create_moodle_groups', RATINGALLOCATE_MOD_NAME),
+            'get'
+        );
 
         $output .= $this->box_end();
         return $output;
