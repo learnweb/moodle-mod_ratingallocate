@@ -23,6 +23,8 @@
 
 namespace mod_ratingallocate;
 
+use moodle_exception;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -94,10 +96,7 @@ class allocations_table extends \table_sql {
             $headers[] = get_string('firstname');
             $columns[] = 'lastname';
             $headers[] = get_string('lastname');
-            if (
-                in_array('email', $additionalfields) &&
-                    has_capability('moodle/course:useremail', $this->ratingallocate->get_context())
-            ) {
+            if (in_array('email', $additionalfields)) {
                 $columns[] = 'email';
                 $headers[] = get_string('email');
             }
@@ -124,26 +123,37 @@ class allocations_table extends \table_sql {
     /**
      * Builds the data for the table. For the online version the users are aggregated for the choices to
      * which they are allocated. For the download version no changes are necessary.
+     *
+     * @throws moodle_exception
      */
-    public function build_table_by_sql() {
+    public function build_table_by_sql(): void {
+        global $CFG;
         $data = $this->rawdata;
 
-        // Retrieve all users, who rated within the course.
-        $userwithratingids = array_map(function ($x) {
-            return $x->userid;
-        },
-                $this->ratingallocate->get_users_with_ratings());
-        $userwithrating = \user_get_users_by_id($userwithratingids);
+        $userwithratingids = array_column($this->ratingallocate->get_users_with_ratings(), 'userid');
 
         if ($this->is_downloading()) {
-            // Search for all users, who rated but were not allocated and add them to the data set.
-            foreach ($userwithrating as $userid => $user) {
-                if (!array_key_exists($userid, $data)) {
-                    $data[$userid] = $user;
+            // Retrieve all users who rated within the course or have received an allocation.
+            $userwithratingorallocids = array_unique(array_merge(array_keys($data), $userwithratingids));
+            $userwithratingoralloc = \user_get_users_by_id($userwithratingorallocids);
+
+            // Add details for all users to the data set.
+            $course = $this->ratingallocate->get_course();
+            $userfields = array_merge(['firstname', 'lastname'], explode(',', $CFG->ratingallocate_download_userfields));
+            foreach ($userwithratingoralloc as $userid => $user) {
+                // Export user fields using user_get_user_details (includes capability checks).
+                $details = user_get_user_details($user, $course, $userfields);
+                if (array_key_exists($userid, $data)) {
+                    $data[$userid] = (object) ((array) $data[$userid] + $details);
+                } else {
+                    $data[$userid] = (object) $details;
                     $data[$userid]->choicetitle = '';
                 }
             }
         } else {
+            // Retrieve all users who rated within the course.
+            $userwithrating = \user_get_users_by_id($userwithratingids);
+
             // Aggregate all users allocated to a specific choice to the users column.
             $allocations = $this->ratingallocate->get_allocations();
 
@@ -224,25 +234,25 @@ class allocations_table extends \table_sql {
      * Sets up the sql statement for querying the table data.
      */
     public function init_sql() {
-        if ($this->is_downloading()) {
-            $fields = "u.*, c.title as choicetitle";
-
-            $from =
-                    "{ratingallocate_allocations} a JOIN {ratingallocate_choices} c ON a.choiceid = c.id
-                    JOIN {user} u ON a.userid = u.id";
-        } else {
-            $fields = "c.id, c.title as choicetitle";
-
-            $from = "{ratingallocate_choices} c";
-        }
-
-        $where = "c.ratingallocateid = :ratingallocateid";
-
         $params = [];
         $params['ratingallocateid'] = $this->ratingallocate->ratingallocate->id;
 
-        $this->set_sql($fields, $from, $where, $params);
+        if ($this->is_downloading()) {
+            $fields = "a.userid AS id, c.title as choicetitle";
+            $from = "{ratingallocate_allocations} a JOIN {ratingallocate_choices} c ON a.choiceid = c.id";
+            $raters = array_map(fn ($rater) => $rater->id, $this->ratingallocate->get_raters_in_course());
+            if (!empty($raters)) {
+                $where = " c.ratingallocateid = :ratingallocateid AND a.userid IN (" . implode(',', $raters) . ")";
+            } else {
+                $where = " c.ratingallocateid = :ratingallocateid AND 1 = 0";
+            }
+        } else {
+            $fields = "c.id, c.title as choicetitle";
+            $from = "{ratingallocate_choices} c";
+            $where = "c.ratingallocateid = :ratingallocateid";
+        }
 
+        $this->set_sql($fields, $from, $where, $params);
         $this->query_db(20);
     }
 }

@@ -2551,6 +2551,15 @@ class ratingallocate {
     }
 
     /**
+     * Returns the course of the ratingallocate instance
+     *
+     * @return stdClass
+     */
+    public function get_course() {
+        return $this->course;
+    }
+
+    /**
      * Get candidate group selection options for a groupselector form element.
      *
      * @param array $grouplist (optional) A list of group records to build mappings from.

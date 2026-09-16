@@ -25,11 +25,13 @@
 namespace mod_ratingallocate;
 
 use mod_ratingallocate_renderer;
+use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/tablelib.php');
+require_once($CFG->dirroot . '/user/lib.php');
 
 /**
  * Ratings and allocations table
@@ -200,11 +202,7 @@ class ratings_and_allocations_table extends \table_sql {
                 $headers[] = get_string('firstname');
                 $columns[] = 'lastname';
                 $headers[] = get_string('lastname');
-                global $COURSE;
-                if (
-                    in_array('email', $additionalfields) &&
-                        has_capability('moodle/course:useremail', $this->ratingallocate->get_context())
-                ) {
+                if (in_array('email', $additionalfields)) {
                     $columns[] = 'email';
                     $headers[] = get_string('email');
                 }
@@ -280,6 +278,7 @@ class ratings_and_allocations_table extends \table_sql {
      * @param array $ratings an array of ratings -- the data for this table
      * @param array $allocations an array of allocations
      * @param bool $writeable if true the cells are rendered as radio buttons
+     * @throws moodle_exception
      */
     public function build_table_by_sql($ratings, $allocations, $writeable = false) {
 
@@ -355,10 +354,19 @@ class ratings_and_allocations_table extends \table_sql {
      * @param object $user of the user for who a row should be added.
      * @param array $userratings consisting of pairs of choiceid to rating for the user.
      * @param array $userallocations constisting of pairs of choiceid and allocation of the user.
+     * @throws moodle_exception
      */
-    private function add_user_ratings_row($user, $userratings, $userallocations) {
+    private function add_user_ratings_row($user, $userratings, $userallocations): void {
+        global $CFG;
 
         $row = convert_to_array($user);
+
+        if ($this->is_downloading()) {
+            // Export user fields using user_get_user_details when downloading the table (includes capability checks).
+            $course = $this->ratingallocate->get_course();
+            $userfields = array_merge(['firstname', 'lastname'], explode(',', $CFG->ratingallocate_download_userfields));
+            $row = user_get_user_details($user, $course, $userfields);
+        }
 
         if ($this->shownames) {
             $row['fullname'] = $user;
