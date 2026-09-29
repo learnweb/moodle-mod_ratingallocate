@@ -1014,6 +1014,7 @@ class ratingallocate {
      */
     public function queue_distribution_of_users_without_choice(string $distributionalgorithm): void {
         global $USER;
+        require_capability('mod/ratingallocate:distribute_unallocated', $this->context);
         $task = new distribute_unallocated_task();
         $data = new stdClass();
         $data->courseid = $this->course->id;
@@ -1404,6 +1405,7 @@ class ratingallocate {
 
             case ACTION_DISTRIBUTE_UNALLOCATED_EQUALLY:
             case ACTION_DISTRIBUTE_UNALLOCATED_FILL:
+                require_capability('mod/ratingallocate:distribute_unallocated', $this->context);
                 $this->queue_distribution_of_users_without_choice($action);
                 redirect(
                     new moodle_url('/mod/ratingallocate/view.php', ['id' => $this->coursemodule->id]),

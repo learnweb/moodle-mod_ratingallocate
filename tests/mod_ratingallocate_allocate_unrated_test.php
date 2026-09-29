@@ -723,4 +723,29 @@ final class mod_ratingallocate_allocate_unrated_test extends \advanced_testcase 
         // Assert the allocations already existing before have not changed.
         $this->assert_allocation_of_random_users();
     }
+
+    #[\PHPUnit\Framework\Attributes\Group('baseline')]
+    /**
+     * Queuing the distribution requires the distribute_unallocated capability.
+     *
+     * @covers ::queue_distribution_of_users_without_choice
+     */
+    public function test_queue_distribution_requires_capability(): void {
+        $mod = mod_ratingallocate_generator::create_instance_with_choices($this, ['course' => $this->course]);
+        $taskclass = \mod_ratingallocate\task\distribute_unallocated_task::class;
+
+        // Violation: a student must not be able to queue the distribution.
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->studentsnogroup[0]);
+        try {
+            $ratingallocate->queue_distribution_of_users_without_choice(ACTION_DISTRIBUTE_UNALLOCATED_FILL);
+            $this->fail('Expected required_capability_exception.');
+        } catch (\required_capability_exception $e) {
+            $this->assertEmpty(\core\task\manager::get_adhoc_tasks($taskclass));
+        }
+
+        // Verification: the teacher can still queue it.
+        $ratingallocate = mod_ratingallocate_generator::get_ratingallocate_for_user($this, $mod, $this->teacher);
+        $ratingallocate->queue_distribution_of_users_without_choice(ACTION_DISTRIBUTE_UNALLOCATED_FILL);
+        $this->assertCount(1, \core\task\manager::get_adhoc_tasks($taskclass));
+    }
 }
