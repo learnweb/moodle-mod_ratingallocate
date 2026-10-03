@@ -173,7 +173,7 @@ class mod_ratingallocate_view_form extends \ratingallocate_strategyform {
             $mform->setType($groupsidelem, PARAM_INT);
 
             // Show title.
-            $mform->addElement('header', $headerelem, $data->title);
+            $mform->addElement('header', $headerelem, format_string($data->title));
             $mform->setExpanded($headerelem);
 
             // Show max. number of allocations.

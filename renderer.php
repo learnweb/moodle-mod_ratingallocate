@@ -441,7 +441,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                     $this->add_notification(get_string(
                         'rating_is_over_with_allocation',
                         RATINGALLOCATE_MOD_NAME,
-                        array_pop($status->allocations)->title
+                        format_string(array_pop($status->allocations)->title)
                     ), 'notifysuccess');
                 } else if ($hasrating) {
                     $this->add_notification(
@@ -757,7 +757,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
         foreach ($choices as $idx => $choice) {
             $row = [];
             $class = '';
-            $row[] = $choice->{this_db\ratingallocate_choices::TITLE};
+            $row[] = format_string($choice->{this_db\ratingallocate_choices::TITLE});
             $explanation = format_text($choice->{this_db\ratingallocate_choices::EXPLANATION});
             $attachments = $ratingallocate->get_file_attachments_for_choice($choice->id);
             if ($attachments) {
@@ -780,7 +780,7 @@ class mod_ratingallocate_renderer extends plugin_renderer_base {
                 $row[] = $this->render_tools(
                     $idx,
                     $choice->{this_db\ratingallocate_choices::ACTIVE},
-                    $choice->{this_db\ratingallocate_choices::TITLE}
+                    format_string($choice->{this_db\ratingallocate_choices::TITLE})
                 );
             }
             if (!$choice->{this_db\ratingallocate_choices::ACTIVE}) {
