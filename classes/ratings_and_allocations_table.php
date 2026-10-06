@@ -69,7 +69,7 @@ class ratings_and_allocations_table extends \table_sql {
     /**
      * @var array Array of all group names assigned to the choices, with choice id as key.
      */
-    private $groupnamesofchoices;
+    private $groupnamesofchoices = [];
 
     /**
      * @var bool if true the table should show a column with the groups in this ratingallocate instance which the user belongs to.
@@ -244,7 +244,7 @@ class ratings_and_allocations_table extends \table_sql {
                 }
             }
             $headers[] = $this->choicenames[$choiceid];
-            if ($this->is_downloading()) {
+            if ($this->is_downloading() && $this->is_downloading() !== 'pdf') {
                 $columns[] = self::CHOICE_COL . $choiceid . self::EXPORT_CHOICE_TEXT_SUFFIX;
                 $headers[] = $this->choicenames[$choiceid] . get_string('export_choice_text_suffix', RATINGALLOCATE_MOD_NAME);
                 $columns[] = self::CHOICE_COL . $choiceid . self::EXPORT_CHOICE_ALLOC_SUFFIX;
@@ -336,14 +336,16 @@ class ratings_and_allocations_table extends \table_sql {
             $choices = $this->ratingallocate->get_choices_by_id($this->filter_choiceids($choiceids));
             $row = [];
             foreach ($choices as $choice) {
-                $choicegroups = $this->groupnamesofchoices[$choice->id];
+                $choicegroups = $this->groupnamesofchoices[$choice->id] ?? [];
                 if (empty($choice->usegroups) || empty($choicegroups)) {
                     continue;
                 }
                 $groupnames = implode(';', $this->groupnamesofchoices[$choice->id]);
                 $row[self::CHOICE_COL . $choice->id] = $groupnames;
-                $row[self::CHOICE_COL . $choice->id . self::EXPORT_CHOICE_TEXT_SUFFIX] = $groupnames;
-                $row[self::CHOICE_COL . $choice->id . self::EXPORT_CHOICE_ALLOC_SUFFIX] = $groupnames;
+                if ($this->is_downloading() !== 'pdf') {
+                    $row[self::CHOICE_COL . $choice->id . self::EXPORT_CHOICE_TEXT_SUFFIX] = $groupnames;
+                    $row[self::CHOICE_COL . $choice->id . self::EXPORT_CHOICE_ALLOC_SUFFIX] = $groupnames;
+                }
             }
             $this->add_data_keyed($row);
         }
@@ -470,6 +472,13 @@ class ratings_and_allocations_table extends \table_sql {
             $ratingclass = $celldata['hasallocation'] ? 'ratingallocate_member' : '';
 
             if ($this->is_downloading()) {
+                if ($this->is_downloading() === 'pdf') {
+                    $result = $ratingtext;
+                    if (!empty($celldata['hasallocation'])) {
+                        $result .= ' (' . get_string('yes') . ')';
+                    }
+                    return $result;
+                }
                 if ($suffix === self::EXPORT_CHOICE_TEXT_SUFFIX) {
                     return $ratingtext;
                 }
@@ -493,6 +502,9 @@ class ratings_and_allocations_table extends \table_sql {
             $ratingtext = get_string('no_rating_given', RATINGALLOCATE_MOD_NAME);
 
             if ($this->is_downloading()) {
+                if ($this->is_downloading() === 'pdf') {
+                    return $ratingtext;
+                }
                 if ($suffix === self::EXPORT_CHOICE_TEXT_SUFFIX) {
                     return $ratingtext;
                 }
