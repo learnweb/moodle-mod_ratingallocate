@@ -442,7 +442,12 @@ class ratingallocate {
             $choiceid = optional_param('choiceid', 0, PARAM_INT);
 
             if ($choiceid) {
-                $record = $DB->get_record(this_db\ratingallocate_choices::TABLE, ['id' => $choiceid]);
+                $record = $DB->get_record(
+                    this_db\ratingallocate_choices::TABLE,
+                    ['id' => $choiceid, this_db\ratingallocate_choices::RATINGALLOCATEID => $this->ratingallocateid],
+                    '*',
+                    MUST_EXIST
+                );
                 $choice = new ratingallocate_choice($record);
             } else {
                 $choice = null;
@@ -615,7 +620,7 @@ class ratingallocate {
                     this_db\ratingallocate_choices::TABLE,
                     this_db\ratingallocate_choices::ACTIVE,
                     $active,
-                    ['id' => $choiceid]
+                    ['id' => $choiceid, this_db\ratingallocate_choices::RATINGALLOCATEID => $this->ratingallocateid]
                 );
             }
             redirect(new moodle_url(
@@ -634,7 +639,10 @@ class ratingallocate {
             $choiceid = optional_param('choiceid', 0, PARAM_INT);
 
             if ($choiceid) {
-                $choice = $DB->get_record(this_db\ratingallocate_choices::TABLE, ['id' => $choiceid]);
+                $choice = $DB->get_record(
+                    this_db\ratingallocate_choices::TABLE,
+                    ['id' => $choiceid, this_db\ratingallocate_choices::RATINGALLOCATEID => $this->ratingallocateid]
+                );
                 if ($choice) {
                     // Delete related group associations, if any.
                     $DB->delete_records(this_db\ratingallocate_group_choices::TABLE, ['choiceid' => $choiceid]);
@@ -2336,7 +2344,13 @@ class ratingallocate {
             $choice->{this_db\ratingallocate_choices::RATINGALLOCATEID} = $this->ratingallocateid;
 
             if (!empty($data->choiceid)) {
-                $choice->id = $data->choiceid;
+                $existing = $DB->get_record(
+                    this_db\ratingallocate_choices::TABLE,
+                    ['id' => $data->choiceid, this_db\ratingallocate_choices::RATINGALLOCATEID => $this->ratingallocateid],
+                    'id',
+                    MUST_EXIST
+                );
+                $choice->id = $existing->id;
                 $DB->update_record(this_db\ratingallocate_choices::TABLE, $choice->dbrecord);
             } else {
                 // Update choiceid for pass through to file attachments.

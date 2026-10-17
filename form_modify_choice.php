@@ -83,7 +83,7 @@ class modify_choice_form extends moodleform {
         $mform = $this->_form;
 
         $mform->addElement('hidden', 'choiceid'); // Save the record's id.
-        $mform->setType('choiceid', PARAM_TEXT);
+        $mform->setType('choiceid', PARAM_INT);
 
         $elementname = 'title';
         $mform->addElement('text', $elementname, get_string('choice_title', RATINGALLOCATE_MOD_NAME));
