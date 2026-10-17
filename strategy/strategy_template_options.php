@@ -89,7 +89,7 @@ abstract class ratingallocate_options_strategyform extends \ratingallocate_strat
             $mform->setType($groupsidelem, PARAM_INT);
 
             // Show title.
-            $mform->addElement('header', $headerelem, $data->title);
+            $mform->addElement('header', $headerelem, format_string($data->title));
             $mform->setExpanded($headerelem);
 
             // Show max. number of allocations.

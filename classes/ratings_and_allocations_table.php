@@ -234,6 +234,9 @@ class ratings_and_allocations_table extends \table_sql {
         foreach ($filteredchoices as $choiceid) {
             $columns[] = self::CHOICE_COL . $choiceid;
             $choice = $this->ratingallocate->get_choices()[$choiceid];
+            if (!$this->is_downloading()) {
+                $this->choicenames[$choiceid] = format_string($this->choicenames[$choiceid]);
+            }
             if ($this->showgroups) {
                 $choicegroups = $this->groupnamesofchoices[$choiceid];
                 if (!$this->is_downloading() && !empty($choice->usegroups) && !empty($choicegroups)) {
